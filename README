@@ -1,0 +1,20 @@
+Basic idea: three "modes"
+
+Mode 1: build an initial network from String/Stitch
+
+1) Add to web service interface: get a list of identifiers.  Will also need to be able to use slider to change
+   confidence cut-offs, a drop-down list of species, and buttons for evidence types.
+2) Take list of identifiers and use resolveList on String web site to get the possible matches.  If the preferredName
+   matches the user input, use that.  If not, provide the user with a dialog to choose which identifier to select.
+3) Once the list of identifiers are known, use the API to get a tsv file with all of the interactions.  Use this to build
+   the network.  Once the network is built, go back to string/stitch to get the additional annotations (currently don't
+   have a good way to do this).
+
+Mode 2: expand an existing network from String/Stitch
+1) Select a group of nodes, right-click on any node and pull the list of String identifiers from selected nodes, then 
+   query string to fetch additional interactions and nodes
+
+Mode 3: Grow network
+1) Like expand, but explicitly send the entire network and ask for more interactors.
+
+Mode 3: "Send to Cytoscape" button in String/Stitch
