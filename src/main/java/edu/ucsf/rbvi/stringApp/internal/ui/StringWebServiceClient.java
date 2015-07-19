@@ -25,7 +25,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -41,8 +40,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableRowSorter;
 
 import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
@@ -55,7 +53,6 @@ import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
 import edu.ucsf.rbvi.stringApp.internal.tasks.ImportNetworkTaskFactory;
-import edu.ucsf.rbvi.stringApp.internal.tasks.ResolveNamesTaskFactory;
 
 // TODO: [Optional] Improve non-gui mode
 public class StringWebServiceClient extends AbstractWebServiceGUIClient 
@@ -68,6 +65,8 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 	JComboBox speciesCombo;
 	JSlider confidenceSlider;
 	JButton importButton;
+	Map<String, String> resolvedIdMap = null;
+	Map<String, List<Annotation>> annotations = null;
 
 	public StringWebServiceClient(StringManager manager) {
 		super(manager.getURL(), "String DB", "The String Database");
@@ -103,7 +102,6 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 		}
 		JPanel speciesBox = createSpeciesComboBox(speciesList);
 		super.gui.add(speciesBox, c.expandHoriz().insets(0,5,0,5));
-		
 
 		// Create the search list panel
 		mainSearchPanel = createSearchPanel();
@@ -127,7 +125,7 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 
 	JPanel createSearchPanel() {
 		JPanel searchPanel = new JPanel(new GridBagLayout());
-		searchPanel.setPreferredSize(new Dimension(500,500));
+		searchPanel.setPreferredSize(new Dimension(600,600));
 		EasyGBC c = new EasyGBC();
 
 		JLabel searchLabel = new JLabel("Enter protein or compound names:");
@@ -138,6 +136,21 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 		c.down().expandBoth().insets(5,10,5,10);
 		searchPanel.add(jsp, c);
 		return searchPanel;
+	}
+
+	void replaceSearchPanel() {
+		mainSearchPanel.removeAll();
+		mainSearchPanel.setLayout(new GridBagLayout());
+		EasyGBC c = new EasyGBC();
+
+		JLabel searchLabel = new JLabel("Enter protein or compound names:");
+		c.noExpand().anchor("northwest").insets(0,5,0,5);
+		mainSearchPanel.add(searchLabel, c);
+		searchTerms = new JTextArea();
+		JScrollPane jsp = new JScrollPane(searchTerms);
+		c.down().expandBoth().insets(5,10,5,10);
+		mainSearchPanel.add(jsp, c);
+		mainSearchPanel.revalidate();
 	}
 
 	JPanel createSpeciesComboBox(List<Species> speciesList) {
@@ -167,49 +180,11 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 		JButton cancelButton = new JButton(new AbstractAction("Cancel") {
         @Override
         public void actionPerformed(ActionEvent e) {
-          ((Window)mainPanel.getRootPane().getParent()).dispose();
+          cancel();
         }
       });
 
-		importButton = new JButton(new AbstractAction("Import") {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-					// Start our task cascade
-					Species species = (Species)speciesCombo.getSelectedItem();
-
-					int additionalNodes = 0;
-					String addText = additionalNodesText.getText();
-					if (addText != null && addText.length() > 0) {
-				 		try {
-							additionalNodes	= Integer.parseInt(addText);
-							System.out.println("Additional Nodes = "+additionalNodes);
-						} catch (NumberFormatException nfe) {
-							JOptionPane.showMessageDialog(null, "Additional nodes must be an integer value", 
-							                              "Additional Nodes Error", JOptionPane.ERROR_MESSAGE); 
-							return;
-						}
-					}
-
-					int taxon = species.getTaxId();
-					String terms = searchTerms.getText();
-
-					Map<String,List<Annotation>> annotations = manager.getAnnotations(taxon, terms);
-					List<String> stringIds = new ArrayList<>();
-					boolean noAmbiguity = resolveAnnotations(annotations, stringIds);
-					if (noAmbiguity) {
-						importNetwork(taxon, confidenceSlider.getValue(), additionalNodes, stringIds);
-					} else {
-						createResolutionPanel(annotations);
-					}
-
-					//TaskFactory factory = new ResolveNamesTaskFactory(manager, species.getTaxId(), 
-					//                                                  confidenceSlider.getValue(),
-					//                                                  additionalNodes,
-					//                                                  searchTerms.getText());
-					// manager.execute(factory.createTaskIterator());
-        }
-
-			});
+		importButton = new JButton(new InitialAction());
 
 		buttonPanel.add(Box.createHorizontalGlue());
 		buttonPanel.add(cancelButton);
@@ -273,6 +248,7 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 	}
 
 	void importNetwork(int taxon, int confidence, int additional_nodes, List<String> stringIds) {
+		cancel();
 		TaskFactory factory = new ImportNetworkTaskFactory(manager, taxon, confidence, additional_nodes, stringIds);
 		manager.execute(factory.createTaskIterator());
 	}
@@ -280,6 +256,11 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 	void createResolutionPanel(final Map<String, List<Annotation>> annotations) {
 		mainSearchPanel.removeAll();
 		mainPanel.revalidate();
+		final Map<String, ResolveTableModel> tableModelMap = new HashMap<>();
+		for (String term: annotations.keySet()) {
+			tableModelMap.put(term, new ResolveTableModel(this, term, annotations.get(term)));
+		}
+		resolvedIdMap = new HashMap<>();
 
 		mainSearchPanel.setLayout(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
@@ -300,20 +281,18 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 			EasyGBC ac = new EasyGBC();
 	
 			final JTable table = new JTable();
+			table.setRowSelectionAllowed(false);
 
-			final JList termList = new JList(annotations.keySet().toArray());
+			Object[] terms = annotations.keySet().toArray();
+			final JList termList = new JList(terms);
 			termList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			termList.addListSelectionListener(new ListSelectionListener() {
 				public void valueChanged(ListSelectionEvent e) {
 					String term = (String)termList.getSelectedValue();
-					table.setModel(new ResolveTableModel(annotations.get(term)));
-					table.setAutoResizeMode( JTable.AUTO_RESIZE_OFF );
-					table.getColumnModel().getColumn(2).setCellRenderer(new MyCellRenderer());
-					table.getColumnModel().getColumn(0).setPreferredWidth(50);
-					table.getColumnModel().getColumn(1).setPreferredWidth(50);
-					table.getColumnModel().getColumn(2).setPreferredWidth(350);
+					showTableRow(table, term, tableModelMap);
 				}
 			});
+			termList.setFixedCellWidth(75);
 
 			JScrollPane termScroller = new JScrollPane(termList);
 			termScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -326,6 +305,9 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 
 			c.down().expandBoth().insets(5,0,5,0);
 			mainSearchPanel.add(annPanel, c);
+
+			// Now, select the first term
+			termList.setSelectedIndex(0);
 		}
 
 		importButton.setEnabled(false);
@@ -333,80 +315,103 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 		mainPanel.revalidate();
 	}
 
-	class ResolveTableModel extends AbstractTableModel {
-		private List<Annotation> annotations;
-
-		public ResolveTableModel(List<Annotation> annotations) {
-			this.annotations = annotations;
+	public void addResolvedStringID(String term, String id) {
+		resolvedIdMap.put(term, id);
+		if (resolvedIdMap.size() == annotations.size()) {
+			importButton.setEnabled(true);
+			importButton.setAction(new ResolvedAction());
 		}
-
-		public int getColumnCount() { return 3; }
-
-		public int getRowCount() { 
-			if (annotations == null) return 0;
-			return annotations.size(); 
-		}
-
-		public String getColumnName(int columnIndex) {
-			switch (columnIndex) {
-			case 0:
-				return "Select";
-			case 1:
-				return "Name";
-			case 2:
-				return "Description";
-			}
-			return "";
-		}
-
-		public Class<?> getColumnClass(int columnIndex) {
-			switch (columnIndex) {
-			case 0:
-				return Boolean.class;
-			case 1:
-				return String.class;
-			case 2:
-				return String.class;
-			}
-			return null;
-		}
-
-		public Object getValueAt(int rowIndex, int columnIndex) {
-			Annotation ann = annotations.get(rowIndex);
-			switch (columnIndex) {
-			case 0:
-				return false;
-			case 1:
-				return ann.getPreferredName();
-			case 2:
-				return ann.getAnnotation();
-			}
-			return null;
-		}
-
-		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			if (columnIndex == 0) return true;
-			return false;
-		}
-
 	}
 
-	public class MyCellRenderer extends JTextArea implements TableCellRenderer {
-		public MyCellRenderer() {
-			setLineWrap(true);
-			setWrapStyleWord(true);
- 		}
+	private void showTableRow(JTable table, String term, Map<String, ResolveTableModel> tableModelMap) {
+		TableRowSorter sorter = new TableRowSorter(tableModelMap.get(term));
+		sorter.setSortable(0, false);
+		sorter.setSortable(1, true);
+		sorter.setSortable(2, false);
+		table.setModel(tableModelMap.get(term));
+		table.setRowSorter(sorter);
+		table.setAutoResizeMode( JTable.AUTO_RESIZE_OFF );
+		table.getColumnModel().getColumn(2).setCellRenderer(new TextAreaRenderer());
+		table.getColumnModel().getColumn(0).setPreferredWidth(50);
+		table.getColumnModel().getColumn(1).setPreferredWidth(75);
+		table.getColumnModel().getColumn(2).setPreferredWidth(400);
+	}
 
-		public Component getTableCellRendererComponent(JTable table, 
-		                                               Object value, 
-											                             boolean isSelected, 
-																									 boolean hasFocus, int row, int column) {
-			setText((String)value);//or something in value, like value.getNote()...
-			setSize(table.getColumnModel().getColumn(column).getWidth(), getPreferredSize().height);
-			if (table.getRowHeight(row) != getPreferredSize().height) {
-				table.setRowHeight(row, getPreferredSize().height);
-			}
-			return this;
+	public void cancel() {
+		resolvedIdMap = null;
+		annotations = null;
+		replaceSearchPanel();
+		importButton.setEnabled(true);
+		((Window)mainPanel.getRootPane().getParent()).dispose();
+	}
+
+	class InitialAction extends AbstractAction {
+		public InitialAction() {
+			super("Import");
 		}
-	} 
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+			// Start our task cascade
+			Species species = (Species)speciesCombo.getSelectedItem();
+
+			int additionalNodes = 0;
+			String addText = additionalNodesText.getText();
+			if (addText != null && addText.length() > 0) {
+				try {
+					additionalNodes	= Integer.parseInt(addText);
+					System.out.println("Additional Nodes = "+additionalNodes);
+				} catch (NumberFormatException nfe) {
+					JOptionPane.showMessageDialog(null, "Additional nodes must be an integer value", 
+								                        "Additional Nodes Error", JOptionPane.ERROR_MESSAGE); 
+					return;
+				}
+			}
+	
+			int taxon = species.getTaxId();
+			String terms = searchTerms.getText();
+	
+			annotations = manager.getAnnotations(taxon, terms);
+			if (annotations == null || annotations.size() == 0) {
+				JOptionPane.showMessageDialog(null, "Your query returned no results",
+							                        "No results", JOptionPane.ERROR_MESSAGE); 
+				return;
+			}
+			List<String> stringIds = new ArrayList<>();
+			boolean noAmbiguity = resolveAnnotations(annotations, stringIds);
+			if (noAmbiguity) {
+				importNetwork(taxon, confidenceSlider.getValue(), additionalNodes, stringIds);
+			} else {
+				createResolutionPanel(annotations);
+			}
+		}
+	}
+
+	class ResolvedAction extends AbstractAction {
+		public ResolvedAction() {
+			super("Import");
+		}
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+			Species species = (Species)speciesCombo.getSelectedItem();
+
+			int additionalNodes = 0;
+			String addText = additionalNodesText.getText();
+			if (addText != null && addText.length() > 0) {
+				try {
+					additionalNodes	= Integer.parseInt(addText);
+					System.out.println("Additional Nodes = "+additionalNodes);
+				} catch (NumberFormatException nfe) {
+					JOptionPane.showMessageDialog(null, "Additional nodes must be an integer value", 
+								                        "Additional Nodes Error", JOptionPane.ERROR_MESSAGE); 
+					return;
+				}
+			}
+
+			int taxon = species.getTaxId();
+			importNetwork(taxon, confidenceSlider.getValue(), additionalNodes, new ArrayList<String>(resolvedIdMap.values()));
+		}
+	}
+
 }
