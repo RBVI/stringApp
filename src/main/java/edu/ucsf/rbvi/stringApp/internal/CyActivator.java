@@ -15,12 +15,15 @@ import java.util.Properties;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.service.util.CyServiceRegistrar;
+import org.cytoscape.view.presentation.customgraphics.CyCustomGraphicsFactory;
 import org.cytoscape.work.TaskFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.ui.StringWebServiceClient;
+import edu.ucsf.rbvi.stringApp.internal.view.StringCustomGraphicsFactory;
+import edu.ucsf.rbvi.stringApp.internal.view.StringLayer;
 
 // TODO: [Optional] Improve non-gui mode
 public class CyActivator extends AbstractCyActivator {
@@ -45,6 +48,13 @@ public class CyActivator extends AbstractCyActivator {
 		
 		StringWebServiceClient client = new StringWebServiceClient(manager);
 		registerAllServices(bc, client, new Properties());
+
+		{
+			// Register our custom graphics
+			CyCustomGraphicsFactory<StringLayer> stringLookFactory = new StringCustomGraphicsFactory(manager);
+			Properties stringProps = new Properties();
+			registerService(bc, stringLookFactory, CyCustomGraphicsFactory.class, stringProps);
+		}
 
 	}
 

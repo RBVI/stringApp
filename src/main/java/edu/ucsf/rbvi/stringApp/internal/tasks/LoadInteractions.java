@@ -1,22 +1,35 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyNode;
+import org.cytoscape.view.layout.CyLayoutAlgorithm;
+import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
+import org.cytoscape.view.model.CyNetworkView;
+import org.cytoscape.view.model.View;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
 public class LoadInteractions extends AbstractTask {
 	final StringManager manager;
+	final String species;
 	final int taxonId;
 	final int confidence;
 	final int additionalNodes;
 	final List<String> stringIds;
 
-	public LoadInteractions(final StringManager manager, final int taxonId, 
+	public LoadInteractions(final StringManager manager, final String species, final int taxonId, 
 	                        final int confidence, final int additionalNodes,
 													final List<String>stringIds) {
 		this.manager = manager;
@@ -24,6 +37,7 @@ public class LoadInteractions extends AbstractTask {
 		this.additionalNodes = additionalNodes;
 		this.confidence = confidence;
 		this.stringIds = stringIds;
+		this.species = species;
 	}
 
 	public void run(TaskMonitor monitor) {
@@ -38,12 +52,33 @@ public class LoadInteractions extends AbstractTask {
 		String conf = "0."+confidence;
 		if (confidence == 100) 
 			conf = "1.0";
+
+		/*
 		String url = manager.getURL()+"psi-mi-tab/interactionsList?species="+taxonId+
 		            "&required_score="+conf+
 		            "&additional_network_nodes="+additionalNodes+
 		            "&identifiers="+URLEncoder.encode(ids.trim());
-		System.out.println("URL = "+url);
-		String results = HttpUtils.fetchText(url, manager);
-		System.out.println("Results: "+results);
+		*/
+		// String url = "http://api.jensenlab.org/network?entities="+URLEncoder.encode(ids.trim())+"&score="+conf;
+		String url = "http://api.jensenlab.org/network";
+		Map<String, String> args = new HashMap<>();
+		args.put("entities",ids.trim());
+		args.put("score", conf);
+		if (additionalNodes > 0)
+			args.put("additional", Integer.toString(additionalNodes));
+		Object results = HttpUtils.postJSON(url, args, manager);
+
+		// This may change...
+		CyNetwork network = ModelUtils.createNetworkFromJSON(manager, species, results);
+		
+		// System.out.println("Results: "+results.toString());
+		// Now style the network
+		CyNetworkView networkView = ViewUtils.styleNetwork(manager, network);
+
+		// And lay it out
+		CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");
+		Object context = alg.createLayoutContext();
+		Set<View<CyNode>> nodeViews = new HashSet<>(networkView.getNodeViews());
+		insertTasksAfterCurrentTask(alg.createTaskIterator(networkView, context, nodeViews, "score"));
 	}
 }

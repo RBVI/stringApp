@@ -7,7 +7,13 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.cytoscape.application.CyUserLog;
+import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyNetworkFactory;
+import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.service.util.CyServiceRegistrar;
+import org.cytoscape.view.model.CyNetworkView;
+import org.cytoscape.view.model.CyNetworkViewFactory;
+import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.work.SynchronousTaskManager;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
@@ -38,11 +44,28 @@ public class StringManager {
 			return new HashMap<String, List<Annotation>>();
 		}
 
-		String url = getURL()+"json/resolveList?species="+taxon+"&identifiers="+encTerms;
+		String url = getURL()+"json/resolveList";
+		Map<String, String> args = new HashMap<>();
+		args.put("species", Integer.toString(taxon));
+		args.put("identifiers", encTerms);
 		System.out.println("URL: "+url);
 		// Get the results
-		Object results = HttpUtils.fetchJSON(url, this);
+		Object results = HttpUtils.getJSON(url, args, this);
 		return Annotation.getAnnotations(results, terms);
+	}
+
+	public CyNetwork createNetwork(String name) {
+		CyNetwork network = registrar.getService(CyNetworkFactory.class).createNetwork();
+		network.getRow(network).set(CyNetwork.NAME, name);
+		return network;
+	}
+
+	public CyNetworkView createNetworkView(CyNetwork network) {
+		return registrar.getService(CyNetworkViewFactory.class).createNetworkView(network);
+	}
+
+	public void addNetwork(CyNetwork network) {
+		registrar.getService(CyNetworkManager.class).addNetwork(network);
 	}
 
 	public void execute(TaskIterator iterator) {

@@ -1,5 +1,6 @@
 package edu.ucsf.rbvi.stringApp.internal.ui;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
@@ -10,12 +11,14 @@ class ResolveTableModel extends AbstractTableModel {
 	private StringWebServiceClient wsClient;
 	private List<Annotation> annotations;
 	private String term;
-	private int selection = -1;
+	private boolean[] selections;
 
 	public ResolveTableModel(StringWebServiceClient wsClient, String term, List<Annotation> annotations) {
 		this.annotations = annotations;
 		this.term = term;
 		this.wsClient = wsClient;
+		this.selections = new boolean[annotations.size()];
+		Arrays.fill(selections, false);
 	}
 
 	@Override
@@ -58,9 +61,7 @@ class ResolveTableModel extends AbstractTableModel {
 		Annotation ann = annotations.get(rowIndex);
 		switch (columnIndex) {
 		case 0:
-			if (rowIndex == selection)
-				return true;
-			return false;
+			return selections[rowIndex];
 		case 1:
 			return ann.getPreferredName();
 		case 2:
@@ -78,12 +79,16 @@ class ResolveTableModel extends AbstractTableModel {
 	@Override
 	public void setValueAt(Object value, int rowIndex, int columnIndex) {
 		if (columnIndex != 0) return;
-		if (selection >= 0)
-			fireTableCellUpdated(selection, columnIndex);
-		selection = rowIndex;
-		// fireTableDataChanged();
+		boolean v = ((Boolean)value).booleanValue();
+		selections[rowIndex] = v;
 		fireTableCellUpdated(rowIndex, columnIndex);
-		wsClient.addResolvedStringID(term, annotations.get(rowIndex).getStringId());
-		System.out.println("Selected "+annotations.get(rowIndex).getPreferredName());
+		Annotation ann = annotations.get(rowIndex);
+		if (v) {
+			wsClient.addResolvedStringID(term, ann.getStringId());
+			// System.out.println("Selected "+ann.getPreferredName()+": "+ann.getStringId());
+		} else {
+			wsClient.removeResolvedStringID(term, ann.getStringId());
+			// System.out.println("Deselected "+ann.getPreferredName()+": "+ann.getStringId());
+		}
 	}
 }

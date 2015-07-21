@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -65,7 +66,8 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 	JComboBox speciesCombo;
 	JSlider confidenceSlider;
 	JButton importButton;
-	Map<String, String> resolvedIdMap = null;
+	JButton backButton;
+	Map<String, List<String>> resolvedIdMap = null;
 	Map<String, List<Annotation>> annotations = null;
 
 	public StringWebServiceClient(StringManager manager) {
@@ -84,6 +86,7 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 		// Create the surrounding panel
 		mainPanel = new JPanel(new GridBagLayout());
 		super.gui = mainPanel;
+		mainPanel.setPreferredSize(new Dimension(800,800));
 		EasyGBC c = new EasyGBC();
 
 		// Create the database options
@@ -112,8 +115,8 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 		super.gui.add(confidenceSlider, c.down().expandBoth().insets(5,5,0,5));
 
 		// Create the slider for the confidence cutoff
-		JPanel additionalNodesPanel = createAdditionalNodesPanel();
-		super.gui.add(additionalNodesPanel, c.down().expandBoth().insets(5,5,0,5));
+		// JPanel additionalNodesPanel = createAdditionalNodesPanel();
+		// super.gui.add(additionalNodesPanel, c.down().expandBoth().insets(5,5,0,5));
 
 		// Create the evidence types buttons
 		// createEvidenceButtons(manager.getEvidenceTypes());
@@ -140,6 +143,8 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 
 	void replaceSearchPanel() {
 		mainSearchPanel.removeAll();
+		mainSearchPanel.revalidate();
+		mainSearchPanel.repaint();
 		mainSearchPanel.setLayout(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
 
@@ -151,6 +156,7 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 		c.down().expandBoth().insets(5,10,5,10);
 		mainSearchPanel.add(jsp, c);
 		mainSearchPanel.revalidate();
+		mainSearchPanel.repaint();
 	}
 
 	JPanel createSpeciesComboBox(List<Species> speciesList) {
@@ -184,10 +190,27 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
         }
       });
 
+		backButton = new JButton(new AbstractAction("Back") {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+					resolvedIdMap = null;
+					annotations = null;
+					replaceSearchPanel();
+					importButton.setEnabled(true);
+					backButton.setEnabled(false);
+					importButton.setAction(new InitialAction());
+					mainPanel.getParent().revalidate();
+        }
+			});
+		backButton.setEnabled(false);
+
 		importButton = new JButton(new InitialAction());
 
-		buttonPanel.add(Box.createHorizontalGlue());
+		buttonPanel.add(Box.createRigidArea(new Dimension(10,0)));
 		buttonPanel.add(cancelButton);
+		buttonPanel.add(Box.createHorizontalGlue());
+		// buttonPanel.add(Box.createRigidArea(new Dimension(10,0)));
+		buttonPanel.add(backButton);
 		buttonPanel.add(Box.createRigidArea(new Dimension(10,0)));
 		buttonPanel.add(importButton);
 		return buttonPanel;
@@ -213,7 +236,7 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 		}
 		confidenceSlider.setLabelTable(labels);
 		confidenceSlider.setPaintLabels(true);
-		confidenceSlider.setValue(0);
+		confidenceSlider.setValue(40);
 		c.down().expandBoth().insets(0,5,10,5);
 		confidencePanel.add(confidenceSlider, c);
 		return confidencePanel;
@@ -234,22 +257,35 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 	}
 
 	boolean resolveAnnotations(final Map<String, List<Annotation>> annotations,
-	                           List<String> stringIds) {
+	                           Map<String, List<String>> resolvedIds) {
 		boolean noAmbiguity = true;
 		for (String key: annotations.keySet()) {
 			if (annotations.get(key).size() > 1) {
 				noAmbiguity = false;
 				break;
 			} else {
-				stringIds.add(annotations.get(key).get(0).getStringId());
+				List<String> ids = new ArrayList<String>();
+				ids.add (annotations.get(key).get(0).getStringId());
+				resolvedIds.put(key, ids);
+			}
+		}
+
+		// Now trim the key set
+		if (resolvedIds.size() > 0) {
+			for (String key: resolvedIds.keySet()) {
+				if (annotations.containsKey(key))
+					annotations.remove(key);
 			}
 		}
 		return noAmbiguity;
 	}
 
-	void importNetwork(int taxon, int confidence, int additional_nodes, List<String> stringIds) {
+	void importNetwork(int taxon, int confidence, int additional_nodes, Map<String,List<String>> resolvedIdMap) {
+		List<String> stringIds = combineIds(resolvedIdMap);
+		// System.out.println("Importing "+stringIds);
 		cancel();
-		TaskFactory factory = new ImportNetworkTaskFactory(manager, taxon, confidence, additional_nodes, stringIds);
+		TaskFactory factory = new ImportNetworkTaskFactory(manager, speciesCombo.getSelectedItem().toString(), 
+		                                                   taxon, confidence, additional_nodes, stringIds);
 		manager.execute(factory.createTaskIterator());
 	}
 
@@ -260,8 +296,6 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 		for (String term: annotations.keySet()) {
 			tableModelMap.put(term, new ResolveTableModel(this, term, annotations.get(term)));
 		}
-		resolvedIdMap = new HashMap<>();
-
 		mainSearchPanel.setLayout(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
 
@@ -283,6 +317,18 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 			final JTable table = new JTable();
 			table.setRowSelectionAllowed(false);
 
+			final JPanel selectPanel = new JPanel(new FlowLayout());
+			final JButton selectAllButton = new JButton(new SelectEverythingAction(tableModelMap));
+			final JButton clearAllButton = new JButton(new ClearEverythingAction(tableModelMap));
+			final JButton selectAllTermButton = new JButton("Select All in Term");
+			final JButton clearAllTermButton = new JButton("Clear All in Term");
+			selectAllTermButton.setEnabled(false);
+			clearAllTermButton.setEnabled(false);
+			selectPanel.add(selectAllButton);
+			selectPanel.add(clearAllButton);
+			selectPanel.add(selectAllTermButton);
+			selectPanel.add(clearAllTermButton);
+
 			Object[] terms = annotations.keySet().toArray();
 			final JList termList = new JList(terms);
 			termList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -290,6 +336,10 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 				public void valueChanged(ListSelectionEvent e) {
 					String term = (String)termList.getSelectedValue();
 					showTableRow(table, term, tableModelMap);
+					selectAllTermButton.setAction(new SelectAllTermAction(term, tableModelMap));
+					selectAllTermButton.setEnabled(true);
+					clearAllTermButton.setAction(new ClearAllTermAction(term, tableModelMap));
+					clearAllTermButton.setEnabled(true);
 				}
 			});
 			termList.setFixedCellWidth(75);
@@ -308,18 +358,38 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 
 			// Now, select the first term
 			termList.setSelectedIndex(0);
+
+			c.down().spanHoriz(2).expandHoriz().insets(0,5,0,5);
+			mainSearchPanel.add(selectPanel, c);
 		}
 
-		importButton.setEnabled(false);
+		if (resolvedIdMap.size() == 0)
+			importButton.setEnabled(false);
+		importButton.setAction(new ResolvedAction());
+		backButton.setEnabled(true);
 
 		mainPanel.revalidate();
 	}
 
 	public void addResolvedStringID(String term, String id) {
-		resolvedIdMap.put(term, id);
-		if (resolvedIdMap.size() == annotations.size()) {
+		if (!resolvedIdMap.containsKey(term))
+			resolvedIdMap.put(term, new ArrayList<String>());
+		resolvedIdMap.get(term).add(id);
+		if (resolvedIdMap.size() > 0) {
 			importButton.setEnabled(true);
-			importButton.setAction(new ResolvedAction());
+		}
+	}
+
+	public void removeResolvedStringID(String term, String id) {
+		if (!resolvedIdMap.containsKey(term))
+			return;
+		List<String> ids = resolvedIdMap.get(term);
+		ids.remove(id);
+		if (ids.size() == 0)
+			resolvedIdMap.remove(term);
+
+		if (resolvedIdMap.size() == 0) {
+			importButton.setEnabled(false);
 		}
 	}
 
@@ -337,11 +407,21 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 		table.getColumnModel().getColumn(2).setPreferredWidth(400);
 	}
 
+	private List<String> combineIds(Map<String, List<String>> resolvedIdsMap) {
+		List<String> ids = new ArrayList<>();
+		for (List<String> idList: resolvedIdsMap.values()) {
+			ids.addAll(idList);
+		}
+		return ids;
+	}
+
 	public void cancel() {
 		resolvedIdMap = null;
 		annotations = null;
 		replaceSearchPanel();
 		importButton.setEnabled(true);
+		backButton.setEnabled(false);
+		importButton.setAction(new InitialAction());
 		((Window)mainPanel.getRootPane().getParent()).dispose();
 	}
 
@@ -354,33 +434,41 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
     public void actionPerformed(ActionEvent e) {
 			// Start our task cascade
 			Species species = (Species)speciesCombo.getSelectedItem();
+			if (resolvedIdMap == null)
+				resolvedIdMap = new HashMap<>();
 
-			int additionalNodes = 0;
+			/*
 			String addText = additionalNodesText.getText();
 			if (addText != null && addText.length() > 0) {
 				try {
 					additionalNodes	= Integer.parseInt(addText);
-					System.out.println("Additional Nodes = "+additionalNodes);
 				} catch (NumberFormatException nfe) {
 					JOptionPane.showMessageDialog(null, "Additional nodes must be an integer value", 
 								                        "Additional Nodes Error", JOptionPane.ERROR_MESSAGE); 
 					return;
 				}
 			}
+			*/
 	
 			int taxon = species.getTaxId();
 			String terms = searchTerms.getText();
+			manager.info("Getting annotations for "+species.getName()+"terms: "+terms);
 	
 			annotations = manager.getAnnotations(taxon, terms);
+
 			if (annotations == null || annotations.size() == 0) {
 				JOptionPane.showMessageDialog(null, "Your query returned no results",
 							                        "No results", JOptionPane.ERROR_MESSAGE); 
 				return;
 			}
-			List<String> stringIds = new ArrayList<>();
-			boolean noAmbiguity = resolveAnnotations(annotations, stringIds);
+			boolean noAmbiguity = resolveAnnotations(annotations, resolvedIdMap);
 			if (noAmbiguity) {
-				importNetwork(taxon, confidenceSlider.getValue(), additionalNodes, stringIds);
+				int additionalNodes = 0;
+				// This mimics the String web site behavior
+				if (resolvedIdMap.size() == 1)
+					additionalNodes = 10;
+
+				importNetwork(taxon, confidenceSlider.getValue(), additionalNodes, resolvedIdMap);
 			} else {
 				createResolutionPanel(annotations);
 			}
@@ -397,6 +485,7 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 			Species species = (Species)speciesCombo.getSelectedItem();
 
 			int additionalNodes = 0;
+			/*
 			String addText = additionalNodesText.getText();
 			if (addText != null && addText.length() > 0) {
 				try {
@@ -408,9 +497,12 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 					return;
 				}
 			}
+			*/
+			if (resolvedIdMap.size() == 1)
+				additionalNodes = 10;
 
 			int taxon = species.getTaxId();
-			importNetwork(taxon, confidenceSlider.getValue(), additionalNodes, new ArrayList<String>(resolvedIdMap.values()));
+			importNetwork(taxon, confidenceSlider.getValue(), additionalNodes, resolvedIdMap);
 		}
 	}
 
