@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.cytoscape.application.CyUserLog;
+import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
@@ -24,6 +25,7 @@ import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 
 public class StringManager {
 	final CyServiceRegistrar registrar;
+	final CyEventHelper cyEventHelper;
 	final Logger logger = Logger.getLogger(CyUserLog.NAME);
 	final TaskManager dialogTaskManager;
 	final SynchronousTaskManager synchronousTaskManager;
@@ -34,6 +36,7 @@ public class StringManager {
 		// Get our task managers
 		dialogTaskManager = registrar.getService(TaskManager.class);
 		synchronousTaskManager = registrar.getService(SynchronousTaskManager.class);
+		cyEventHelper = registrar.getService(CyEventHelper.class);
 	}
 
 	public Map<String, List<Annotation>> getAnnotations(int taxon, final String terms) {
@@ -50,7 +53,7 @@ public class StringManager {
 		args.put("identifiers", encTerms);
 		System.out.println("URL: "+url);
 		// Get the results
-		Object results = HttpUtils.getJSON(url, args, this);
+		Object results = HttpUtils.postJSON(url, args, this);
 		return Annotation.getAnnotations(results, terms);
 	}
 
@@ -66,6 +69,10 @@ public class StringManager {
 
 	public void addNetwork(CyNetwork network) {
 		registrar.getService(CyNetworkManager.class).addNetwork(network);
+	}
+
+	public void flushEvents() {
+		cyEventHelper.flushPayloadEvents();
 	}
 
 	public void execute(TaskIterator iterator) {

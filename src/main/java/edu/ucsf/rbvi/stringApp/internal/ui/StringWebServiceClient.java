@@ -43,8 +43,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
 
+import org.cytoscape.work.FinishStatus;
+import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
+import org.cytoscape.work.TaskObserver;
 import org.cytoscape.io.webservice.NetworkImportWebServiceClient;
 import org.cytoscape.io.webservice.SearchWebServiceClient;
 import org.cytoscape.io.webservice.swing.AbstractWebServiceGUIClient;
@@ -53,6 +56,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
+import edu.ucsf.rbvi.stringApp.internal.tasks.GetAnnotationsTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ImportNetworkTaskFactory;
 
 // TODO: [Optional] Improve non-gui mode
@@ -281,11 +285,13 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 	}
 
 	void importNetwork(int taxon, int confidence, int additional_nodes, Map<String,List<String>> resolvedIdMap) {
-		List<String> stringIds = combineIds(resolvedIdMap);
+		Map<String, String> queryTermMap = new HashMap<>();
+		List<String> stringIds = combineIds(resolvedIdMap, queryTermMap);
 		// System.out.println("Importing "+stringIds);
 		cancel();
 		TaskFactory factory = new ImportNetworkTaskFactory(manager, speciesCombo.getSelectedItem().toString(), 
-		                                                   taxon, confidence, additional_nodes, stringIds);
+		                                                   taxon, confidence, additional_nodes, stringIds,
+																											 queryTermMap);
 		manager.execute(factory.createTaskIterator());
 	}
 
@@ -407,10 +413,13 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 		table.getColumnModel().getColumn(2).setPreferredWidth(400);
 	}
 
-	private List<String> combineIds(Map<String, List<String>> resolvedIdsMap) {
+	private List<String> combineIds(Map<String, List<String>> resolvedIdsMap, Map<String, String> reverseMap) {
 		List<String> ids = new ArrayList<>();
-		for (List<String> idList: resolvedIdsMap.values()) {
-			ids.addAll(idList);
+		for (String term: resolvedIdsMap.keySet()) {
+			for (String id: resolvedIdsMap.get(term)) {
+				ids.add(id);
+				reverseMap.put(id, term);
+			}
 		}
 		return ids;
 	}
@@ -425,7 +434,8 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 		((Window)mainPanel.getRootPane().getParent()).dispose();
 	}
 
-	class InitialAction extends AbstractAction {
+
+	class InitialAction extends AbstractAction implements TaskObserver {
 		public InitialAction() {
 			super("Import");
 		}
@@ -453,9 +463,22 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 			int taxon = species.getTaxId();
 			String terms = searchTerms.getText();
 			manager.info("Getting annotations for "+species.getName()+"terms: "+terms);
-	
-			annotations = manager.getAnnotations(taxon, terms);
 
+			// Launch a task to get the annotations. 
+			manager.execute(new TaskIterator(new GetAnnotationsTask(manager, taxon, terms)),this);
+		}
+
+		@Override
+		public void allFinished(FinishStatus finishStatus) {}
+
+		@Override
+		public void taskFinished(ObservableTask task) {
+			if (!(task instanceof GetAnnotationsTask))
+				return;
+			GetAnnotationsTask annTask = (GetAnnotationsTask)task;
+	
+			annotations = annTask.getAnnotations();
+			int taxon = annTask.getTaxon();
 			if (annotations == null || annotations.size() == 0) {
 				JOptionPane.showMessageDialog(null, "Your query returned no results",
 							                        "No results", JOptionPane.ERROR_MESSAGE); 
@@ -467,7 +490,7 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 				// This mimics the String web site behavior
 				if (resolvedIdMap.size() == 1)
 					additionalNodes = 10;
-
+	
 				importNetwork(taxon, confidenceSlider.getValue(), additionalNodes, resolvedIdMap);
 			} else {
 				createResolutionPanel(annotations);

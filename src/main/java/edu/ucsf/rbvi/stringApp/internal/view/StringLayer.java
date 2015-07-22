@@ -10,6 +10,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
 import org.cytoscape.model.CyIdentifiable;
+import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
@@ -33,10 +34,14 @@ public class StringLayer implements Cy2DGraphicLayer {
 	public void draw(Graphics2D g, Shape shape,
 	                 CyNetworkView networkView, View<? extends CyIdentifiable> view) {
 		if (! (view.getModel() instanceof CyNode) ) return;
+		CyNetwork network = networkView.getModel();
 
 		Paint fill = view.getVisualProperty(BasicVisualLexicon.NODE_FILL_COLOR);
 		Paint background = networkView.getVisualProperty(BasicVisualLexicon.NETWORK_BACKGROUND_PAINT);
-		DrawSphere ds = new DrawSphere((Color)fill, (Color)background, image);
+		boolean selected = false;
+		if (network.getRow(view.getModel()).get(CyNetwork.SELECTED, Boolean.class))
+			selected = true;
+		DrawSphere ds = new DrawSphere((Color)fill, (Color)background, image, selected);
 		ds.draw(g, bounds);
 	}
 

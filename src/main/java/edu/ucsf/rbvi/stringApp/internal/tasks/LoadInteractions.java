@@ -15,6 +15,7 @@ import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.TunableSetter;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
@@ -28,16 +29,19 @@ public class LoadInteractions extends AbstractTask {
 	final int confidence;
 	final int additionalNodes;
 	final List<String> stringIds;
+	final Map<String, String> queryTermMap;
 
 	public LoadInteractions(final StringManager manager, final String species, final int taxonId, 
 	                        final int confidence, final int additionalNodes,
-													final List<String>stringIds) {
+													final List<String>stringIds,
+													final Map<String, String> queryTermMap) {
 		this.manager = manager;
 		this.taxonId = taxonId;
 		this.additionalNodes = additionalNodes;
 		this.confidence = confidence;
 		this.stringIds = stringIds;
 		this.species = species;
+		this.queryTermMap = queryTermMap;
 	}
 
 	public void run(TaskMonitor monitor) {
@@ -69,8 +73,11 @@ public class LoadInteractions extends AbstractTask {
 		Object results = HttpUtils.postJSON(url, args, manager);
 
 		// This may change...
-		CyNetwork network = ModelUtils.createNetworkFromJSON(manager, species, results);
-		
+		CyNetwork network = ModelUtils.createNetworkFromJSON(manager, species, results, queryTermMap);
+
+		// Set our confidence score
+		ModelUtils.setConfidence(network, ((double)confidence)/100.0);
+
 		// System.out.println("Results: "+results.toString());
 		// Now style the network
 		CyNetworkView networkView = ViewUtils.styleNetwork(manager, network);
@@ -78,6 +85,10 @@ public class LoadInteractions extends AbstractTask {
 		// And lay it out
 		CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");
 		Object context = alg.createLayoutContext();
+		TunableSetter setter = manager.getService(TunableSetter.class);
+		Map<String, Object> layoutArgs = new HashMap<>();
+		layoutArgs.put("defaultNodeMass", 10.0);
+		setter.applyTunables(context, layoutArgs);
 		Set<View<CyNode>> nodeViews = new HashSet<>(networkView.getNodeViews());
 		insertTasksAfterCurrentTask(alg.createTaskIterator(networkView, context, nodeViews, "score"));
 	}
