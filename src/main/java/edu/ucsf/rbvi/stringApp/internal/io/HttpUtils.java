@@ -88,6 +88,10 @@ public class HttpUtils {
 			response1 = client.execute(request);
 			HttpEntity entity1 = response1.getEntity();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(entity1.getContent()));
+			String lin;
+			// while ((lin=reader.readLine()) != null) {
+			// 	System.out.println(lin);
+			// }
 			JSONParser parser = new JSONParser();
 			jsonObject = parser.parse(reader);
 
@@ -95,6 +99,8 @@ public class HttpUtils {
 			EntityUtils.consume(entity1);
 		} catch (Exception e) {
 			e.printStackTrace();
+			manager.error("Unable to parse JSON from server: "+e.getMessage());
+			return null;
 		} finally {
 			try {
 				response1.close();

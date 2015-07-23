@@ -82,26 +82,24 @@ public class ChangeConfidenceTask extends AbstractTask {
 			// We're decreasing the confidence, so we need to get new edges
 			// Get all of the current nodes for our "existing" list
 			String existing = ModelUtils.getExisting(network);
-			String url = "http://api.jensenlab.org/network";
 			Map<String, String> args = new HashMap<>();
 			args.put("existing",existing.trim());
 			args.put("score", confidence.getValue().toString());
 			args.put("maxscore", Float.toString(currentConfidence));
-			Object results = HttpUtils.postJSON(url, args, manager);
-	
+			Object results = HttpUtils.postJSON(manager.getURL(), args, manager);
+
 			// This may change...
 			List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results);
 
 			ModelUtils.setConfidence(network, confidence.getValue());
 		}
 
-			
 		// If we have a view, re-apply the style and layout
 		if (netView != null) {
 			monitor.setStatusMessage("Laying out network");
 			ViewUtils.updateEdgeStyle(manager, netView, newEdges);
 			netView.updateView();
-			
+
 			// At some point, we want to change this to only restyle the edges
 			/* ViewUtils.reapplyStyle(manager, netView);
 			CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");

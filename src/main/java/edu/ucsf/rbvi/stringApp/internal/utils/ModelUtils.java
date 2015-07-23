@@ -16,6 +16,7 @@ import org.cytoscape.model.CyTable;
 import org.apache.commons.codec.binary.Base64;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 
 public class ModelUtils {
 
@@ -58,6 +59,13 @@ public class ModelUtils {
 
 		List<CyNode> nodes = getJSON(manager, species, net, nodeMap, nodeNameMap, null, newEdges, json);
 		return nodes;
+	}
+
+	public static CyNetwork createNetworkFromJSON(StringNetwork stringNetwork, String species, Object object,
+	                                              Map<String, String> queryTermMap) {
+		CyNetwork network = createNetworkFromJSON(stringNetwork.getManager(), species, object, queryTermMap);
+		stringNetwork.getManager().addStringNetwork(stringNetwork, network);
+		return network;
 	}
 
 	public static CyNetwork createNetworkFromJSON(StringManager manager, String species, Object object,

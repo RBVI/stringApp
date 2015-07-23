@@ -29,7 +29,9 @@ public class StringManager {
 	final Logger logger = Logger.getLogger(CyUserLog.NAME);
 	final TaskManager dialogTaskManager;
 	final SynchronousTaskManager synchronousTaskManager;
-	public static String URI = "http://string-db.org/api/";
+	Map<CyNetwork, StringNetwork> stringNetworkMap;
+	public static String ResolveURI = "http://string-db.org/api/";
+	public static String URI = "http://api.jensenlab.org/network";
 
 	public StringManager(CyServiceRegistrar registrar) {
 		this.registrar = registrar;
@@ -37,30 +39,30 @@ public class StringManager {
 		dialogTaskManager = registrar.getService(TaskManager.class);
 		synchronousTaskManager = registrar.getService(SynchronousTaskManager.class);
 		cyEventHelper = registrar.getService(CyEventHelper.class);
-	}
-
-	public Map<String, List<Annotation>> getAnnotations(int taxon, final String terms) {
-		String encTerms;
-		try {
-			encTerms = URLEncoder.encode(terms.trim(), "UTF-8");
-		} catch (Exception e) {
-			return new HashMap<String, List<Annotation>>();
-		}
-
-		String url = getURL()+"json/resolveList";
-		Map<String, String> args = new HashMap<>();
-		args.put("species", Integer.toString(taxon));
-		args.put("identifiers", encTerms);
-		System.out.println("URL: "+url);
-		// Get the results
-		Object results = HttpUtils.postJSON(url, args, this);
-		return Annotation.getAnnotations(results, terms);
+		stringNetworkMap = new HashMap<>();
 	}
 
 	public CyNetwork createNetwork(String name) {
 		CyNetwork network = registrar.getService(CyNetworkFactory.class).createNetwork();
 		network.getRow(network).set(CyNetwork.NAME, name);
 		return network;
+	}
+
+	public CyNetwork createStringNetwork(String name, StringNetwork stringNet) {
+		CyNetwork network = createNetwork(name);
+		addStringNetwork(stringNet, network);
+		return network;
+	}
+
+	public void addStringNetwork(StringNetwork stringNet, CyNetwork network) {
+		stringNetworkMap.put(network, stringNet);
+		stringNet.setNetwork(network);
+	}
+
+	public StringNetwork getStringNetwork(CyNetwork network) {
+		if (stringNetworkMap.containsKey(network))
+			return stringNetworkMap.get(network);
+		return null;
 	}
 
 	public CyNetworkView createNetworkView(CyNetwork network) {
@@ -101,6 +103,10 @@ public class StringManager {
 
 	public String getURL() {
 		return URI;
+	}
+
+	public String getResolveURL() {
+		return ResolveURI;
 	}
 
 	public void info(String info) {

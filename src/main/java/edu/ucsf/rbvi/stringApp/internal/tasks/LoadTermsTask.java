@@ -1,17 +1,21 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.layout.CyLayoutAlgorithm;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkView;
+import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.model.View;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
@@ -23,7 +27,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
-public class LoadInteractions extends AbstractTask {
+public class LoadTermsTask extends AbstractTask {
 	final StringNetwork stringNet;
 	final String species;
 	final int taxonId;
@@ -32,10 +36,10 @@ public class LoadInteractions extends AbstractTask {
 	final List<String> stringIds;
 	final Map<String, String> queryTermMap;
 
-	public LoadInteractions(final StringNetwork stringNet, final String species, final int taxonId, 
-	                        final int confidence, final int additionalNodes,
-													final List<String>stringIds,
-													final Map<String, String> queryTermMap) {
+	public LoadTermsTask(final StringNetwork stringNet, final String species, final int taxonId, 
+	                     final int confidence, final int additionalNodes,
+								     	 final List<String>stringIds,
+								    	 final Map<String, String> queryTermMap) {
 		this.stringNet = stringNet;
 		this.taxonId = taxonId;
 		this.additionalNodes = additionalNodes;
@@ -47,6 +51,8 @@ public class LoadInteractions extends AbstractTask {
 
 	public void run(TaskMonitor monitor) {
 		StringManager manager = stringNet.getManager();
+		CyNetwork network = stringNet.getNetwork();
+
 		String ids = null;
 		for (String id: stringIds) {
 			if (ids == null)
@@ -65,26 +71,44 @@ public class LoadInteractions extends AbstractTask {
 		args.put("score", conf);
 		if (additionalNodes > 0)
 			args.put("additional", Integer.toString(additionalNodes));
+		args.put("existing", ModelUtils.getExisting(network).trim());
+
 		Object results = HttpUtils.postJSON(manager.getURL(), args, manager);
 
-		// This may change...
-		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, species, results, queryTermMap);
+		List<CyEdge> newEdges = new ArrayList<>();
+		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results);
 
 		// Set our confidence score
 		ModelUtils.setConfidence(network, ((double)confidence)/100.0);
 
-		// System.out.println("Results: "+results.toString());
-		// Now style the network
-		CyNetworkView networkView = ViewUtils.styleNetwork(manager, network);
+		// Get our view
+		CyNetworkView netView = null;
+		Collection<CyNetworkView> views = 
+		          manager.getService(CyNetworkViewManager.class).getNetworkViews(network);
+		for (CyNetworkView view: views) {
+			if (view.getRendererId().equals("org.cytoscape.ding")) {
+				netView = view;
+				break;
+			}
+		}
 
-		// And lay it out
-		CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");
-		Object context = alg.createLayoutContext();
-		TunableSetter setter = manager.getService(TunableSetter.class);
-		Map<String, Object> layoutArgs = new HashMap<>();
-		layoutArgs.put("defaultNodeMass", 10.0);
-		setter.applyTunables(context, layoutArgs);
-		Set<View<CyNode>> nodeViews = new HashSet<>(networkView.getNodeViews());
-		insertTasksAfterCurrentTask(alg.createTaskIterator(networkView, context, nodeViews, "score"));
+		// If we have a view, re-apply the style and layout
+		if (netView != null) {
+			// monitor.setStatusMessage("Laying out network");
+			ViewUtils.updateNodeStyle(manager, netView, newNodes);
+			ViewUtils.updateEdgeStyle(manager, netView, newEdges);
+
+			// And lay it out
+			/*
+			CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");
+			Object context = alg.createLayoutContext();
+			TunableSetter setter = manager.getService(TunableSetter.class);
+			Map<String, Object> layoutArgs = new HashMap<>();
+			layoutArgs.put("defaultNodeMass", 10.0);
+			setter.applyTunables(context, layoutArgs);
+			Set<View<CyNode>> nodeViews = new HashSet<>(netView.getNodeViews());
+			insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, "score"));
+			*/
+		}
 	}
 }

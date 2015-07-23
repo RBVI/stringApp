@@ -6,10 +6,10 @@ import java.util.Map;
 import org.cytoscape.work.AbstractTaskFactory;
 import org.cytoscape.work.TaskIterator;
 
-import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 
 public class ImportNetworkTaskFactory extends AbstractTaskFactory {
-	final StringManager manager;
+	final StringNetwork stringNet;
 	final String species;
 	int taxon;
 	int confidence;
@@ -18,11 +18,11 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 	final Map<String, String> queryTermMap;
 	
 
-	public ImportNetworkTaskFactory(final StringManager manager, final String species, 
+	public ImportNetworkTaskFactory(final StringNetwork stringNet, final String species, 
 	                                int taxon, int confidence, int additional_nodes, 
 	                                final List<String> stringIds,
 																	final Map<String, String> queryTermMap) {
-		this.manager = manager;
+		this.stringNet = stringNet;
 		this.taxon = taxon;
 		this.confidence = confidence;
 		this.additionalNodes = additional_nodes;
@@ -32,6 +32,9 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 	}
 
 	public TaskIterator createTaskIterator() {
-		return new TaskIterator(new LoadInteractions(manager, species, taxon, confidence, additionalNodes, stringIds, queryTermMap));
+		if (stringNet.getNetwork() == null) {
+			return new TaskIterator(new LoadInteractions(stringNet, species, taxon, confidence, additionalNodes, stringIds, queryTermMap));
+		}
+		return new TaskIterator(new LoadTermsTask(stringNet, species, taxon, confidence, additionalNodes, stringIds, queryTermMap));
 	}
 }

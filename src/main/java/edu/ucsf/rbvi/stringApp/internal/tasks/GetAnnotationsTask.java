@@ -9,15 +9,16 @@ import org.cytoscape.work.TaskMonitor;
 
 import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 
 public class GetAnnotationsTask extends AbstractTask implements ObservableTask {
-	final StringManager manager;
+	final StringNetwork stringNetwork;
 	final int taxon;
 	final String terms;
 	Map<String, List<Annotation>> annotations = null;
 
-	public GetAnnotationsTask(StringManager manager, int taxon, String terms) {
-		this.manager = manager;
+	public GetAnnotationsTask(StringNetwork stringNetwork, int taxon, String terms) {
+		this.stringNetwork = stringNetwork;
 		this.taxon = taxon;
 		this.terms = terms;
 	}
@@ -25,12 +26,14 @@ public class GetAnnotationsTask extends AbstractTask implements ObservableTask {
 	@Override
 	public void run(TaskMonitor monitor) {
 		monitor.setTitle("Getting annotations");
-		annotations = manager.getAnnotations(taxon, terms);
+		annotations = stringNetwork.getAnnotations(taxon, terms);
 	}
 
 	public Map<String, List<Annotation>> getAnnotations() { return annotations; }
 
 	public int getTaxon() { return taxon; }
+
+	public StringNetwork getStringNetwork() { return stringNetwork; }
 
 	@Override
 	public <T> T getResults(Class<? extends T> type) {

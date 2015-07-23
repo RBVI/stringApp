@@ -8,12 +8,12 @@ import javax.swing.table.AbstractTableModel;
 import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
 
 class ResolveTableModel extends AbstractTableModel {
-	private StringWebServiceClient wsClient;
+	private GetTermsPanel wsClient;
 	private List<Annotation> annotations;
 	private String term;
 	private boolean[] selections;
 
-	public ResolveTableModel(StringWebServiceClient wsClient, String term, List<Annotation> annotations) {
+	public ResolveTableModel(GetTermsPanel wsClient, String term, List<Annotation> annotations) {
 		this.annotations = annotations;
 		this.term = term;
 		this.wsClient = wsClient;

@@ -37,7 +37,7 @@ public class Annotation {
 
 	public static Map<String, List<Annotation>> getAnnotations(Object json, String queryTerms) {
 		String[] terms = queryTerms.trim().split("\n");
-		if (!(json instanceof JSONArray)) {
+		if ((json == null) || !(json instanceof JSONArray)) {
 			return null;
 		}
 
