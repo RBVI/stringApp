@@ -74,6 +74,7 @@ public class ChangeConfidenceTask extends AbstractTask {
 				if (score != null && score < newConfidence)
 					removeEdges.add(edge);
 			}
+			monitor.setStatusMessage("Removing "+removeEdges.size()+" edges");
 			network.removeEdges(removeEdges);
 			// And set the new value
 			ModelUtils.setConfidence(network, confidence.getValue());
@@ -89,7 +90,9 @@ public class ChangeConfidenceTask extends AbstractTask {
 			Object results = HttpUtils.postJSON(manager.getURL(), args, manager);
 
 			// This may change...
-			List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results);
+			List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null);
+
+			monitor.setStatusMessage("Adding "+newEdges.size()+" edges");
 
 			ModelUtils.setConfidence(network, confidence.getValue());
 		}
@@ -112,6 +115,6 @@ public class ChangeConfidenceTask extends AbstractTask {
 
 	@ProvidesTitle
 	public String getTitle() {
-		return "Add Nodes to Network";
+		return "Changing Confidence";
 	}
 }

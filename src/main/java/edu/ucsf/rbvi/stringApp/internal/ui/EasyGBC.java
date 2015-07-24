@@ -31,6 +31,8 @@ class EasyGBC extends GridBagConstraints {
 		anchors.put("northeast", NORTHEAST);
 		anchors.put("west",      WEST);
 		anchors.put("south",     SOUTH);
+		anchors.put("southwest", SOUTHWEST);
+		anchors.put("southeast", SOUTHEAST);
 		anchors.put("east",      EAST);
 	}
 	
@@ -88,6 +90,12 @@ class EasyGBC extends GridBagConstraints {
 	public EasyGBC down() {
 		gridx = 0;
 		gridy++;
+		return this;
+	}
+
+	public EasyGBC up() {
+		gridx = 0;
+		gridy--;
 		return this;
 	}
 

@@ -18,7 +18,9 @@ import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.model.View;
 import org.cytoscape.work.AbstractTask;
+import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.Tunable;
 import org.cytoscape.work.TunableSetter;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
@@ -35,6 +37,9 @@ public class LoadTermsTask extends AbstractTask {
 	final int additionalNodes;
 	final List<String> stringIds;
 	final Map<String, String> queryTermMap;
+
+	@Tunable(description="Re-layout network?")
+	public boolean relayout = false;
 
 	public LoadTermsTask(final StringNetwork stringNet, final String species, final int taxonId, 
 	                     final int confidence, final int additionalNodes,
@@ -73,10 +78,17 @@ public class LoadTermsTask extends AbstractTask {
 			args.put("additional", Integer.toString(additionalNodes));
 		args.put("existing", ModelUtils.getExisting(network).trim());
 
+		monitor.setStatusMessage("Getting additional terms from "+manager.getURL());
+
 		Object results = HttpUtils.postJSON(manager.getURL(), args, manager);
 
+		monitor.setStatusMessage("Augmenting network");
+
 		List<CyEdge> newEdges = new ArrayList<>();
-		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results);
+		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges,
+		                                                          results, queryTermMap);
+
+		monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
 
 		// Set our confidence score
 		ModelUtils.setConfidence(network, ((double)confidence)/100.0);
@@ -94,21 +106,29 @@ public class LoadTermsTask extends AbstractTask {
 
 		// If we have a view, re-apply the style and layout
 		if (netView != null) {
+			monitor.setStatusMessage("Updating style");
 			// monitor.setStatusMessage("Laying out network");
 			ViewUtils.updateNodeStyle(manager, netView, newNodes);
 			ViewUtils.updateEdgeStyle(manager, netView, newEdges);
+			netView.updateView();
 
 			// And lay it out
-			/*
-			CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");
-			Object context = alg.createLayoutContext();
-			TunableSetter setter = manager.getService(TunableSetter.class);
-			Map<String, Object> layoutArgs = new HashMap<>();
-			layoutArgs.put("defaultNodeMass", 10.0);
-			setter.applyTunables(context, layoutArgs);
-			Set<View<CyNode>> nodeViews = new HashSet<>(netView.getNodeViews());
-			insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, "score"));
-			*/
+			if (relayout) {
+				monitor.setStatusMessage("Updating layout");
+				CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");
+				Object context = alg.createLayoutContext();
+				TunableSetter setter = manager.getService(TunableSetter.class);
+				Map<String, Object> layoutArgs = new HashMap<>();
+				layoutArgs.put("defaultNodeMass", 10.0);
+				setter.applyTunables(context, layoutArgs);
+				Set<View<CyNode>> nodeViews = new HashSet<>(netView.getNodeViews());
+				insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, "score"));
+			}
 		}
+	}
+
+	@ProvidesTitle
+	public String getTitle() {
+		return "Adding Terms to Network";
 	}
 }

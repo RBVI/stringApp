@@ -38,6 +38,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -214,26 +215,34 @@ public class GetTermsPanel extends JPanel {
 	JPanel createConfidenceSlider() {
 		JPanel confidencePanel = new JPanel(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
-		JLabel confidenceLabel = new JLabel("Required confidence (score):");
-		Font labelFont = confidenceLabel.getFont();
-		confidenceLabel.setFont(new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()));
-		c.anchor("west").noExpand().insets(0,5,0,5);
-		confidencePanel.add(confidenceLabel, c);
-		confidenceSlider = new JSlider();
-		Dictionary<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
-		Font valueFont = new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()-4);
-		NumberFormat formatter = new DecimalFormat("#0.00");
-		for (int value = 0; value <= 100; value += 10) {
-			double labelValue = (double)value/100.0;
-			JLabel label = new JLabel(formatter.format(labelValue));
-			label.setFont(valueFont);
-			labels.put(value, label);
+
+		Font labelFont;
+		{
+			c.anchor("west").noExpand().insets(0,5,0,5);
+			JLabel confidenceLabel = new JLabel("Required confidence (score):");
+			labelFont = confidenceLabel.getFont();
+			confidenceLabel.setFont(new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()));
+			confidencePanel.add(confidenceLabel, c);
 		}
-		confidenceSlider.setLabelTable(labels);
-		confidenceSlider.setPaintLabels(true);
-		confidenceSlider.setValue(40);
-		c.down().expandBoth().insets(0,5,10,5);
-		confidencePanel.add(confidenceSlider, c);
+
+		{
+			confidenceSlider = new JSlider();
+			Dictionary<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
+			Font valueFont = new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()-4);
+			NumberFormat formatter = new DecimalFormat("#0.00");
+			for (int value = 0; value <= 100; value += 10) {
+				double labelValue = (double)value/100.0;
+				JLabel label = new JLabel(formatter.format(labelValue));
+				label.setFont(valueFont);
+				labels.put(value, label);
+			}
+			confidenceSlider.setLabelTable(labels);
+			confidenceSlider.setPaintLabels(true);
+			confidenceSlider.setValue(40);
+			// c.anchor("southwest").expandHoriz().insets(0,5,0,5);
+			c.down().expandHoriz().insets(0,5,0,5);
+			confidencePanel.add(confidenceSlider, c);
+		}
 		return confidencePanel;
 	}
 
@@ -404,7 +413,7 @@ public class GetTermsPanel extends JPanel {
 			}
 			GetAnnotationsTask annTask = (GetAnnotationsTask)task;
 
-			int taxon = annTask.getTaxon();
+			final int taxon = annTask.getTaxon();
 			if (stringNetwork.getAnnotations() == null || stringNetwork.getAnnotations().size() == 0) {
 				JOptionPane.showMessageDialog(null, "Your query returned no results",
 							                        "No results", JOptionPane.ERROR_MESSAGE); 
@@ -417,7 +426,13 @@ public class GetTermsPanel extends JPanel {
 				if (stringNetwork.getResolvedTerms() == 1)
 					additionalNodes = 10;
 
-				importNetwork(taxon, confidenceSlider.getValue(), additionalNodes);
+				final int addNodes = additionalNodes;
+
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						importNetwork(taxon, confidenceSlider.getValue(), addNodes);
+					}
+				});
 			} else {
 				createResolutionPanel();
 			}

@@ -38,13 +38,14 @@ public class ModelUtils {
 	// Network information
 	public static String CONFIDENCE = "Confidence Score";
 
-	public static List<CyNode> augmentNetworkFromJSON(StringManager manager, CyNetwork net, 
-	                                                  List<CyEdge> newEdges, Object object) {
+	public static List<CyNode> augmentNetworkFromJSON(StringManager manager, CyNetwork net,
+	                                                  List<CyEdge> newEdges, Object object,
+																				            Map<String, String> queryTermMap) {
 		if (!(object instanceof JSONObject))
 			return null;
 
 		JSONObject json = (JSONObject)object;
-		
+
 		Map<String, CyNode> nodeMap = new HashMap<>();
 		Map<String, String> nodeNameMap = new HashMap<>();
 		String species = null;
@@ -57,7 +58,7 @@ public class ModelUtils {
 			nodeNameMap.put(stringId, name);
 		}
 
-		List<CyNode> nodes = getJSON(manager, species, net, nodeMap, nodeNameMap, null, newEdges, json);
+		List<CyNode> nodes = getJSON(manager, species, net, nodeMap, nodeNameMap, queryTermMap, newEdges, json);
 		return nodes;
 	}
 
@@ -128,7 +129,8 @@ public class ModelUtils {
 				if (nodeObj instanceof JSONObject) {
 					JSONObject nodeJSON = (JSONObject)nodeObj;
 					CyNode newNode = createNode(network, nodeJSON, species, nodeMap, nodeNameMap, queryTermMap);
-					newNodes.add(newNode);
+					if (newNode != null)
+						newNodes.add(newNode);
 				}
 			}
 		}
@@ -172,12 +174,15 @@ public class ModelUtils {
 		return selectedStr.toString();
 	}
 
-	private static CyNode createNode(CyNetwork network, JSONObject nodeObj, String species, Map<String, CyNode> nodeMap,
+	private static CyNode createNode(CyNetwork network, JSONObject nodeObj, String species,
+	                                 Map<String, CyNode> nodeMap,
 	                                 Map<String, String> nodeNameMap, Map<String, String> queryTermMap) {
 		String name = (String)nodeObj.get("name");
 		String id = (String)nodeObj.get("@id");
 		String namespace = id.substring(0,id.indexOf(":"));
 		String stringId = id.substring(id.indexOf(":")+1);
+		if (nodeMap.containsKey(stringId))
+			return null;
 		// System.out.println("Node id = "+id+", stringID = "+stringId+", namespace="+namespace);
 		CyNode newNode = network.addNode();
 		if (nodeObj.containsKey("description")) {
