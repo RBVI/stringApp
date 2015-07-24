@@ -70,7 +70,7 @@ public class DrawSphere {
 			s1.addStop( 0.8975f, "#3c3c3c");
 			s1.addStop( 1.0f, "#383838");
 
-			Paint p = new LinearGradientPaint(scaleX(20), scaleY(40), scaleX(20), scaleY(0), s1.getStops(), s1.getColors());
+			Paint p = new LinearGradientPaint(scaleX(20f), scaleY(40f), scaleX(20f), scaleY(0f), s1.getStops(), s1.getColors());
 			g2.setPaint(p);
 			fillOval(g2, xOff, yOff, xScale*40f, yScale*40f);
 		}
@@ -89,7 +89,7 @@ public class DrawSphere {
 			s2.addStop(0.9523f,"#373737");
 			s2.addStop(0.9926f,"#090909");
 			s2.addStop(1.0f,"#000000");
-			Paint p = new RadialGradientPaint(scaleX(20), scaleY(20), yScale*20, s2.getStops(), s2.getColors());
+			Paint p = new RadialGradientPaint(scaleX(20f), scaleY(20f), yScale*20f, s2.getStops(), s2.getColors());
 			g2.setPaint(p);
 			fillOval(g2, xOff, yOff, xScale*40f, yScale*40f);
 		}
@@ -110,7 +110,7 @@ public class DrawSphere {
 				Stops s1 = new Stops(2, 0.8f);
 				s1.addStop(0f, Color.YELLOW);
 				s1.addStop(1f, Color.YELLOW);
-				Paint p = new LinearGradientPaint(scaleX(-1), scaleY(41), scaleX(-1), scaleY(-1), s1.getStops(), s1.getColors());
+				Paint p = new LinearGradientPaint(scaleX(-1f), scaleY(41f), scaleX(-1f), scaleY(-1f), s1.getStops(), s1.getColors());
 				g2.setPaint(p);
 				// Make the oval slightly larger
 				fillOval(g2, xOff-1, yOff-1, xScale*42f, yScale*42f);
@@ -118,7 +118,7 @@ public class DrawSphere {
 				Stops s1 = new Stops(2, 0.4f);
 				s1.addStop(0f, color);
 				s1.addStop(1f, color);
-				Paint p = new LinearGradientPaint(scaleX(0), scaleY(40), scaleX(0), scaleY(0), s1.getStops(), s1.getColors());
+				Paint p = new LinearGradientPaint(scaleX(0f), scaleY(40f), scaleX(0f), scaleY(0f), s1.getStops(), s1.getColors());
 				g2.setPaint(p);
 				fillOval(g2, xOff, yOff, xScale*40f, yScale*40f);
 			}
@@ -129,9 +129,9 @@ public class DrawSphere {
 			s3.addStop(0f, "#FFFFFF", 1.0f);
 			s3.addStop(0.1f, "#FFFFFF", 0.99f);
 			s3.addStop(1.0f, "#FFFFFF", 0f);
-			Paint p = new LinearGradientPaint(scaleX(20), scaleY(2), scaleX(20), scaleY(2+12), s3.getStops(), s3.getColors());
+			Paint p = new LinearGradientPaint(scaleX(20f), scaleY(2f), scaleX(20f), scaleY(2f+12f), s3.getStops(), s3.getColors());
 			g2.setPaint(p);
-			fillOval(g2, scaleX(20f-11.5f), scaleY(2), xScale*23f, yScale*12f);
+			fillOval(g2, scaleX(20f-11.5f), scaleY(2f), xScale*23f, yScale*12f);
 		}
 
 		// Restores the previous state
