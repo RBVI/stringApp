@@ -109,6 +109,7 @@ public class CyActivator extends AbstractCyActivator {
 			registerService(bc, stringLookFactory, CyCustomGraphicsFactory.class, stringProps);
 		}
 
+		manager.info("String APP initialized");
 	}
 
 }

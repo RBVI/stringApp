@@ -14,6 +14,7 @@ import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
 import org.cytoscape.work.AbstractTask;
+import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.TunableSetter;
 
@@ -87,4 +88,7 @@ public class LoadInteractions extends AbstractTask {
 		Set<View<CyNode>> nodeViews = new HashSet<>(networkView.getNodeViews());
 		insertTasksAfterCurrentTask(alg.createTaskIterator(networkView, context, nodeViews, "score"));
 	}
+
+	@ProvidesTitle
+	public String getTitle() { return "Loading interactions"; }
 }
