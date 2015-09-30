@@ -66,7 +66,9 @@ public class StringCustomGraphics implements CyCustomGraphics<StringLayer> {
 	public float getFitRatio() { return fitRatio; }
 	public void setFitRatio(float fitRatio) { this.fitRatio = fitRatio; }
 	public String toString() {
-		return displayName;
+		if (displayName != null)
+			return displayName;
+		return "String Custom Graphics";
 	}
 
 	public Image getRenderedImage() {return null;}
