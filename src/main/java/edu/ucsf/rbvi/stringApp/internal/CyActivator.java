@@ -17,6 +17,7 @@ import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.task.NetworkTaskFactory;
 import org.cytoscape.task.NetworkViewTaskFactory;
+import org.cytoscape.task.NodeViewTaskFactory;
 import org.cytoscape.view.presentation.customgraphics.CyCustomGraphicsFactory;
 import org.cytoscape.work.TaskFactory;
 import org.osgi.framework.BundleContext;
@@ -80,6 +81,13 @@ public class CyActivator extends AbstractCyActivator {
 			props2.setProperty(MENU_GRAVITY, "1.0");
 			props2.setProperty(IN_MENU_BAR, "false");
 			registerService(bc, addNodes, NetworkViewTaskFactory.class, props2);
+
+			Properties props3 = new Properties();
+			props3.setProperty(PREFERRED_MENU, "Apps.String");
+			props3.setProperty(TITLE, "Expand network");
+			props3.setProperty(MENU_GRAVITY, "1.0");
+			props3.setProperty(IN_MENU_BAR, "false");
+			registerService(bc, addNodes, NodeViewTaskFactory.class, props3);
 		}
 
 		{

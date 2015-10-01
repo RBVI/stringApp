@@ -32,7 +32,7 @@ public class ViewUtils {
 	public static CyNetworkView styleNetwork(StringManager manager, CyNetwork network) {
 		// First, let's get a network view
 		CyNetworkView netView = manager.createNetworkView(network);
-		VisualStyle stringStyle = createStyle(manager);
+		VisualStyle stringStyle = createStyle(manager, network);
 
 		updateColorMap(manager, stringStyle, netView);
 
@@ -57,7 +57,7 @@ public class ViewUtils {
 		for (CyNode node: nodes) {
 			style.apply(view.getModel().getRow(node), view.getNodeView(node));
 		}
-		style.apply(view);
+		// style.apply(view);
 	}
 
 	public static void updateEdgeStyle(StringManager manager, CyNetworkView view, List<CyEdge> edges) {
@@ -67,13 +67,26 @@ public class ViewUtils {
 		for (CyEdge edge: edges) {
 			style.apply(view.getModel().getRow(edge), view.getEdgeView(edge));
 		}
-		style.apply(view);
+		// style.apply(view);
 	}
 
-	public static VisualStyle createStyle(StringManager manager) {
+	public static VisualStyle createStyle(StringManager manager, CyNetwork network) {
+		String networkName = manager.getNetworkName(network);
+		String styleName = STYLE_NAME;
+		if (networkName.startsWith("String Network")) {
+			String[] parts = networkName.split("_");
+			if (parts.length == 1) {
+				String[] parts2 = networkName.split(" - ");
+				if (parts2.length == 2)
+					styleName = STYLE_NAME+" - "+parts2[1];
+			} else if (parts.length == 2)
+				styleName = STYLE_NAME+"_"+parts[1];
+		}
+
+
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
 		for (VisualStyle style: vmm.getAllVisualStyles()) {
-			if (style.getTitle().equals(STYLE_NAME)) {
+			if (style.getTitle().equals(styleName)) {
 				return style;
 			}
 		}
@@ -81,7 +94,7 @@ public class ViewUtils {
 		VisualStyleFactory vsf = manager.getService(VisualStyleFactory.class);
 
 		VisualStyle stringStyle = vsf.createVisualStyle(vmm.getCurrentVisualStyle());
-		stringStyle.setTitle(STYLE_NAME);
+		stringStyle.setTitle(styleName);
 
 		// Set the shape to an ellipse
 		stringStyle.setDefaultValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.ELLIPSE);

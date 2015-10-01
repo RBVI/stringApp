@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.cytoscape.application.CyUserLog;
 import org.cytoscape.event.CyEventHelper;
@@ -42,6 +43,40 @@ public class StringManager {
 		stringNetworkMap = new HashMap<>();
 	}
 
+	public String getNetworkName(String ids) {
+		String name = "String Network";
+
+		// If we have a single query term, use that as the network name
+		if (ids != null) {
+			if (ids.split("\n").length == 1) {
+				return name+" - "+ids;
+			}
+		}
+
+		// Use simple name, but make sure we're unique
+		Set<CyNetwork> allNetworks = registrar.getService(CyNetworkManager.class).getNetworkSet();
+		if (allNetworks == null || allNetworks.size() == 0)
+			return name;
+
+		int max = 0;
+		for (CyNetwork network: allNetworks) {
+			String netName = getNetworkName(network);
+			if (netName.startsWith("String Network")) {
+				String [] parts = netName.split("_");
+				if (parts.length == 1)
+					max = 1;
+				else {
+					max = Integer.parseInt(parts[1].trim());
+				}
+			}
+		}
+
+		if (max > 0)
+			return name+"_"+max;
+
+		return name;
+	}
+
 	public CyNetwork createNetwork(String name) {
 		CyNetwork network = registrar.getService(CyNetworkFactory.class).createNetwork();
 		network.getRow(network).set(CyNetwork.NAME, name);
@@ -63,6 +98,10 @@ public class StringManager {
 		if (stringNetworkMap.containsKey(network))
 			return stringNetworkMap.get(network);
 		return null;
+	}
+
+	public String getNetworkName(CyNetwork net) {
+		return net.getRow(net).get(CyNetwork.NAME, String.class);
 	}
 
 	public CyNetworkView createNetworkView(CyNetwork network) {

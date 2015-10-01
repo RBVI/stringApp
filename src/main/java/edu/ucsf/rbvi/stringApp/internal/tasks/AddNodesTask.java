@@ -32,6 +32,7 @@ public class AddNodesTask extends AbstractTask {
 	final StringManager manager;
 	final CyNetwork network;
 	CyNetworkView netView;
+	View<CyNode> nodeView;
 
 	@Tunable (description="Number of nodes to add to network", gravity=1.0)
 	public int additionalNodes = 10;
@@ -42,6 +43,14 @@ public class AddNodesTask extends AbstractTask {
 		this.manager = manager;
 		this.network = network;
 		this.netView = netView;
+		this.nodeView = null;
+	}
+
+	public AddNodesTask(final StringManager manager, final CyNetwork network, CyNetworkView netView, View<CyNode> nodeView) {
+		this.manager = manager;
+		this.network = network;
+		this.netView = netView;
+		this.nodeView = nodeView;
 	}
 
 	public void run(TaskMonitor monitor) {
@@ -60,7 +69,7 @@ public class AddNodesTask extends AbstractTask {
 
 		// Get all of the current nodes for our "existing" list
 		String existing = ModelUtils.getExisting(network);
-		String selected = ModelUtils.getSelected(network);
+		String selected = ModelUtils.getSelected(network, nodeView);
 		String url = "http://api.jensenlab.org/network";
 		Map<String, String> args = new HashMap<>();
 		args.put("existing",existing.trim());

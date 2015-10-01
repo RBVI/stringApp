@@ -13,6 +13,8 @@ import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyTable;
 
+import org.cytoscape.view.model.View;
+
 import org.apache.commons.codec.binary.Base64;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
@@ -63,19 +65,22 @@ public class ModelUtils {
 	}
 
 	public static CyNetwork createNetworkFromJSON(StringNetwork stringNetwork, String species, Object object,
-	                                              Map<String, String> queryTermMap) {
-		CyNetwork network = createNetworkFromJSON(stringNetwork.getManager(), species, object, queryTermMap);
+	                                              Map<String, String> queryTermMap, String ids) {
+		CyNetwork network = createNetworkFromJSON(stringNetwork.getManager(), species, object, queryTermMap, ids);
 		stringNetwork.getManager().addStringNetwork(stringNetwork, network);
 		return network;
 	}
 
 	public static CyNetwork createNetworkFromJSON(StringManager manager, String species, Object object,
-	                                              Map<String, String> queryTermMap) {
+	                                              Map<String, String> queryTermMap, String ids) {
 		if (!(object instanceof JSONObject))
 			return null;
 
+		// Get a network name
+		String str = manager.getNetworkName(ids);
+
 		// Create the network
-		CyNetwork newNetwork = manager.createNetwork("String network");
+		CyNetwork newNetwork = manager.createNetwork(str);
 
 		// Create a map to save the nodes
 		Map<String, CyNode> nodeMap = new HashMap<>();
@@ -162,8 +167,13 @@ public class ModelUtils {
 		return str.toString();
 	}
 
-	public static String getSelected(CyNetwork network) {
+	public static String getSelected(CyNetwork network, View<CyNode> nodeView) {
 		StringBuilder selectedStr = new StringBuilder();
+		if (nodeView != null) {
+			String stringID = network.getRow(nodeView.getModel()).get(STRINGID, String.class);
+			selectedStr.append(stringID+"\n");
+		}
+
 		for (CyNode node: network.getNodeList()) {
 			if (network.getRow(node).get(CyNetwork.SELECTED, Boolean.class)) {
 				String stringID = network.getRow(node).get(STRINGID, String.class);

@@ -66,10 +66,13 @@ public class LoadInteractions extends AbstractTask {
 		args.put("score", conf);
 		if (additionalNodes > 0)
 			args.put("additional", Integer.toString(additionalNodes));
+		else 
+			args.put("additional", "50");
+
 		Object results = HttpUtils.postJSON(manager.getURL(), args, manager);
 
 		// This may change...
-		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, species, results, queryTermMap);
+		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, species, results, queryTermMap, ids.trim());
 
 		// Set our confidence score
 		ModelUtils.setConfidence(network, ((double)confidence)/100.0);
