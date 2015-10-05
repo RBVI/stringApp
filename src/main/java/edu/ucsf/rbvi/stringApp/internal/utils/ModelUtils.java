@@ -2,15 +2,19 @@ package edu.ucsf.rbvi.stringApp.internal.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
+import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
 
 import org.cytoscape.view.model.View;
@@ -127,13 +131,15 @@ public class ModelUtils {
 
 		createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, SCORE);
 
+		Set<String> columnMap = new HashSet<>();
+
 		// Get the nodes
 		JSONArray nodes = (JSONArray)json.get("nodes");
 		if (nodes != null && nodes.size() > 0) {
 			for (Object nodeObj: nodes) {
 				if (nodeObj instanceof JSONObject) {
 					JSONObject nodeJSON = (JSONObject)nodeObj;
-					CyNode newNode = createNode(network, nodeJSON, species, nodeMap, nodeNameMap, queryTermMap);
+					CyNode newNode = createNode(network, nodeJSON, species, nodeMap, nodeNameMap, queryTermMap, columnMap);
 					if (newNode != null)
 						newNodes.add(newNode);
 				}
@@ -186,7 +192,8 @@ public class ModelUtils {
 
 	private static CyNode createNode(CyNetwork network, JSONObject nodeObj, String species,
 	                                 Map<String, CyNode> nodeMap,
-	                                 Map<String, String> nodeNameMap, Map<String, String> queryTermMap) {
+	                                 Map<String, String> nodeNameMap, Map<String, String> queryTermMap,
+																	 Set<String> columnMap) {
 		String name = (String)nodeObj.get("name");
 		String id = (String)nodeObj.get("@id");
 		String namespace = id.substring(0,id.indexOf(":"));
@@ -195,26 +202,47 @@ public class ModelUtils {
 			return null;
 		// System.out.println("Node id = "+id+", stringID = "+stringId+", namespace="+namespace);
 		CyNode newNode = network.addNode();
-		if (nodeObj.containsKey("description")) {
-			network.getRow(newNode).set(DESCRIPTION, (String)nodeObj.get("description"));
-		}
-		if (nodeObj.containsKey("canonical")) {
-			network.getRow(newNode).set(CANONICAL, (String)nodeObj.get("canonical"));
-		}
-		if (nodeObj.containsKey("sequence")) {
-			network.getRow(newNode).set(SEQUENCE, (String)nodeObj.get("sequence"));
-		}
-		network.getRow(newNode).set(CyNetwork.NAME, name);
-		network.getRow(newNode).set(STRINGID, stringId);
-		network.getRow(newNode).set(ID, id);
+		CyRow row = network.getRow(newNode);
+
+		row.set(CyNetwork.NAME, name);
+		row.set(STRINGID, stringId);
+		row.set(ID, id);
 		if (species != null)
-			network.getRow(newNode).set(SPECIES, species);
-		network.getRow(newNode).set(NAMESPACE, namespace);
-		network.getRow(newNode).set(TYPE, getType(id));
-		if (nodeObj.containsKey("image")) {
-			network.getRow(newNode).set(STYLE, "string:"+nodeObj.get("image"));
-		} else {
-			network.getRow(newNode).set(STYLE, "string:");
+			row.set(SPECIES, species);
+		row.set(NAMESPACE, namespace);
+		row.set(TYPE, getType(id));
+		row.set(STYLE, "string:"); // We may overwrite this, if we get an image
+
+		for (Object objKey: nodeObj.keySet()) {
+			String key = (String)objKey;
+			// Look for our "special" columns
+			if (key.equals("description")) {
+				row.set(DESCRIPTION, (String)nodeObj.get("description"));
+			} else if (key.equals("canonical")) {
+				row.set(CANONICAL, (String)nodeObj.get("canonical"));
+			} else if (key.equals("sequence")) {
+				network.getRow(newNode).set(SEQUENCE, (String)nodeObj.get("sequence"));
+			} else if (key.equals("image")) {
+				row.set(STYLE, "string:"+nodeObj.get("image"));
+			} else {
+				// It's not one of our "standard" attributes, create a column for it (if necessary) and then add it
+				Object value = nodeObj.get(key);
+				if (value instanceof JSONArray) {
+					JSONArray list = (JSONArray)value;
+					if (!columnMap.contains(key)) {
+						Object element = list.get(0);
+						createListColumnIfNeeded(network.getDefaultNodeTable(), element.getClass(), key);
+						columnMap.add(key);
+					}
+					row.set(key, list);
+				} else {
+					if (!columnMap.contains(key)) {
+						createColumnIfNeeded(network.getDefaultNodeTable(), value.getClass(), key);
+						columnMap.add(key);
+					}
+					row.set(key, value);
+				}
+			}
 		}
 		if (queryTermMap != null && queryTermMap.containsKey(stringId)) {
 			network.getRow(newNode).set(QUERYTERM, queryTermMap.get(stringId));
