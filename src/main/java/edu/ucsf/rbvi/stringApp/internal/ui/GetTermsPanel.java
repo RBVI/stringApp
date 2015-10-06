@@ -1,6 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -10,8 +11,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.ParsePosition;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -39,7 +43,10 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
@@ -71,8 +78,11 @@ public class GetTermsPanel extends JPanel {
 	JPanel mainSearchPanel;
 	JComboBox speciesCombo;
 	JSlider confidenceSlider;
+	JTextField confidenceValue;
 	JButton importButton;
 	JButton backButton;
+	NumberFormat formatter = new DecimalFormat("#0.00");
+	private boolean ignore = false;
 
 	public GetTermsPanel(final StringManager manager) {
 		super(new GridBagLayout());
@@ -219,7 +229,7 @@ public class GetTermsPanel extends JPanel {
 		Font labelFont;
 		{
 			c.anchor("west").noExpand().insets(0,5,0,5);
-			JLabel confidenceLabel = new JLabel("Required confidence (score):");
+			JLabel confidenceLabel = new JLabel("Confidence (score) cutoff:");
 			labelFont = confidenceLabel.getFont();
 			confidenceLabel.setFont(new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()));
 			confidencePanel.add(confidenceLabel, c);
@@ -229,7 +239,6 @@ public class GetTermsPanel extends JPanel {
 			confidenceSlider = new JSlider();
 			Dictionary<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
 			Font valueFont = new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()-4);
-			NumberFormat formatter = new DecimalFormat("#0.00");
 			for (int value = 0; value <= 100; value += 10) {
 				double labelValue = (double)value/100.0;
 				JLabel label = new JLabel(formatter.format(labelValue));
@@ -239,11 +248,81 @@ public class GetTermsPanel extends JPanel {
 			confidenceSlider.setLabelTable(labels);
 			confidenceSlider.setPaintLabels(true);
 			confidenceSlider.setValue(40);
+
+			confidenceSlider.addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					if (ignore) return;
+					ignore = true;
+					int value = confidenceSlider.getValue();
+					confidenceValue.setText(formatter.format(((double)value)/100.0));
+					ignore = false;
+				}
+			});
 			// c.anchor("southwest").expandHoriz().insets(0,5,0,5);
-			c.down().expandHoriz().insets(0,5,0,5);
+			c.right().expandHoriz().insets(0,5,0,5);
 			confidencePanel.add(confidenceSlider, c);
 		}
+
+		{
+			confidenceValue = new JTextField(4);
+			confidenceValue.setHorizontalAlignment(JTextField.RIGHT);
+			confidenceValue.setText("0.40");
+			c.right().noExpand().insets(0,5,0,5);
+			confidencePanel.add(confidenceValue, c);
+
+			confidenceValue.addActionListener(new AbstractAction() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					textFieldValueChanged();
+				}
+			});
+
+			confidenceValue.addFocusListener(new FocusAdapter() {
+				@Override
+				public void focusLost(FocusEvent e) {
+					textFieldValueChanged();
+				}
+			});
+
+		}
 		return confidencePanel;
+	}
+
+	private void textFieldValueChanged() {
+		if (ignore) return;
+		ignore = true;
+		String text = confidenceValue.getText();
+		Number n = formatter.parse(text, new ParsePosition(0));
+		double val = 0.0;
+		if (n == null) {
+			try {
+				val = Double.valueOf(confidenceValue.getText());
+			} catch (NumberFormatException nfe) {
+				val = inputError();
+			}
+		} else if (n.doubleValue() > 1.0 || n.doubleValue() < 0.0) {
+			val = inputError();
+		} else {
+			val = n.doubleValue();
+		}
+
+		val = val*100.0;
+		confidenceSlider.setValue((int)val);
+		ignore = false;
+	}
+
+	private double inputError() {
+		confidenceValue.setBackground(Color.RED);
+		JOptionPane.showMessageDialog(null, 
+				                          "Please enter a confence cutoff between 0.0 and 1.0", 
+											            "Alert", JOptionPane.ERROR_MESSAGE);
+		confidenceValue.setBackground(UIManager.getColor("TextField.background"));
+
+		// Reset the value to correspond to the current slider setting
+		double val = ((double)confidenceSlider.getValue())/100.0;
+		confidenceValue.setText(formatter.format(val));
+		return val;
 	}
 
 	void importNetwork(int taxon, int confidence, int additionalNodes) {
