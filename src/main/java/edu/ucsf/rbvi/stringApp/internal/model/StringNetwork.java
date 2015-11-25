@@ -55,6 +55,7 @@ public class StringNetwork {
 		System.out.println("URL: "+url+"?species="+Integer.toString(taxon)+"&identifiers="+encTerms);
 		// Get the results
 		Object results = HttpUtils.postJSON(url, args, manager);
+		if (results == null) return null;
 		// System.out.println("Got results");
 		annotations = Annotation.getAnnotations(results, terms);
 		// System.out.println("Get annotations returns "+annotations.size());

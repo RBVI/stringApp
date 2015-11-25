@@ -1,6 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.io;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -50,7 +51,10 @@ public class HttpUtils {
 			// request.setEntity(new UrlEncodedFormEntity(nvps));
 			response1 = client.execute(request);
 			HttpEntity entity1 = response1.getEntity();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(entity1.getContent()));
+			InputStream entityStream = entity1.getContent();
+			if (entity1.getContentLength() == 0 || entityStream.available() == 0)
+				return null;
+			BufferedReader reader = new BufferedReader(new InputStreamReader(entityStream));
 			JSONParser parser = new JSONParser();
 			jsonObject = parser.parse(reader);
 
@@ -87,7 +91,10 @@ public class HttpUtils {
 			request.setEntity(new UrlEncodedFormEntity(nvps));
 			response1 = client.execute(request);
 			HttpEntity entity1 = response1.getEntity();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(entity1.getContent()));
+			InputStream entityStream = entity1.getContent();
+			if (entity1.getContentLength() == 0)
+				return null;
+			BufferedReader reader = new BufferedReader(new InputStreamReader(entityStream));
 			String lin;
 			// while ((lin=reader.readLine()) != null) {
 			// 	System.out.println(lin);

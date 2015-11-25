@@ -494,8 +494,12 @@ public class GetTermsPanel extends JPanel {
 
 			final int taxon = annTask.getTaxon();
 			if (stringNetwork.getAnnotations() == null || stringNetwork.getAnnotations().size() == 0) {
-				JOptionPane.showMessageDialog(null, "Your query returned no results",
-							                        "No results", JOptionPane.ERROR_MESSAGE); 
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						JOptionPane.showMessageDialog(null, "Your query returned no results",
+									                        "No results", JOptionPane.ERROR_MESSAGE); 
+					}
+				});
 				return;
 			}
 			boolean noAmbiguity = stringNetwork.resolveAnnotations();
