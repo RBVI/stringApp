@@ -67,7 +67,6 @@ public class StringNetwork {
 	 * Maintenance of the resolveIdMap
 	 */
 	public boolean resolveAnnotations() {
-		// System.out.println("Resolving annotations");
 		if (resolvedIdMap == null) resolvedIdMap = new HashMap<>();
 		boolean noAmbiguity = true;
 		for (String key: annotations.keySet()) {
@@ -88,7 +87,6 @@ public class StringNetwork {
 					annotations.remove(key);
 			}
 		}
-		// System.out.println("Resolving annotations: "+noAmbiguity);
 		return noAmbiguity;
 	}
 
@@ -108,9 +106,15 @@ public class StringNetwork {
 	}
 
 	public boolean haveResolvedNames() {
-		if (resolvedIdMap != null && resolvedIdMap.size() > 0)
+		if (resolvedIdMap == null)
 			return true;
-		return false;
+
+		for (String key: annotations.keySet()) {
+			if (!resolvedIdMap.containsKey(key) || resolvedIdMap.get(key).size() == 0) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public int getResolvedTerms() { return resolvedIdMap.size(); }

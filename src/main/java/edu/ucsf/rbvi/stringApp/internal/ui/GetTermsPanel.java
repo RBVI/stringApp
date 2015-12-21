@@ -412,22 +412,26 @@ public class GetTermsPanel extends JPanel {
 			mainSearchPanel.add(selectPanel, c);
 		}
 
-		if (!stringNetwork.haveResolvedNames())
-			importButton.setEnabled(false);
 		importButton.setAction(new ResolvedAction());
 		backButton.setEnabled(true);
 
 		revalidate();
+		importButton.setEnabled(false);
 	}
 
 	public void addResolvedStringID(String term, String id) {
 		stringNetwork.addResolvedStringID(term, id);
-		importButton.setEnabled(true);
+		if (stringNetwork.haveResolvedNames()) {
+			importButton.setEnabled(true);
+		} else
+			importButton.setEnabled(false);
 	}
 
 	public void removeResolvedStringID(String term, String id) {
 		stringNetwork.removeResolvedStringID(term, id);
-		if (!stringNetwork.haveResolvedNames());
+		if (stringNetwork.haveResolvedNames()) {
+			importButton.setEnabled(true);
+		} else
 			importButton.setEnabled(false);
 	}
 
