@@ -74,14 +74,16 @@ public class GetTermsPanel extends JPanel {
 	// Map<String, List<Annotation>> annotations = null;
 
 	JTextArea searchTerms;
-	JTextField additionalNodesText;
 	JPanel mainSearchPanel;
 	JComboBox speciesCombo;
 	JSlider confidenceSlider;
 	JTextField confidenceValue;
+	JSlider additionalNodesSlider;
+	JTextField additionalNodesValue;
 	JButton importButton;
 	JButton backButton;
 	NumberFormat formatter = new DecimalFormat("#0.00");
+	NumberFormat intFormatter = new DecimalFormat("#0");
 	private boolean ignore = false;
 
 	public GetTermsPanel(final StringManager manager) {
@@ -124,6 +126,10 @@ public class GetTermsPanel extends JPanel {
 		// Create the slider for the confidence cutoff
 		JPanel confidenceSlider = createConfidenceSlider();
 		add(confidenceSlider, c.down().expandBoth().insets(5,5,0,5));
+
+		// Create the slider for the confidence cutoff
+		JPanel additionalNodesSlider = createAdditionalNodesSlider();
+		add(additionalNodesSlider, c.down().expandBoth().insets(5,5,0,5));
 
 		// Create the evidence types buttons
 		// createEvidenceButtons(manager.getEvidenceTypes());
@@ -288,7 +294,109 @@ public class GetTermsPanel extends JPanel {
 		}
 		return confidencePanel;
 	}
+	
+	JPanel createAdditionalNodesSlider() {
+		JPanel additionalNodesPanel = new JPanel(new GridBagLayout());
+		EasyGBC c = new EasyGBC();
 
+		Font labelFont;
+		{
+			c.anchor("west").noExpand().insets(0,5,0,5);
+			JLabel additionalNodesLabel = new JLabel("Number of additional nodes:");
+			labelFont = additionalNodesLabel.getFont();
+			additionalNodesLabel.setFont(new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()));
+			additionalNodesPanel.add(additionalNodesLabel, c);
+		}
+
+		{
+			additionalNodesSlider = new JSlider();
+			Dictionary<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
+			Font valueFont = new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()-4);
+			for (int value = 0; value <= 100; value += 10) {
+				JLabel label = new JLabel(Integer.toString(value));
+				label.setFont(valueFont);
+				labels.put(value, label);
+			}
+			additionalNodesSlider.setLabelTable(labels);
+			additionalNodesSlider.setPaintLabels(true);
+			additionalNodesSlider.setValue(0);
+
+			additionalNodesSlider.addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					if (ignore) return;
+					ignore = true;
+					int value = additionalNodesSlider.getValue();
+					additionalNodesValue.setText(Integer.toString(value));
+					ignore = false;
+				}
+			});
+			// c.anchor("southwest").expandHoriz().insets(0,5,0,5);
+			c.right().expandHoriz().insets(0,5,0,5);
+			additionalNodesPanel.add(additionalNodesSlider, c);
+		}
+
+		{
+			additionalNodesValue = new JTextField(4);
+			additionalNodesValue.setHorizontalAlignment(JTextField.RIGHT);
+			additionalNodesValue.setText("0");
+			c.right().noExpand().insets(0,5,0,5);
+			additionalNodesPanel.add(additionalNodesValue, c);
+
+			additionalNodesValue.addActionListener(new AbstractAction() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					addNodesFieldValueChanged();
+				}
+			});
+
+			additionalNodesValue.addFocusListener(new FocusAdapter() {
+				@Override
+				public void focusLost(FocusEvent e) {
+					addNodesFieldValueChanged();
+				}
+			});
+
+		}
+		return additionalNodesPanel;
+	}
+
+	private void addNodesFieldValueChanged() {
+		if (ignore) return;
+		ignore = true;
+		String text = additionalNodesValue.getText();
+		Number n = intFormatter.parse(text, new ParsePosition(0));
+		int val = 0;
+		if (n == null) {
+			try {
+				val = Integer.valueOf(additionalNodesValue.getText());
+			} catch (NumberFormatException nfe) {
+				val = addNodesInputError();
+			}
+		} else if (n.intValue() > 100 || n.intValue() < 0) {
+			val = addNodesInputError();
+		} else {
+			val = n.intValue();
+		}
+
+		val = val;
+		additionalNodesSlider.setValue(val);
+		ignore = false;
+	}
+	
+	private int addNodesInputError() {
+		additionalNodesValue.setBackground(Color.RED);
+		JOptionPane.showMessageDialog(null, 
+				                          "Please enter a number of additional nodes between 0 and 100", 
+											            "Alert", JOptionPane.ERROR_MESSAGE);
+		additionalNodesValue.setBackground(UIManager.getColor("TextField.background"));
+
+		// Reset the value to correspond to the current slider setting
+		int val = additionalNodesSlider.getValue();
+		additionalNodesValue.setText(Integer.toString(val));
+		return val;
+	}
+	
 	private void textFieldValueChanged() {
 		if (ignore) return;
 		ignore = true;
@@ -508,9 +616,9 @@ public class GetTermsPanel extends JPanel {
 			}
 			boolean noAmbiguity = stringNetwork.resolveAnnotations();
 			if (noAmbiguity) {
-				int additionalNodes = 0;
+				int additionalNodes = additionalNodesSlider.getValue();
 				// This mimics the String web site behavior
-				if (stringNetwork.getResolvedTerms() == 1)
+				if (stringNetwork.getResolvedTerms() == 1 && additionalNodes == 0)
 					additionalNodes = 10;
 
 				final int addNodes = additionalNodes;

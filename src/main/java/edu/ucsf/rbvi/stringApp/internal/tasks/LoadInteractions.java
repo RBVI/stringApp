@@ -66,8 +66,6 @@ public class LoadInteractions extends AbstractTask {
 		args.put("score", conf);
 		if (additionalNodes > 0)
 			args.put("additional", Integer.toString(additionalNodes));
-		else 
-			args.put("additional", "50");
 
 		Object results = HttpUtils.postJSON(manager.getURL(), args, manager);
 

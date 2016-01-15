@@ -50,7 +50,8 @@ public class ViewUtils {
 		style.apply(view);
 	}
 
-	public static void updateNodeStyle(StringManager manager, CyNetworkView view, List<CyNode> nodes) {
+	public static void updateNodeStyle(StringManager manager, 
+	                                   CyNetworkView view, List<CyNode> nodes) {
 		manager.flushEvents();
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
 		VisualStyle style = vmm.getVisualStyle(view);
