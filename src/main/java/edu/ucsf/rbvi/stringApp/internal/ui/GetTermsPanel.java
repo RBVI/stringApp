@@ -45,6 +45,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -230,6 +231,7 @@ public class GetTermsPanel extends JPanel {
 
 	JPanel createConfidenceSlider() {
 		JPanel confidencePanel = new JPanel(new GridBagLayout());
+		confidencePanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		EasyGBC c = new EasyGBC();
 
 		Font labelFont;
@@ -297,6 +299,7 @@ public class GetTermsPanel extends JPanel {
 	
 	JPanel createAdditionalNodesSlider() {
 		JPanel additionalNodesPanel = new JPanel(new GridBagLayout());
+		additionalNodesPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		EasyGBC c = new EasyGBC();
 
 		Font labelFont;
