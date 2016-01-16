@@ -18,12 +18,17 @@ class ResolveTableModel extends AbstractTableModel {
 		this.term = term;
 		this.wsClient = wsClient;
 		this.selections = new boolean[annotations.size()];
+		/*
 		if (annotations.size() == 1) {
 			this.selections[0] = true;
 			wsClient.addResolvedStringID(term, annotations.get(0).getStringId());
 		} else {
 			Arrays.fill(selections, false);
 		}
+		*/
+		Arrays.fill(selections, false);
+		this.selections[0] = true;
+		wsClient.addResolvedStringID(term, annotations.get(0).getStringId());
 	}
 
 	@Override
