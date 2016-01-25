@@ -41,7 +41,7 @@ public class StringLayer implements Cy2DGraphicLayer {
 		boolean selected = false;
 		if (network.getRow(view.getModel()).get(CyNetwork.SELECTED, Boolean.class))
 			selected = true;
-		DrawSphere ds = new DrawSphere((Color)fill, (Color)background, image, selected);
+		DrawSphere ds = new DrawSphere((Color)fill, (Color)background, image, shape, selected);
 		ds.draw(g, bounds);
 	}
 

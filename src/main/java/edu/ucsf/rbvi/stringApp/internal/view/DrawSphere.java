@@ -10,6 +10,7 @@ import java.awt.Paint;
 import java.awt.RadialGradientPaint;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
@@ -19,17 +20,19 @@ public class DrawSphere {
 	Image image;
 	Color color;
 	Color background;
+	Shape nodeShape;
 	boolean selected = false;
 	float xScale = 1.0f;
 	float yScale = 1.0f;
 	float xOff = 0.0f;
 	float yOff = 0.0f;
 
-	public DrawSphere(Color color, Color background, Image image, boolean selected) {
+	public DrawSphere(Color color, Color background, Image image, Shape nodeShape, boolean selected) {
 		this.color = color;
 		this.background = background;
 		this.image = image;
 		this.selected = selected;
+		this.nodeShape = nodeShape;
 	}
 
 
@@ -101,7 +104,9 @@ public class DrawSphere {
 			                                         (int)bounds.getWidth(), (int)bounds.getHeight());
 			g2.drawImage(resizedImage, (int)xOff, (int)yOff, (int)bounds.getWidth(), (int)bounds.getHeight(), null);
 			*/
+			g2.setClip(nodeShape);
 			g2.drawImage(image, (int)xOff, (int)yOff, (int)bounds.getWidth(), (int)bounds.getHeight(), null);
+			g2.setClip(null);
 		}
 
 		{
