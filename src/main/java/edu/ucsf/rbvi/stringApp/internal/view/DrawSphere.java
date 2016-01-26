@@ -2,6 +2,7 @@ package edu.ucsf.rbvi.stringApp.internal.view;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -38,10 +39,25 @@ public class DrawSphere {
 
 	public void draw(Graphics2D g2, Rectangle2D bounds) {
 		Paint oldPaint = g2.getPaint();
+
+		/*
+		AffineTransform xform = g2.getTransform();
+		Shape s = xform.createTransformedShape(bounds);
+		bounds = s.getBounds2D();
+		g2.setTransform(new AffineTransform());
+		*/
+
 		xScale = (float)(bounds.getWidth()/40.0);
 		yScale = (float)(bounds.getHeight()/40.0);
 		xOff = (float)bounds.getX()-(float)bounds.getWidth()/2;
 		yOff = (float)bounds.getY()-(float)bounds.getHeight()/2;
+
+		g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+		                    RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		g2.setRenderingHint(RenderingHints.KEY_RENDERING,
+		                    RenderingHints.VALUE_RENDER_QUALITY);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+		                    RenderingHints.VALUE_ANTIALIAS_ON);
 
 		{
 			// Paint a shadow
@@ -50,7 +66,8 @@ public class DrawSphere {
 			s1.addStop(0.0f, "#000000", 0.6f);
 			s1.addStop(0.9f, "#000000", 0.6f);
 			s1.addStop(1.0f, "#000000", 0.0f);
-			Paint p = new RadialGradientPaint(scaleX(20.0f), scaleY(28f), yScale*19f, s1.getStops(), s1.getColors());
+			Paint p = new RadialGradientPaint(scaleX(20.0f), scaleY(28f), yScale*19f, 
+			                                  s1.getStops(), s1.getColors());
 			g2.setPaint(p);
 			g2.scale(1.0, 0.9);
 			fillOval(g2, scaleX(1.0f), scaleY(9f), xScale*19f*2f, yScale*19f*2f);
@@ -73,7 +90,8 @@ public class DrawSphere {
 			s1.addStop( 0.8975f, "#3c3c3c");
 			s1.addStop( 1.0f, "#383838");
 
-			Paint p = new LinearGradientPaint(scaleX(20f), scaleY(40f), scaleX(20f), scaleY(0f), s1.getStops(), s1.getColors());
+			Paint p = new LinearGradientPaint(scaleX(20f), scaleY(40f), scaleX(20f), scaleY(0f), 
+			                                  s1.getStops(), s1.getColors());
 			g2.setPaint(p);
 			fillOval(g2, xOff, yOff, xScale*40f, yScale*40f);
 		}
@@ -92,21 +110,10 @@ public class DrawSphere {
 			s2.addStop(0.9523f,"#373737");
 			s2.addStop(0.9926f,"#090909");
 			s2.addStop(1.0f,"#000000");
-			Paint p = new RadialGradientPaint(scaleX(20f), scaleY(20f), yScale*20f, s2.getStops(), s2.getColors());
+			Paint p = new RadialGradientPaint(scaleX(20f), scaleY(20f), yScale*20f, 
+			                                  s2.getStops(), s2.getColors());
 			g2.setPaint(p);
 			fillOval(g2, xOff, yOff, xScale*40f, yScale*40f);
-		}
-
-		// Draw our image (if we have one);
-		if (image != null) {
-			/* Should we try to rescale the image?
-			BufferedImage resizedImage = resizeImage((BufferedImage)image, 
-			                                         (int)bounds.getWidth(), (int)bounds.getHeight());
-			g2.drawImage(resizedImage, (int)xOff, (int)yOff, (int)bounds.getWidth(), (int)bounds.getHeight(), null);
-			*/
-			g2.setClip(nodeShape);
-			g2.drawImage(image, (int)xOff, (int)yOff, (int)bounds.getWidth(), (int)bounds.getHeight(), null);
-			g2.setClip(null);
 		}
 
 		{
@@ -115,7 +122,8 @@ public class DrawSphere {
 				Stops s1 = new Stops(2, 0.8f);
 				s1.addStop(0f, Color.YELLOW);
 				s1.addStop(1f, Color.YELLOW);
-				Paint p = new LinearGradientPaint(scaleX(-1f), scaleY(41f), scaleX(-1f), scaleY(-1f), s1.getStops(), s1.getColors());
+				Paint p = new LinearGradientPaint(scaleX(-1f), scaleY(41f), scaleX(-1f), scaleY(-1f), 
+				                                  s1.getStops(), s1.getColors());
 				g2.setPaint(p);
 				// Make the oval slightly larger
 				fillOval(g2, xOff-1, yOff-1, xScale*42f, yScale*42f);
@@ -123,10 +131,21 @@ public class DrawSphere {
 				Stops s1 = new Stops(2, 0.4f);
 				s1.addStop(0f, color);
 				s1.addStop(1f, color);
-				Paint p = new LinearGradientPaint(scaleX(0f), scaleY(40f), scaleX(0f), scaleY(0f), s1.getStops(), s1.getColors());
+				Paint p = new LinearGradientPaint(scaleX(0f), scaleY(40f), scaleX(0f), scaleY(0f), 
+				                                  s1.getStops(), s1.getColors());
 				g2.setPaint(p);
 				fillOval(g2, xOff, yOff, xScale*40f, yScale*40f);
 			}
+		}
+
+		// Draw our image (if we have one);
+		// For some reason, I can't make the compositing to work right.  The image is transparent,
+		// but when I composite it, the translucent areas come out white.  Doesn't make sense to
+		// me
+		if (image != null) {
+			g2.setClip(nodeShape);
+			g2.drawImage(image, (int)xOff, (int)yOff, (int)bounds.getWidth(), (int)bounds.getHeight(), null);
+			g2.setClip(null);
 		}
 
 		{
@@ -134,30 +153,15 @@ public class DrawSphere {
 			s3.addStop(0f, "#FFFFFF", 1.0f);
 			s3.addStop(0.1f, "#FFFFFF", 0.99f);
 			s3.addStop(1.0f, "#FFFFFF", 0f);
-			Paint p = new LinearGradientPaint(scaleX(20f), scaleY(2f), scaleX(20f), scaleY(2f+12f), s3.getStops(), s3.getColors());
+			Paint p = new LinearGradientPaint(scaleX(20f), scaleY(2f), scaleX(20f), scaleY(2f+12f), 
+			                                  s3.getStops(), s3.getColors());
 			g2.setPaint(p);
 			fillOval(g2, scaleX(20f-11.5f), scaleY(2f), xScale*23f, yScale*12f);
 		}
 
 		// Restores the previous state
 		g2.setPaint(oldPaint);
-	}
-
-	// Doesn't really work well....
-	BufferedImage resizeImage(BufferedImage image, int width, int height) {
-		BufferedImage resizedImage = new BufferedImage(width, height, image.getType());
-		Graphics2D g = resizedImage.createGraphics();
-		g.drawImage(image, 0, 0, width, height, null);
-		g.dispose();
-		g.setComposite(AlphaComposite.Src);
-
-		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-		                   RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		g.setRenderingHint(RenderingHints.KEY_RENDERING,
-		                   RenderingHints.VALUE_RENDER_QUALITY);
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-		                   RenderingHints.VALUE_ANTIALIAS_ON);
-		return resizedImage;
+		// g2.setTransform(xform);
 	}
 
 	int scaleX(int value) {

@@ -8,6 +8,7 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
 import org.cytoscape.model.CyIdentifiable;
 import org.cytoscape.model.CyNetwork;
@@ -23,12 +24,15 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 public class StringLayer implements Cy2DGraphicLayer {
 	StringManager manager;
 	Rectangle2D bounds;
-	Image image;
+	BufferedImage image;
 
-	public StringLayer(StringManager manager, Image image) {
+	public StringLayer(StringManager manager, BufferedImage image) {
 		this.manager = manager;
-		bounds = new Rectangle(0, 0, 100, 100);
 		this.image = image;
+		if (image != null)
+			bounds = new Rectangle2D.Double(0.0, 0.0, (double)image.getWidth(), (double)image.getHeight());
+		else
+			bounds = new Rectangle2D.Double(0.0, 0.0, 150, 150);
 	}
 
 	public void draw(Graphics2D g, Shape shape,
