@@ -18,7 +18,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 public class DrawSphere {
-	Image image;
+	BufferedImage image;
 	Color color;
 	Color background;
 	Shape nodeShape;
@@ -28,7 +28,7 @@ public class DrawSphere {
 	float xOff = 0.0f;
 	float yOff = 0.0f;
 
-	public DrawSphere(Color color, Color background, Image image, Shape nodeShape, boolean selected) {
+	public DrawSphere(Color color, Color background, BufferedImage image, Shape nodeShape, boolean selected) {
 		this.color = color;
 		this.background = background;
 		this.image = image;
@@ -75,7 +75,8 @@ public class DrawSphere {
 		}
 
 		{ // get a background to work with
-			g2.setColor(background);
+			g2.setColor(color);
+			g2.setBackground(color);
 			fillOval(g2, xOff, yOff, (float)bounds.getWidth(), (float)bounds.getHeight());
 		}
 
@@ -143,6 +144,10 @@ public class DrawSphere {
 		// but when I composite it, the translucent areas come out white.  Doesn't make sense to
 		// me
 		if (image != null) {
+			// Shape newShape = xform.createTransformedShape(nodeShape);
+			// Create a new image that premultiplies the alpha
+			// BufferedImage newImage = scaleImage(image, color, bounds.getWidth(), bounds.getHeight());
+			// g2.setClip(newShape);
 			g2.setClip(nodeShape);
 			g2.drawImage(image, (int)xOff, (int)yOff, (int)bounds.getWidth(), (int)bounds.getHeight(), null);
 			g2.setClip(null);
@@ -184,6 +189,27 @@ public class DrawSphere {
 		Ellipse2D ellipse = new Ellipse2D.Float(x,y,width,height);
 		g2.fill(ellipse);
 	}
+
+	/*
+	 * NotUsed
+	private BufferedImage scaleImage(BufferedImage image, Color color, double width, double height) {
+		BufferedImage newImage = new BufferedImage((int)width, (int)height, BufferedImage.TYPE_INT_ARGB_PRE);
+		Graphics2D g = newImage.createGraphics();
+		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+		                   RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		g.setRenderingHint(RenderingHints.KEY_RENDERING,
+		                   RenderingHints.VALUE_RENDER_QUALITY);
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+		                   RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setComposite(AlphaComposite.Src);
+		g.setPaint(new Color(color.getRed(), color.getGreen(), color.getBlue(), 0));
+		g.fillRect(0, 0, (int)width, (int) height);
+		g.setComposite(AlphaComposite.SrcOver);
+		g.drawImage(image, 0, 0, (int)width, (int)height, null);
+		g.dispose();
+		return newImage;
+	}
+	*/
 
 	class Stops {
 		float[] stops;
