@@ -40,13 +40,6 @@ public class DrawSphere {
 	public void draw(Graphics2D g2, Rectangle2D bounds) {
 		Paint oldPaint = g2.getPaint();
 
-		/*
-		AffineTransform xform = g2.getTransform();
-		Shape s = xform.createTransformedShape(bounds);
-		bounds = s.getBounds2D();
-		g2.setTransform(new AffineTransform());
-		*/
-
 		xScale = (float)(bounds.getWidth()/40.0);
 		yScale = (float)(bounds.getHeight()/40.0);
 		xOff = (float)bounds.getX()-(float)bounds.getWidth()/2;
@@ -58,6 +51,12 @@ public class DrawSphere {
 		                    RenderingHints.VALUE_RENDER_QUALITY);
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 		                    RenderingHints.VALUE_ANTIALIAS_ON);
+
+		{
+			// Painting a white background helps out the images
+			g2.setPaint(Color.WHITE);
+			fillOval(g2, xOff, yOff, xScale*40f, yScale*40f);
+		}
 
 		{
 			// Paint a shadow
@@ -72,12 +71,6 @@ public class DrawSphere {
 			g2.scale(1.0, 0.9);
 			fillOval(g2, scaleX(1.0f), scaleY(9f), xScale*19f*2f, yScale*19f*2f);
 			g2.scale(1.0, 1.0/0.9);
-		}
-
-		{ // get a background to work with
-			g2.setColor(color);
-			g2.setBackground(color);
-			fillOval(g2, xOff, yOff, (float)bounds.getWidth(), (float)bounds.getHeight());
 		}
 
 		{
@@ -117,10 +110,20 @@ public class DrawSphere {
 			fillOval(g2, xOff, yOff, xScale*40f, yScale*40f);
 		}
 
+		// Draw our image (if we have one);
+		// For some reason, I can't make the compositing to work right.  The image is transparent,
+		// but when I composite it, the translucent areas come out white.  Doesn't make sense to
+		// me
+		if (image != null) {
+			g2.setClip(nodeShape);
+			g2.drawImage(image, (int)xOff, (int)yOff, (int)bounds.getWidth(), (int)bounds.getHeight(), null);
+			g2.setClip(null);
+		}
+
 		{
 			// Color clr = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int)(((float)255)*0.4f));
 			if (selected) {
-				Stops s1 = new Stops(2, 0.8f);
+				Stops s1 = new Stops(2, 0.6f);
 				s1.addStop(0f, Color.YELLOW);
 				s1.addStop(1f, Color.YELLOW);
 				Paint p = new LinearGradientPaint(scaleX(-1f), scaleY(41f), scaleX(-1f), scaleY(-1f), 
@@ -137,20 +140,6 @@ public class DrawSphere {
 				g2.setPaint(p);
 				fillOval(g2, xOff, yOff, xScale*40f, yScale*40f);
 			}
-		}
-
-		// Draw our image (if we have one);
-		// For some reason, I can't make the compositing to work right.  The image is transparent,
-		// but when I composite it, the translucent areas come out white.  Doesn't make sense to
-		// me
-		if (image != null) {
-			// Shape newShape = xform.createTransformedShape(nodeShape);
-			// Create a new image that premultiplies the alpha
-			// BufferedImage newImage = scaleImage(image, color, bounds.getWidth(), bounds.getHeight());
-			// g2.setClip(newShape);
-			g2.setClip(nodeShape);
-			g2.drawImage(image, (int)xOff, (int)yOff, (int)bounds.getWidth(), (int)bounds.getHeight(), null);
-			g2.setClip(null);
 		}
 
 		{
@@ -189,27 +178,6 @@ public class DrawSphere {
 		Ellipse2D ellipse = new Ellipse2D.Float(x,y,width,height);
 		g2.fill(ellipse);
 	}
-
-	/*
-	 * NotUsed
-	private BufferedImage scaleImage(BufferedImage image, Color color, double width, double height) {
-		BufferedImage newImage = new BufferedImage((int)width, (int)height, BufferedImage.TYPE_INT_ARGB_PRE);
-		Graphics2D g = newImage.createGraphics();
-		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-		                   RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		g.setRenderingHint(RenderingHints.KEY_RENDERING,
-		                   RenderingHints.VALUE_RENDER_QUALITY);
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-		                   RenderingHints.VALUE_ANTIALIAS_ON);
-		g.setComposite(AlphaComposite.Src);
-		g.setPaint(new Color(color.getRed(), color.getGreen(), color.getBlue(), 0));
-		g.fillRect(0, 0, (int)width, (int) height);
-		g.setComposite(AlphaComposite.SrcOver);
-		g.drawImage(image, 0, 0, (int)width, (int)height, null);
-		g.dispose();
-		return newImage;
-	}
-	*/
 
 	class Stops {
 		float[] stops;
