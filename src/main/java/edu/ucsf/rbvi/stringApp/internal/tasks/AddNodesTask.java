@@ -94,11 +94,14 @@ public class AddNodesTask extends AbstractTask {
 		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null);
 
 		monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
+		System.out.println("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
 
 		// If we have a view, re-apply the style and layout
 		if (netView != null) {
 			monitor.setStatusMessage("Updating style");
+			System.out.println("Updating style");
 			ViewUtils.updateEdgeStyle(manager, netView, newEdges);
+			System.out.println("Done");
 			if (relayout) {
 				monitor.setStatusMessage("Updating layout");
 				CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");
