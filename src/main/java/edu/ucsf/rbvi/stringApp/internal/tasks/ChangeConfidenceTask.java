@@ -87,7 +87,7 @@ public class ChangeConfidenceTask extends AbstractTask {
 			args.put("existing",existing.trim());
 			args.put("score", confidence.getValue().toString());
 			args.put("maxscore", Float.toString(currentConfidence));
-			Object results = HttpUtils.postJSON(manager.getURL(), args, manager);
+			Object results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
 
 			// This may change...
 			List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null);

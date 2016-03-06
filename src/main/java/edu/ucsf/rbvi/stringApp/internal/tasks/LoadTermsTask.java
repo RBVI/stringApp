@@ -78,9 +78,9 @@ public class LoadTermsTask extends AbstractTask {
 			args.put("additional", Integer.toString(additionalNodes));
 		args.put("existing", ModelUtils.getExisting(network).trim());
 
-		monitor.setStatusMessage("Getting additional terms from "+manager.getURL());
+		monitor.setStatusMessage("Getting additional terms from "+manager.getNetworkURL());
 
-		Object results = HttpUtils.postJSON(manager.getURL(), args, manager);
+		Object results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
 
 		monitor.setStatusMessage("Augmenting network");
 

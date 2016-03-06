@@ -23,18 +23,14 @@ import org.cytoscape.work.TaskFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
-import static org.cytoscape.work.ServiceProperties.COMMAND_DESCRIPTION;
-import static org.cytoscape.work.ServiceProperties.COMMAND_NAMESPACE;
-import static org.cytoscape.work.ServiceProperties.IN_MENU_BAR;
-import static org.cytoscape.work.ServiceProperties.MENU_GRAVITY;
-import static org.cytoscape.work.ServiceProperties.PREFERRED_MENU;
-import static org.cytoscape.work.ServiceProperties.TITLE;
-
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.tasks.AddNodesTaskFactory;
-import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeConfidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.AddTermsTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeConfidenceTaskFactory;
+// import edu.ucsf.rbvi.stringApp.internal.tasks.FindProteinsTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.ui.StringWebServiceClient;
+import edu.ucsf.rbvi.stringApp.internal.ui.TextMiningWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.view.StringCustomGraphicsFactory;
 import edu.ucsf.rbvi.stringApp.internal.view.StringLayer;
 
@@ -62,6 +58,12 @@ public class CyActivator extends AbstractCyActivator {
 		{
 			// Register our web service client
 			StringWebServiceClient client = new StringWebServiceClient(manager);
+			registerAllServices(bc, client, new Properties());
+		}
+		
+		{
+			// Register our web service client
+			TextMiningWebServiceClient client = new TextMiningWebServiceClient(manager);
 			registerAllServices(bc, client, new Properties());
 		}
 
@@ -108,6 +110,24 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(MENU_GRAVITY, "3.0");
 			props.setProperty(IN_MENU_BAR, "true");
 			registerService(bc, addTerms, NetworkTaskFactory.class, props);
+		}
+
+		/*
+		{
+			FindProteinsTaskFactory findProteins = new FindProteinsTaskFactory(manager);
+			Properties props = new Properties();
+			props.setProperty(PREFERRED_MENU, "Apps.String");
+			props.setProperty(TITLE, "Find proteins using text mining");
+			props.setProperty(MENU_GRAVITY, "4.0");
+			props.setProperty(IN_MENU_BAR, "true");
+			registerService(bc, findProteins, TaskFactory.class, props);
+		}
+		*/
+
+		{
+			// Register our "show image" toggle
+			ShowImagesTaskFactory showImagesTF = new ShowImagesTaskFactory(manager);
+			showImagesTF.reregister();
 		}
 
 		{

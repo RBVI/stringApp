@@ -21,8 +21,10 @@ import org.cytoscape.view.model.View;
 
 import org.apache.commons.codec.binary.Base64;
 
+import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
+import edu.ucsf.rbvi.stringApp.internal.model.TextMiningResult;
 
 public class ModelUtils {
 
@@ -37,12 +39,73 @@ public class ModelUtils {
 	public static String STRINGID = "Database Identifier";
 	public static String STYLE = "String Style";
 	public static String TYPE = "Node Type";
+	public static String TM_FOREGROUND = "TextMining Foreground";
+	public static String TM_BACKGROUND = "TextMining Background";
+	public static String TM_SCORE = "TextMining Score";
 
 	// Edge information
 	public static String SCORE = "score";
 
 	// Network information
 	public static String CONFIDENCE = "Confidence Score";
+
+	public static List<TextMiningResult> getIdsFromJSON(StringManager manager, int taxon, Object object, String query) {
+		if (!(object instanceof JSONArray))
+			return null;
+
+		JSONArray tmResults = (JSONArray)object;
+		JSONObject nodeDict = (JSONObject)tmResults.get(0);
+		Boolean limited = (Boolean)tmResults.get(1);
+
+		List<TextMiningResult> results = new ArrayList<>();
+
+		for (Object stringid: nodeDict.keySet()) {
+			JSONObject data = (JSONObject)nodeDict.get(stringid);
+			String name = data.get("name").toString();
+			int fg = ((Long)data.get("foreground")).intValue();
+			int bg = ((Long)data.get("background")).intValue();
+			Double score = (Double)data.get("score");
+			TextMiningResult tm = new TextMiningResult(taxon+"."+(String)stringid, name, fg, bg, score);
+			results.add(tm);
+		}
+		return results;
+
+	}
+
+	public static void addTextMiningResults (StringManager manager, List<TextMiningResult> tmResults, CyNetwork network) {
+		// Create our columns
+		createColumnIfNeeded(network.getDefaultNodeTable(), Integer.class, TM_FOREGROUND);
+		createColumnIfNeeded(network.getDefaultNodeTable(), Integer.class, TM_BACKGROUND);
+		createColumnIfNeeded(network.getDefaultNodeTable(), Double.class, TM_SCORE);
+
+		// Create a map of our results
+		Map<String, TextMiningResult> resultsMap = new HashMap<>();
+		for (TextMiningResult tm: tmResults) {
+			resultsMap.put(tm.getID(), tm);
+		}
+
+		for (CyNode node: network.getNodeList()) {
+			CyRow row = network.getRow(node);
+			String id = row.get(STRINGID, String.class);
+			if (resultsMap.containsKey(id)) {
+				TextMiningResult result = resultsMap.get(id);
+				row.set(TM_FOREGROUND, result.getForeground());
+				row.set(TM_BACKGROUND, result.getBackground());
+				row.set(TM_SCORE, result.getScore());
+			}
+		}
+	}
+
+	public static List<CyNode> createTMNetworkFromJSON(StringManager manager, Species species, Object object, String query) {
+		if (!(object instanceof JSONArray))
+			return null;
+
+		// Create the network
+		CyNetwork newNetwork = manager.createNetwork(query);
+
+		List<CyNode> nodes = getJSON(manager, species, newNetwork, (JSONArray)object);
+		return nodes;
+	}
 
 	public static List<CyNode> augmentNetworkFromJSON(StringManager manager, CyNetwork net,
 	                                                  List<CyEdge> newEdges, Object object,
@@ -109,6 +172,43 @@ public class ModelUtils {
 		if (network.getDefaultNetworkTable().getColumn(CONFIDENCE) == null)
 			return null;
 		return network.getRow(network).get(CONFIDENCE, Double.class);
+	}
+
+	private static List<CyNode> getJSON(StringManager manager, Species species, CyNetwork network, 
+	                                    JSONArray tmResults) {
+		List<CyNode> newNodes = new ArrayList<>();
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, ID);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, SPECIES);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STRINGID);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STYLE);
+		createColumnIfNeeded(network.getDefaultNodeTable(), Integer.class, TM_FOREGROUND);
+		createColumnIfNeeded(network.getDefaultNodeTable(), Integer.class, TM_BACKGROUND);
+		createColumnIfNeeded(network.getDefaultNodeTable(), Double.class, TM_SCORE);
+
+		JSONObject nodeDict = (JSONObject)tmResults.get(0);
+		Boolean limited = (Boolean)tmResults.get(1);
+
+		List<CyNode> nodes = new ArrayList<>();
+
+		for (Object stringid: nodeDict.keySet()) {
+			JSONObject data = (JSONObject)nodeDict.get(stringid);
+			String name = data.get("name").toString();
+			int fg = ((Long)data.get("foreground")).intValue();
+			int bg = ((Long)data.get("background")).intValue();
+			Double score = (Double)data.get("score");
+			CyNode newNode = network.addNode();
+			CyRow row = network.getRow(newNode);
+			row.set(ID, "stringdb:"+species.getTaxId()+"."+stringid.toString());
+			row.set(CyNetwork.NAME, name);
+			row.set(SPECIES, species.getName());
+			row.set(STRINGID, species.getTaxId()+"."+stringid.toString());
+			row.set(STYLE, "string:");
+			row.set(TM_FOREGROUND, fg);
+			row.set(TM_BACKGROUND, bg);
+			row.set(TM_SCORE, score);
+			nodes.add(newNode);
+		}
+		return nodes;
 	}
 
 	private static List<CyNode> getJSON(StringManager manager, String species, CyNetwork network, 

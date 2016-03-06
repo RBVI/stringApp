@@ -57,7 +57,10 @@ public class StringCustomGraphics implements CyCustomGraphics<StringLayer> {
 	public int getWidth() { return width; }
 	public int getHeight() { return height; }
 	public List<StringLayer> getLayers(CyNetworkView networkView, View<? extends CyIdentifiable> nodeView) { 
-		return Collections.singletonList(new StringLayer(manager, bi)); 
+		if (manager.showImage())
+			return Collections.singletonList(new StringLayer(manager, bi)); 
+		else
+			return Collections.singletonList(new StringLayer(manager, null)); 
 	}
 	public String getDisplayName() { return displayName; }
 	public void setDisplayName(final String displayName) {

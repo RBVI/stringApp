@@ -28,11 +28,13 @@ public class StringManager {
 	final CyServiceRegistrar registrar;
 	final CyEventHelper cyEventHelper;
 	final Logger logger = Logger.getLogger(CyUserLog.NAME);
-	final TaskManager dialogTaskManager;
-	final SynchronousTaskManager synchronousTaskManager;
-	Map<CyNetwork, StringNetwork> stringNetworkMap;
+	final TaskManager<?,?> dialogTaskManager;
+	final SynchronousTaskManager<?> synchronousTaskManager;
+	private boolean showImage = true;
+	private Map<CyNetwork, StringNetwork> stringNetworkMap;
+
 	public static String ResolveURI = "http://string-db.org/api/";
-	public static String URI = "http://api.jensenlab.org/network";
+	public static String URI = "http://api.jensenlab.org/";
 
 	public StringManager(CyServiceRegistrar registrar) {
 		this.registrar = registrar;
@@ -112,6 +114,9 @@ public class StringManager {
 		registrar.getService(CyNetworkManager.class).addNetwork(network);
 	}
 
+	public boolean showImage() { return showImage; }
+	public void setShowImage(boolean set) { showImage = set; }
+
 	public void flushEvents() {
 		cyEventHelper.flushPayloadEvents();
 	}
@@ -140,8 +145,12 @@ public class StringManager {
 		}
 	}
 
-	public String getURL() {
-		return URI;
+	public String getNetworkURL() {
+		return URI+"network";
+	}
+
+	public String getTextMiningURL() {
+		return URI+"Textmining";
 	}
 
 	public String getResolveURL() {

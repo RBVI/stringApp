@@ -11,6 +11,8 @@ import java.util.Map;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -30,13 +32,14 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
 public class HttpUtils {
 	public static Object getJSON(String url, Map<String, String> queryMap, StringManager manager) {
+		RequestConfig globalConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.IGNORE_COOKIES).build();
 
 		// Set up our connection
-		CloseableHttpClient client = HttpClients.createDefault();
+		CloseableHttpClient client = HttpClients.custom().setDefaultRequestConfig(globalConfig).build();
 		String args = HttpUtils.getStringArguments(queryMap);
 		HttpGet request = new HttpGet(url+"?"+args);
 		// List<NameValuePair> nvps = HttpUtils.getArguments(queryMap);
-		System.out.println("URL: "+url+"?"+args);
+		// System.out.println("URL: "+url+"?"+args);
 		Object jsonObject = null;
 
 		// The underlying HTTP connection is still held by the response object
@@ -52,9 +55,13 @@ public class HttpUtils {
 			response1 = client.execute(request);
 			HttpEntity entity1 = response1.getEntity();
 			InputStream entityStream = entity1.getContent();
-			if (entity1.getContentLength() == 0 || entityStream.available() == 0)
-				return null;
+			if (entity1.getContentLength() == 0)
+			 	return null;
 			BufferedReader reader = new BufferedReader(new InputStreamReader(entityStream));
+			// String lin;
+			// while ((lin=reader.readLine()) != null) {
+			//  	System.out.println(lin);
+			// }
 			JSONParser parser = new JSONParser();
 			jsonObject = parser.parse(reader);
 
@@ -95,9 +102,9 @@ public class HttpUtils {
 			if (entity1.getContentLength() == 0)
 				return null;
 			BufferedReader reader = new BufferedReader(new InputStreamReader(entityStream));
-			String lin;
+			// String lin;
 			// while ((lin=reader.readLine()) != null) {
-			// 	System.out.println(lin);
+			//  	System.out.println(lin);
 			// }
 			JSONParser parser = new JSONParser();
 			jsonObject = parser.parse(reader);
