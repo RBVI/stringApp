@@ -208,10 +208,10 @@ public class PubMedQueryPanel extends JPanel {
 		}
 
 		{
-			limitSlider = new JSlider(0, 10000, 100);
+			limitSlider = new JSlider(0, 2000, 100);
 			Dictionary<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
 			Font valueFont = new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()-4);
-			for (int value = 0; value <= 10000; value += 2000) {
+			for (int value = 0; value <= 2000; value += 400) {
 				JLabel label = new JLabel(intFormatter.format(value));
 				label.setFont(valueFont);
 				labels.put(value, label);
@@ -375,7 +375,7 @@ public class PubMedQueryPanel extends JPanel {
 			} catch (NumberFormatException nfe) {
 				val = limitInputError();
 			}
-		} else if (n.intValue() > 10000 || n.intValue() < 0) {
+		} else if (n.intValue() > 2000 || n.intValue() < 0) {
 			val = limitInputError();
 		} else {
 			val = n.intValue();

@@ -29,6 +29,7 @@ public class ShowImagesTaskFactory extends AbstractNetworkViewTaskFactory {
 	}
 
 	public boolean isReady(CyNetworkView netView) {
+		if (netView == null) return false;
 		return ModelUtils.isStringNetwork(netView.getModel());
 	}
 

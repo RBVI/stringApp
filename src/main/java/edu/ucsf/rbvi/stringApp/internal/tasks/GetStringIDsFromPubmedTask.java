@@ -48,8 +48,8 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 		Map<String, String> args = new HashMap<>();
 		args.put("db", "pubmed");
 		args.put("retmode","json");
-		args.put("retmax","10000");
-		args.put("term","\""+query+"\"");
+		args.put("retmax","40000");
+		args.put("term",query);
 		Object object = HttpUtils.getJSON("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
 		                                  args, manager);
 		if (!(object instanceof JSONObject)) {
@@ -71,9 +71,11 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 			System.out.println("object doesn't contain count: "+json.toString());
 			return;
 		}
-		monitor.showMessage(TaskMonitor.Level.INFO,"Pubmed returned "+count+" results");
 
 		JSONArray ids = (JSONArray)json.get("idlist");
+
+		monitor.showMessage(TaskMonitor.Level.INFO,"Pubmed returned "+count+" results, of which we downloaded "+ids.size());
+
 		StringBuilder sb = new StringBuilder();
 		for (Object id: ids) {
 			sb.append(id.toString()+" ");
