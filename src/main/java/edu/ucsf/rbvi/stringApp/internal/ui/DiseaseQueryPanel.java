@@ -18,6 +18,7 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -50,6 +51,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.cytoscape.model.CyNetwork;
@@ -59,42 +61,45 @@ import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskObserver;
 
+import edu.ucsf.rbvi.stringApp.internal.model.EntityIdentifier;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
-import edu.ucsf.rbvi.stringApp.internal.model.TextMiningResult;
 
-import edu.ucsf.rbvi.stringApp.internal.tasks.AddTextMiningResultsTask;
-import edu.ucsf.rbvi.stringApp.internal.tasks.ImportNetworkTaskFactory;
-import edu.ucsf.rbvi.stringApp.internal.tasks.GetStringIDsFromPubmedTask;
-
-import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+import edu.ucsf.rbvi.stringApp.internal.tasks.GetDiseaseTermsTask;
+import edu.ucsf.rbvi.stringApp.internal.tasks.GetStringIDsFromDiseasesTask;
 
 // TODO: [Optional] Improve non-gui mode
-public class PubMedQueryPanel extends JPanel { 
+public class DiseaseQueryPanel extends JPanel { 
 	StringNetwork stringNetwork = null;
 	StringNetwork initialStringNetwork = null;
 	final StringManager manager;
 
-	JTextArea pubmedQuery;
+	JTextField searchTerms;
 	JPanel mainSearchPanel;
-	JComboBox<Species> speciesCombo;
-	JSlider limitSlider;
-	JTextField limitValue;
+	// JComboBox<Species> speciesCombo;
 	JSlider confidenceSlider;
 	JTextField confidenceValue;
+	JSlider limitSlider;
+	JTextField limitValue;
 	JButton importButton;
+	JButton backButton;
 	NumberFormat formatter = new DecimalFormat("#0.00");
 	NumberFormat intFormatter = new DecimalFormat("#0");
+
+	EntityIdentifier diseaseEntity = null;
+	List<EntityIdentifier> entityList;
+	Species species = null;
+
 	private boolean ignore = false;
 
-	public PubMedQueryPanel(final StringManager manager) {
+	public DiseaseQueryPanel(final StringManager manager) {
 		super(new GridBagLayout());
 		this.manager = manager;
 		init();
 	}
 
-	public PubMedQueryPanel(final StringManager manager, StringNetwork stringNetwork) {
+	public DiseaseQueryPanel(final StringManager manager, StringNetwork stringNetwork) {
 		super(new GridBagLayout());
 		this.manager = manager;
 		this.stringNetwork = stringNetwork;
@@ -104,7 +109,7 @@ public class PubMedQueryPanel extends JPanel {
 
 	private void init() {
 		// Create the surrounding panel
-		setPreferredSize(new Dimension(600,400));
+		setPreferredSize(new Dimension(800,400));
 		EasyGBC c = new EasyGBC();
 
 		// Create the species panel
@@ -118,8 +123,16 @@ public class PubMedQueryPanel extends JPanel {
 				return;
 			}
 		}
-		JPanel speciesBox = createSpeciesComboBox(speciesList);
-		add(speciesBox, c.expandHoriz().insets(0,5,0,5));
+
+		// Set Human as the species
+		for (Species s: speciesList) {
+			if (s.toString().equals("Homo sapiens")) {
+				species = s;
+				break;
+			}
+		}
+		// JPanel speciesBox = createSpeciesComboBox(speciesList);
+		// add(speciesBox, c.expandHoriz().insets(0,5,0,5));
 
 		// Create the search list panel
 		mainSearchPanel = createSearchPanel();
@@ -139,27 +152,47 @@ public class PubMedQueryPanel extends JPanel {
 	}
 
 	JPanel createSearchPanel() {
-		String ttText = "<html>Enter any PubMed query, but remember to quote multiple-word terms e.g.:"+
-										"<dl><dd>\"drug metabolism\"</dd>"+
-										"<dd>(\"Science\")[Journal] AND cancer[Title/Abstract]</dd>"+
-										"<dd>Ideker[Author]</dd></dl></html>";
-		JPanel queryPanel = new JPanel(new GridBagLayout());
-		queryPanel.setPreferredSize(new Dimension(600,300));
+		String ttText = "<html>Enter disease name or partial name e.g.:"+
+										"<dl><dd>cancer (matches various cancers)</dd>"+
+										"<dd>demen (matches several forms of dementia)</dd>"+
+										"<dd>als (matches various forms of amyotrophic lateral sclerosis)</dd></dl></html>";
+		JPanel searchPanel = new JPanel(new GridBagLayout());
+		searchPanel.setPreferredSize(new Dimension(600,300));
 		EasyGBC c = new EasyGBC();
 
-		JLabel queryLabel = new JLabel("Pubmed Query:");
-		queryLabel.setToolTipText(ttText);
-
+		JLabel searchLabel = new JLabel("Enter disease term:");
+		searchLabel.setToolTipText(ttText);
 		c.noExpand().anchor("northwest").insets(0,5,0,5);
-		queryPanel.add(queryLabel, c);
-		pubmedQuery = new JTextArea();
-		pubmedQuery.setToolTipText(ttText);
-		JScrollPane jsp = new JScrollPane(pubmedQuery);
+		searchPanel.add(searchLabel, c);
+		searchTerms = new JTextField();
+		searchTerms.setToolTipText(ttText);
+		c.down().expandHoriz().insets(5,10,5,10);
+		searchPanel.add(searchTerms, c);
+		JLabel filler = new JLabel();
 		c.down().expandBoth().insets(5,10,5,10);
-		queryPanel.add(jsp, c);
-		return queryPanel;
+		searchPanel.add(filler, c);
+		return searchPanel;
 	}
 
+	void replaceSearchPanel() {
+		mainSearchPanel.removeAll();
+		mainSearchPanel.revalidate();
+		mainSearchPanel.repaint();
+		mainSearchPanel.setLayout(new GridBagLayout());
+		EasyGBC c = new EasyGBC();
+
+		JLabel searchLabel = new JLabel("Enter disease term:");
+		c.noExpand().anchor("northwest").insets(0,5,0,5);
+		mainSearchPanel.add(searchLabel, c);
+		searchTerms = new JTextField();
+		JScrollPane jsp = new JScrollPane(searchTerms);
+		c.down().expandBoth().insets(5,10,5,10);
+		mainSearchPanel.add(jsp, c);
+		mainSearchPanel.revalidate();
+		mainSearchPanel.repaint();
+	}
+
+	/*
 	JPanel createSpeciesComboBox(List<Species> speciesList) {
 		JPanel speciesPanel = new JPanel(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
@@ -179,6 +212,7 @@ public class PubMedQueryPanel extends JPanel {
 		speciesPanel.add(speciesCombo, c);
 		return speciesPanel;
 	}
+	*/
 
 	JPanel createControlButtons() {
 		JPanel buttonPanel = new JPanel();
@@ -191,11 +225,27 @@ public class PubMedQueryPanel extends JPanel {
         }
       });
 
+		backButton = new JButton(new AbstractAction("Back") {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+					stringNetwork.reset();
+					replaceSearchPanel();
+					importButton.setEnabled(true);
+					backButton.setEnabled(false);
+					importButton.setAction(new InitialAction());
+					getParent().revalidate();
+        }
+			});
+		backButton.setEnabled(false);
+
 		importButton = new JButton(new InitialAction());
 
 		buttonPanel.add(Box.createRigidArea(new Dimension(10,0)));
 		buttonPanel.add(cancelButton);
 		buttonPanel.add(Box.createHorizontalGlue());
+		// buttonPanel.add(Box.createRigidArea(new Dimension(10,0)));
+		buttonPanel.add(backButton);
+		buttonPanel.add(Box.createRigidArea(new Dimension(10,0)));
 		buttonPanel.add(importButton);
 		return buttonPanel;
 	}
@@ -265,7 +315,7 @@ public class PubMedQueryPanel extends JPanel {
 		}
 		return limitPanel;
 	}
-	
+
 	JPanel createConfidenceSlider() {
 		JPanel confidencePanel = new JPanel(new GridBagLayout());
 		confidencePanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
@@ -334,6 +384,7 @@ public class PubMedQueryPanel extends JPanel {
 		return confidencePanel;
 	}
 
+	
 	private void confidenceValueChanged() {
 		if (ignore) return;
 		ignore = true;
@@ -405,16 +456,69 @@ public class PubMedQueryPanel extends JPanel {
 		return val;
 	}
 
+	void importNetwork(EntityIdentifier entity) {
+		if (stringNetwork == null)
+			stringNetwork = new StringNetwork(manager);
+		int confidence = confidenceSlider.getValue();
+		int limit = limitSlider.getValue();
+		manager.execute(new TaskIterator(new GetStringIDsFromDiseasesTask(stringNetwork, species, limit,
+		                                                                  confidence, entity.getIdentifier())));
+		cancel();
+	}
+
+	void createResolutionPanel() {
+		mainSearchPanel.removeAll();
+		revalidate();
+		mainSearchPanel.setLayout(new GridBagLayout());
+		EasyGBC c = new EasyGBC();
+
+		{
+			String label = "<html><b>Multiple possible matches for some terms:</b> ";
+			label += "Select the best matching term from the table";
+			label += "</html>";
+
+			JLabel lbl = new JLabel(label);
+			c.anchor("northeast").expandHoriz();
+			mainSearchPanel.add(lbl, c);
+		}
+
+		ResolveDiseaseTermsTableModel tableModel;
+		{
+			JPanel annPanel = new JPanel(new GridBagLayout());
+			EasyGBC ac = new EasyGBC();
+
+			tableModel = new ResolveDiseaseTermsTableModel(entityList);
+			final JTable table = new JTable(tableModel);
+			
+			table.setRowSelectionAllowed(false);
+
+			JScrollPane tableScroller = new JScrollPane(table);
+			ac.right().expandBoth().insets(0,5,0,5);
+			annPanel.add(tableScroller, ac);
+
+			c.down().expandBoth().insets(5,0,5,0);
+			mainSearchPanel.add(annPanel, c);
+		}
+
+		importButton.setAction(new ResolvedAction(tableModel));
+		backButton.setEnabled(true);
+
+		revalidate();
+		importButton.setEnabled(true);
+	}
+
 	public void cancel() {
 		stringNetwork = initialStringNetwork;
 		if (stringNetwork != null) stringNetwork.reset();
+		replaceSearchPanel();
 		importButton.setEnabled(true);
+		backButton.setEnabled(false);
 		importButton.setAction(new InitialAction());
 		((Window)getRootPane().getParent()).dispose();
 	}
 
 
-	class InitialAction extends AbstractAction {
+	class InitialAction extends AbstractAction implements TaskObserver {
 		public InitialAction() {
 			super("Import");
 		}
@@ -422,28 +526,162 @@ public class PubMedQueryPanel extends JPanel {
     @Override
     public void actionPerformed(ActionEvent e) {
 			// Start our task cascade
-			Species species = (Species)speciesCombo.getSelectedItem();
 			if (stringNetwork == null)
 				stringNetwork = new StringNetwork(manager);
 
 			int taxon = species.getTaxId();
-			String query = pubmedQuery.getText();
-			if (query == null || query.length() == 0) {
-				JOptionPane.showMessageDialog(null, "No query was entered -- nothing to do",
+			String terms = searchTerms.getText();
+			if (terms == null || terms.length() == 0) {
+				JOptionPane.showMessageDialog(null, "No terms were entered -- nothing to search for",
 							                        "Nothing entered", JOptionPane.ERROR_MESSAGE); 
 				return;
 			}
-
-			int confidence = confidenceSlider.getValue();
-
-			manager.info("Getting pubmed IDs for "+species.getName()+"query: "+query);
+			manager.info("Getting diesease identifiers for "+species.getName()+"terms: "+terms);
 
 			// Launch a task to get the annotations. 
-			manager.execute(new TaskIterator(new GetStringIDsFromPubmedTask(stringNetwork, species, 
-		                                                                  limitSlider.getValue(), confidence, query)));
-			cancel();
+			manager.execute(new TaskIterator(new GetDiseaseTermsTask(manager, taxon, terms)), this);
 		}
 
+		@Override
+		public void allFinished(FinishStatus finishStatus) {
+		}
+
+		@Override
+		public void taskFinished(ObservableTask task) {
+			if (!(task instanceof GetDiseaseTermsTask)) {
+				return;
+			}
+			GetDiseaseTermsTask annTask = (GetDiseaseTermsTask)task;
+
+			entityList = annTask.getMatchedTerms(); 
+
+			final int taxon = annTask.getTaxon();
+			if (entityList == null || entityList.size() == 0) {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						JOptionPane.showMessageDialog(null, "Your query returned no results",
+									                        "No results", JOptionPane.ERROR_MESSAGE); 
+					}
+				});
+				return;
+			}
+			if (entityList.size() == 1) {
+				diseaseEntity = entityList.get(0);
+
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						importNetwork(diseaseEntity);
+					}
+				});
+			} else {
+				createResolutionPanel();
+			}
+		}
+	}
+
+	class ResolvedAction extends AbstractAction {
+		final ResolveDiseaseTermsTableModel model;
+		public ResolvedAction(final ResolveDiseaseTermsTableModel model) {
+			super("Import");
+			this.model = model;
+		}
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+			int taxon = species.getTaxId();
+
+			diseaseEntity = model.getSelectedEntity();
+
+			importNetwork(diseaseEntity);
+
+		}
+	}
+
+	class ResolveDiseaseTermsTableModel extends AbstractTableModel {
+		final List<EntityIdentifier> entityList;
+		final Boolean[] selected;
+		String[] columns = {"Select", "Matched name", "Primary name", "Type", "Identifier"};
+		public ResolveDiseaseTermsTableModel(final List<EntityIdentifier> entityList) {
+			this.entityList = entityList;
+			selected = new Boolean[entityList.size()];
+			selected[0] = Boolean.TRUE;
+			for (int i = 1; i < entityList.size(); i++)
+				selected[i] = Boolean.FALSE;
+		}
+
+		public EntityIdentifier getSelectedEntity() {
+			for (int i = 0; i < entityList.size(); i++) {
+				if (selected[i])
+					return entityList.get(i);
+			}
+			return null;
+		}
+
+		@Override
+		public int getColumnCount() { return 5; }
+
+		@Override
+		public String getColumnName(int column) { return columns[column]; }
+
+		@Override
+		public int getRowCount() { return entityList.size(); }
+
+		@Override
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			EntityIdentifier eid = entityList.get(rowIndex);
+			switch (columnIndex) {
+			case 0:
+				return selected[rowIndex];
+			case 1:
+				return eid.getMatchedName();
+			case 2:
+				return eid.getPrimaryName();
+			case 3:
+				return "Disease";
+			case 4:
+				return eid.getIdentifier();
+			}
+			return null;
+		}
+
+		@Override
+		public Class<?> getColumnClass(int columnIndex) {
+			switch (columnIndex) {
+			case 0:
+				return Boolean.class;
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+				return String.class;
+			}
+			return String.class;
+		}
+
+		@Override
+		public boolean isCellEditable(int rowIndex, int columnIndex) {
+			if (columnIndex == 0) 
+				return true;
+			return false;
+		}
+
+		@Override
+		public void setValueAt(Object value, int rowIndex, int columnIndex) {
+			if (columnIndex != 0) {
+				return;
+			}
+			Boolean bool = (Boolean) value;
+			if (bool.equals(Boolean.FALSE)) {
+				selected[rowIndex] = bool;
+				return;
+			}
+
+			for (int i = 0; i < getRowCount(); i++) 
+				if (i != rowIndex)
+					setValueAt(Boolean.FALSE, i, 0);
+			selected[rowIndex] = Boolean.TRUE;
+			fireTableDataChanged();
+		}
 	}
 
 }

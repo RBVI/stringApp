@@ -47,6 +47,7 @@ public class LoadInteractions extends AbstractTask {
 	}
 
 	public void run(TaskMonitor monitor) {
+		monitor.setTitle("Loading interactions from string-db");
 		StringManager manager = stringNet.getManager();
 		String ids = null;
 		for (String id: stringIds) {

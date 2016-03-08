@@ -37,9 +37,9 @@ public class HttpUtils {
 		// Set up our connection
 		CloseableHttpClient client = HttpClients.custom().setDefaultRequestConfig(globalConfig).build();
 		String args = HttpUtils.getStringArguments(queryMap);
+		System.out.println("URL: "+url+"?"+args);
 		HttpGet request = new HttpGet(url+"?"+args);
 		// List<NameValuePair> nvps = HttpUtils.getArguments(queryMap);
-		// System.out.println("URL: "+url+"?"+args);
 		Object jsonObject = null;
 
 		// The underlying HTTP connection is still held by the response object
@@ -75,6 +75,17 @@ public class HttpUtils {
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
+		}
+		return jsonObject;
+	}
+
+	public static Object testJSON(String url, Map<String, String> queryMap, StringManager manager, String json) {
+		Object jsonObject = null;
+		try {
+			JSONParser parser = new JSONParser();
+			jsonObject = parser.parse(json);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return jsonObject;
 	}

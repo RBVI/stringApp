@@ -29,6 +29,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.AddTermsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeConfidenceTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.FindProteinsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.ui.DiseaseNetworkWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.ui.StringWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.ui.TextMiningWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.view.StringCustomGraphicsFactory;
@@ -62,8 +63,14 @@ public class CyActivator extends AbstractCyActivator {
 		}
 		
 		{
-			// Register our web service client
+			// Register our text mining web service client
 			TextMiningWebServiceClient client = new TextMiningWebServiceClient(manager);
+			registerAllServices(bc, client, new Properties());
+		}
+		
+		{
+			// Register our disease network web service client
+			DiseaseNetworkWebServiceClient client = new DiseaseNetworkWebServiceClient(manager);
 			registerAllServices(bc, client, new Properties());
 		}
 

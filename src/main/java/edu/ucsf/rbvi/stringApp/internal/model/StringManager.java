@@ -153,6 +153,14 @@ public class StringManager {
 		return URI+"Textmining";
 	}
 
+	public String getEntityQueryURL() {
+		return URI+"EntityQuery";
+	}
+
+	public String getIntegrationURL() {
+		return URI+"Integration";
+	}
+
 	public String getResolveURL() {
 		return ResolveURI;
 	}

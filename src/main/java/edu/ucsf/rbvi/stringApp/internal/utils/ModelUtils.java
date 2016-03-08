@@ -21,6 +21,7 @@ import org.cytoscape.view.model.View;
 
 import org.apache.commons.codec.binary.Base64;
 
+import edu.ucsf.rbvi.stringApp.internal.model.EntityIdentifier;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
@@ -49,6 +50,25 @@ public class ModelUtils {
 	// Network information
 	public static String CONFIDENCE = "Confidence Score";
 
+	public static List<EntityIdentifier> getEntityIdsFromJSON(StringManager manager, Object object) {
+		if (!(object instanceof JSONArray))
+			return null;
+
+		JSONArray tmResults = (JSONArray)object;
+		JSONObject entityDict = (JSONObject)tmResults.get(0);
+		Boolean limited = (Boolean)tmResults.get(1);
+		List<EntityIdentifier> results = new ArrayList<>();
+
+		for (Object entityId: entityDict.keySet()) {
+			JSONObject data = (JSONObject)entityDict.get(entityId);
+			String matched = data.get("matched").toString();
+			String primary = data.get("primary").toString();
+			EntityIdentifier ei = new EntityIdentifier(matched, primary, -26, entityId.toString());
+			results.add(ei);
+		}
+		return results;
+	}
+
 	public static List<TextMiningResult> getIdsFromJSON(StringManager manager, int taxon, Object object, String query) {
 		if (!(object instanceof JSONArray))
 			return null;
@@ -60,10 +80,14 @@ public class ModelUtils {
 		List<TextMiningResult> results = new ArrayList<>();
 
 		for (Object stringid: nodeDict.keySet()) {
+			int fg = -1;
+			int bg = -1;
 			JSONObject data = (JSONObject)nodeDict.get(stringid);
 			String name = data.get("name").toString();
-			int fg = ((Long)data.get("foreground")).intValue();
-			int bg = ((Long)data.get("background")).intValue();
+			if (data.containsKey("foreground"))
+				fg = ((Long)data.get("foreground")).intValue();
+			if (data.containsKey("background"))
+				bg = ((Long)data.get("background")).intValue();
 			Double score = (Double)data.get("score");
 			TextMiningResult tm = new TextMiningResult(taxon+"."+(String)stringid, name, fg, bg, score);
 			results.add(tm);
@@ -73,24 +97,32 @@ public class ModelUtils {
 	}
 
 	public static void addTextMiningResults (StringManager manager, List<TextMiningResult> tmResults, CyNetwork network) {
-		// Create our columns
-		createColumnIfNeeded(network.getDefaultNodeTable(), Integer.class, TM_FOREGROUND);
-		createColumnIfNeeded(network.getDefaultNodeTable(), Integer.class, TM_BACKGROUND);
-		createColumnIfNeeded(network.getDefaultNodeTable(), Double.class, TM_SCORE);
+		boolean haveFBValues = false;
 
 		// Create a map of our results
 		Map<String, TextMiningResult> resultsMap = new HashMap<>();
 		for (TextMiningResult tm: tmResults) {
 			resultsMap.put(tm.getID(), tm);
+			if (tm.getForeground() > 0 || tm.getBackground() > 0)
+				haveFBValues = true;
 		}
+
+		// Create our columns
+		if (haveFBValues) {
+			createColumnIfNeeded(network.getDefaultNodeTable(), Integer.class, TM_FOREGROUND);
+			createColumnIfNeeded(network.getDefaultNodeTable(), Integer.class, TM_BACKGROUND);
+		}
+		createColumnIfNeeded(network.getDefaultNodeTable(), Double.class, TM_SCORE);
 
 		for (CyNode node: network.getNodeList()) {
 			CyRow row = network.getRow(node);
 			String id = row.get(STRINGID, String.class);
 			if (resultsMap.containsKey(id)) {
 				TextMiningResult result = resultsMap.get(id);
-				row.set(TM_FOREGROUND, result.getForeground());
-				row.set(TM_BACKGROUND, result.getBackground());
+				if (result.getForeground() > 0)
+					row.set(TM_FOREGROUND, result.getForeground());
+				if (result.getBackground() > 0)
+					row.set(TM_BACKGROUND, result.getBackground());
 				row.set(TM_SCORE, result.getScore());
 			}
 		}
