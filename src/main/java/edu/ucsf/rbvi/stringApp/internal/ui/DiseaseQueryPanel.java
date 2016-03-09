@@ -36,6 +36,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTable;
@@ -152,12 +153,17 @@ public class DiseaseQueryPanel extends JPanel {
 	}
 
 	JPanel createSearchPanel() {
-		String ttText = "<html>Enter disease name or partial name e.g.:"+
-										"<dl><dd>cancer (matches various cancers)</dd>"+
-										"<dd>demen (matches several forms of dementia)</dd>"+
-										"<dd>als (matches various forms of amyotrophic lateral sclerosis)</dd></dl></html>";
 		JPanel searchPanel = new JPanel(new GridBagLayout());
 		searchPanel.setPreferredSize(new Dimension(600,300));
+		fillSearchPanel(searchPanel);
+		return searchPanel;
+	}
+
+	void fillSearchPanel(JPanel searchPanel) {
+		String ttText = "<html>Enter disease name or partial name e.g.:"+
+		                "<dl><dd>cancer (matches various cancers)</dd>"+
+		                "<dd>demen (matches several forms of dementia)</dd>"+
+		                "<dd>als (matches various forms of amyotrophic lateral sclerosis)</dd></dl></html>";
 		EasyGBC c = new EasyGBC();
 
 		JLabel searchLabel = new JLabel("Enter disease term:");
@@ -166,12 +172,12 @@ public class DiseaseQueryPanel extends JPanel {
 		searchPanel.add(searchLabel, c);
 		searchTerms = new JTextField();
 		searchTerms.setToolTipText(ttText);
+		searchTerms.addActionListener(new InitialAction());
 		c.down().expandHoriz().insets(5,10,5,10);
 		searchPanel.add(searchTerms, c);
 		JLabel filler = new JLabel();
 		c.down().expandBoth().insets(5,10,5,10);
 		searchPanel.add(filler, c);
-		return searchPanel;
 	}
 
 	void replaceSearchPanel() {
@@ -179,40 +185,10 @@ public class DiseaseQueryPanel extends JPanel {
 		mainSearchPanel.revalidate();
 		mainSearchPanel.repaint();
 		mainSearchPanel.setLayout(new GridBagLayout());
-		EasyGBC c = new EasyGBC();
-
-		JLabel searchLabel = new JLabel("Enter disease term:");
-		c.noExpand().anchor("northwest").insets(0,5,0,5);
-		mainSearchPanel.add(searchLabel, c);
-		searchTerms = new JTextField();
-		JScrollPane jsp = new JScrollPane(searchTerms);
-		c.down().expandBoth().insets(5,10,5,10);
-		mainSearchPanel.add(jsp, c);
+		fillSearchPanel(mainSearchPanel);
 		mainSearchPanel.revalidate();
 		mainSearchPanel.repaint();
 	}
-
-	/*
-	JPanel createSpeciesComboBox(List<Species> speciesList) {
-		JPanel speciesPanel = new JPanel(new GridBagLayout());
-		EasyGBC c = new EasyGBC();
-		JLabel speciesLabel = new JLabel("Species:");
-		c.noExpand().insets(0,5,0,5);
-		speciesPanel.add(speciesLabel, c);
-		speciesCombo = new JComboBox<Species>(speciesList.toArray(new Species[0]));
-
-		// Set Human as the default
-		for (Species s: speciesList) {
-			if (s.toString().equals("Homo sapiens")) {
-				speciesCombo.setSelectedItem(s);
-				break;
-			}
-		}
-		c.right().expandHoriz().insets(0,5,0,5);
-		speciesPanel.add(speciesCombo, c);
-		return speciesPanel;
-	}
-	*/
 
 	JPanel createControlButtons() {
 		JPanel buttonPanel = new JPanel();
@@ -473,8 +449,8 @@ public class DiseaseQueryPanel extends JPanel {
 		EasyGBC c = new EasyGBC();
 
 		{
-			String label = "<html><b>Multiple possible matches for some terms:</b> ";
-			label += "Select the best matching term from the table";
+			String label = "<html><b>Multiple possible matches for term:</b> ";
+			label += "Select the best matching disease from the table";
 			label += "</html>";
 
 			JLabel lbl = new JLabel(label);
@@ -565,6 +541,8 @@ public class DiseaseQueryPanel extends JPanel {
 				});
 				return;
 			}
+			// Always create the resolution panel
+			/*
 			if (entityList.size() == 1) {
 				diseaseEntity = entityList.get(0);
 
@@ -574,8 +552,9 @@ public class DiseaseQueryPanel extends JPanel {
 					}
 				});
 			} else {
+			*/
 				createResolutionPanel();
-			}
+			//}
 		}
 	}
 
