@@ -55,15 +55,17 @@ public class ModelUtils {
 			return null;
 
 		JSONArray tmResults = (JSONArray)object;
-		JSONObject entityDict = (JSONObject)tmResults.get(0);
+		JSONArray entityArray = (JSONArray)tmResults.get(0);
 		Boolean limited = (Boolean)tmResults.get(1);
 		List<EntityIdentifier> results = new ArrayList<>();
 
-		for (Object entityId: entityDict.keySet()) {
-			JSONObject data = (JSONObject)entityDict.get(entityId);
+		for (Object entityDict: entityArray) {
+			JSONObject data = (JSONObject)entityDict;
 			String matched = data.get("matched").toString();
 			String primary = data.get("primary").toString();
-			EntityIdentifier ei = new EntityIdentifier(matched, primary, -26, entityId.toString());
+			String id = data.get("id").toString();
+			Long type = (Long)data.get("type");
+			EntityIdentifier ei = new EntityIdentifier(matched, primary, type, id);
 			results.add(ei);
 		}
 		return results;
