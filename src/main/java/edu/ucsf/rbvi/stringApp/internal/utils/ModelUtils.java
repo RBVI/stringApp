@@ -43,6 +43,9 @@ public class ModelUtils {
 	public static String TM_FOREGROUND = "TextMining Foreground";
 	public static String TM_BACKGROUND = "TextMining Background";
 	public static String TM_SCORE = "TextMining Score";
+	public static String TM_LINKOUT = "TextMining Linkout";
+
+	public static String DISEASEINFO = "http://diseases.jensenlab.org/Entity?documents=50&type1=9606&type2=-26&";
 
 	// Edge information
 	public static String SCORE = "score";
@@ -91,7 +94,8 @@ public class ModelUtils {
 			if (data.containsKey("background"))
 				bg = ((Long)data.get("background")).intValue();
 			Double score = (Double)data.get("score");
-			TextMiningResult tm = new TextMiningResult(taxon+"."+(String)stringid, name, fg, bg, score);
+			String url = DISEASEINFO+"id1="+(String)stringid+"&id2="+query;
+			TextMiningResult tm = new TextMiningResult(taxon+"."+(String)stringid, name, fg, bg, score, url);
 			results.add(tm);
 		}
 		return results;
@@ -100,6 +104,7 @@ public class ModelUtils {
 
 	public static void addTextMiningResults (StringManager manager, List<TextMiningResult> tmResults, CyNetwork network) {
 		boolean haveFBValues = false;
+		boolean haveLinkout = false;
 
 		// Create a map of our results
 		Map<String, TextMiningResult> resultsMap = new HashMap<>();
@@ -107,12 +112,17 @@ public class ModelUtils {
 			resultsMap.put(tm.getID(), tm);
 			if (tm.getForeground() > 0 || tm.getBackground() > 0)
 				haveFBValues = true;
+			if (tm.getLinkout() != null)
+				haveLinkout = true;
 		}
 
 		// Create our columns
 		if (haveFBValues) {
 			createColumnIfNeeded(network.getDefaultNodeTable(), Integer.class, TM_FOREGROUND);
 			createColumnIfNeeded(network.getDefaultNodeTable(), Integer.class, TM_BACKGROUND);
+		}
+		if (haveLinkout) {
+			createColumnIfNeeded(network.getDefaultNodeTable(), String.class, TM_LINKOUT);
 		}
 		createColumnIfNeeded(network.getDefaultNodeTable(), Double.class, TM_SCORE);
 
@@ -125,6 +135,8 @@ public class ModelUtils {
 					row.set(TM_FOREGROUND, result.getForeground());
 				if (result.getBackground() > 0)
 					row.set(TM_BACKGROUND, result.getBackground());
+				if (result.getLinkout() != null)
+					row.set(TM_LINKOUT, result.getLinkout());
 				row.set(TM_SCORE, result.getScore());
 			}
 		}

@@ -36,7 +36,6 @@ public class GetDiseaseTermsTask extends AbstractTask implements ObservableTask 
 		args.put("types", "-26");
 		args.put("format", "json");
 		args.put("query", term);
-		// String response = "[{\"-26.DOID:1307\":{\"matched\":\"dementia\",\"primary\":\"dementia\"},\"-26.DOID:11870\":{\"matched\":\"Dementia in Pick's disease \",\"primary\":\"Pick's disease\"},\"-26.DOID:12217\":{\"matched\":\"Dementia with Lewy bodies\",\"primary\":\"Lewy body dementia\"}},false]";
 		// String response = "[[{"type":-26,"id":"DOID:1307","matched":"dementia","primary":"dementia"},{"type":-26,"id":"DOID:11870","matched":"Dementia in Pick's disease ","primary":"Pick's disease"},{"type":-26,"id":"DOID:12217","matched":"Dementia with Lewy bodies","primary":"Lewy body dementia"}],false]"
 		//
 		// Get the results

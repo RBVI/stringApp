@@ -28,6 +28,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.AddNodesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.AddTermsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeConfidenceTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.FindProteinsTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.OpenEvidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.ui.DiseaseNetworkWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.ui.StringWebServiceClient;
@@ -117,6 +118,16 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(MENU_GRAVITY, "3.0");
 			props.setProperty(IN_MENU_BAR, "true");
 			registerService(bc, addTerms, NetworkTaskFactory.class, props);
+		}
+		
+		{
+			OpenEvidenceTaskFactory openEvidence = new OpenEvidenceTaskFactory(manager);
+			Properties props = new Properties();
+			props.setProperty(PREFERRED_MENU, "Apps.String");
+			props.setProperty(TITLE, "Show evidence for association (if available)");
+			props.setProperty(MENU_GRAVITY, "2.0");
+			props.setProperty(IN_MENU_BAR, "true");
+			registerService(bc, openEvidence, NodeViewTaskFactory.class, props);
 		}
 
 		/*
