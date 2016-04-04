@@ -45,7 +45,11 @@ public class ModelUtils {
 	public static String TM_SCORE = "TextMining Score";
 	public static String TM_LINKOUT = "TextMining Linkout";
 
-	public static String DISEASEINFO = "http://diseases.jensenlab.org/Entity?documents=50&type1=9606&type2=-26&";
+	public static int NDOCUMENTS = 50;
+	public static int NEXPERIMENTS = 50;
+	public static int NKNOWLEDGE = 50;
+
+	public static String DISEASEINFO = "http://diseases.jensenlab.org/Entity?type1=9606&type2=-26";
 
 	// Edge information
 	public static String SCORE = "score";
@@ -94,7 +98,7 @@ public class ModelUtils {
 			if (data.containsKey("background"))
 				bg = ((Long)data.get("background")).intValue();
 			Double score = (Double)data.get("score");
-			String url = DISEASEINFO+"id1="+(String)stringid+"&id2="+query;
+			String url = getDiseaseURL((String)stringid, query);
 			TextMiningResult tm = new TextMiningResult(taxon+"."+(String)stringid, name, fg, bg, score, url);
 			results.add(tm);
 		}
@@ -454,5 +458,13 @@ public class ModelUtils {
 		if (table.getColumn(columnName) != null) return;
 
 		table.createListColumn(columnName, clazz, false);
+	}
+
+	private static String getDiseaseURL(String id, String query) {
+		String url = DISEASEINFO+"&documents="+NDOCUMENTS+
+		                         "&experiments="+NEXPERIMENTS+
+											       "&knowledge="+NKNOWLEDGE+
+														 "&id1="+id+"&id2="+query;
+		return url;
 	}
 }
