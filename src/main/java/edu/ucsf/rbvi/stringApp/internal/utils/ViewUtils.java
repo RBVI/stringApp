@@ -104,7 +104,7 @@ public class ViewUtils {
 		stringStyle.setDefaultValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.WHITE);
 
 		// And set the edge color to blue
-		stringStyle.setDefaultValue(BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT, Color.BLUE);
+		stringStyle.setDefaultValue(BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT, new Color(31,41,61));
 
 		// And set the label color to black
 		stringStyle.setDefaultValue(BasicVisualLexicon.NODE_LABEL_COLOR, Color.BLACK);
@@ -137,8 +137,8 @@ public class ViewUtils {
 			ContinuousMapping<Double,Double> cMapping = 
 				(ContinuousMapping) continuousFactory.createVisualMappingFunction("score", Double.class, 
 											                                                  BasicVisualLexicon.EDGE_WIDTH);
-			cMapping.addPoint(0.4, new BoundaryRangeValues<Double>(0.2,1.0,1.0));
-			cMapping.addPoint(0.8, new BoundaryRangeValues<Double>(1.0,1.0,1.0));
+			cMapping.addPoint(0.2, new BoundaryRangeValues<Double>(0.8,0.8,0.8));
+			cMapping.addPoint(0.5, new BoundaryRangeValues<Double>(2.0,2.0,2.0));
 			cMapping.addPoint(1.0, new BoundaryRangeValues<Double>(4.0,4.0,4.0));
 			stringStyle.addVisualMappingFunction(cMapping);
 		}
@@ -147,10 +147,9 @@ public class ViewUtils {
 			ContinuousMapping<Double,Integer> cMapping = 
 				(ContinuousMapping) continuousFactory.createVisualMappingFunction("score", Double.class, 
 											   	                                               BasicVisualLexicon.EDGE_TRANSPARENCY);
-			cMapping.addPoint(0.0, new BoundaryRangeValues<Integer>(10,10,10));
-			cMapping.addPoint(0.4, new BoundaryRangeValues<Integer>(50,50,50));
-			cMapping.addPoint(0.8, new BoundaryRangeValues<Integer>(192,192,192));
-			cMapping.addPoint(1.0, new BoundaryRangeValues<Integer>(225,225,225));
+			cMapping.addPoint(0.2, new BoundaryRangeValues<Integer>(34,34,34));
+			cMapping.addPoint(0.5, new BoundaryRangeValues<Integer>(85,85,85));
+			cMapping.addPoint(1.0, new BoundaryRangeValues<Integer>(170,170,170));
 			stringStyle.addVisualMappingFunction(cMapping);
 		}
 
