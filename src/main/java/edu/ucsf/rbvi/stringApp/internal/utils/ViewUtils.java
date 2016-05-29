@@ -3,6 +3,7 @@ package edu.ucsf.rbvi.stringApp.internal.utils;
 import java.awt.Color;
 import java.util.List;
 
+import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
@@ -40,6 +41,7 @@ public class ViewUtils {
 		vmm.setVisualStyle(stringStyle, netView);
 		vmm.setCurrentVisualStyle(stringStyle);
 		manager.getService(CyNetworkViewManager.class).addNetworkView(netView);
+		manager.getService(CyApplicationManager.class).setCurrentNetworkView(netView);
 		
 		return netView;
 	}

@@ -12,6 +12,7 @@ import org.json.simple.JSONObject;
 
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyEdge;
+import org.cytoscape.model.CyIdentifiable;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyRow;
@@ -458,6 +459,16 @@ public class ModelUtils {
 		if (table.getColumn(columnName) != null) return;
 
 		table.createListColumn(columnName, clazz, false);
+	}
+
+	public static String getName(CyNetwork network, CyIdentifiable ident) {
+		return getString(network, ident, CyNetwork.NAME);
+	}
+
+	public static String getString(CyNetwork network, CyIdentifiable ident, String column) {
+		if (network.getRow(ident) != null) 
+			return network.getRow(ident).get(column, String.class);
+		return null;
 	}
 
 	private static String getDiseaseURL(String id, String query) {

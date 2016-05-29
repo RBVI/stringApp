@@ -29,6 +29,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.AddTermsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeConfidenceTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.FindProteinsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.OpenEvidenceTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.ui.DiseaseNetworkWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.ui.StringWebServiceClient;
@@ -120,6 +121,29 @@ public class CyActivator extends AbstractCyActivator {
 			registerService(bc, addTerms, NetworkTaskFactory.class, props);
 		}
 		
+		if (haveGUI) {
+			ShowResultsPanelTaskFactory showResults = new ShowResultsPanelTaskFactory(manager);
+			showResults.reregister();
+			/*
+			Properties props = new Properties();
+			props.setProperty(PREFERRED_MENU, "Apps.String");
+			props.setProperty(TITLE, "Show results panel");
+			props.setProperty(MENU_GRAVITY, "4.0");
+			props.setProperty(IN_MENU_BAR, "true");
+			registerService(bc, showResults, TaskFactory.class, props);
+			*/
+
+			/*
+			ShowResultsPanelTaskFactory hideResults = new ShowResultsPanelTaskFactory(manager, false);
+			Properties hideProps = new Properties();
+			hideProps.setProperty(PREFERRED_MENU, "Apps.String");
+			hideProps.setProperty(TITLE, "Show results panel");
+			hideProps.setProperty(MENU_GRAVITY, "4.0");
+			hideProps.setProperty(IN_MENU_BAR, "true");
+			registerService(bc, hideResults, TaskFactory.class, hideProps);
+			*/
+		}
+		
 		{
 			OpenEvidenceTaskFactory openEvidence = new OpenEvidenceTaskFactory(manager);
 			Properties props = new Properties();
@@ -129,7 +153,7 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(IN_MENU_BAR, "true");
 			registerService(bc, openEvidence, NodeViewTaskFactory.class, props);
 		}
-
+		
 		/*
 		{
 			FindProteinsTaskFactory findProteins = new FindProteinsTaskFactory(manager);

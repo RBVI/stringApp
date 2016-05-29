@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.CyUserLog;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetwork;
@@ -107,11 +108,17 @@ public class StringManager {
 	}
 
 	public CyNetworkView createNetworkView(CyNetwork network) {
-		return registrar.getService(CyNetworkViewFactory.class).createNetworkView(network);
+		CyNetworkView view = registrar.getService(CyNetworkViewFactory.class).createNetworkView(network);
+		return view;
 	}
 
 	public void addNetwork(CyNetwork network) {
 		registrar.getService(CyNetworkManager.class).addNetwork(network);
+		registrar.getService(CyApplicationManager.class).setCurrentNetwork(network);
+	}
+	
+	public CyNetwork getCurrentNetwork() {
+		return registrar.getService(CyApplicationManager.class).getCurrentNetwork();
 	}
 
 	public boolean showImage() { return showImage; }
