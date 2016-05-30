@@ -80,21 +80,21 @@ public class CyActivator extends AbstractCyActivator {
 			// Register our "Add Nodes" factory
 			AddNodesTaskFactory addNodes = new AddNodesTaskFactory(manager);
 			Properties props = new Properties();
-			props.setProperty(PREFERRED_MENU, "Apps.String");
+			props.setProperty(PREFERRED_MENU, "Apps.STRING");
 			props.setProperty(TITLE, "Expand network");
 			props.setProperty(MENU_GRAVITY, "1.0");
 			props.setProperty(IN_MENU_BAR, "true");
 			registerService(bc, addNodes, NetworkTaskFactory.class, props);
 
 			Properties props2 = new Properties();
-			props2.setProperty(PREFERRED_MENU, "Apps.String");
+			props2.setProperty(PREFERRED_MENU, "Apps.STRING");
 			props2.setProperty(TITLE, "Expand network");
 			props2.setProperty(MENU_GRAVITY, "1.0");
 			props2.setProperty(IN_MENU_BAR, "false");
 			registerService(bc, addNodes, NetworkViewTaskFactory.class, props2);
 
 			Properties props3 = new Properties();
-			props3.setProperty(PREFERRED_MENU, "Apps.String");
+			props3.setProperty(PREFERRED_MENU, "Apps.STRING");
 			props3.setProperty(TITLE, "Expand network");
 			props3.setProperty(MENU_GRAVITY, "1.0");
 			props3.setProperty(IN_MENU_BAR, "false");
@@ -104,7 +104,7 @@ public class CyActivator extends AbstractCyActivator {
 		{
 			ChangeConfidenceTaskFactory changeConfidence = new ChangeConfidenceTaskFactory(manager);
 			Properties props = new Properties();
-			props.setProperty(PREFERRED_MENU, "Apps.String");
+			props.setProperty(PREFERRED_MENU, "Apps.STRING");
 			props.setProperty(TITLE, "Change confidence");
 			props.setProperty(MENU_GRAVITY, "2.0");
 			props.setProperty(IN_MENU_BAR, "true");
@@ -114,7 +114,7 @@ public class CyActivator extends AbstractCyActivator {
 		{
 			AddTermsTaskFactory addTerms = new AddTermsTaskFactory(manager);
 			Properties props = new Properties();
-			props.setProperty(PREFERRED_MENU, "Apps.String");
+			props.setProperty(PREFERRED_MENU, "Apps.STRING");
 			props.setProperty(TITLE, "Add Terms to Network");
 			props.setProperty(MENU_GRAVITY, "3.0");
 			props.setProperty(IN_MENU_BAR, "true");

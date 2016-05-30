@@ -36,7 +36,7 @@ public class ShowResultsPanelTaskFactory extends AbstractTaskFactory {
 	public void reregister() {
 		manager.unregisterService(this, TaskFactory.class);
 		Properties props = new Properties();
-		props.setProperty(PREFERRED_MENU, "Apps.String");
+		props.setProperty(PREFERRED_MENU, "Apps.STRING");
 		if (ShowResultsPanelTask.isPanelRegistered(manager)) {
 			props.setProperty(TITLE, "Hide results panel");
 			show = false;

@@ -40,7 +40,7 @@ public class ShowImagesTaskFactory extends AbstractNetworkViewTaskFactory {
 	public void reregister() {
 		manager.unregisterService(this, NetworkViewTaskFactory.class);
 		Properties props = new Properties();
-		props.setProperty(PREFERRED_MENU, "Apps.String");
+		props.setProperty(PREFERRED_MENU, "Apps.STRING");
 		if (manager.showImage())
 			props.setProperty(TITLE, "Don't show structure images");
 		else

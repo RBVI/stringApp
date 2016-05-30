@@ -97,7 +97,7 @@ public class StringNode {
 	}
 
 	public boolean haveDisease() {
-		return haveData("Disease ", 4);
+		return haveData("disease ", 4);
 	}
 
 	public String getDisease() {

@@ -28,7 +28,7 @@ import org.cytoscape.view.vizmap.mappings.PassthroughMapping;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
 public class ViewUtils {
-	public static String STYLE_NAME = "String Style";
+	public static String STYLE_NAME = "STRING style";
 
 	public static CyNetworkView styleNetwork(StringManager manager, CyNetwork network) {
 		// First, let's get a network view
@@ -129,7 +129,7 @@ public class ViewUtils {
 		VisualLexicon lex = manager.getService(RenderingEngineManager.class).getDefaultVisualLexicon();
 		VisualProperty customGraphics = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_1");
 		PassthroughMapping pMapping = 
-			(PassthroughMapping) passthroughFactory.createVisualMappingFunction("String Style", String.class, customGraphics);
+			(PassthroughMapping) passthroughFactory.createVisualMappingFunction("STRING Style", String.class, customGraphics);
 		stringStyle.addVisualMappingFunction(pMapping);
 
 		// Finally, set the edge width to be dependent on the total score

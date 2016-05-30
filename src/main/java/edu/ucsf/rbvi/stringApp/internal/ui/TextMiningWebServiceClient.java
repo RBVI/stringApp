@@ -13,7 +13,7 @@ public class TextMiningWebServiceClient extends AbstractWebServiceGUIClient
 	StringManager manager;
 
 	public TextMiningWebServiceClient(StringManager manager) {
-		super(manager.getNetworkURL(), "String DB from PubMed query", 
+		super(manager.getNetworkURL(), "STRING: PubMed query", 
 										                "<html>Enter a Pubmed query and create a STRING network by finding all "+
 																		"proteins mentioned in the resulting publications.<p>STRING is a database of "+
 																		"known and predicted protein interactions.  The interactions include direct "+

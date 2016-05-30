@@ -31,20 +31,20 @@ import edu.ucsf.rbvi.stringApp.internal.model.TextMiningResult;
 public class ModelUtils {
 
 	// Node information
-	public static String CANONICAL = "Canonical Name";
+	public static String CANONICAL = "canonical name";
 	public static String ID = "@id";
-	public static String DESCRIPTION = "Description";
-	public static String DISEASE_SCORE = "Disease Score";
-	public static String NAMESPACE = "Namespace";
-	public static String QUERYTERM = "Query Term";
-	public static String SEQUENCE = "Sequence";
+	public static String DESCRIPTION = "description";
+	public static String DISEASE_SCORE = "disease score";
+	public static String NAMESPACE = "namespace";
+	public static String QUERYTERM = "query term";
+	public static String SEQUENCE = "sequence";
 	public static String SPECIES = "species";
-	public static String STRINGID = "Database Identifier";
-	public static String STYLE = "String Style";
-	public static String TYPE = "Node Type";
-	public static String TM_FOREGROUND = "TextMining Foreground";
-	public static String TM_BACKGROUND = "TextMining Background";
-	public static String TM_SCORE = "TextMining Score";
+	public static String STRINGID = "database identifier";
+	public static String STYLE = "STRING style";
+	public static String TYPE = "node type";
+	public static String TM_FOREGROUND = "textmining foreground";
+	public static String TM_BACKGROUND = "textmining background";
+	public static String TM_SCORE = "textmining score";
 	// public static String TM_LINKOUT = "TextMining Linkout";
 
 	public static int NDOCUMENTS = 50;
@@ -57,7 +57,7 @@ public class ModelUtils {
 	public static String SCORE = "score";
 
 	// Network information
-	public static String CONFIDENCE = "Confidence Score";
+	public static String CONFIDENCE = "confidence score";
 
 	public static List<EntityIdentifier> getEntityIdsFromJSON(StringManager manager, Object object) {
 		if (!(object instanceof JSONArray))

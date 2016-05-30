@@ -13,7 +13,7 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 	StringManager manager;
 
 	public StringWebServiceClient(StringManager manager) {
-		super(manager.getNetworkURL(), "String DB", "<html>STRING is a database of known and predicted protein interactions.  The interactions include direct (physical) and indirect (functional) associations; they are derived from four sources: <ul><li>Genomic Context</li><li>High-throughput Experiments</li><li>(Conserved) Coexpression</li><li>Previous Knowledge</li></ul>	 STRING quantitatively integrates interaction data from these sources for a large number of organisms, and transfers information between these organisms where applicable. The database currently covers 9,643,763 proteins from 2,031 organisms.</html>");
+		super(manager.getNetworkURL(), "STRING: protein query", "<html>STRING is a database of known and predicted protein interactions.  The interactions include direct (physical) and indirect (functional) associations; they are derived from four sources: <ul><li>Genomic Context</li><li>High-throughput Experiments</li><li>(Conserved) Coexpression</li><li>Previous Knowledge</li></ul>	 STRING quantitatively integrates interaction data from these sources for a large number of organisms, and transfers information between these organisms where applicable. The database currently covers 9,643,763 proteins from 2,031 organisms.</html>");
 		this.manager = manager;
 		super.gui = new GetTermsPanel(manager);
 	}

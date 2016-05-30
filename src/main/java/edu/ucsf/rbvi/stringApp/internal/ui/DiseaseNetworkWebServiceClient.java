@@ -13,7 +13,7 @@ public class DiseaseNetworkWebServiceClient extends AbstractWebServiceGUIClient
 	StringManager manager;
 
 	public DiseaseNetworkWebServiceClient(StringManager manager) {
-		super(manager.getNetworkURL(), "String DB from disease term", 
+		super(manager.getNetworkURL(), "STRING: disease query", 
 										                "<html>Enter a disease term and create a STRING network by finding all "+
 																		"proteins associated with the disease in the STRING database."+
 																		"<p>STRING is a database of "+
