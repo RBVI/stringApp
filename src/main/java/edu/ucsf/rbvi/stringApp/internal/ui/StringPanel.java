@@ -94,9 +94,9 @@ public class StringPanel extends JPanel
 				message += "<td><a href=\""+sNode.getTissuesURL()+"\">"+sNode.getTissues()+"</a></td></tr>";
 			}
 
-			if (sNode.haveTextMining()) {
-				message += "<tr><td>Text mining results: </td>";
-				message += "<td><a href=\""+sNode.getTextMiningURL()+"\">"+sNode.getTextMining()+"</a></td></tr>";
+			if (sNode.haveDisease()) {
+				message += "<tr><td>Diseases: </td>";
+				message += "<td><a href=\""+sNode.getDiseaseURL()+"\">"+sNode.getDisease()+"</a></td></tr>";
 			}
 
 			if (sNode.havePharos()) {

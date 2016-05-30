@@ -97,7 +97,7 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 			return;
 		}
 
-		tmResults = ModelUtils.getIdsFromJSON(manager, species.getTaxId(), tmobject, query);
+		tmResults = ModelUtils.getIdsFromJSON(manager, species.getTaxId(), tmobject, query, false);
 
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = new ArrayList<>();

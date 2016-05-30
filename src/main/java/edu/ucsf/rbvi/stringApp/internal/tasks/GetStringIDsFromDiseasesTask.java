@@ -62,7 +62,7 @@ public class GetStringIDsFromDiseasesTask extends AbstractTask implements Observ
 			return;
 		}
 
-		tmResults = ModelUtils.getIdsFromJSON(manager, species.getTaxId(), tmobject, query);
+		tmResults = ModelUtils.getIdsFromJSON(manager, species.getTaxId(), tmobject, query, true);
 		if (tmResults == null || tmResults.size() == 0) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results");
 			return;

@@ -96,16 +96,16 @@ public class StringNode {
 		return "http://pharos.nih.gov/idg/targets/"+id;
 	}
 
-	public boolean haveTextMining() {
-		return haveData("TextMining", 4);
+	public boolean haveDisease() {
+		return haveData("Disease ", 4);
 	}
 
-	public String getTextMining() {
+	public String getDisease() {
 		return getStringID();
 	}
 
-	public String getTextMiningURL() {
-		String id = getTextMining();
+	public String getDiseaseURL() {
+		String id = getDisease();
 		if (id == null) return null;
 		return "http://diseases.jensenlab.org/"+id;
 	}

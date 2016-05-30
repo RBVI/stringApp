@@ -34,6 +34,7 @@ public class ModelUtils {
 	public static String CANONICAL = "Canonical Name";
 	public static String ID = "@id";
 	public static String DESCRIPTION = "Description";
+	public static String DISEASE_SCORE = "Disease Score";
 	public static String NAMESPACE = "Namespace";
 	public static String QUERYTERM = "Query Term";
 	public static String SEQUENCE = "Sequence";
@@ -44,13 +45,13 @@ public class ModelUtils {
 	public static String TM_FOREGROUND = "TextMining Foreground";
 	public static String TM_BACKGROUND = "TextMining Background";
 	public static String TM_SCORE = "TextMining Score";
-	public static String TM_LINKOUT = "TextMining Linkout";
+	// public static String TM_LINKOUT = "TextMining Linkout";
 
 	public static int NDOCUMENTS = 50;
 	public static int NEXPERIMENTS = 50;
 	public static int NKNOWLEDGE = 50;
 
-	public static String DISEASEINFO = "http://diseases.jensenlab.org/Entity?type1=9606&type2=-26";
+	// public static String DISEASEINFO = "http://diseases.jensenlab.org/Entity?type1=9606&type2=-26";
 
 	// Edge information
 	public static String SCORE = "score";
@@ -79,7 +80,7 @@ public class ModelUtils {
 		return results;
 	}
 
-	public static List<TextMiningResult> getIdsFromJSON(StringManager manager, int taxon, Object object, String query) {
+	public static List<TextMiningResult> getIdsFromJSON(StringManager manager, int taxon, Object object, String query, boolean disease) {
 		if (!(object instanceof JSONArray))
 			return null;
 
@@ -99,8 +100,8 @@ public class ModelUtils {
 			if (data.containsKey("background"))
 				bg = ((Long)data.get("background")).intValue();
 			Double score = (Double)data.get("score");
-			String url = getDiseaseURL((String)stringid, query);
-			TextMiningResult tm = new TextMiningResult(taxon+"."+(String)stringid, name, fg, bg, score, url);
+			// String url = getDiseaseURL((String)stringid, query);
+			TextMiningResult tm = new TextMiningResult(taxon+"."+(String)stringid, name, fg, bg, score, disease);
 			results.add(tm);
 		}
 		return results;
@@ -109,7 +110,7 @@ public class ModelUtils {
 
 	public static void addTextMiningResults (StringManager manager, List<TextMiningResult> tmResults, CyNetwork network) {
 		boolean haveFBValues = false;
-		boolean haveLinkout = false;
+		boolean haveDisease = false;
 
 		// Create a map of our results
 		Map<String, TextMiningResult> resultsMap = new HashMap<>();
@@ -117,8 +118,8 @@ public class ModelUtils {
 			resultsMap.put(tm.getID(), tm);
 			if (tm.getForeground() > 0 || tm.getBackground() > 0)
 				haveFBValues = true;
-			if (tm.getLinkout() != null)
-				haveLinkout = true;
+			if (tm.isDisease())
+				haveDisease = true;
 		}
 
 		// Create our columns
@@ -126,10 +127,17 @@ public class ModelUtils {
 			createColumnIfNeeded(network.getDefaultNodeTable(), Integer.class, TM_FOREGROUND);
 			createColumnIfNeeded(network.getDefaultNodeTable(), Integer.class, TM_BACKGROUND);
 		}
+
+		/*
 		if (haveLinkout) {
 			createColumnIfNeeded(network.getDefaultNodeTable(), String.class, TM_LINKOUT);
 		}
-		createColumnIfNeeded(network.getDefaultNodeTable(), Double.class, TM_SCORE);
+		*/
+
+		if (haveDisease)
+			createColumnIfNeeded(network.getDefaultNodeTable(), Double.class, DISEASE_SCORE);
+		else
+			createColumnIfNeeded(network.getDefaultNodeTable(), Double.class, TM_SCORE);
 
 		for (CyNode node: network.getNodeList()) {
 			CyRow row = network.getRow(node);
@@ -140,9 +148,14 @@ public class ModelUtils {
 					row.set(TM_FOREGROUND, result.getForeground());
 				if (result.getBackground() > 0)
 					row.set(TM_BACKGROUND, result.getBackground());
+				/*
 				if (result.getLinkout() != null)
 					row.set(TM_LINKOUT, result.getLinkout());
-				row.set(TM_SCORE, result.getScore());
+				*/
+				if (haveDisease)
+					row.set(DISEASE_SCORE, result.getScore());
+				else
+					row.set(TM_SCORE, result.getScore());
 			}
 		}
 	}
@@ -471,6 +484,7 @@ public class ModelUtils {
 		return null;
 	}
 
+	/*
 	private static String getDiseaseURL(String id, String query) {
 		String url = DISEASEINFO+"&documents="+NDOCUMENTS+
 		                         "&experiments="+NEXPERIMENTS+
@@ -478,4 +492,5 @@ public class ModelUtils {
 														 "&id1="+id+"&id2="+query;
 		return url;
 	}
+	*/
 }

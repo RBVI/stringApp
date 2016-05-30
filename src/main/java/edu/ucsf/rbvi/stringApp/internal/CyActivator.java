@@ -28,7 +28,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.AddNodesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.AddTermsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeConfidenceTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.FindProteinsTaskFactory;
-import edu.ucsf.rbvi.stringApp.internal.tasks.OpenEvidenceTaskFactory;
+// import edu.ucsf.rbvi.stringApp.internal.tasks.OpenEvidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.ui.DiseaseNetworkWebServiceClient;
@@ -57,7 +57,7 @@ public class CyActivator extends AbstractCyActivator {
 		// Get a handle on the CyServiceRegistrar
 		CyServiceRegistrar registrar = getService(bc, CyServiceRegistrar.class);
 		StringManager manager = new StringManager(registrar);
-		
+
 		{
 			// Register our web service client
 			StringWebServiceClient client = new StringWebServiceClient(manager);
@@ -144,6 +144,7 @@ public class CyActivator extends AbstractCyActivator {
 			*/
 		}
 		
+		/*
 		{
 			OpenEvidenceTaskFactory openEvidence = new OpenEvidenceTaskFactory(manager);
 			Properties props = new Properties();
@@ -153,6 +154,7 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(IN_MENU_BAR, "true");
 			registerService(bc, openEvidence, NodeViewTaskFactory.class, props);
 		}
+		*/
 		
 		/*
 		{
