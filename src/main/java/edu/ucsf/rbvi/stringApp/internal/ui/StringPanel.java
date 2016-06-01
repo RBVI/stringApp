@@ -81,8 +81,10 @@ public class StringPanel extends JPanel
 			message += "<table style=\"margin-left: 10px;margin-top: 0px;\">";
 			message += "<tr><td>Uniprot: </td>";
 			message += "<td><a href=\""+sNode.getUniprotURL()+"\">"+sNode.getUniprot()+"</a></td></tr>";
-			message += "<tr><td>GeneCard: </td>";
-			message += "<td><a href=\""+sNode.getGeneCardURL()+"\">"+sNode.getUniprot()+"</a></td></tr>";
+			if (sNode.getGeneCardURL() != null) {
+				message += "<tr><td>GeneCard: </td>";
+				message += "<td><a href=\""+sNode.getGeneCardURL()+"\">"+sNode.getUniprot()+"</a></td></tr>";
+			}
 
 			if (sNode.haveCompartments()) {
 				message += "<tr><td>Compartments: </td>";

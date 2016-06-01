@@ -42,6 +42,10 @@ public class StringNode {
 		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.CANONICAL);
 	}
 
+	public String getSpecies() {
+		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.SPECIES);
+	}
+
 	public String getUniprotURL() {
 		String uniprot = getUniprot();
 		if (uniprot == null) return null;
@@ -51,7 +55,10 @@ public class StringNode {
 	public String getGeneCardURL() {
 		String uniprot = getUniprot();
 		if (uniprot == null) return null;
-		return "http://www.genecards.org/cgi-bin/carddisp.pl?gene="+uniprot;
+		// GeneCards only supports human proteins
+		if (getSpecies().equals("Homo sapiens"))
+			return "http://www.genecards.org/cgi-bin/carddisp.pl?gene="+uniprot;
+		return null;
 	}
 
 	public boolean haveCompartments() {

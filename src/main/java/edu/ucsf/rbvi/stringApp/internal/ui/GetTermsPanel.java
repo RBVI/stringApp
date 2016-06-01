@@ -527,7 +527,10 @@ public class GetTermsPanel extends JPanel {
 		backButton.setEnabled(true);
 
 		revalidate();
-		importButton.setEnabled(false);
+		if (stringNetwork.haveResolvedNames()) {
+			importButton.setEnabled(true);
+		} else
+			importButton.setEnabled(false);
 	}
 
 	public void addResolvedStringID(String term, String id) {
