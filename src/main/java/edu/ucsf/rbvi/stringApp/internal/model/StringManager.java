@@ -13,6 +13,8 @@ import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
+import org.cytoscape.model.events.NetworkAddedEvent;
+import org.cytoscape.model.events.NetworkAddedListener;
 import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewFactory;
@@ -24,14 +26,16 @@ import org.cytoscape.work.TaskObserver;
 import org.apache.log4j.Logger;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
-public class StringManager {
+public class StringManager implements NetworkAddedListener {
 	final CyServiceRegistrar registrar;
 	final CyEventHelper cyEventHelper;
 	final Logger logger = Logger.getLogger(CyUserLog.NAME);
 	final TaskManager<?,?> dialogTaskManager;
 	final SynchronousTaskManager<?> synchronousTaskManager;
 	private boolean showImage = true;
+	private boolean ignore = false;
 	private Map<CyNetwork, StringNetwork> stringNetworkMap;
 
 	public static String ResolveURI = "http://string-db.org/api/";
@@ -182,6 +186,28 @@ public class StringManager {
 
 	public void warn(String warn) {
 		logger.warn(warn);
+	}
+
+	public void ignoreAdd() {
+		ignore = true;
+	}
+
+	public void listenToAdd() {
+		ignore = false;
+	}
+
+	public void handleEvent(NetworkAddedEvent nae) {
+		CyNetwork network = nae.getNetwork();
+		if (ignore) return;
+
+		// This is a string network only if we have a confidence score in the network table,
+		// "@id", "species", "canonical name", and "sequence" columns in the node table, and 
+		// a "score" column in the edge table
+		if (ModelUtils.isStringNetwork(network)) {
+			StringNetwork stringNet = new StringNetwork(this);
+			stringNet.setNetwork(network);
+			addStringNetwork(stringNet, network);
+		}
 	}
 
 	public <T> T getService(Class<? extends T> clazz) {

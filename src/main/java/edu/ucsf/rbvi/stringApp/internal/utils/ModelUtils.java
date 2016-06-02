@@ -197,8 +197,10 @@ public class ModelUtils {
 
 	public static CyNetwork createNetworkFromJSON(StringNetwork stringNetwork, String species, Object object,
 	                                              Map<String, String> queryTermMap, String ids) {
+		stringNetwork.getManager().ignoreAdd();
 		CyNetwork network = createNetworkFromJSON(stringNetwork.getManager(), species, object, queryTermMap, ids);
 		stringNetwork.getManager().addStringNetwork(stringNetwork, network);
+		stringNetwork.getManager().listenToAdd();
 		return network;
 	}
 
@@ -321,10 +323,23 @@ public class ModelUtils {
 		return newNodes;
 	}
 
+	public static boolean isMergedStringNetwork(CyNetwork network) {
+		CyTable nodeTable = network.getDefaultNodeTable();
+		if (nodeTable.getColumn(ID) == null) return false;
+		if (nodeTable.getColumn(SPECIES) == null) return false;
+		if (nodeTable.getColumn(CANONICAL) == null) return false;
+		if (nodeTable.getColumn(SPECIES) == null) return false;
+		CyTable edgeTable = network.getDefaultEdgeTable();
+		if (edgeTable.getColumn(SCORE) == null) return false;
+		return true;
+	}
+
 	public static boolean isStringNetwork(CyNetwork network) {
-		if (network != null && network.getDefaultNodeTable().getColumn(STRINGID) != null)
-			return true;
-		return false;
+		// This is a string network only if we have a confidence score in the network table,
+		// "@id", "species", "canonical name", and "sequence" columns in the node table, and 
+		// a "score" column in the edge table
+		if (network == null || network.getRow(network).get(CONFIDENCE, Double.class) == null) return false;
+		return isMergedStringNetwork(network);
 	}
 
 	public static String getExisting(CyNetwork network) {
@@ -484,13 +499,4 @@ public class ModelUtils {
 		return null;
 	}
 
-	/*
-	private static String getDiseaseURL(String id, String query) {
-		String url = DISEASEINFO+"&documents="+NDOCUMENTS+
-		                         "&experiments="+NEXPERIMENTS+
-											       "&knowledge="+NKNOWLEDGE+
-														 "&id1="+id+"&id2="+query;
-		return url;
-	}
-	*/
 }

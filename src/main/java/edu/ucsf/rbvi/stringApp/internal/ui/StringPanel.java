@@ -79,8 +79,10 @@ public class StringPanel extends JPanel
 			textArea.setEditable(false);
 			String message = "<h3 style=\"margin-left: 5px;margin-bottom: 0px;\">CrossLinks</h3>";
 			message += "<table style=\"margin-left: 10px;margin-top: 0px;\">";
-			message += "<tr><td>Uniprot: </td>";
-			message += "<td><a href=\""+sNode.getUniprotURL()+"\">"+sNode.getUniprot()+"</a></td></tr>";
+			if (sNode.getUniprot() != null) {
+				message += "<tr><td>Uniprot: </td>";
+				message += "<td><a href=\""+sNode.getUniprotURL()+"\">"+sNode.getUniprot()+"</a></td></tr>";
+			}
 			if (sNode.getGeneCardURL() != null) {
 				message += "<tr><td>GeneCard: </td>";
 				message += "<td><a href=\""+sNode.getGeneCardURL()+"\">"+sNode.getUniprot()+"</a></td></tr>";
