@@ -43,6 +43,8 @@ public class Annotation {
 
 		Map<String, List<Annotation>> map = new HashMap<>();
 
+		int queryIndexStart = 0;
+
 		for (Object annObject: (JSONArray) json) {
 			JSONObject ann = (JSONObject)annObject;
 			String annotation = null;
@@ -62,10 +64,17 @@ public class Annotation {
 			if (ann.containsKey("queryIndex")) {
 				Object index = ann.get("queryIndex");
 				if (index instanceof Long) {
-					queryIndex = ((Long)index).intValue() + 1; // String queryIndex starts at -1!
+					queryIndex = ((Long)index).intValue();
 				} else {
-					queryIndex = Integer.parseInt((String)index) + 1;
+					queryIndex = Integer.parseInt((String)index);
 				}
+
+				// The original API started queryIndex at "-1".  It has been updated
+				// to now use 0, but we need to detect which is which.
+				if (queryIndex < 0)
+					queryIndexStart = -1;
+
+				queryIndex = queryIndex - queryIndexStart;
 			}
 
 			Annotation newAnnotation = new Annotation(preferredName, stringId, taxId, terms[queryIndex], annotation);

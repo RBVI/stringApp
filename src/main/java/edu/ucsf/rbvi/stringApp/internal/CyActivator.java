@@ -10,6 +10,7 @@ import static org.cytoscape.work.ServiceProperties.MENU_GRAVITY;
 import static org.cytoscape.work.ServiceProperties.PREFERRED_MENU;
 import static org.cytoscape.work.ServiceProperties.TITLE;
 
+import java.util.Dictionary;
 import java.util.Properties;
 
 import org.cytoscape.application.swing.CySwingApplication;
@@ -59,6 +60,12 @@ public class CyActivator extends AbstractCyActivator {
 		// Get a handle on the CyServiceRegistrar
 		CyServiceRegistrar registrar = getService(bc, CyServiceRegistrar.class);
 		StringManager manager = new StringManager(registrar);
+
+		// Get our version number
+		Dictionary headers = bc.getBundle().getHeaders();
+		String version = (String) headers.get("Bundle-Version");
+		manager.setVersion(version);
+
 
 		{
 			// Register our network added listener

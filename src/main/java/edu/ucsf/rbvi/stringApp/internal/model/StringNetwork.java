@@ -53,7 +53,7 @@ public class StringNetwork {
 		args.put("species", Integer.toString(taxon));
 		args.put("identifiers", encTerms);
 		args.put("caller_identity", StringManager.CallerIdentity);
-		System.out.println("URL: "+url+"?species="+Integer.toString(taxon)+"&identifiers="+encTerms);
+		System.out.println("URL: "+url+"?species="+Integer.toString(taxon)+"&caller_identity="+StringManager.CallerIdentity+"&identifiers="+encTerms);
 		// Get the results
 		Object results = HttpUtils.postJSON(url, args, manager);
 		if (results == null) return null;

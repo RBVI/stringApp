@@ -227,4 +227,9 @@ public class StringManager implements NetworkAddedListener {
 		registrar.unregisterService(service, clazz);
 	}
 
+	public void setVersion(String version) {
+		String v = version.replace('.', '_');
+		StringManager.CallerIdentity = "string_app_v"+v;
+	}
+
 }
