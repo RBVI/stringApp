@@ -40,6 +40,7 @@ public class StringManager implements NetworkAddedListener {
 
 	public static String ResolveURI = "http://string-db.org/api/";
 	public static String URI = "http://api.jensenlab.org/";
+	public static String CallerIdentity = "string_app";
 
 	public StringManager(CyServiceRegistrar registrar) {
 		this.registrar = registrar;

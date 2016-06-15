@@ -59,8 +59,14 @@ public class Annotation {
 				stringId = (String)ann.get("stringId");
 			if (ann.containsKey("ncbiTaxonId"))
 				taxId = ((Long)ann.get("ncbiTaxonId")).intValue();
-			if (ann.containsKey("queryIndex"))
-				queryIndex = ((Long)ann.get("queryIndex")).intValue() + 1; // String queryIndex starts at -1!
+			if (ann.containsKey("queryIndex")) {
+				Object index = ann.get("queryIndex");
+				if (index instanceof Long) {
+					queryIndex = ((Long)index).intValue() + 1; // String queryIndex starts at -1!
+				} else {
+					queryIndex = Integer.parseInt((String)index) + 1;
+				}
+			}
 
 			Annotation newAnnotation = new Annotation(preferredName, stringId, taxId, terms[queryIndex], annotation);
 			if (!map.containsKey(terms[queryIndex])) {

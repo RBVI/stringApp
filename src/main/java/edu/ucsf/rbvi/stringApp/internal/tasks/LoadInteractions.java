@@ -65,6 +65,7 @@ public class LoadInteractions extends AbstractTask {
 		Map<String, String> args = new HashMap<>();
 		args.put("entities",ids.trim());
 		args.put("score", conf);
+		args.put("caller_identity", StringManager.CallerIdentity);
 		if (additionalNodes > 0)
 			args.put("additional", Integer.toString(additionalNodes));
 
