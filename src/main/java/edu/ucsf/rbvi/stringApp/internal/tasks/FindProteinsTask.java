@@ -56,7 +56,7 @@ public class FindProteinsTask extends AbstractTask {
 		args.put("retmode","json");
 		args.put("retmax","10000");
 		args.put("term","\""+query+"\"");
-		Object object = HttpUtils.getJSON("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+		Object object = HttpUtils.getJSON("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
 		                                  args, manager);
 		if (!(object instanceof JSONObject)) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"Pubmed returned no results");

@@ -54,7 +54,7 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 		args.put("retmax","40000");
 		args.put("term",query);
 		monitor.setTitle("Querying PubMed");
-		Object object = HttpUtils.getJSON("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+		Object object = HttpUtils.getJSON("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
 		                                  args, manager);
 		if (!(object instanceof JSONObject)) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"Pubmed returned no results");
