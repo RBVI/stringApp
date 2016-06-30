@@ -139,8 +139,8 @@ public class CyActivator extends AbstractCyActivator {
 			SetConfidenceTaskFactory setConfidence = new SetConfidenceTaskFactory(manager);
 			Properties props = new Properties();
 			props.setProperty(PREFERRED_MENU, "Apps.STRING");
-			props.setProperty(TITLE, "Set confidence of network (doesn't update query)");
-			props.setProperty(MENU_GRAVITY, "4.0");
+			props.setProperty(TITLE, "Set as STRING network");
+			props.setProperty(MENU_GRAVITY, "10.0");
 			props.setProperty(IN_MENU_BAR, "true");
 			registerService(bc, setConfidence, NetworkTaskFactory.class, props);
 		}

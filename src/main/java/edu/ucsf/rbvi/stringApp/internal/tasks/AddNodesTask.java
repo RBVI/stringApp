@@ -118,6 +118,6 @@ public class AddNodesTask extends AbstractTask {
 
 	@ProvidesTitle
 	public String getTitle() {
-		return "Add Nodes to Network";
+		return "Expand Network";
 	}
 }

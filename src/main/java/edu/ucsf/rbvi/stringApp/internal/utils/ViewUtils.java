@@ -99,6 +99,9 @@ public class ViewUtils {
 		VisualStyle stringStyle = vsf.createVisualStyle(vmm.getCurrentVisualStyle());
 		stringStyle.setTitle(styleName);
 
+		// Set the default node size
+		stringStyle.setDefaultValue(BasicVisualLexicon.NODE_SIZE, 45.0);
+
 		// Set the shape to an ellipse
 		stringStyle.setDefaultValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.ELLIPSE);
 

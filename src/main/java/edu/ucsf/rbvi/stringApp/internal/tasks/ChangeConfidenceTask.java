@@ -115,6 +115,6 @@ public class ChangeConfidenceTask extends AbstractTask {
 
 	@ProvidesTitle
 	public String getTitle() {
-		return "Changing Confidence";
+		return "Change Confidence";
 	}
 }

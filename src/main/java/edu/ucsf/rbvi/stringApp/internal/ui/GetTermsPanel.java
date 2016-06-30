@@ -305,7 +305,7 @@ public class GetTermsPanel extends JPanel {
 		Font labelFont;
 		{
 			c.anchor("west").noExpand().insets(0,5,0,5);
-			JLabel additionalNodesLabel = new JLabel("Number of additional nodes:");
+			JLabel additionalNodesLabel = new JLabel("Maximum number of interactors:");
 			labelFont = additionalNodesLabel.getFont();
 			additionalNodesLabel.setFont(new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()));
 			additionalNodesPanel.add(additionalNodesLabel, c);
@@ -449,7 +449,8 @@ public class GetTermsPanel extends JPanel {
 
 	void createResolutionPanel() {
 		mainSearchPanel.removeAll();
-		revalidate();
+		mainSearchPanel.revalidate();
+		mainSearchPanel.repaint();
 		final Map<String, ResolveTableModel> tableModelMap = new HashMap<>();
 		for (String term: stringNetwork.getAnnotations().keySet()) {
 			tableModelMap.put(term, new ResolveTableModel(this, term, stringNetwork.getAnnotations().get(term)));
@@ -624,8 +625,16 @@ public class GetTermsPanel extends JPanel {
 			if (noAmbiguity) {
 				int additionalNodes = additionalNodesSlider.getValue();
 				// This mimics the String web site behavior
-				if (stringNetwork.getResolvedTerms() == 1 && additionalNodes == 0)
-					additionalNodes = 10;
+				if (stringNetwork.getResolvedTerms() == 1 && additionalNodes == 0) {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							JOptionPane.showMessageDialog(null, 
+													"This will return only one node (Hint: increase maximum interactors slider?)",
+										       "Hint", JOptionPane.WARNING_MESSAGE); 
+						}
+					});
+				}
+				//	additionalNodes = 10;
 
 				final int addNodes = additionalNodes;
 
@@ -649,10 +658,20 @@ public class GetTermsPanel extends JPanel {
     public void actionPerformed(ActionEvent e) {
 			Species species = (Species)speciesCombo.getSelectedItem();
 
-			int additionalNodes = 0;
+			int additionalNodes = additionalNodesSlider.getValue();
 
-			if (stringNetwork.getResolvedTerms() == 1)
-				additionalNodes = 10;
+			if (stringNetwork.getResolvedTerms() == 1 && additionalNodes == 0) {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						JOptionPane.showMessageDialog(null, 
+												"This will return only one node (Hint: increase maximum interactors slider?)",
+									       "Hint", JOptionPane.WARNING_MESSAGE); 
+					}
+				});
+			}
+
+			// if (stringNetwork.getResolvedTerms() == 1)
+			// 	additionalNodes = 10;
 
 			int taxon = species.getTaxId();
 			importNetwork(taxon, confidenceSlider.getValue(), additionalNodes);

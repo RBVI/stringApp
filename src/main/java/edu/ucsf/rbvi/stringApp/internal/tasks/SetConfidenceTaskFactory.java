@@ -29,6 +29,10 @@ public class SetConfidenceTaskFactory extends AbstractNetworkTaskFactory {
 
 	public boolean isReady(CyNetwork net) {
 		if (net == null) return false;
+
+		// Are we already a string network?
+		if (ModelUtils.isStringNetwork(net)) return false;
+
 		return ModelUtils.isMergedStringNetwork(net);
 	}
 
