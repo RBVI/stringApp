@@ -42,7 +42,7 @@ public class AddTermsTask extends AbstractTask {
 		StringNetwork stringNetwork = manager.getStringNetwork(network);
 		JFrame parent = manager.getService(CySwingApplication.class).getJFrame();
 		// Get AddTerms dialog
-		JDialog termsDialog = new JDialog(parent, "Add Terms to Network");
+		JDialog termsDialog = new JDialog(parent, "Query for additional nodes");
 		GetTermsPanel termsPanel = new GetTermsPanel(manager, stringNetwork, false);
 		termsDialog.setContentPane(termsPanel);
 		// Pack it and display it
@@ -53,6 +53,6 @@ public class AddTermsTask extends AbstractTask {
 
 	@ProvidesTitle
 	public String getTitle() {
-		return "Add Terms to Network";
+		return "Query for additional nodes";
 	}
 }

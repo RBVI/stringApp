@@ -154,7 +154,7 @@ public class CyActivator extends AbstractCyActivator {
 			AddTermsTaskFactory addTerms = new AddTermsTaskFactory(manager);
 			Properties props = new Properties();
 			props.setProperty(PREFERRED_MENU, "Apps.STRING");
-			props.setProperty(TITLE, "Add Terms to Network");
+			props.setProperty(TITLE, "Query for additional nodes");
 			props.setProperty(MENU_GRAVITY, "3.0");
 			props.setProperty(IN_MENU_BAR, "true");
 			registerService(bc, addTerms, NetworkTaskFactory.class, props);
