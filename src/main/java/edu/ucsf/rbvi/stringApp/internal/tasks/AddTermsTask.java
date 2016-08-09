@@ -43,7 +43,7 @@ public class AddTermsTask extends AbstractTask {
 		JFrame parent = manager.getService(CySwingApplication.class).getJFrame();
 		// Get AddTerms dialog
 		JDialog termsDialog = new JDialog(parent, "Add Terms to Network");
-		GetTermsPanel termsPanel = new GetTermsPanel(manager, stringNetwork);
+		GetTermsPanel termsPanel = new GetTermsPanel(manager, stringNetwork, false);
 		termsDialog.setContentPane(termsPanel);
 		// Pack it and display it
 		termsDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

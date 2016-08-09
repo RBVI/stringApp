@@ -29,6 +29,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.tasks.AddNodesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.AddTermsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeConfidenceTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.GetNetworkTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.FindProteinsTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.OpenEvidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.SetConfidenceTaskFactory;
@@ -88,6 +89,30 @@ public class CyActivator extends AbstractCyActivator {
 			// Register our disease network web service client
 			DiseaseNetworkWebServiceClient client = new DiseaseNetworkWebServiceClient(manager);
 			registerAllServices(bc, client, new Properties());
+		}
+
+		{
+			GetNetworkTaskFactory getNetwork = new GetNetworkTaskFactory(manager, "protein");
+			Properties props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "protein query");
+			registerService(bc, getNetwork, TaskFactory.class, props);
+		}
+
+		{
+			GetNetworkTaskFactory getNetwork = new GetNetworkTaskFactory(manager, "disease");
+			Properties props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "disease query");
+			registerService(bc, getNetwork, TaskFactory.class, props);
+		}
+		
+		{
+			GetNetworkTaskFactory getNetwork = new GetNetworkTaskFactory(manager, "pubmed");
+			Properties props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "pubmed query");
+			registerService(bc, getNetwork, TaskFactory.class, props);
 		}
 
 		{

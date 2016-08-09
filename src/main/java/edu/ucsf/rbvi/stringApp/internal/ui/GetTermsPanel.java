@@ -30,6 +30,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -86,18 +87,21 @@ public class GetTermsPanel extends JPanel {
 	NumberFormat formatter = new DecimalFormat("#0.00");
 	NumberFormat intFormatter = new DecimalFormat("#0");
 	private boolean ignore = false;
+	private boolean useSTITCH = false;
 
-	public GetTermsPanel(final StringManager manager) {
+	public GetTermsPanel(final StringManager manager, final boolean useSTITCH) {
 		super(new GridBagLayout());
 		this.manager = manager;
+		this.useSTITCH = useSTITCH;
 		init();
 	}
 
-	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork) {
+	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, boolean useSTITCH) {
 		super(new GridBagLayout());
 		this.manager = manager;
 		this.stringNetwork = stringNetwork;
 		this.initialStringNetwork = stringNetwork;
+		this.useSTITCH = useSTITCH;
 		init();
 	}
 
