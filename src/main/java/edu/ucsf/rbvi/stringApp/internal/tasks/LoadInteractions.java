@@ -32,11 +32,12 @@ public class LoadInteractions extends AbstractTask {
 	final int additionalNodes;
 	final List<String> stringIds;
 	final Map<String, String> queryTermMap;
+	final String netName;
 
 	public LoadInteractions(final StringNetwork stringNet, final String species, final int taxonId, 
 	                        final int confidence, final int additionalNodes,
 													final List<String>stringIds,
-													final Map<String, String> queryTermMap) {
+													final Map<String, String> queryTermMap, final String netName) {
 		this.stringNet = stringNet;
 		this.taxonId = taxonId;
 		this.additionalNodes = additionalNodes;
@@ -44,6 +45,7 @@ public class LoadInteractions extends AbstractTask {
 		this.stringIds = stringIds;
 		this.species = species;
 		this.queryTermMap = queryTermMap;
+		this.netName = netName;
 	}
 
 	public void run(TaskMonitor monitor) {
@@ -72,7 +74,7 @@ public class LoadInteractions extends AbstractTask {
 		Object results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
 
 		// This may change...
-		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, species, results, queryTermMap, ids.trim());
+		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, species, results, queryTermMap, ids.trim(), netName);
 
 		// Set our confidence score
 		ModelUtils.setConfidence(network, ((double)confidence)/100.0);

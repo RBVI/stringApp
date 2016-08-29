@@ -32,7 +32,7 @@ public class StringManager implements NetworkAddedListener {
 	final CyServiceRegistrar registrar;
 	final CyEventHelper cyEventHelper;
 	final Logger logger = Logger.getLogger(CyUserLog.NAME);
-	final TaskManager<?,?> dialogTaskManager;
+	final TaskManager<?, ?> dialogTaskManager;
 	final SynchronousTaskManager<?> synchronousTaskManager;
 	private boolean showImage = true;
 	private boolean ignore = false;
@@ -57,7 +57,7 @@ public class StringManager implements NetworkAddedListener {
 		// If we have a single query term, use that as the network name
 		if (ids != null) {
 			if (ids.split("\n").length == 1) {
-				return name+" - "+ids;
+				return name + " - " + ids;
 			}
 		}
 
@@ -67,21 +67,24 @@ public class StringManager implements NetworkAddedListener {
 			return name;
 
 		int max = 0;
-		for (CyNetwork network: allNetworks) {
+		for (CyNetwork network : allNetworks) {
 			String netName = getNetworkName(network);
 			if (netName.startsWith("String Network")) {
-				String [] parts = netName.split("_");
+				String[] parts = netName.split("_");
 				if (parts.length == 1)
 					max = 1;
 				else {
-					max = Integer.parseInt(parts[1].trim());
+					try {
+						max = Math.max(max, Integer.parseInt(parts[1].trim())+1);
+					} catch (NumberFormatException ex) {
+						// skip and do nothing
+					}
 				}
 			}
 		}
 
-		if (max > 0)
-			return name+"_"+max;
-
+		if (max > 0) 
+			return name + "_" + max;
 		return name;
 	}
 
@@ -113,7 +116,8 @@ public class StringManager implements NetworkAddedListener {
 	}
 
 	public CyNetworkView createNetworkView(CyNetwork network) {
-		CyNetworkView view = registrar.getService(CyNetworkViewFactory.class).createNetworkView(network);
+		CyNetworkView view = registrar.getService(CyNetworkViewFactory.class)
+				.createNetworkView(network);
 		return view;
 	}
 
@@ -121,13 +125,18 @@ public class StringManager implements NetworkAddedListener {
 		registrar.getService(CyNetworkManager.class).addNetwork(network);
 		registrar.getService(CyApplicationManager.class).setCurrentNetwork(network);
 	}
-	
+
 	public CyNetwork getCurrentNetwork() {
 		return registrar.getService(CyApplicationManager.class).getCurrentNetwork();
 	}
 
-	public boolean showImage() { return showImage; }
-	public void setShowImage(boolean set) { showImage = set; }
+	public boolean showImage() {
+		return showImage;
+	}
+
+	public void setShowImage(boolean set) {
+		showImage = set;
+	}
 
 	public void flushEvents() {
 		cyEventHelper.flushPayloadEvents();
@@ -158,19 +167,19 @@ public class StringManager implements NetworkAddedListener {
 	}
 
 	public String getNetworkURL() {
-		return URI+"network";
+		return URI + "network";
 	}
 
 	public String getTextMiningURL() {
-		return URI+"Textmining";
+		return URI + "Textmining";
 	}
 
 	public String getEntityQueryURL() {
-		return URI+"EntityQuery";
+		return URI + "EntityQuery";
 	}
 
 	public String getIntegrationURL() {
-		return URI+"Integration";
+		return URI + "Integration";
 	}
 
 	public String getResolveURL() {
@@ -199,10 +208,11 @@ public class StringManager implements NetworkAddedListener {
 
 	public void handleEvent(NetworkAddedEvent nae) {
 		CyNetwork network = nae.getNetwork();
-		if (ignore) return;
+		if (ignore)
+			return;
 
 		// This is a string network only if we have a confidence score in the network table,
-		// "@id", "species", "canonical name", and "sequence" columns in the node table, and 
+		// "@id", "species", "canonical name", and "sequence" columns in the node table, and
 		// a "score" column in the edge table
 		if (ModelUtils.isStringNetwork(network)) {
 			StringNetwork stringNet = new StringNetwork(this);
@@ -229,7 +239,7 @@ public class StringManager implements NetworkAddedListener {
 
 	public void setVersion(String version) {
 		String v = version.replace('.', '_');
-		StringManager.CallerIdentity = "string_app_v"+v;
+		StringManager.CallerIdentity = "string_app_v" + v;
 	}
 
 }

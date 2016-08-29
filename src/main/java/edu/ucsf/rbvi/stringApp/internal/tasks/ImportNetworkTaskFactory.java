@@ -34,7 +34,7 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 	public TaskIterator createTaskIterator() {
 		if (stringNet.getNetwork() == null) {
 			return new TaskIterator(new LoadInteractions(stringNet, species, taxon, 
-			                                             confidence, additionalNodes, stringIds, queryTermMap));
+			                                             confidence, additionalNodes, stringIds, queryTermMap, ""));
 		}
 		return new TaskIterator(new LoadTermsTask(stringNet, species, taxon, confidence, 
 		                                          additionalNodes, stringIds, queryTermMap));

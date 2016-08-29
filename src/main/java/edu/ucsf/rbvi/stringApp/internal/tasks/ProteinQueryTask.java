@@ -104,8 +104,7 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
 		LoadInteractions load = new LoadInteractions(stringNetwork, sp.toString(), sp.getTaxId(), 
-                                                 confidence, limit.getValue(),
-																								 stringIds, queryTermMap);
+                                                 confidence, limit.getValue(), stringIds, queryTermMap, "");
 		manager.execute(new TaskIterator(load), true);
 	}
 
