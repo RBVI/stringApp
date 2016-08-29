@@ -90,6 +90,31 @@ public class StringManager implements NetworkAddedListener {
 
 	public CyNetwork createNetwork(String name) {
 		CyNetwork network = registrar.getService(CyNetworkFactory.class).createNetwork();
+		CyNetworkManager netMgr = registrar.getService(CyNetworkManager.class);
+
+		// See if this name is already taken
+		int index = -1;
+		boolean match = false;
+		for (CyNetwork net: netMgr.getNetworkSet()) {
+			String netName = net.getRow(net).get(CyNetwork.NAME, String.class);
+			if (netName.equals(name)) {
+				match = true;
+			} else if (netName.startsWith(name)) {
+				String subname = netName.substring(name.length());
+				if (subname.startsWith(" - ")) {
+					try {
+						int v = Integer.parseInt(subname.substring(3));
+						if (v >= index)
+							index = v+1;
+					} catch (NumberFormatException e) {}
+				}
+			}
+		}
+		if (match && index < 0) {
+			name = name + " - 1";
+		} else if (index > 0) {
+			name = name + " - "+index;
+		}
 		network.getRow(network).set(CyNetwork.NAME, name);
 		return network;
 	}
