@@ -51,43 +51,7 @@ public class StringManager implements NetworkAddedListener {
 		stringNetworkMap = new HashMap<>();
 	}
 
-	public String getNetworkName(String ids) {
-		String name = "String Network";
-
-		// If we have a single query term, use that as the network name
-		if (ids != null) {
-			if (ids.split("\n").length == 1) {
-				return name + " - " + ids;
-			}
-		}
-
-		// Use simple name, but make sure we're unique
-		Set<CyNetwork> allNetworks = registrar.getService(CyNetworkManager.class).getNetworkSet();
-		if (allNetworks == null || allNetworks.size() == 0)
-			return name;
-
-		int max = 0;
-		for (CyNetwork network : allNetworks) {
-			String netName = getNetworkName(network);
-			if (netName.startsWith("String Network")) {
-				String[] parts = netName.split("_");
-				if (parts.length == 1)
-					max = 1;
-				else {
-					try {
-						max = Math.max(max, Integer.parseInt(parts[1].trim())+1);
-					} catch (NumberFormatException ex) {
-						// skip and do nothing
-					}
-				}
-			}
-		}
-
-		if (max > 0) 
-			return name + "_" + max;
-		return name;
-	}
-
+	
 	public CyNetwork createNetwork(String name) {
 		CyNetwork network = registrar.getService(CyNetworkFactory.class).createNetwork();
 		CyNetworkManager netMgr = registrar.getService(CyNetworkManager.class);
@@ -113,7 +77,7 @@ public class StringManager implements NetworkAddedListener {
 		if (match && index < 0) {
 			name = name + " - 1";
 		} else if (index > 0) {
-			name = name + " - "+index;
+			name = name + " - " + index;
 		}
 		network.getRow(network).set(CyNetwork.NAME, name);
 		return network;

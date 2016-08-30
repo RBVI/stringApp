@@ -210,13 +210,15 @@ public class ModelUtils {
 			return null;
 
 		// Get a network name
+		String defaultName = "String Network";
 		if (netName != null && netName != "") {
-			netName = "String Network - " + netName;
+			netName = defaultName + " - " + netName;
 		}
 		else if (queryTermMap.size() == 1 && queryTermMap.containsKey(ids)) {
-			netName = "String Network - " + queryTermMap.get(ids);
+			netName = defaultName + " - " + queryTermMap.get(ids);
 		} else {
-			netName = manager.getNetworkName(ids);
+			netName = defaultName;
+			// netName = manager.getNetworkName(ids);
 		}
 
 		// Create the network
