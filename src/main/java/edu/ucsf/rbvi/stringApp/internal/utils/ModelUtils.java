@@ -198,7 +198,8 @@ public class ModelUtils {
 	public static CyNetwork createNetworkFromJSON(StringNetwork stringNetwork, String species, Object object,
 	                                              Map<String, String> queryTermMap, String ids, String netName) {
 		stringNetwork.getManager().ignoreAdd();
-		CyNetwork network = createNetworkFromJSON(stringNetwork.getManager(), species, object, queryTermMap, ids, netName);
+		CyNetwork network = createNetworkFromJSON(stringNetwork.getManager(), species, object, 
+		                                          queryTermMap, ids, netName);
 		stringNetwork.getManager().addStringNetwork(stringNetwork, network);
 		stringNetwork.getManager().listenToAdd();
 		return network;

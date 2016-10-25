@@ -36,6 +36,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.SetConfidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.ui.DiseaseNetworkWebServiceClient;
+import edu.ucsf.rbvi.stringApp.internal.ui.StitchWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.ui.StringWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.ui.TextMiningWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.view.StringCustomGraphicsFactory;
@@ -67,7 +68,6 @@ public class CyActivator extends AbstractCyActivator {
 		String version = (String) headers.get("Bundle-Version");
 		manager.setVersion(version);
 
-
 		{
 			// Register our network added listener
 			registerService(bc, manager, NetworkAddedListener.class, new Properties());
@@ -88,6 +88,12 @@ public class CyActivator extends AbstractCyActivator {
 		{
 			// Register our disease network web service client
 			DiseaseNetworkWebServiceClient client = new DiseaseNetworkWebServiceClient(manager);
+			registerAllServices(bc, client, new Properties());
+		}
+		
+		{
+			// Register our stitch network web service client
+			StitchWebServiceClient client = new StitchWebServiceClient(manager);
 			registerAllServices(bc, client, new Properties());
 		}
 

@@ -32,13 +32,15 @@ public class StringManager implements NetworkAddedListener {
 	final CyServiceRegistrar registrar;
 	final CyEventHelper cyEventHelper;
 	final Logger logger = Logger.getLogger(CyUserLog.NAME);
-	final TaskManager<?, ?> dialogTaskManager;
+	final TaskManager<?,?> dialogTaskManager;
 	final SynchronousTaskManager<?> synchronousTaskManager;
 	private boolean showImage = true;
 	private boolean ignore = false;
 	private Map<CyNetwork, StringNetwork> stringNetworkMap;
 
 	public static String ResolveURI = "http://string-db.org/api/";
+	public static String STITCHResolveURI = "http://stitch.embl.de/api/";
+	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
 	public static String URI = "http://api.jensenlab.org/";
 	public static String CallerIdentity = "string_app";
 
@@ -51,7 +53,6 @@ public class StringManager implements NetworkAddedListener {
 		stringNetworkMap = new HashMap<>();
 	}
 
-	
 	public CyNetwork createNetwork(String name) {
 		CyNetwork network = registrar.getService(CyNetworkFactory.class).createNetwork();
 		CyNetworkManager netMgr = registrar.getService(CyNetworkManager.class);
@@ -106,7 +107,7 @@ public class StringManager implements NetworkAddedListener {
 
 	public CyNetworkView createNetworkView(CyNetwork network) {
 		CyNetworkView view = registrar.getService(CyNetworkViewFactory.class)
-				.createNetworkView(network);
+		                                          .createNetworkView(network);
 		return view;
 	}
 
@@ -114,18 +115,13 @@ public class StringManager implements NetworkAddedListener {
 		registrar.getService(CyNetworkManager.class).addNetwork(network);
 		registrar.getService(CyApplicationManager.class).setCurrentNetwork(network);
 	}
-
+	
 	public CyNetwork getCurrentNetwork() {
 		return registrar.getService(CyApplicationManager.class).getCurrentNetwork();
 	}
 
-	public boolean showImage() {
-		return showImage;
-	}
-
-	public void setShowImage(boolean set) {
-		showImage = set;
-	}
+	public boolean showImage() { return showImage; }
+	public void setShowImage(boolean set) { showImage = set; }
 
 	public void flushEvents() {
 		cyEventHelper.flushPayloadEvents();
@@ -156,22 +152,25 @@ public class StringManager implements NetworkAddedListener {
 	}
 
 	public String getNetworkURL() {
-		return URI + "network";
+		return URI+"network";
 	}
 
 	public String getTextMiningURL() {
-		return URI + "Textmining";
+		return URI+"Textmining";
 	}
 
 	public String getEntityQueryURL() {
-		return URI + "EntityQuery";
+		return URI+"EntityQuery";
 	}
 
 	public String getIntegrationURL() {
-		return URI + "Integration";
+		return URI+"Integration";
 	}
 
-	public String getResolveURL() {
+	public String getResolveURL(boolean useSTITCH) {
+		if (useSTITCH)
+			return STITCHResolveURI;
+
 		return ResolveURI;
 	}
 
@@ -197,11 +196,10 @@ public class StringManager implements NetworkAddedListener {
 
 	public void handleEvent(NetworkAddedEvent nae) {
 		CyNetwork network = nae.getNetwork();
-		if (ignore)
-			return;
+		if (ignore) return;
 
 		// This is a string network only if we have a confidence score in the network table,
-		// "@id", "species", "canonical name", and "sequence" columns in the node table, and
+		// "@id", "species", "canonical name", and "sequence" columns in the node table, and 
 		// a "score" column in the edge table
 		if (ModelUtils.isStringNetwork(network)) {
 			StringNetwork stringNet = new StringNetwork(this);
@@ -228,7 +226,7 @@ public class StringManager implements NetworkAddedListener {
 
 	public void setVersion(String version) {
 		String v = version.replace('.', '_');
-		StringManager.CallerIdentity = "string_app_v" + v;
+		StringManager.CallerIdentity = "string_app_v"+v;
 	}
 
 }

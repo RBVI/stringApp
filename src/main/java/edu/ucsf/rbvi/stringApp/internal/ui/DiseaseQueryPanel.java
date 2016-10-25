@@ -438,7 +438,8 @@ public class DiseaseQueryPanel extends JPanel {
 		int confidence = confidenceSlider.getValue();
 		int limit = limitSlider.getValue();
 		manager.execute(new TaskIterator(new GetStringIDsFromDiseasesTask(stringNetwork, species, limit,
-		                                                                  confidence, entity.getIdentifier(), entity.getPrimaryName())));
+		                                                                  confidence, entity.getIdentifier(),
+																																			entity.getPrimaryName())));
 		cancel();
 	}
 
