@@ -601,6 +601,9 @@ public class GetTermsPanel extends JPanel {
 							                        "Nothing entered", JOptionPane.ERROR_MESSAGE); 
 				return;
 			}
+			
+			// Strip off any blank lines
+			terms = terms.replaceAll("(?m)^\\s*", "");
 			manager.info("Getting annotations for "+species.getName()+"terms: "+terms);
 
 			// Launch a task to get the annotations. 
