@@ -83,7 +83,8 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 
 		// We want the query with newlines, so we need to convert
 		query = query.replace(",","\n");
-		System.out.println("query = "+query);
+		// Now, strip off any blank lines
+		query = query.replaceAll("(?m)^\\s*","");
 
 		// Get the annotations
 		Map<String, List<Annotation>> annotations = stringNetwork.getAnnotations(sp.getTaxId(), query);
