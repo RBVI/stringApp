@@ -51,6 +51,7 @@ public class Annotation {
 			String stringId = null;
 			String preferredName = null;
 			int taxId = -1;
+			// If we switch the API back to use a start of 0, this will need to change
 			int queryIndex = -1;
 
 			if (ann.containsKey("preferredName"))
@@ -68,11 +69,6 @@ public class Annotation {
 				} else {
 					queryIndex = Integer.parseInt((String)index);
 				}
-
-				// The original API started queryIndex at "-1".  It has been updated
-				// to now use 0, but we need to detect which is which.
-				if (queryIndex < 0)
-					queryIndexStart = -1;
 
 				queryIndex = queryIndex - queryIndexStart;
 			}

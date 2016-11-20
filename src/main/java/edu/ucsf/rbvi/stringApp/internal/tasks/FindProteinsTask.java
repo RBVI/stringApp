@@ -34,6 +34,9 @@ public class FindProteinsTask extends AbstractTask {
 	@Tunable (description="Species")
 	public ListSingleSelection<Species> species;
 
+	@Tunable (description="Taxon ID", context="nogui")
+	public int taxonID = -1;
+
 	@Tunable (description="Number of proteins")
 	public BoundedInteger limit = new BoundedInteger(10, 100, 10000, false, false);
 
@@ -89,7 +92,10 @@ public class FindProteinsTask extends AbstractTask {
 		args.put("documents", sb.toString());
 		args.put("format", "json");
 		args.put("limit", limit.getValue().toString());
-		args.put("type2", Integer.toString(species.getSelectedValue().getTaxId()));
+		if (taxonID != -1)
+			args.put("type2", Integer.toString(taxonID));
+		else
+			args.put("type2", Integer.toString(species.getSelectedValue().getTaxId()));
 		monitor.setTitle("Querying STRING");
 		Object tmobject = HttpUtils.postJSON(manager.getTextMiningURL(), args, manager);
 		if (tmobject == null) {

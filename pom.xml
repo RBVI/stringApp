@@ -15,7 +15,7 @@
 	<packaging>bundle</packaging>
 	<name>${bundle.symbolicName}</name>
 
-	<version>1.0.5</version>
+	<version>1.0.6</version>
 
 	<build>
 		<plugins>

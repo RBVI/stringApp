@@ -40,6 +40,9 @@ public class DiseaseQueryTask extends AbstractTask implements ObservableTask {
 	@Tunable (description="Species", context="nogui")
 	public String species = null;
 
+	@Tunable (description="Taxon ID", context="nogui")
+	public int taxonID = -1;
+
 	@Tunable (description="Number of proteins")
 	public BoundedInteger limit = new BoundedInteger(1, 100, 10000, false, false);
 
@@ -68,7 +71,7 @@ public class DiseaseQueryTask extends AbstractTask implements ObservableTask {
 		boolean found;
 		Species sp = null;
 		for (Species s: speciesList) {
-			if (s.toString().equals(species)) {
+			if (s.toString().equals(species) || s.getTaxId() == taxonID) {
 				found = true;
 				sp = s;
 				break;

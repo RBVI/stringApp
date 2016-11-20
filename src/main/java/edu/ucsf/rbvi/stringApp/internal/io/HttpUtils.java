@@ -113,10 +113,10 @@ public class HttpUtils {
 			if (entity1.getContentLength() == 0)
 				return null;
 			BufferedReader reader = new BufferedReader(new InputStreamReader(entityStream));
-			// String lin;
-			// while ((lin=reader.readLine()) != null) {
-			//  	System.out.println(lin);
-			// }
+			String lin;
+			while ((lin=reader.readLine()) != null) {
+			 	System.out.println(lin);
+			}
 			JSONParser parser = new JSONParser();
 			jsonObject = parser.parse(reader);
 

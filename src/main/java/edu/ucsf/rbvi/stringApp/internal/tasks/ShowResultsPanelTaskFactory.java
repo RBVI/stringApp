@@ -48,5 +48,17 @@ public class ShowResultsPanelTaskFactory extends AbstractTaskFactory {
 		props.setProperty(IN_MENU_BAR, "true");
 		manager.registerService(this, TaskFactory.class, props);
 	}
+
+	public boolean isReady() {
+		// We always want to be able to shut it off
+		if (!show) return true;
+
+		CyNetwork net = manager.getCurrentNetwork();
+		if (net == null) return false;
+
+		if (ModelUtils.isStringNetwork(net)) return true;
+
+		return false;
+	}
 }
 
