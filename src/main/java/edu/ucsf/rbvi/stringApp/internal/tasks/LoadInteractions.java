@@ -32,11 +32,15 @@ public class LoadInteractions extends AbstractTask {
 	final int additionalNodes;
 	final List<String> stringIds;
 	final Map<String, String> queryTermMap;
+	final String netName;
+	final boolean useSTITCH;
 
 	public LoadInteractions(final StringNetwork stringNet, final String species, final int taxonId, 
 	                        final int confidence, final int additionalNodes,
 													final List<String>stringIds,
-													final Map<String, String> queryTermMap) {
+													final Map<String, String> queryTermMap,
+													final String netName,
+													final boolean useSTITCH) {
 		this.stringNet = stringNet;
 		this.taxonId = taxonId;
 		this.additionalNodes = additionalNodes;
@@ -44,10 +48,15 @@ public class LoadInteractions extends AbstractTask {
 		this.stringIds = stringIds;
 		this.species = species;
 		this.queryTermMap = queryTermMap;
+		this.netName = netName;
+		this.useSTITCH = useSTITCH;
 	}
 
 	public void run(TaskMonitor monitor) {
-		monitor.setTitle("Loading interactions from string-db");
+		if (!useSTITCH)
+			monitor.setTitle("Loading interactions from string-db");
+		else
+			monitor.setTitle("Loading interactions from STITCH");
 		StringManager manager = stringNet.getManager();
 		String ids = null;
 		for (String id: stringIds) {
@@ -63,6 +72,8 @@ public class LoadInteractions extends AbstractTask {
 
 		// String url = "http://api.jensenlab.org/network?entities="+URLEncoder.encode(ids.trim())+"&score="+conf;
 		Map<String, String> args = new HashMap<>();
+		if (useSTITCH)
+			args.put("database", "stitch");
 		args.put("entities",ids.trim());
 		args.put("score", conf);
 		args.put("caller_identity", StringManager.CallerIdentity);
@@ -72,7 +83,8 @@ public class LoadInteractions extends AbstractTask {
 		Object results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
 
 		// This may change...
-		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, species, results, queryTermMap, ids.trim());
+		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, species, results, 
+		                                                     queryTermMap, ids.trim(), netName);
 
 		// Set our confidence score
 		ModelUtils.setConfidence(network, ((double)confidence)/100.0);
@@ -80,6 +92,7 @@ public class LoadInteractions extends AbstractTask {
 
 		// System.out.println("Results: "+results.toString());
 		// Now style the network
+		// TODO:  change style to accomodate STITCH
 		CyNetworkView networkView = ViewUtils.styleNetwork(manager, network);
 
 		// And lay it out

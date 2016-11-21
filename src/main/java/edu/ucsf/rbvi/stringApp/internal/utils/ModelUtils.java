@@ -196,24 +196,34 @@ public class ModelUtils {
 	}
 
 	public static CyNetwork createNetworkFromJSON(StringNetwork stringNetwork, String species, Object object,
-	                                              Map<String, String> queryTermMap, String ids) {
+	                                              Map<String, String> queryTermMap, String ids, String netName) {
 		stringNetwork.getManager().ignoreAdd();
-		CyNetwork network = createNetworkFromJSON(stringNetwork.getManager(), species, object, queryTermMap, ids);
+		CyNetwork network = createNetworkFromJSON(stringNetwork.getManager(), species, object, 
+		                                          queryTermMap, ids, netName);
 		stringNetwork.getManager().addStringNetwork(stringNetwork, network);
 		stringNetwork.getManager().listenToAdd();
 		return network;
 	}
 
 	public static CyNetwork createNetworkFromJSON(StringManager manager, String species, Object object,
-	                                              Map<String, String> queryTermMap, String ids) {
+	                                              Map<String, String> queryTermMap, String ids, String netName) {
 		if (!(object instanceof JSONObject))
 			return null;
 
 		// Get a network name
-		String str = manager.getNetworkName(ids);
+		String defaultName = "String Network";
+		if (netName != null && netName != "") {
+			netName = defaultName + " - " + netName;
+		}
+		else if (queryTermMap.size() == 1 && queryTermMap.containsKey(ids)) {
+			netName = defaultName + " - " + queryTermMap.get(ids);
+		} else {
+			netName = defaultName;
+			// netName = manager.getNetworkName(ids);
+		}
 
 		// Create the network
-		CyNetwork newNetwork = manager.createNetwork(str);
+		CyNetwork newNetwork = manager.createNetwork(netName);
 
 		// Create a map to save the nodes
 		Map<String, CyNode> nodeMap = new HashMap<>();

@@ -15,18 +15,20 @@ public class GetAnnotationsTask extends AbstractTask implements ObservableTask {
 	final StringNetwork stringNetwork;
 	final int taxon;
 	final String terms;
+	final boolean useSTITCH;
 	Map<String, List<Annotation>> annotations = null;
 
-	public GetAnnotationsTask(StringNetwork stringNetwork, int taxon, String terms) {
+	public GetAnnotationsTask(StringNetwork stringNetwork, int taxon, String terms, boolean useSTITCH) {
 		this.stringNetwork = stringNetwork;
 		this.taxon = taxon;
 		this.terms = terms;
+		this.useSTITCH = useSTITCH;
 	}
 
 	@Override
 	public void run(TaskMonitor monitor) {
 		monitor.setTitle("Getting annotations");
-		annotations = stringNetwork.getAnnotations(taxon, terms);
+		annotations = stringNetwork.getAnnotations(taxon, terms, useSTITCH);
 	}
 
 	public Map<String, List<Annotation>> getAnnotations() { return annotations; }

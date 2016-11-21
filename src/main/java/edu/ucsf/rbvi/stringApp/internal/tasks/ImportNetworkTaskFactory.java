@@ -16,12 +16,14 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 	int additionalNodes;
 	final List<String> stringIds;
 	final Map<String, String> queryTermMap;
+	boolean useSTITCH;
 	
 
 	public ImportNetworkTaskFactory(final StringNetwork stringNet, final String species, 
 	                                int taxon, int confidence, int additional_nodes, 
 	                                final List<String> stringIds,
-																	final Map<String, String> queryTermMap) {
+																	final Map<String, String> queryTermMap,
+																	final boolean useSTITCH) {
 		this.stringNet = stringNet;
 		this.taxon = taxon;
 		this.confidence = confidence;
@@ -29,14 +31,16 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 		this.stringIds = stringIds;
 		this.species = species;
 		this.queryTermMap = queryTermMap;
+		this.useSTITCH = useSTITCH;
 	}
 
 	public TaskIterator createTaskIterator() {
 		if (stringNet.getNetwork() == null) {
 			return new TaskIterator(new LoadInteractions(stringNet, species, taxon, 
-			                                             confidence, additionalNodes, stringIds, queryTermMap));
+			                                             confidence, additionalNodes, stringIds, 
+																									 queryTermMap, "", useSTITCH));
 		}
 		return new TaskIterator(new LoadTermsTask(stringNet, species, taxon, confidence, 
-		                                          additionalNodes, stringIds, queryTermMap));
+		                                          additionalNodes, stringIds, queryTermMap, useSTITCH));
 	}
 }

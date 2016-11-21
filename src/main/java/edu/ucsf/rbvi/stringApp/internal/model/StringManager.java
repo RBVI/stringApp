@@ -39,6 +39,8 @@ public class StringManager implements NetworkAddedListener {
 	private Map<CyNetwork, StringNetwork> stringNetworkMap;
 
 	public static String ResolveURI = "http://string-db.org/api/";
+	public static String STITCHResolveURI = "http://stitch.embl.de/api/";
+	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
 	public static String URI = "http://api.jensenlab.org/";
 	public static String CallerIdentity = "string_app";
 
@@ -51,42 +53,33 @@ public class StringManager implements NetworkAddedListener {
 		stringNetworkMap = new HashMap<>();
 	}
 
-	public String getNetworkName(String ids) {
-		String name = "String Network";
+	public CyNetwork createNetwork(String name) {
+		CyNetwork network = registrar.getService(CyNetworkFactory.class).createNetwork();
+		CyNetworkManager netMgr = registrar.getService(CyNetworkManager.class);
 
-		// If we have a single query term, use that as the network name
-		if (ids != null) {
-			if (ids.split("\n").length == 1) {
-				return name+" - "+ids;
-			}
-		}
-
-		// Use simple name, but make sure we're unique
-		Set<CyNetwork> allNetworks = registrar.getService(CyNetworkManager.class).getNetworkSet();
-		if (allNetworks == null || allNetworks.size() == 0)
-			return name;
-
-		int max = 0;
-		for (CyNetwork network: allNetworks) {
-			String netName = getNetworkName(network);
-			if (netName.startsWith("String Network")) {
-				String [] parts = netName.split("_");
-				if (parts.length == 1)
-					max = 1;
-				else {
-					max = Integer.parseInt(parts[1].trim());
+		// See if this name is already taken
+		int index = -1;
+		boolean match = false;
+		for (CyNetwork net: netMgr.getNetworkSet()) {
+			String netName = net.getRow(net).get(CyNetwork.NAME, String.class);
+			if (netName.equals(name)) {
+				match = true;
+			} else if (netName.startsWith(name)) {
+				String subname = netName.substring(name.length());
+				if (subname.startsWith(" - ")) {
+					try {
+						int v = Integer.parseInt(subname.substring(3));
+						if (v >= index)
+							index = v+1;
+					} catch (NumberFormatException e) {}
 				}
 			}
 		}
-
-		if (max > 0)
-			return name+"_"+max;
-
-		return name;
-	}
-
-	public CyNetwork createNetwork(String name) {
-		CyNetwork network = registrar.getService(CyNetworkFactory.class).createNetwork();
+		if (match && index < 0) {
+			name = name + " - 1";
+		} else if (index > 0) {
+			name = name + " - " + index;
+		}
 		network.getRow(network).set(CyNetwork.NAME, name);
 		return network;
 	}
@@ -113,7 +106,8 @@ public class StringManager implements NetworkAddedListener {
 	}
 
 	public CyNetworkView createNetworkView(CyNetwork network) {
-		CyNetworkView view = registrar.getService(CyNetworkViewFactory.class).createNetworkView(network);
+		CyNetworkView view = registrar.getService(CyNetworkViewFactory.class)
+		                                          .createNetworkView(network);
 		return view;
 	}
 
@@ -173,7 +167,10 @@ public class StringManager implements NetworkAddedListener {
 		return URI+"Integration";
 	}
 
-	public String getResolveURL() {
+	public String getResolveURL(boolean useSTITCH) {
+		if (useSTITCH)
+			return STITCHResolveURI;
+
 		return ResolveURI;
 	}
 

@@ -77,7 +77,7 @@ public class GetTermsPanel extends JPanel {
 
 	JTextArea searchTerms;
 	JPanel mainSearchPanel;
-	JComboBox speciesCombo;
+	JComboBox<Species> speciesCombo;
 	JSlider confidenceSlider;
 	JTextField confidenceValue;
 	JSlider additionalNodesSlider;
@@ -166,7 +166,10 @@ public class GetTermsPanel extends JPanel {
 		mainSearchPanel.setLayout(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
 
-		JLabel searchLabel = new JLabel("Enter protein or compound names:");
+		String label = "Enter protein names or identifiers:";
+		if (useSTITCH)
+			label = "Enter protein or compound names or identifiers:";
+		JLabel searchLabel = new JLabel(label);
 		c.noExpand().anchor("northwest").insets(0,5,0,5);
 		mainSearchPanel.add(searchLabel, c);
 		searchTerms = new JTextArea();
@@ -183,7 +186,7 @@ public class GetTermsPanel extends JPanel {
 		JLabel speciesLabel = new JLabel("Species:");
 		c.noExpand().insets(0,5,0,5);
 		speciesPanel.add(speciesLabel, c);
-		speciesCombo = new JComboBox(speciesList.toArray());
+		speciesCombo = new JComboBox<Species>(speciesList.toArray(new Species[1]));
 
 		// Set Human as the default
 		for (Species s: speciesList) {
@@ -446,7 +449,7 @@ public class GetTermsPanel extends JPanel {
 		// System.out.println("Importing "+stringIds);
 		TaskFactory factory = new ImportNetworkTaskFactory(stringNetwork, speciesCombo.getSelectedItem().toString(), 
 		                                                   taxon, confidence, additionalNodes, stringIds,
-																											 queryTermMap);
+																											 queryTermMap, useSTITCH);
 		cancel();
 		manager.execute(factory.createTaskIterator());
 	}
@@ -601,7 +604,7 @@ public class GetTermsPanel extends JPanel {
 			manager.info("Getting annotations for "+species.getName()+"terms: "+terms);
 
 			// Launch a task to get the annotations. 
-			manager.execute(new TaskIterator(new GetAnnotationsTask(stringNetwork, taxon, terms)),this);
+			manager.execute(new TaskIterator(new GetAnnotationsTask(stringNetwork, taxon, terms, useSTITCH)),this);
 		}
 
 		@Override

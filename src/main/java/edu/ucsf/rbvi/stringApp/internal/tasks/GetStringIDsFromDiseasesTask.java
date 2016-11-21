@@ -36,16 +36,18 @@ public class GetStringIDsFromDiseasesTask extends AbstractTask implements Observ
 	final int limit;
 	final int confidence;
 	final String query;
+	final String diseaseName;
 	private List<TextMiningResult> tmResults;
 
 	public GetStringIDsFromDiseasesTask(final StringNetwork stringNetwork, final Species species, final int limit, 
-	                                    final int confidence, final String query) {
+	                                    final int confidence, final String query, final String diseaseName) {
 		this.stringNetwork = stringNetwork;
 		manager = stringNetwork.getManager();
 		this.species = species;
 		this.limit = limit;
 		this.confidence = confidence;
 		this.query = query;
+		this.diseaseName = diseaseName;
 	}
 	public void run(TaskMonitor monitor) {
 		monitor.setTitle("Loading STRING network with disease associated proteins");
@@ -77,7 +79,7 @@ public class GetStringIDsFromDiseasesTask extends AbstractTask implements Observ
 
 		// OK, if we got any results, fetch the network
 		LoadInteractions liTask = new LoadInteractions(stringNetwork, species.getName(), species.getTaxId(), 
-			                                             confidence, 0, stringIds, queryTermMap);
+			                                             confidence, 0, stringIds, queryTermMap, diseaseName, false);
 		AddTextMiningResultsTask atmTask = new AddTextMiningResultsTask(stringNetwork, tmResults);
 		insertTasksAfterCurrentTask(liTask, atmTask);
 	}

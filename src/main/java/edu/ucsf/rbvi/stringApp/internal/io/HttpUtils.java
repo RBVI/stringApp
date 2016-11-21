@@ -97,6 +97,9 @@ public class HttpUtils {
 		List<NameValuePair> nvps = HttpUtils.getArguments(queryMap);
 		Object jsonObject = null;
 
+		String args = HttpUtils.getStringArguments(queryMap);
+		System.out.println("URL: "+url+"?"+args);
+
 		// The underlying HTTP connection is still held by the response object
 		// to allow the response content to be streamed directly from the network socket.
 		// In order to ensure correct deallocation of system resources
@@ -113,10 +116,12 @@ public class HttpUtils {
 			if (entity1.getContentLength() == 0)
 				return null;
 			BufferedReader reader = new BufferedReader(new InputStreamReader(entityStream));
-			// String lin;
-			// while ((lin=reader.readLine()) != null) {
-			//  	System.out.println(lin);
-			// }
+			/*
+			String lin;
+			while ((lin=reader.readLine()) != null) {
+				System.out.println(lin);
+			}
+			*/
 			JSONParser parser = new JSONParser();
 			jsonObject = parser.parse(reader);
 
