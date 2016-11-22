@@ -345,7 +345,7 @@ public class ModelUtils {
 		if (edges != null && edges.size() > 0) {
 			for (Object edgeObj: edges) {
 				if (edgeObj instanceof JSONObject)
-					createEdge(network, (JSONObject)edgeObj, nodeMap, nodeNameMap, newEdges);
+					createEdge(network, (JSONObject)edgeObj, nodeMap, nodeNameMap, newEdges, useSTITCH);
 			}
 		}
 		return newNodes;
@@ -483,19 +483,33 @@ public class ModelUtils {
 	}
 
 	private static void createEdge(CyNetwork network, JSONObject edgeObj, Map<String, CyNode> nodeMap,
-	                               Map<String, String> nodeNameMap, List<CyEdge> newEdges) {
+	                               Map<String, String> nodeNameMap, List<CyEdge> newEdges,
+																 boolean useSTITCH) {
 		String source = (String)edgeObj.get("source");
 		String target = (String)edgeObj.get("target");
 		CyNode sourceNode = nodeMap.get(source);
 		CyNode targetNode = nodeMap.get(target);
 
 		CyEdge edge;
+		String interaction = "pp";
 
 		// Don't create an edge if we already have one between these nodes
 		if (!network.containsEdge(sourceNode, targetNode)) {
+			if (useSTITCH) {
+				boolean sourceType = isCompound(network, sourceNode);
+				boolean targetType = isCompound(network, targetNode);
+				if (sourceType == false && targetType == false)
+					interaction = "pp";
+				else if (sourceType == true && targetType == true)
+					interaction = "cc";
+				else 
+					interaction = "pc";
+			}
+			
 			edge = network.addEdge(sourceNode, targetNode, false);
-			network.getRow(edge).set(CyNetwork.NAME, nodeNameMap.get(source)+" (pp) "+nodeNameMap.get(target));
-			network.getRow(edge).set(CyEdge.INTERACTION, "pp");
+			network.getRow(edge).set(CyNetwork.NAME, 
+			                         nodeNameMap.get(source)+" ("+interaction+") "+nodeNameMap.get(target));
+			network.getRow(edge).set(CyEdge.INTERACTION, interaction);
 			if (newEdges != null) newEdges.add(edge);
 		} else {
 			List<CyEdge> edges = network.getConnectingEdgeList(sourceNode, targetNode, CyEdge.Type.ANY);

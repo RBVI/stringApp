@@ -239,6 +239,17 @@ public class ViewUtils {
 					                                                                    String.class, customGraphics);
 				stringStyle.addVisualMappingFunction(pMapping);
 			}
+
+			// Now, set colors for edges based on the edge type
+			{
+				DiscreteMapping<String,Color> dMapping = 
+					(DiscreteMapping) discreteFactory.createVisualMappingFunction(CyEdge.INTERACTION, String.class, 
+											   	                                    BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT);
+				dMapping.putMapValue("pp", new Color(31,41,61));
+				dMapping.putMapValue("cc", Color.RED);
+				dMapping.putMapValue("pc", Color.GREEN);
+				stringStyle.addVisualMappingFunction(dMapping);
+			}
 		}
 
 		vmm.addVisualStyle(stringStyle);
