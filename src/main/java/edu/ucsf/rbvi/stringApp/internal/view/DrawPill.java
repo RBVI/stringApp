@@ -66,9 +66,9 @@ public class DrawPill {
 			// Change this to a radial gradient with a steep drop-off in the end:w
 			Stops s1 = new Stops(3);
 			s1.addStop(0.0f, "#000000", 0.6f);
-			s1.addStop(0.98f, "#000000", 0.6f);
+			s1.addStop(0.9f, "#000000", 0.6f);
 			s1.addStop(1.0f, "#000000", 0.0f);
-			Paint p = new RadialGradientPaint(scaleX(20.0f), scaleY(28f), xScale*19f*2f, 
+			Paint p = new RadialGradientPaint(scaleX(20.0f), scaleY(28f), xScale*19f, 
 			                                  s1.getStops(), s1.getColors());
 			g2.setPaint(p);
 			g2.scale(1.05, 0.9);
