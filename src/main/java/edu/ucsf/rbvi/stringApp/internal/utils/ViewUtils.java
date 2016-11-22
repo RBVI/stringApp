@@ -219,17 +219,17 @@ public class ViewUtils {
 
 			// TODO: Set the label position
 			// We need to export ObjectPosition in the API in order to be able to do this, unfortunately
-			/*
 			{
-				VisualProperty customGraphics = lex.lookup(CyNode.class, "NODE_LABEL_POSITION");
-				DiscreteMapping<String,NodeShape> dMapping = 
+				VisualProperty labelPosition = lex.lookup(CyNode.class, "NODE_LABEL_POSITION");
+				DiscreteMapping<String,Object> dMapping = 
 					(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 
-											   	                                            BasicVisualLexicon.NODE_SHAPE);
-				dMapping.putMapValue("compound", NodeShapeVisualProperty.ROUND_RECTANGLE);
-				dMapping.putMapValue("protein", NodeShapeVisualProperty.ELLIPSE);
+											   	                                              labelPosition);
+				Object top = labelPosition.parseSerializableString("N,S,c,0.00,0.00");
+				Object upperRight = labelPosition.parseSerializableString("NE,S,c,0.00,0.00");
+				dMapping.putMapValue("compound", top);
+				dMapping.putMapValue("protein", upperRight);
 				stringStyle.addVisualMappingFunction(dMapping);
 			}
-			*/
 
 			// Set up a passthrough for chemViz
 			{
