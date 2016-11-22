@@ -72,7 +72,6 @@ public class DrawPill {
 			                                  s1.getStops(), s1.getColors());
 			g2.setPaint(p);
 			g2.scale(1.05, 0.9);
-			System.out.println("shadow");
 			fillPill(g2, scaleX(1.0f), scaleY(9.5f), xScale*19f*2f, yScale*19f*2f);
 			g2.scale(1.0/1.05, 1.0/0.9);
 		}
@@ -201,9 +200,6 @@ public class DrawPill {
 		path.closePath();
 		g2.fill(path);
 		*/
-
-		System.out.println("x,y="+x+","+y);
-		System.out.println("width,height="+width+","+height);
 
 		path.moveTo(xStart,yStart);
 		// A15,15 0 0,0 485.5,212
