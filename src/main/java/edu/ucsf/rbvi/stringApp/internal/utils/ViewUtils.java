@@ -189,21 +189,21 @@ public class ViewUtils {
 
 			// Set the appropriate width
 			{
-				DiscreteMapping<String,Integer> dMapping = 
+				DiscreteMapping<String,Double> dMapping = 
 					(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 
 											   	                                            BasicVisualLexicon.NODE_WIDTH);
-				dMapping.putMapValue("compound", 100);
-				dMapping.putMapValue("protein", 50);
+				dMapping.putMapValue("compound", 100.0);
+				dMapping.putMapValue("protein", 50.0);
 				stringStyle.addVisualMappingFunction(dMapping);
 			}
 
 			// Set the appropriate height
 			{
-				DiscreteMapping<String,Integer> dMapping = 
+				DiscreteMapping<String,Double> dMapping = 
 					(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 
 											   	                                            BasicVisualLexicon.NODE_HEIGHT);
-				dMapping.putMapValue("compound", 40);
-				dMapping.putMapValue("protein", 50);
+				dMapping.putMapValue("compound", 40.0);
+				dMapping.putMapValue("protein", 50.0);
 				stringStyle.addVisualMappingFunction(dMapping);
 			}
 
