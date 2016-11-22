@@ -441,6 +441,14 @@ public class ModelUtils {
 		return newNode;
 	}
 
+	public static boolean isCompound(CyNetwork net, CyNode node) {
+		if (net == null || node == null)
+			return false;
+
+		String ns = net.getRow(node).get(ID, String.class);
+		return getType(ns).equals("compound");
+	}
+
 	private static String getType(String id) {
 		// Get the namespace
 		String namespace = id.substring(0, id.indexOf(":"));

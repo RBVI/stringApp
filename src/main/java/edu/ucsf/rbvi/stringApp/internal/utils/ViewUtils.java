@@ -15,6 +15,7 @@ import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.presentation.RenderingEngineManager;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
+import org.cytoscape.view.presentation.property.values.NodeShape;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualPropertyDependency;
@@ -33,7 +34,10 @@ public class ViewUtils {
 	public static CyNetworkView styleNetwork(StringManager manager, CyNetwork network) {
 		// First, let's get a network view
 		CyNetworkView netView = manager.createNetworkView(network);
-		VisualStyle stringStyle = createStyle(manager, network);
+		boolean useStitch = false;
+		if (network.getDefaultNodeTable().getColumn(ModelUtils.TYPE) != null)
+			useStitch = true;
+		VisualStyle stringStyle = createStyle(manager, network, useStitch);
 
 		updateColorMap(manager, stringStyle, netView);
 
@@ -73,7 +77,7 @@ public class ViewUtils {
 		// style.apply(view);
 	}
 
-	public static VisualStyle createStyle(StringManager manager, CyNetwork network) {
+	public static VisualStyle createStyle(StringManager manager, CyNetwork network, boolean useStitch) {
 		String networkName = manager.getNetworkName(network);
 		String styleName = STYLE_NAME;
 		if (networkName.startsWith("String Network")) {
@@ -100,7 +104,8 @@ public class ViewUtils {
 		stringStyle.setTitle(styleName);
 
 		// Set the default node size
-		stringStyle.setDefaultValue(BasicVisualLexicon.NODE_SIZE, 45.0);
+		stringStyle.setDefaultValue(BasicVisualLexicon.NODE_WIDTH, 45.0);
+		stringStyle.setDefaultValue(BasicVisualLexicon.NODE_HEIGHT, 45.0);
 
 		// Set the shape to an ellipse
 		stringStyle.setDefaultValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.ELLIPSE);
@@ -123,7 +128,7 @@ public class ViewUtils {
 		// Lock node width and height
 		for(VisualPropertyDependency<?> vpd: stringStyle.getAllVisualPropertyDependencies()) {
 			if (vpd.getIdString().equals("nodeSizeLocked"))
-				vpd.setDependency(true);
+				vpd.setDependency(false);
 		}
 
 		// Set up the passthrough mapping for the glass style
@@ -156,6 +161,39 @@ public class ViewUtils {
 			cMapping.addPoint(0.5, new BoundaryRangeValues<Integer>(85,85,85));
 			cMapping.addPoint(1.0, new BoundaryRangeValues<Integer>(170,170,170));
 			stringStyle.addVisualMappingFunction(cMapping);
+		}
+
+		// Set up all of our special mappings if we have a stitch network
+		if (useStitch) {
+			VisualMappingFunctionFactory discreteFactory = 
+		                 manager.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
+
+			{
+				DiscreteMapping<String,Integer> dMapping = 
+					(DiscreteMapping) discreteFactory.createVisualMappingFunction("node type", String.class, 
+												   	                                            BasicVisualLexicon.NODE_TRANSPARENCY);
+				dMapping.putMapValue("compound", 0);
+				dMapping.putMapValue("protein", 255);
+				stringStyle.addVisualMappingFunction(dMapping);
+			}
+
+			{
+				DiscreteMapping<String,Integer> dMapping = 
+					(DiscreteMapping) discreteFactory.createVisualMappingFunction("node type", String.class, 
+											   	                                            BasicVisualLexicon.NODE_WIDTH);
+				dMapping.putMapValue("compound", 100);
+				dMapping.putMapValue("protein", 45);
+				stringStyle.addVisualMappingFunction(dMapping);
+			}
+
+			{
+				DiscreteMapping<String,NodeShape> dMapping = 
+					(DiscreteMapping) discreteFactory.createVisualMappingFunction("node type", String.class, 
+											   	                                            BasicVisualLexicon.NODE_SHAPE);
+				dMapping.putMapValue("compound", NodeShapeVisualProperty.ROUND_RECTANGLE);
+				dMapping.putMapValue("protein", NodeShapeVisualProperty.ELLIPSE);
+				stringStyle.addVisualMappingFunction(dMapping);
+			}
 		}
 
 		vmm.addVisualStyle(stringStyle);
