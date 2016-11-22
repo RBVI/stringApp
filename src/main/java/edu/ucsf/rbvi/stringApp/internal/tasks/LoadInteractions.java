@@ -84,7 +84,7 @@ public class LoadInteractions extends AbstractTask {
 
 		// This may change...
 		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, species, results, 
-		                                                     queryTermMap, ids.trim(), netName);
+		                                                     queryTermMap, ids.trim(), netName, useSTITCH);
 
 		// Set our confidence score
 		ModelUtils.setConfidence(network, ((double)confidence)/100.0);

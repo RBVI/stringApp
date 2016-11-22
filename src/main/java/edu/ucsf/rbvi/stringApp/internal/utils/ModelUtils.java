@@ -32,12 +32,14 @@ public class ModelUtils {
 
 	// Node information
 	public static String CANONICAL = "canonical name";
+	public static String CV_STYLE = "chemViz Passthrough";
 	public static String ID = "@id";
 	public static String DESCRIPTION = "description";
 	public static String DISEASE_SCORE = "disease score";
 	public static String NAMESPACE = "namespace";
 	public static String QUERYTERM = "query term";
 	public static String SEQUENCE = "sequence";
+	public static String SMILES = "smiles";
 	public static String SPECIES = "species";
 	public static String STRINGID = "database identifier";
 	public static String STYLE = "STRING style";
@@ -160,7 +162,8 @@ public class ModelUtils {
 		}
 	}
 
-	public static List<CyNode> createTMNetworkFromJSON(StringManager manager, Species species, Object object, String query) {
+	public static List<CyNode> createTMNetworkFromJSON(StringManager manager, 
+	                                                   Species species, Object object, String query) {
 		if (!(object instanceof JSONArray))
 			return null;
 
@@ -182,6 +185,7 @@ public class ModelUtils {
 		Map<String, CyNode> nodeMap = new HashMap<>();
 		Map<String, String> nodeNameMap = new HashMap<>();
 		String species = null;
+		boolean useSTITCH = false;
 		for (CyNode node: net.getNodeList()) {
 			if (species == null)
 				species = net.getRow(node).get(SPECIES, String.class);
@@ -189,29 +193,38 @@ public class ModelUtils {
 			String name = net.getRow(node).get(CyNetwork.NAME, String.class);
 			nodeMap.put(stringId, node);
 			nodeNameMap.put(stringId, name);
+			if (isCompound(net, node))
+				useSTITCH = true;
 		}
 
-		List<CyNode> nodes = getJSON(manager, species, net, nodeMap, nodeNameMap, queryTermMap, newEdges, json);
+		List<CyNode> nodes = getJSON(manager, species, net, nodeMap, nodeNameMap, 
+		                             queryTermMap, newEdges, json, useSTITCH);
 		return nodes;
 	}
 
 	public static CyNetwork createNetworkFromJSON(StringNetwork stringNetwork, String species, Object object,
-	                                              Map<String, String> queryTermMap, String ids, String netName) {
+	                                              Map<String, String> queryTermMap, String ids, String netName,
+																								boolean useSTITCH) {
 		stringNetwork.getManager().ignoreAdd();
 		CyNetwork network = createNetworkFromJSON(stringNetwork.getManager(), species, object, 
-		                                          queryTermMap, ids, netName);
+		                                          queryTermMap, ids, netName, useSTITCH);
 		stringNetwork.getManager().addStringNetwork(stringNetwork, network);
 		stringNetwork.getManager().listenToAdd();
 		return network;
 	}
 
 	public static CyNetwork createNetworkFromJSON(StringManager manager, String species, Object object,
-	                                              Map<String, String> queryTermMap, String ids, String netName) {
+	                                              Map<String, String> queryTermMap, String ids, 
+																								String netName, boolean useSTITCH) {
 		if (!(object instanceof JSONObject))
 			return null;
 
 		// Get a network name
-		String defaultName = "String Network";
+		String defaultName;
+	 	if (useSTITCH)
+			defaultName	= "STITCH Network";
+		else
+			defaultName	= "String Network";
 		if (netName != null && netName != "") {
 			netName = defaultName + " - " + netName;
 		}
@@ -233,7 +246,7 @@ public class ModelUtils {
 
 		JSONObject json = (JSONObject)object;
 
-		getJSON(manager, species, newNetwork, nodeMap, nodeNameMap, queryTermMap, null, json);
+		getJSON(manager, species, newNetwork, nodeMap, nodeNameMap, queryTermMap, null, json, useSTITCH);
 
 		manager.addNetwork(newNetwork);
 		return newNetwork;
@@ -291,7 +304,7 @@ public class ModelUtils {
 	                                    Map<String, CyNode> nodeMap, Map<String, String> nodeNameMap,
 																			Map<String, String> queryTermMap,
 	                                    List<CyEdge> newEdges,
-																			JSONObject json) {
+																			JSONObject json, boolean useSTITCH) {
 
 		List<CyNode> newNodes = new ArrayList<>();
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, CANONICAL);
@@ -304,6 +317,10 @@ public class ModelUtils {
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STRINGID);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STYLE);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, TYPE);
+		if (useSTITCH) {
+			createColumnIfNeeded(network.getDefaultNodeTable(), String.class, CV_STYLE);
+			createColumnIfNeeded(network.getDefaultNodeTable(), String.class, SMILES);
+		}
 
 		createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, SCORE);
 
@@ -315,7 +332,8 @@ public class ModelUtils {
 			for (Object nodeObj: nodes) {
 				if (nodeObj instanceof JSONObject) {
 					JSONObject nodeJSON = (JSONObject)nodeObj;
-					CyNode newNode = createNode(network, nodeJSON, species, nodeMap, nodeNameMap, queryTermMap, columnMap);
+					CyNode newNode = 
+									createNode(network, nodeJSON, species, nodeMap, nodeNameMap, queryTermMap, columnMap);
 					if (newNode != null)
 						newNodes.add(newNode);
 				}
@@ -399,8 +417,10 @@ public class ModelUtils {
 		if (species != null)
 			row.set(SPECIES, species);
 		row.set(NAMESPACE, namespace);
-		row.set(TYPE, getType(id));
 		row.set(STYLE, "string:"); // We may overwrite this, if we get an image
+
+		String type = getType(id);
+		row.set(TYPE, type);
 
 		for (Object objKey: nodeObj.keySet()) {
 			String key = (String)objKey;
@@ -413,6 +433,9 @@ public class ModelUtils {
 				network.getRow(newNode).set(SEQUENCE, (String)nodeObj.get("sequence"));
 			} else if (key.equals("image")) {
 				row.set(STYLE, "string:"+nodeObj.get("image"));
+			} else if (key.equals("smiles")) {
+				row.set(CV_STYLE, "chemviz:"+nodeObj.get("smiles"));
+				row.set(key, nodeObj.get("smiles"));
 			} else {
 				// It's not one of our "standard" attributes, create a column for it (if necessary) and then add it
 				Object value = nodeObj.get(key);
