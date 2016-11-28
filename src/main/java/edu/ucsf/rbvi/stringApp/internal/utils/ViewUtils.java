@@ -15,6 +15,7 @@ import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.presentation.RenderingEngineManager;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
+import org.cytoscape.view.presentation.property.values.NodeShape;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualPropertyDependency;
@@ -33,7 +34,10 @@ public class ViewUtils {
 	public static CyNetworkView styleNetwork(StringManager manager, CyNetwork network) {
 		// First, let's get a network view
 		CyNetworkView netView = manager.createNetworkView(network);
-		VisualStyle stringStyle = createStyle(manager, network);
+		boolean useStitch = false;
+		if (network.getDefaultNodeTable().getColumn(ModelUtils.TYPE) != null)
+			useStitch = true;
+		VisualStyle stringStyle = createStyle(manager, network, useStitch);
 
 		updateColorMap(manager, stringStyle, netView);
 
@@ -73,7 +77,7 @@ public class ViewUtils {
 		// style.apply(view);
 	}
 
-	public static VisualStyle createStyle(StringManager manager, CyNetwork network) {
+	public static VisualStyle createStyle(StringManager manager, CyNetwork network, boolean useStitch) {
 		String networkName = manager.getNetworkName(network);
 		String styleName = STYLE_NAME;
 		if (networkName.startsWith("String Network")) {
@@ -100,7 +104,8 @@ public class ViewUtils {
 		stringStyle.setTitle(styleName);
 
 		// Set the default node size
-		stringStyle.setDefaultValue(BasicVisualLexicon.NODE_SIZE, 45.0);
+		stringStyle.setDefaultValue(BasicVisualLexicon.NODE_WIDTH, 45.0);
+		stringStyle.setDefaultValue(BasicVisualLexicon.NODE_HEIGHT, 45.0);
 
 		// Set the shape to an ellipse
 		stringStyle.setDefaultValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.ELLIPSE);
@@ -123,25 +128,29 @@ public class ViewUtils {
 		// Lock node width and height
 		for(VisualPropertyDependency<?> vpd: stringStyle.getAllVisualPropertyDependencies()) {
 			if (vpd.getIdString().equals("nodeSizeLocked"))
-				vpd.setDependency(true);
+				vpd.setDependency(false);
 		}
 
-		// Set up the passthrough mapping for the glass style
 		VisualMappingFunctionFactory passthroughFactory = 
 		                 manager.getService(VisualMappingFunctionFactory.class, "(mapping.type=passthrough)");
 		VisualLexicon lex = manager.getService(RenderingEngineManager.class).getDefaultVisualLexicon();
-		VisualProperty customGraphics = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_1");
-		PassthroughMapping pMapping = 
-			(PassthroughMapping) passthroughFactory.createVisualMappingFunction("STRING Style", String.class, customGraphics);
-		stringStyle.addVisualMappingFunction(pMapping);
 
-		// Finally, set the edge width to be dependent on the total score
+		// Set up the passthrough mapping for the glass style
+		{
+			VisualProperty customGraphics = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_1");
+			PassthroughMapping pMapping = 
+				(PassthroughMapping) passthroughFactory.createVisualMappingFunction(ModelUtils.STYLE, 
+				                                                                    String.class, customGraphics);
+			stringStyle.addVisualMappingFunction(pMapping);
+		}
+
+		// Set the edge width to be dependent on the total score
 		VisualMappingFunctionFactory continuousFactory = 
 		                 manager.getService(VisualMappingFunctionFactory.class, "(mapping.type=continuous)");
 		{
 			ContinuousMapping<Double,Double> cMapping = 
-				(ContinuousMapping) continuousFactory.createVisualMappingFunction("score", Double.class, 
-											                                                  BasicVisualLexicon.EDGE_WIDTH);
+				(ContinuousMapping) continuousFactory.createVisualMappingFunction(ModelUtils.SCORE, Double.class, 
+				                                                                  BasicVisualLexicon.EDGE_WIDTH);
 			cMapping.addPoint(0.2, new BoundaryRangeValues<Double>(0.8,0.8,0.8));
 			cMapping.addPoint(0.5, new BoundaryRangeValues<Double>(2.0,2.0,2.0));
 			cMapping.addPoint(1.0, new BoundaryRangeValues<Double>(4.0,4.0,4.0));
@@ -150,12 +159,97 @@ public class ViewUtils {
 
 		{
 			ContinuousMapping<Double,Integer> cMapping = 
-				(ContinuousMapping) continuousFactory.createVisualMappingFunction("score", Double.class, 
-											   	                                               BasicVisualLexicon.EDGE_TRANSPARENCY);
+				(ContinuousMapping) continuousFactory.createVisualMappingFunction(ModelUtils.SCORE, Double.class, 
+				                                                                  BasicVisualLexicon.EDGE_TRANSPARENCY);
 			cMapping.addPoint(0.2, new BoundaryRangeValues<Integer>(34,34,34));
 			cMapping.addPoint(0.5, new BoundaryRangeValues<Integer>(85,85,85));
 			cMapping.addPoint(1.0, new BoundaryRangeValues<Integer>(170,170,170));
 			stringStyle.addVisualMappingFunction(cMapping);
+		}
+
+		// Set up all of our special mappings if we have a stitch network
+		if (useStitch) {
+
+			// Increase our font size to 12pt
+			stringStyle.setDefaultValue(BasicVisualLexicon.NODE_LABEL_FONT_SIZE, 12);
+
+			// Set the node to be transparent if it's a compound.  We
+			// need to do this because Cytoscape doesn't have a "pill" shape
+			VisualMappingFunctionFactory discreteFactory = 
+		                 manager.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
+
+			{
+				DiscreteMapping<String,Integer> dMapping = 
+					(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 
+												   	                                            BasicVisualLexicon.NODE_TRANSPARENCY);
+				dMapping.putMapValue("compound", 0);
+				dMapping.putMapValue("protein", 255);
+				stringStyle.addVisualMappingFunction(dMapping);
+			}
+
+			// Set the appropriate width
+			{
+				DiscreteMapping<String,Double> dMapping = 
+					(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 
+											   	                                            BasicVisualLexicon.NODE_WIDTH);
+				dMapping.putMapValue("compound", 100.0);
+				dMapping.putMapValue("protein", 50.0);
+				stringStyle.addVisualMappingFunction(dMapping);
+			}
+
+			// Set the appropriate height
+			{
+				DiscreteMapping<String,Double> dMapping = 
+					(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 
+											   	                                            BasicVisualLexicon.NODE_HEIGHT);
+				dMapping.putMapValue("compound", 40.0);
+				dMapping.putMapValue("protein", 50.0);
+				stringStyle.addVisualMappingFunction(dMapping);
+			}
+
+			// Set the appropriate shape
+			{
+				DiscreteMapping<String,NodeShape> dMapping = 
+					(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 
+											   	                                            BasicVisualLexicon.NODE_SHAPE);
+				dMapping.putMapValue("compound", NodeShapeVisualProperty.ROUND_RECTANGLE);
+				dMapping.putMapValue("protein", NodeShapeVisualProperty.ELLIPSE);
+				stringStyle.addVisualMappingFunction(dMapping);
+			}
+
+			// TODO: Set the label position
+			// We need to export ObjectPosition in the API in order to be able to do this, unfortunately
+			{
+				VisualProperty labelPosition = lex.lookup(CyNode.class, "NODE_LABEL_POSITION");
+				DiscreteMapping<String,Object> dMapping = 
+					(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 
+											   	                                              labelPosition);
+				Object top = labelPosition.parseSerializableString("N,S,c,0.00,0.00");
+				Object upperRight = labelPosition.parseSerializableString("NE,S,c,0.00,0.00");
+				dMapping.putMapValue("compound", top);
+				dMapping.putMapValue("protein", upperRight);
+				stringStyle.addVisualMappingFunction(dMapping);
+			}
+
+			// Set up a passthrough for chemViz
+			{
+				VisualProperty customGraphics = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_2");
+				PassthroughMapping pMapping = 
+					(PassthroughMapping) passthroughFactory.createVisualMappingFunction(ModelUtils.CV_STYLE, 
+					                                                                    String.class, customGraphics);
+				stringStyle.addVisualMappingFunction(pMapping);
+			}
+
+			// Now, set colors for edges based on the edge type
+			{
+				DiscreteMapping<String,Color> dMapping = 
+					(DiscreteMapping) discreteFactory.createVisualMappingFunction(CyEdge.INTERACTION, String.class, 
+											   	                                    BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT);
+				dMapping.putMapValue("pp", new Color(31,41,61));
+				dMapping.putMapValue("cc", Color.RED);
+				dMapping.putMapValue("pc", Color.GREEN);
+				stringStyle.addVisualMappingFunction(dMapping);
+			}
 		}
 
 		vmm.addVisualStyle(stringStyle);

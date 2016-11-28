@@ -20,6 +20,7 @@ import org.cytoscape.view.presentation.customgraphics.Cy2DGraphicLayer;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class StringLayer implements Cy2DGraphicLayer {
 	StringManager manager;
@@ -39,14 +40,21 @@ public class StringLayer implements Cy2DGraphicLayer {
 	                 CyNetworkView networkView, View<? extends CyIdentifiable> view) {
 		if (! (view.getModel() instanceof CyNode) ) return;
 		CyNetwork network = networkView.getModel();
+		CyNode node = (CyNode)view.getModel();
+		boolean usePill = ModelUtils.isCompound(network, node);
 
 		Paint fill = view.getVisualProperty(BasicVisualLexicon.NODE_FILL_COLOR);
 		Paint background = networkView.getVisualProperty(BasicVisualLexicon.NETWORK_BACKGROUND_PAINT);
 		boolean selected = false;
 		if (network.getRow(view.getModel()).get(CyNetwork.SELECTED, Boolean.class))
 			selected = true;
-		DrawSphere ds = new DrawSphere((Color)fill, (Color)background, image, shape, selected);
-		ds.draw(g, bounds);
+		if (usePill) {
+			DrawPill ds = new DrawPill((Color)fill, (Color)background, image, shape, selected);
+			ds.draw(g, bounds);
+		} else {
+			DrawSphere ds = new DrawSphere((Color)fill, (Color)background, image, shape, selected);
+			ds.draw(g, bounds);
+		}
 	}
 
 	public Rectangle2D getBounds2D() { return bounds; }

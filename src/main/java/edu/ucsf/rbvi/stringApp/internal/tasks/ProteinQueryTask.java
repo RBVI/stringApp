@@ -51,7 +51,7 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 
 	private List<Species> speciesList;
 
-	private CyNetwork stringNetwork;
+	private CyNetwork loadedNetwork;
 
 	public ProteinQueryTask(final StringManager manager) {
 		this.manager = manager;
@@ -90,7 +90,7 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 		query = query.replaceAll("(?m)^\\s*","");
 
 		// Get the annotations
-		Map<String, List<Annotation>> annotations = stringNetwork.getAnnotations(sp.getTaxId(), query);
+		Map<String, List<Annotation>> annotations = stringNetwork.getAnnotations(sp.getTaxId(), query, false);
 		if (annotations == null || annotations.size() == 0) {
 			monitor.showMessage(TaskMonitor.Level.ERROR, "Query '"+query+"' returned no results");
 			return;
@@ -108,21 +108,25 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
 		LoadInteractions load = new LoadInteractions(stringNetwork, sp.toString(), sp.getTaxId(), 
-                                                 confidence, limit.getValue(), stringIds, queryTermMap, "");
+                                                 confidence, limit.getValue(),
+																								 stringIds, queryTermMap, "", false);
 		manager.execute(new TaskIterator(load), true);
+		loadedNetwork = stringNetwork.getNetwork();
 	}
 
 	@Override
 	public <R> R getResults(Class<? extends R> clzz) {
 		// Return the network we created
-		if (stringNetwork == null) return null;
+		if (loadedNetwork == null) return null;
 
 		if (clzz.equals(CyNetwork.class)) {
-			return (R)stringNetwork;
+			return (R)loadedNetwork;
 		} else if (clzz.equals(Long.class)) {
-			return (R)stringNetwork.getSUID();
+			return (R)loadedNetwork.getSUID();
 		} else if (clzz.equals(String.class)) {
-			return (R)stringNetwork.getRow(stringNetwork).get(CyNetwork.NAME, String.class);
+			String resp = "Loaded network '"+loadedNetwork.getRow(loadedNetwork).get(CyNetwork.NAME, String.class);
+			resp += "' with "+loadedNetwork.getNodeCount()+" nodes and "+loadedNetwork.getEdgeCount()+" edges";
+			return (R)resp;
 		}
 		return null;
 	}

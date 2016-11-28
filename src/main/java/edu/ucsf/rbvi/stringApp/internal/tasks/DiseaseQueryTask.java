@@ -96,7 +96,8 @@ public class DiseaseQueryTask extends AbstractTask implements ObservableTask {
 		EntityIdentifier entity = matches.get(0);
 		monitor.showMessage(TaskMonitor.Level.INFO, "Loading proteins for "+entity.getPrimaryName());
 		manager.execute(new TaskIterator(new GetStringIDsFromDiseasesTask(stringNetwork, sp, limit.getValue(),
-	                                                                    confidence, entity.getIdentifier(), entity.getPrimaryName())));
+	                                                                    confidence, entity.getIdentifier(),
+																																			entity.getPrimaryName())));
 	}
 
 	@Override

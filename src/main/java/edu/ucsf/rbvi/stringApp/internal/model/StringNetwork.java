@@ -40,7 +40,7 @@ public class StringNetwork {
 
 	public Map<String, List<Annotation>> getAnnotations() { return annotations; }
 
-	public Map<String, List<Annotation>> getAnnotations(int taxon, final String terms) {
+	public Map<String, List<Annotation>> getAnnotations(int taxon, final String terms, final boolean useSTITCH) {
 		String encTerms;
 		try {
 			encTerms = URLEncoder.encode(terms.trim(), "UTF-8");
@@ -48,14 +48,24 @@ public class StringNetwork {
 			return new HashMap<String, List<Annotation>>();
 		}
 
-		String url = manager.getResolveURL()+"json/resolveList";
+		String url = manager.getResolveURL(useSTITCH)+"json/resolveList";
 		Map<String, String> args = new HashMap<>();
 		args.put("species", Integer.toString(taxon));
 		args.put("identifiers", encTerms);
 		args.put("caller_identity", StringManager.CallerIdentity);
 		System.out.println("URL: "+url+"?species="+Integer.toString(taxon)+"&caller_identity="+StringManager.CallerIdentity+"&identifiers="+encTerms);
+		Object results;
 		// Get the results
-		Object results = HttpUtils.postJSON(url, args, manager);
+		//
+		/* At one point STITCH didn't work with POST
+		if (!useSTITCH) {
+			results = HttpUtils.postJSON(url, args, manager);
+		} else {
+			results = HttpUtils.postJSON(url, args, manager);
+		}
+		*/
+		results = HttpUtils.postJSON(url, args, manager);
+
 		if (results == null) return null;
 		// System.out.println("Got results");
 		annotations = Annotation.getAnnotations(results, terms);
