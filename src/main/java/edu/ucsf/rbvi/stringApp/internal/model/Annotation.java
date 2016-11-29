@@ -35,7 +35,8 @@ public class Annotation {
 		return res;
 	}
 
-	public static Map<String, List<Annotation>> getAnnotations(Object json, String queryTerms) {
+	public static Map<String, List<Annotation>> getAnnotations(Object json, String queryTerms, 
+	                                                           boolean stitch) {
 		String[] terms = queryTerms.trim().split("\n");
 		if ((json == null) || !(json instanceof JSONArray)) {
 			return null;
@@ -43,7 +44,8 @@ public class Annotation {
 
 		Map<String, List<Annotation>> map = new HashMap<>();
 
-		int queryIndexStart = 0;
+		// If we switch the API back to use a start of 0, this will need to change
+		int queryIndexStart = -1;
 
 		for (Object annObject: (JSONArray) json) {
 			JSONObject ann = (JSONObject)annObject;
@@ -51,7 +53,6 @@ public class Annotation {
 			String stringId = null;
 			String preferredName = null;
 			int taxId = -1;
-			// If we switch the API back to use a start of 0, this will need to change
 			int queryIndex = -1;
 
 			if (ann.containsKey("preferredName"))

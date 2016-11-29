@@ -56,19 +56,11 @@ public class StringNetwork {
 		System.out.println("URL: "+url+"?species="+Integer.toString(taxon)+"&caller_identity="+StringManager.CallerIdentity+"&identifiers="+encTerms);
 		Object results;
 		// Get the results
-		//
-		/* At one point STITCH didn't work with POST
-		if (!useSTITCH) {
-			results = HttpUtils.postJSON(url, args, manager);
-		} else {
-			results = HttpUtils.postJSON(url, args, manager);
-		}
-		*/
 		results = HttpUtils.postJSON(url, args, manager);
 
 		if (results == null) return null;
 		// System.out.println("Got results");
-		annotations = Annotation.getAnnotations(results, terms);
+		annotations = Annotation.getAnnotations(results, terms, useSTITCH);
 		// System.out.println("Get annotations returns "+annotations.size());
 		return annotations;
 	}
