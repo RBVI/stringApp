@@ -6,11 +6,14 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Species implements Comparable<Species> {
 	private static List<Species> allSpecies;
+	private static Map<Integer, Species> taxIdSpecies;
 	private int taxon_id;
 	private String type;
 	private String compactName;
@@ -64,6 +67,7 @@ public class Species implements Comparable<Species> {
 
 	public static List<Species> readSpecies(StringManager manager) throws Exception {
 		allSpecies = new ArrayList<Species>();
+		taxIdSpecies = new HashMap<Integer, Species>();
 
 		InputStream stream = null;
 		try {
@@ -78,8 +82,10 @@ public class Species implements Comparable<Species> {
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 				Species s = new Species(line);
-				if (s != null && s.toString() != null && s.toString().length() > 0)
+				if (s != null && s.toString() != null && s.toString().length() > 0) {
 					allSpecies.add(s);
+					taxIdSpecies.put(new Integer(s.getTaxId()), s);
+				}
 			}
  
 			scanner.close();
@@ -91,4 +97,17 @@ public class Species implements Comparable<Species> {
 		Collections.sort(allSpecies);
 		return allSpecies;
 	}
+
+	public static String getSpeciesName(String taxId) {
+		try {
+			Integer intTaxId = Integer.valueOf(taxId);
+			if (taxIdSpecies.containsKey(intTaxId)) {
+				return taxIdSpecies.get(intTaxId).getName();
+			}
+		} catch (Exception e) {
+			// ignore
+		}		
+		return "";
+	}
+
 }

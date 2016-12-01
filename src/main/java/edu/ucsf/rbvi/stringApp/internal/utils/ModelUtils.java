@@ -405,6 +405,11 @@ public class ModelUtils {
 		String id = (String)nodeObj.get("@id");
 		String namespace = id.substring(0,id.indexOf(":"));
 		String stringId = id.substring(id.indexOf(":")+1);
+		String taxID = stringId.substring(0,stringId.indexOf("."));
+		String nodeSpecies = Species.getSpeciesName(taxID);
+		if (!"".equals(nodeSpecies) && !species.equals(nodeSpecies)) {
+			species = nodeSpecies;
+		}
 		if (nodeMap.containsKey(stringId))
 			return null;
 		// System.out.println("Node id = "+id+", stringID = "+stringId+", namespace="+namespace);
