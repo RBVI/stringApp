@@ -61,11 +61,9 @@ public class ModelUtils {
 	// Network information
 	public static String CONFIDENCE = "confidence score";
 
-	public static List<EntityIdentifier> getEntityIdsFromJSON(StringManager manager, Object object) {
-		if (!(object instanceof JSONArray))
-			return null;
-
-		JSONArray tmResults = (JSONArray)object;
+	public static List<EntityIdentifier> getEntityIdsFromJSON(StringManager manager, JSONObject object) {
+		JSONArray tmResults = getResultsFromJSON(object, JSONArray.class);
+		if (tmResults == null) return null;
 		JSONArray entityArray = (JSONArray)tmResults.get(0);
 		Boolean limited = (Boolean)tmResults.get(1);
 		List<EntityIdentifier> results = new ArrayList<>();
@@ -82,11 +80,9 @@ public class ModelUtils {
 		return results;
 	}
 
-	public static List<TextMiningResult> getIdsFromJSON(StringManager manager, int taxon, Object object, String query, boolean disease) {
-		if (!(object instanceof JSONArray))
-			return null;
-
-		JSONArray tmResults = (JSONArray)object;
+	public static List<TextMiningResult> getIdsFromJSON(StringManager manager, int taxon, JSONObject object, String query, boolean disease) {
+		JSONArray tmResults = getResultsFromJSON(object, JSONArray.class);
+		if (tmResults == null) return null;
 		JSONObject nodeDict = (JSONObject)tmResults.get(0);
 		Boolean limited = (Boolean)tmResults.get(1);
 
@@ -163,24 +159,22 @@ public class ModelUtils {
 	}
 
 	public static List<CyNode> createTMNetworkFromJSON(StringManager manager, 
-	                                                   Species species, Object object, String query) {
-		if (!(object instanceof JSONArray))
-			return null;
+	                                                   Species species, JSONObject object, String query) {
+		JSONArray results = getResultsFromJSON(object, JSONArray.class);
+		if (results == null) return null;
 
 		// Create the network
 		CyNetwork newNetwork = manager.createNetwork(query);
 
-		List<CyNode> nodes = getJSON(manager, species, newNetwork, (JSONArray)object);
+		List<CyNode> nodes = getJSON(manager, species, newNetwork, results);
 		return nodes;
 	}
 
 	public static List<CyNode> augmentNetworkFromJSON(StringManager manager, CyNetwork net,
-	                                                  List<CyEdge> newEdges, Object object,
+	                                                  List<CyEdge> newEdges, JSONObject object,
 																				            Map<String, String> queryTermMap) {
-		if (!(object instanceof JSONObject))
-			return null;
-
-		JSONObject json = (JSONObject)object;
+		JSONObject results = getResultsFromJSON(object, JSONObject.class);
+		if (results == null) return null;
 
 		Map<String, CyNode> nodeMap = new HashMap<>();
 		Map<String, String> nodeNameMap = new HashMap<>();
@@ -198,11 +192,11 @@ public class ModelUtils {
 		}
 
 		List<CyNode> nodes = getJSON(manager, species, net, nodeMap, nodeNameMap, 
-		                             queryTermMap, newEdges, json, useSTITCH);
+		                             queryTermMap, newEdges, results, useSTITCH);
 		return nodes;
 	}
 
-	public static CyNetwork createNetworkFromJSON(StringNetwork stringNetwork, String species, Object object,
+	public static CyNetwork createNetworkFromJSON(StringNetwork stringNetwork, String species, JSONObject object,
 	                                              Map<String, String> queryTermMap, String ids, String netName,
 																								boolean useSTITCH) {
 		stringNetwork.getManager().ignoreAdd();
@@ -213,11 +207,11 @@ public class ModelUtils {
 		return network;
 	}
 
-	public static CyNetwork createNetworkFromJSON(StringManager manager, String species, Object object,
+	public static CyNetwork createNetworkFromJSON(StringManager manager, String species, JSONObject object,
 	                                              Map<String, String> queryTermMap, String ids, 
 																								String netName, boolean useSTITCH) {
-		if (!(object instanceof JSONObject))
-			return null;
+		JSONObject results = getResultsFromJSON(object, JSONObject.class);
+		if (results == null) return null;
 
 		// Get a network name
 		String defaultName;
@@ -244,9 +238,7 @@ public class ModelUtils {
 		// Create a map to save the node names
 		Map<String, String> nodeNameMap = new HashMap<>();
 
-		JSONObject json = (JSONObject)object;
-
-		getJSON(manager, species, newNetwork, nodeMap, nodeNameMap, queryTermMap, null, json, useSTITCH);
+		getJSON(manager, species, newNetwork, nodeMap, nodeNameMap, queryTermMap, null, results, useSTITCH);
 
 		manager.addNetwork(newNetwork);
 		return newNetwork;
@@ -552,6 +544,23 @@ public class ModelUtils {
 		if (network.getRow(ident) != null) 
 			return network.getRow(ident).get(column, String.class);
 		return null;
+	}
+
+	public static <T> T getResultsFromJSON(JSONObject json, Class<? extends T> clazz) {
+		if (json == null || !json.containsKey(StringManager.RESULT))
+			return null;
+
+		Object result = json.get(StringManager.RESULT);
+		if (!clazz.isAssignableFrom(result.getClass()))
+			return null;
+
+		return (T)result;
+	}
+
+	public static Integer getVersionFromJSON(JSONObject json) {
+		if (json == null || !json.containsKey(StringManager.APIVERSION))
+			return null;
+		return (Integer)json.get(StringManager.APIVERSION);
 	}
 
 }

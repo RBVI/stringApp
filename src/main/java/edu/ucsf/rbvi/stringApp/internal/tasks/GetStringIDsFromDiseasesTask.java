@@ -58,7 +58,7 @@ public class GetStringIDsFromDiseasesTask extends AbstractTask implements Observ
 		args.put("format", "json");
 		args.put("limit", Integer.toString(limit));
 		args.put("type2", Integer.toString(species.getTaxId()));
-		Object tmobject = HttpUtils.postJSON(manager.getIntegrationURL(), args, manager);
+		JSONObject tmobject = HttpUtils.postJSON(manager.getIntegrationURL(), args, manager);
 		if (tmobject == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results");
 			return;

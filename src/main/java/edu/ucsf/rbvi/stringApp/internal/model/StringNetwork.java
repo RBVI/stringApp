@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.simple.JSONObject;
+
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.view.model.CyNetworkView;
 
@@ -53,18 +55,9 @@ public class StringNetwork {
 		args.put("species", Integer.toString(taxon));
 		args.put("identifiers", encTerms);
 		args.put("caller_identity", StringManager.CallerIdentity);
-		System.out.println("URL: "+url+"?species="+Integer.toString(taxon)+"&caller_identity="+StringManager.CallerIdentity+"&identifiers="+encTerms);
-		Object results;
+		manager.info("URL: "+url+"?species="+Integer.toString(taxon)+"&caller_identity="+StringManager.CallerIdentity+"&identifiers="+encTerms);
 		// Get the results
-		//
-		/* At one point STITCH didn't work with POST
-		if (!useSTITCH) {
-			results = HttpUtils.postJSON(url, args, manager);
-		} else {
-			results = HttpUtils.postJSON(url, args, manager);
-		}
-		*/
-		results = HttpUtils.postJSON(url, args, manager);
+		JSONObject results = HttpUtils.postJSON(url, args, manager);
 
 		if (results == null) return null;
 		// System.out.println("Got results");

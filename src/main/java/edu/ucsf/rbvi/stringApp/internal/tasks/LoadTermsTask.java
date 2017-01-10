@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.simple.JSONObject;
+
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
@@ -83,7 +85,7 @@ public class LoadTermsTask extends AbstractTask {
 
 		monitor.setStatusMessage("Getting additional terms from "+manager.getNetworkURL());
 
-		Object results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+		JSONObject results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
 
 		monitor.setStatusMessage("Augmenting network");
 

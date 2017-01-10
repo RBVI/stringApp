@@ -54,17 +54,18 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 		args.put("retmax","40000");
 		args.put("term",query);
 		monitor.setTitle("Querying PubMed");
-		Object object = HttpUtils.getJSON("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
-		                                  args, manager);
-		if (!(object instanceof JSONObject)) {
+		JSONObject object = HttpUtils.getJSON("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+		                                      args, manager);
+		JSONObject result = ModelUtils.getResultsFromJSON(object, JSONObject.class);
+		if (result == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"Pubmed returned no results");
-			System.out.println("object wrong type: "+object.toString());
+			// System.out.println("object wrong type: "+object.toString());
 			return;
 		}
-		JSONObject json = (JSONObject)((JSONObject) object).get("esearchresult");
+		JSONObject json = (JSONObject)result.get("esearchresult");
 		if (json == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"Pubmed returned no results");
-			System.out.println("object doesn't contain esearchresult: "+object.toString());
+			// System.out.println("object doesn't contain esearchresult: "+object.toString());
 			return;
 		}
 
@@ -72,7 +73,7 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 		int count = Integer.parseInt((String)json.get("count"));
 		if (count == 0) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"Pubmed returned no results");
-			System.out.println("object doesn't contain count: "+json.toString());
+			// System.out.println("object doesn't contain count: "+json.toString());
 			return;
 		}
 
@@ -91,7 +92,7 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 		args.put("limit", Integer.toString(limit));
 		args.put("type2", Integer.toString(species.getTaxId()));
 		monitor.setTitle("Querying STRING");
-		Object tmobject = HttpUtils.postJSON(manager.getTextMiningURL(), args, manager);
+		JSONObject tmobject = HttpUtils.postJSON(manager.getTextMiningURL(), args, manager);
 		if (tmobject == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results");
 			return;

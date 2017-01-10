@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.simple.JSONObject;
+
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
@@ -85,7 +87,7 @@ public class AddNodesTask extends AbstractTask {
 
 		monitor.setStatusMessage("Getting additional nodes from: "+url);
 
-		Object results = HttpUtils.postJSON(url, args, manager);
+		JSONObject results = HttpUtils.postJSON(url, args, manager);
 
 		monitor.setStatusMessage("Augmenting network");
 
@@ -94,14 +96,14 @@ public class AddNodesTask extends AbstractTask {
 		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null);
 
 		monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
-		System.out.println("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
+		// System.out.println("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
 
 		// If we have a view, re-apply the style and layout
 		if (netView != null) {
 			monitor.setStatusMessage("Updating style");
-			System.out.println("Updating style");
+			// System.out.println("Updating style");
 			ViewUtils.updateEdgeStyle(manager, netView, newEdges);
-			System.out.println("Done");
+			// System.out.println("Done");
 			if (relayout) {
 				monitor.setStatusMessage("Updating layout");
 				CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");

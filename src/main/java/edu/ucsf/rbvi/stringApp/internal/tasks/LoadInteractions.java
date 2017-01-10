@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.simple.JSONObject;
+
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.layout.CyLayoutAlgorithm;
@@ -80,7 +82,7 @@ public class LoadInteractions extends AbstractTask {
 		if (additionalNodes > 0)
 			args.put("additional", Integer.toString(additionalNodes));
 
-		Object results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+		JSONObject results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
 
 		// This may change...
 		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, species, results, 

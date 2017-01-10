@@ -8,6 +8,8 @@ import java.util.Map;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+
 public class Annotation {
 	String annotation;
 	int taxId;
@@ -35,17 +37,18 @@ public class Annotation {
 		return res;
 	}
 
-	public static Map<String, List<Annotation>> getAnnotations(Object json, String queryTerms) {
+	public static Map<String, List<Annotation>> getAnnotations(JSONObject json, String queryTerms) {
 		String[] terms = queryTerms.trim().split("\n");
-		if ((json == null) || !(json instanceof JSONArray)) {
-			return null;
-		}
+		JSONArray annotationArray = ModelUtils.getResultsFromJSON(json, JSONArray.class);
+		Integer version = ModelUtils.getVersionFromJSON(json);
 
 		Map<String, List<Annotation>> map = new HashMap<>();
 
 		int queryIndexStart = 0;
+		if (version == null || version == 1)
+			queryIndexStart = -1;
 
-		for (Object annObject: (JSONArray) json) {
+		for (Object annObject: annotationArray) {
 			JSONObject ann = (JSONObject)annObject;
 			String annotation = null;
 			String stringId = null;
@@ -68,11 +71,6 @@ public class Annotation {
 				} else {
 					queryIndex = Integer.parseInt((String)index);
 				}
-
-				// The original API started queryIndex at "-1".  It has been updated
-				// to now use 0, but we need to detect which is which.
-				if (queryIndex < 0)
-					queryIndexStart = -1;
 
 				queryIndex = queryIndex - queryIndexStart;
 			}

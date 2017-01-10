@@ -43,6 +43,8 @@ public class StringManager implements NetworkAddedListener {
 	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
 	public static String URI = "http://api.jensenlab.org/";
 	public static String CallerIdentity = "string_app";
+	public static String APIVERSION = "String-api-version";
+	public static String RESULT = "QueryResult";
 
 	public StringManager(CyServiceRegistrar registrar) {
 		this.registrar = registrar;
