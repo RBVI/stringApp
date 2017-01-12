@@ -8,10 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.SingleSelectionModel;
-
-import org.json.simple.JSONObject;
-
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
@@ -25,10 +21,11 @@ import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.TunableSetter;
-import org.cytoscape.work.util.BoundedFloat;
 import org.cytoscape.work.util.ListSingleSelection;
+import org.json.simple.JSONObject;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
@@ -41,12 +38,14 @@ public class ExpandNetworkTask extends AbstractTask {
 	
 	@Tunable (description="Number of nodes to expand network by", gravity=1.0)
 	public int additionalNodes = 10;
-	@Tunable (description="Relayout network?", gravity=2.0)
+
+	@Tunable (description="Expand from database", gravity=2.0)
+	public ListSingleSelection<String> databases = new ListSingleSelection<String>(
+			Databases.STRING.toString(), Databases.STITCH.toString());
+	
+	@Tunable (description="Relayout network?", gravity=3.0)
 	public boolean relayout = false;
 
-	@Tunable (description="Expand from database", gravity=3.0)
-	public ListSingleSelection<String> databases = new ListSingleSelection<String>("STRING", "STITCH");
-	
 	//@Tunable (description="Expand from database", gravity=3.0, groups = "Advanced options", params = "displayState=collapsed")
 	//public ListSingleSelection<String> databases = new ListSingleSelection<String>("string", "stitch");
 	
@@ -55,7 +54,9 @@ public class ExpandNetworkTask extends AbstractTask {
 		this.network = network;
 		this.netView = netView;
 		this.nodeView = null;
-		databases.setSelectedValue(ModelUtils.getDatabase(network).toUpperCase());
+		databases.setSelectedValue(Databases.STRING.toString());
+		if (ModelUtils.getDatabase(network) != null && ModelUtils.getDatabase(network).equals(Databases.STITCH.getAPIName()))
+			databases.setSelectedValue(Databases.STITCH.toString());
 	}
 
 	public ExpandNetworkTask(final StringManager manager, final CyNetwork network, CyNetworkView netView, View<CyNode> nodeView) {
@@ -63,7 +64,9 @@ public class ExpandNetworkTask extends AbstractTask {
 		this.network = network;
 		this.netView = netView;
 		this.nodeView = nodeView;
-		databases.setSelectedValue(ModelUtils.getDatabase(network).toUpperCase());
+		databases.setSelectedValue(Databases.STRING.toString());
+		if (ModelUtils.getDatabase(network) != null && ModelUtils.getDatabase(network).equals(Databases.STITCH.getAPIName()))
+			databases.setSelectedValue(Databases.STITCH.toString());
 	}
 
 	public void run(TaskMonitor monitor) {

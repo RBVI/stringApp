@@ -23,6 +23,7 @@ import org.cytoscape.work.Tunable;
 import org.cytoscape.work.util.BoundedDouble;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
@@ -52,7 +53,7 @@ public class SetConfidenceTask extends AbstractTask {
 
 		ModelUtils.setConfidence(net, minScore);
 		// TODO: Find a better way to set the database, e.g. check certain node column
-		ModelUtils.setDatabase(net, StringManager.STRINGDB);
+		ModelUtils.setDatabase(net, Databases.STRING.getAPIName());
 		StringNetwork stringNet = new StringNetwork(manager);
 		stringNet.setNetwork(net);
 		manager.addStringNetwork(stringNet, net);

@@ -21,6 +21,7 @@ import org.cytoscape.work.util.BoundedInteger;
 import org.cytoscape.work.util.ListSingleSelection;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
@@ -104,7 +105,7 @@ public class FindProteinsTask extends AbstractTask {
 			return;
 		}
 
-		ModelUtils.createTMNetworkFromJSON(manager, species.getSelectedValue(), tmobject, query, StringManager.STRINGDB);
+		ModelUtils.createTMNetworkFromJSON(manager, species.getSelectedValue(), tmobject, query, Databases.STRING.getAPIName());
 	}
 
 	@ProvidesTitle

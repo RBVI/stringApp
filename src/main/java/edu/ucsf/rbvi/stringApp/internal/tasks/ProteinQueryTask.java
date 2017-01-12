@@ -25,6 +25,7 @@ import org.cytoscape.work.util.ListSingleSelection;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
+import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.EntityIdentifier;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
@@ -91,7 +92,7 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 
 		// Get the annotations
 		Map<String, List<Annotation>> annotations = stringNetwork.getAnnotations(sp.getTaxId(),
-				query, StringManager.STRINGDB);
+				query, Databases.STRING.getAPIName());
 		if (annotations == null || annotations.size() == 0) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,
 					"Query '" + query + "' returned no results");
@@ -110,7 +111,7 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
 		LoadInteractions load = new LoadInteractions(stringNetwork, sp.toString(), sp.getTaxId(),
-				confidence, limit.getValue(), stringIds, queryTermMap, "", StringManager.STRINGDB);
+				confidence, limit.getValue(), stringIds, queryTermMap, "", Databases.STRING.getAPIName());
 		manager.execute(new TaskIterator(load), true);
 		loadedNetwork = stringNetwork.getNetwork();
 	}

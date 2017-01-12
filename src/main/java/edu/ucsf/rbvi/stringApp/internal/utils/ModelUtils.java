@@ -22,6 +22,7 @@ import org.cytoscape.view.model.View;
 
 import org.apache.commons.codec.binary.Base64;
 
+import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.EntityIdentifier;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
@@ -218,7 +219,7 @@ public class ModelUtils {
 
 		// Get a network name
 		String defaultName;
-	 	if (useDATABASE.equals(StringManager.STITCHDB))
+	 	if (useDATABASE.equals(Databases.STITCH.getAPIName()))
 			defaultName	= "STITCH Network";
 		else
 			defaultName	= "String Network";
@@ -324,7 +325,7 @@ public class ModelUtils {
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STRINGID);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STYLE);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, TYPE);
-		if (useDATABASE.equals(StringManager.STITCHDB)) {
+		if (useDATABASE.equals(Databases.STITCH.getAPIName())) {
 			createColumnIfNeeded(network.getDefaultNodeTable(), String.class, CV_STYLE);
 			createColumnIfNeeded(network.getDefaultNodeTable(), String.class, SMILES);
 		}
@@ -508,7 +509,7 @@ public class ModelUtils {
 
 		// Don't create an edge if we already have one between these nodes
 		if (!network.containsEdge(sourceNode, targetNode)) {
-			if (useDATABASE.equals(StringManager.STITCHDB)) {
+			if (useDATABASE.equals(Databases.STITCH.getAPIName())) {
 				boolean sourceType = isCompound(network, sourceNode);
 				boolean targetType = isCompound(network, targetNode);
 				if (sourceType == false && targetType == false)

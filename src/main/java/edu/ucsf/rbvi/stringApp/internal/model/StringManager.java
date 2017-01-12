@@ -45,8 +45,6 @@ public class StringManager implements NetworkAddedListener {
 	public static String CallerIdentity = "string_app";
 	public static String APIVERSION = "String-api-version";
 	public static String RESULT = "QueryResult";
-	public static String STRINGDB = "string";
-	public static String STITCHDB = "stitch";
 
 	public StringManager(CyServiceRegistrar registrar) {
 		this.registrar = registrar;
@@ -174,7 +172,7 @@ public class StringManager implements NetworkAddedListener {
 	}
 
 	public String getResolveURL(String useDATABASE) {
-		if (useDATABASE.equals(STITCHDB))
+		if (useDATABASE.equals(Databases.STRING.getAPIName()))
 			return STITCHResolveURI;
 
 		return ResolveURI;

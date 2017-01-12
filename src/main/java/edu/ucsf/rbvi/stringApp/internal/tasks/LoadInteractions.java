@@ -21,6 +21,7 @@ import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.TunableSetter;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
@@ -55,9 +56,9 @@ public class LoadInteractions extends AbstractTask {
 	}
 
 	public void run(TaskMonitor monitor) {
-		if (useDATABASE.equals(StringManager.STRINGDB))
+		if (useDATABASE.equals(Databases.STRING.getAPIName()))
 			monitor.setTitle("Loading interactions from string-db");
-		else if (useDATABASE.equals(StringManager.STITCHDB))
+		else if (useDATABASE.equals(Databases.STITCH.getAPIName()))
 			monitor.setTitle("Loading interactions from STITCH");
 		StringManager manager = stringNet.getManager();
 		String ids = null;

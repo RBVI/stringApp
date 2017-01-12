@@ -60,6 +60,7 @@ import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskObserver;
 
+import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
@@ -87,7 +88,7 @@ public class GetTermsPanel extends JPanel {
 	NumberFormat formatter = new DecimalFormat("#0.00");
 	NumberFormat intFormatter = new DecimalFormat("#0");
 	private boolean ignore = false;
-	private String useDATABASE = StringManager.STRINGDB;
+	private String useDATABASE = Databases.STRING.getAPIName();
 
 	public GetTermsPanel(final StringManager manager, final String useDATABASE) {
 		super(new GridBagLayout());
@@ -167,7 +168,7 @@ public class GetTermsPanel extends JPanel {
 		EasyGBC c = new EasyGBC();
 
 		String label = "Enter protein names or identifiers:";
-		if (useDATABASE.equals(StringManager.STITCHDB))
+		if (useDATABASE.equals(Databases.STITCH.getAPIName()))
 			label = "Enter protein or compound names or identifiers:";
 		JLabel searchLabel = new JLabel(label);
 		c.noExpand().anchor("northwest").insets(0,5,0,5);
