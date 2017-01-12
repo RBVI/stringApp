@@ -13,10 +13,10 @@ import org.cytoscape.work.TaskIterator;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
-public class AddNodesTaskFactory extends AbstractNetworkTaskFactory implements NetworkViewTaskFactory, NodeViewTaskFactory {
+public class ExpandNetworkTaskFactory extends AbstractNetworkTaskFactory implements NetworkViewTaskFactory, NodeViewTaskFactory {
 	final StringManager manager;
 
-	public AddNodesTaskFactory(final StringManager manager) {
+	public ExpandNetworkTaskFactory(final StringManager manager) {
 		this.manager = manager;
 	}
 
@@ -25,7 +25,7 @@ public class AddNodesTaskFactory extends AbstractNetworkTaskFactory implements N
 	}
 
 	public TaskIterator createTaskIterator(CyNetwork network) {
-		return new TaskIterator(new AddNodesTask(manager, network, null));
+		return new TaskIterator(new ExpandNetworkTask(manager, network, null));
 	}
 
 	public boolean isReady(CyNetworkView netView) {
@@ -33,7 +33,7 @@ public class AddNodesTaskFactory extends AbstractNetworkTaskFactory implements N
 	}
 
 	public TaskIterator createTaskIterator(CyNetworkView netView) {
-		return new TaskIterator(new AddNodesTask(manager, netView.getModel(), netView));
+		return new TaskIterator(new ExpandNetworkTask(manager, netView.getModel(), netView));
 	}
 
 	public boolean isReady(View<CyNode> nodeView, CyNetworkView netView) {
@@ -41,7 +41,7 @@ public class AddNodesTaskFactory extends AbstractNetworkTaskFactory implements N
 	}
 
 	public TaskIterator createTaskIterator(View<CyNode> nodeView, CyNetworkView netView) {
-		return new TaskIterator(new AddNodesTask(manager, netView.getModel(), netView, nodeView));
+		return new TaskIterator(new ExpandNetworkTask(manager, netView.getModel(), netView, nodeView));
 	}
 }
 

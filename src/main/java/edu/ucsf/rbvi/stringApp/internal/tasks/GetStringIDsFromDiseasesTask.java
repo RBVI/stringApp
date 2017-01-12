@@ -79,7 +79,7 @@ public class GetStringIDsFromDiseasesTask extends AbstractTask implements Observ
 
 		// OK, if we got any results, fetch the network
 		LoadInteractions liTask = new LoadInteractions(stringNetwork, species.getName(), species.getTaxId(), 
-			                                             confidence, 0, stringIds, queryTermMap, diseaseName, false);
+			                                             confidence, 0, stringIds, queryTermMap, diseaseName, StringManager.STRINGDB);
 		AddTextMiningResultsTask atmTask = new AddTextMiningResultsTask(stringNetwork, tmResults);
 		insertTasksAfterCurrentTask(liTask, atmTask);
 	}

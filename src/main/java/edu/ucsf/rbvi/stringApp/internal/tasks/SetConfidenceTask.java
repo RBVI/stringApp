@@ -51,6 +51,8 @@ public class SetConfidenceTask extends AbstractTask {
 		}
 
 		ModelUtils.setConfidence(net, minScore);
+		// TODO: Find a better way to set the database, e.g. check certain node column
+		ModelUtils.setDatabase(net, StringManager.STRINGDB);
 		StringNetwork stringNet = new StringNetwork(manager);
 		stringNet.setNetwork(net);
 		manager.addStringNetwork(stringNet, net);

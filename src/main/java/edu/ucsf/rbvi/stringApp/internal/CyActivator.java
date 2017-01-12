@@ -26,7 +26,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
-import edu.ucsf.rbvi.stringApp.internal.tasks.AddNodesTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ExpandNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.AddTermsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeConfidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetNetworkTaskFactory;
@@ -123,7 +123,7 @@ public class CyActivator extends AbstractCyActivator {
 
 		{
 			// Register our "Add Nodes" factory
-			AddNodesTaskFactory addNodes = new AddNodesTaskFactory(manager);
+			ExpandNetworkTaskFactory addNodes = new ExpandNetworkTaskFactory(manager);
 			Properties props = new Properties();
 			props.setProperty(PREFERRED_MENU, "Apps.STRING");
 			props.setProperty(TITLE, "Expand network");

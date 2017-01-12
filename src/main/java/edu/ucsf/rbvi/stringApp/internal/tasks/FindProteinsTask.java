@@ -98,7 +98,7 @@ public class FindProteinsTask extends AbstractTask {
 			return;
 		}
 
-		ModelUtils.createTMNetworkFromJSON(manager, species.getSelectedValue(), tmobject, query);
+		ModelUtils.createTMNetworkFromJSON(manager, species.getSelectedValue(), tmobject, query, StringManager.STRINGDB);
 	}
 
 	@ProvidesTitle

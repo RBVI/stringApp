@@ -111,7 +111,7 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 		if (query.length() > 18)
 			netName = query.substring(0, 15)+"...";
 		LoadInteractions liTask = new LoadInteractions(stringNetwork, species.getName(), species.getTaxId(), 
-			                                             confidence, 0, stringIds, queryTermMap, netName, false);
+			                                             confidence, 0, stringIds, queryTermMap, netName, StringManager.STRINGDB);
 		AddTextMiningResultsTask atmTask = new AddTextMiningResultsTask(stringNetwork, tmResults);
 		insertTasksAfterCurrentTask(liTask, atmTask);
 	}
