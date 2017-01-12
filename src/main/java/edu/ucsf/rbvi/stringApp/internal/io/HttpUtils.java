@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -31,16 +32,16 @@ import org.json.simple.parser.ParseException;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
 public class HttpUtils {
-	public static Object getJSON(String url, Map<String, String> queryMap, StringManager manager) {
+	public static JSONObject getJSON(String url, Map<String, String> queryMap, StringManager manager) {
 		RequestConfig globalConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.IGNORE_COOKIES).build();
 
 		// Set up our connection
 		CloseableHttpClient client = HttpClients.custom().setDefaultRequestConfig(globalConfig).build();
 		String args = HttpUtils.getStringArguments(queryMap);
-		System.out.println("URL: "+url+"?"+args);
 		HttpGet request = new HttpGet(url+"?"+args);
+		manager.info("URL: "+url+"?"+args);
 		// List<NameValuePair> nvps = HttpUtils.getArguments(queryMap);
-		Object jsonObject = null;
+		JSONObject jsonObject = new JSONObject();
 
 		// The underlying HTTP connection is still held by the response object
 		// to allow the response content to be streamed directly from the network socket.
@@ -53,6 +54,7 @@ public class HttpUtils {
 		try {
 			// request.setEntity(new UrlEncodedFormEntity(nvps));
 			response1 = client.execute(request);
+			addVersion(response1, jsonObject);
 			HttpEntity entity1 = response1.getEntity();
 			InputStream entityStream = entity1.getContent();
 			if (entity1.getContentLength() == 0)
@@ -63,7 +65,8 @@ public class HttpUtils {
 			//  	System.out.println(lin);
 			// }
 			JSONParser parser = new JSONParser();
-			jsonObject = parser.parse(reader);
+			Object obj = parser.parse(reader);
+			jsonObject.put(StringManager.RESULT, obj);
 
 			// and ensure it is fully consumed
 			EntityUtils.consume(entity1);
@@ -90,15 +93,15 @@ public class HttpUtils {
 		return jsonObject;
 	}
 
-	public static Object postJSON(String url, Map<String, String> queryMap, StringManager manager) {
+	public static JSONObject postJSON(String url, Map<String, String> queryMap, StringManager manager) {
 		// Set up our connection
 		CloseableHttpClient client = HttpClients.createDefault();
 		HttpPost request = new HttpPost(url);
 		List<NameValuePair> nvps = HttpUtils.getArguments(queryMap);
-		Object jsonObject = null;
+		JSONObject jsonObject = new JSONObject();
 
 		String args = HttpUtils.getStringArguments(queryMap);
-		System.out.println("URL: "+url+"?"+args);
+		manager.info("URL: "+url+"?"+args);
 
 		// The underlying HTTP connection is still held by the response object
 		// to allow the response content to be streamed directly from the network socket.
@@ -111,6 +114,7 @@ public class HttpUtils {
 		try {
 			request.setEntity(new UrlEncodedFormEntity(nvps));
 			response1 = client.execute(request);
+			addVersion(response1, jsonObject);
 			HttpEntity entity1 = response1.getEntity();
 			InputStream entityStream = entity1.getContent();
 			if (entity1.getContentLength() == 0)
@@ -123,7 +127,8 @@ public class HttpUtils {
 			}
 			*/
 			JSONParser parser = new JSONParser();
-			jsonObject = parser.parse(reader);
+			Object obj = parser.parse(reader);
+			jsonObject.put(StringManager.RESULT, obj);
 
 			// and ensure it is fully consumed
 			EntityUtils.consume(entity1);
@@ -188,6 +193,16 @@ public class HttpUtils {
 			}
 		} catch (Exception e) { e.printStackTrace(); }
 		return s;
+	}
+
+	public static void addVersion(CloseableHttpResponse resp, JSONObject object) {
+		if (resp.containsHeader(StringManager.APIVERSION)) {
+			Header apiHeader = resp.getFirstHeader(StringManager.APIVERSION);
+			String api = apiHeader.getValue();
+			if (api != null && api.length() > 0) {
+				object.put(StringManager.APIVERSION, Integer.parseInt(api));
+			}
+		}
 	}
 
 }

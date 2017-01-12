@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.simple.JSONObject;
+
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
@@ -83,14 +85,16 @@ public class ChangeConfidenceTask extends AbstractTask {
 			// We're decreasing the confidence, so we need to get new edges
 			// Get all of the current nodes for our "existing" list
 			String existing = ModelUtils.getExisting(network);
+			String database = ModelUtils.getDatabase(network);
 			Map<String, String> args = new HashMap<>();
-			args.put("existing",existing.trim());
+			args.put("existing", existing.trim());
+			args.put("database", database.trim());
 			args.put("score", confidence.getValue().toString());
 			args.put("maxscore", Float.toString(currentConfidence));
-			Object results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+			JSONObject results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
 
 			// This may change...
-			List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null);
+			List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, database);
 
 			monitor.setStatusMessage("Adding "+newEdges.size()+" edges");
 

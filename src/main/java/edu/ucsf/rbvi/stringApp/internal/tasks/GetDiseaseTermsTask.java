@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.simple.JSONObject;
+
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.TaskMonitor;
@@ -39,7 +41,7 @@ public class GetDiseaseTermsTask extends AbstractTask implements ObservableTask 
 		// String response = "[[{"type":-26,"id":"DOID:1307","matched":"dementia","primary":"dementia"},{"type":-26,"id":"DOID:11870","matched":"Dementia in Pick's disease ","primary":"Pick's disease"},{"type":-26,"id":"DOID:12217","matched":"Dementia with Lewy bodies","primary":"Lewy body dementia"}],false]"
 		//
 		// Get the results
-		Object results = HttpUtils.getJSON(url, args, stringManager);
+		JSONObject results = HttpUtils.getJSON(url, args, stringManager);
 		// Object results = HttpUtils.testJSON(url, args, stringManager, response);
 		if (results == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results");

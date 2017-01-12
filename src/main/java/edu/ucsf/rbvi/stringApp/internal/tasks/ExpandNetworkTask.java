@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.SingleSelectionModel;
+
+import org.json.simple.JSONObject;
+
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
@@ -22,35 +26,44 @@ import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.TunableSetter;
 import org.cytoscape.work.util.BoundedFloat;
+import org.cytoscape.work.util.ListSingleSelection;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
-public class AddNodesTask extends AbstractTask {
+public class ExpandNetworkTask extends AbstractTask {
 	final StringManager manager;
 	final CyNetwork network;
 	CyNetworkView netView;
 	View<CyNode> nodeView;
-
-	@Tunable (description="Number of nodes to add to network", gravity=1.0)
+	
+	@Tunable (description="Number of nodes to expand network by", gravity=1.0)
 	public int additionalNodes = 10;
 	@Tunable (description="Relayout network?", gravity=2.0)
 	public boolean relayout = false;
 
-	public AddNodesTask(final StringManager manager, final CyNetwork network, CyNetworkView netView) {
+	@Tunable (description="Expand from database", gravity=3.0)
+	public ListSingleSelection<String> databases = new ListSingleSelection<String>("STRING", "STITCH");
+	
+	//@Tunable (description="Expand from database", gravity=3.0, groups = "Advanced options", params = "displayState=collapsed")
+	//public ListSingleSelection<String> databases = new ListSingleSelection<String>("string", "stitch");
+	
+	public ExpandNetworkTask(final StringManager manager, final CyNetwork network, CyNetworkView netView) {
 		this.manager = manager;
 		this.network = network;
 		this.netView = netView;
 		this.nodeView = null;
+		databases.setSelectedValue(ModelUtils.getDatabase(network).toUpperCase());
 	}
 
-	public AddNodesTask(final StringManager manager, final CyNetwork network, CyNetworkView netView, View<CyNode> nodeView) {
+	public ExpandNetworkTask(final StringManager manager, final CyNetwork network, CyNetworkView netView, View<CyNode> nodeView) {
 		this.manager = manager;
 		this.network = network;
 		this.netView = netView;
 		this.nodeView = nodeView;
+		databases.setSelectedValue(ModelUtils.getDatabase(network).toUpperCase());
 	}
 
 	public void run(TaskMonitor monitor) {
@@ -82,26 +95,27 @@ public class AddNodesTask extends AbstractTask {
 			args.put("score", conf.toString());
 		if (additionalNodes > 0)
 			args.put("additional", Integer.toString(additionalNodes));
-
+		String useDatabase = databases.getSelectedValue().toLowerCase();
+		args.put("database", useDatabase);
 		monitor.setStatusMessage("Getting additional nodes from: "+url);
 
-		Object results = HttpUtils.postJSON(url, args, manager);
+		JSONObject results = HttpUtils.postJSON(url, args, manager);
 
 		monitor.setStatusMessage("Augmenting network");
 
 		// This may change...
 		List<CyEdge> newEdges = new ArrayList<>();
-		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null);
+		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, useDatabase);
 
 		monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
-		System.out.println("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
+		// System.out.println("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
 
 		// If we have a view, re-apply the style and layout
 		if (netView != null) {
 			monitor.setStatusMessage("Updating style");
-			System.out.println("Updating style");
+			// System.out.println("Updating style");
 			ViewUtils.updateEdgeStyle(manager, netView, newEdges);
-			System.out.println("Done");
+			// System.out.println("Done");
 			if (relayout) {
 				monitor.setStatusMessage("Updating layout");
 				CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");

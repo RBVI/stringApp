@@ -43,6 +43,10 @@ public class StringManager implements NetworkAddedListener {
 	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
 	public static String URI = "http://api.jensenlab.org/";
 	public static String CallerIdentity = "string_app";
+	public static String APIVERSION = "String-api-version";
+	public static String RESULT = "QueryResult";
+	public static String STRINGDB = "string";
+	public static String STITCHDB = "stitch";
 
 	public StringManager(CyServiceRegistrar registrar) {
 		this.registrar = registrar;
@@ -81,11 +85,13 @@ public class StringManager implements NetworkAddedListener {
 			name = name + " - " + index;
 		}
 		network.getRow(network).set(CyNetwork.NAME, name);
+
 		return network;
 	}
 
-	public CyNetwork createStringNetwork(String name, StringNetwork stringNet) {
+	public CyNetwork createStringNetwork(String name, StringNetwork stringNet, String useDATABASE) {
 		CyNetwork network = createNetwork(name);
+		ModelUtils.setDatabase(network, useDATABASE);
 		addStringNetwork(stringNet, network);
 		return network;
 	}
@@ -167,8 +173,8 @@ public class StringManager implements NetworkAddedListener {
 		return URI+"Integration";
 	}
 
-	public String getResolveURL(boolean useSTITCH) {
-		if (useSTITCH)
+	public String getResolveURL(String useDATABASE) {
+		if (useDATABASE.equals(STITCHDB))
 			return STITCHResolveURI;
 
 		return ResolveURI;

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.simple.JSONObject;
+
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.layout.CyLayoutAlgorithm;
@@ -33,14 +35,14 @@ public class LoadInteractions extends AbstractTask {
 	final List<String> stringIds;
 	final Map<String, String> queryTermMap;
 	final String netName;
-	final boolean useSTITCH;
+	final String useDATABASE;
 
 	public LoadInteractions(final StringNetwork stringNet, final String species, final int taxonId, 
 	                        final int confidence, final int additionalNodes,
 													final List<String>stringIds,
 													final Map<String, String> queryTermMap,
 													final String netName,
-													final boolean useSTITCH) {
+													final String useDATABASE) {
 		this.stringNet = stringNet;
 		this.taxonId = taxonId;
 		this.additionalNodes = additionalNodes;
@@ -49,13 +51,13 @@ public class LoadInteractions extends AbstractTask {
 		this.species = species;
 		this.queryTermMap = queryTermMap;
 		this.netName = netName;
-		this.useSTITCH = useSTITCH;
+		this.useDATABASE = useDATABASE;
 	}
 
 	public void run(TaskMonitor monitor) {
-		if (!useSTITCH)
+		if (useDATABASE.equals(StringManager.STRINGDB))
 			monitor.setTitle("Loading interactions from string-db");
-		else
+		else if (useDATABASE.equals(StringManager.STITCHDB))
 			monitor.setTitle("Loading interactions from STITCH");
 		StringManager manager = stringNet.getManager();
 		String ids = null;
@@ -72,22 +74,22 @@ public class LoadInteractions extends AbstractTask {
 
 		// String url = "http://api.jensenlab.org/network?entities="+URLEncoder.encode(ids.trim())+"&score="+conf;
 		Map<String, String> args = new HashMap<>();
-		if (useSTITCH)
-			args.put("database", "stitch");
+		args.put("database", useDATABASE);
 		args.put("entities",ids.trim());
 		args.put("score", conf);
 		args.put("caller_identity", StringManager.CallerIdentity);
 		if (additionalNodes > 0)
 			args.put("additional", Integer.toString(additionalNodes));
 
-		Object results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+		JSONObject results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
 
 		// This may change...
 		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, species, results, 
-		                                                     queryTermMap, ids.trim(), netName, useSTITCH);
+		                                                     queryTermMap, ids.trim(), netName, useDATABASE);
 
 		// Set our confidence score
 		ModelUtils.setConfidence(network, ((double)confidence)/100.0);
+		ModelUtils.setDatabase(network, useDATABASE);
 		stringNet.setNetwork(network);
 
 		// System.out.println("Results: "+results.toString());

@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.simple.JSONObject;
+
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.view.model.CyNetworkView;
 
@@ -40,7 +42,7 @@ public class StringNetwork {
 
 	public Map<String, List<Annotation>> getAnnotations() { return annotations; }
 
-	public Map<String, List<Annotation>> getAnnotations(int taxon, final String terms, final boolean useSTITCH) {
+	public Map<String, List<Annotation>> getAnnotations(int taxon, final String terms, final String useDATABASE) {
 		String encTerms;
 		try {
 			encTerms = URLEncoder.encode(terms.trim(), "UTF-8");
@@ -48,19 +50,18 @@ public class StringNetwork {
 			return new HashMap<String, List<Annotation>>();
 		}
 
-		String url = manager.getResolveURL(useSTITCH)+"json/resolveList";
+		String url = manager.getResolveURL(useDATABASE)+"json/resolveList";
 		Map<String, String> args = new HashMap<>();
 		args.put("species", Integer.toString(taxon));
 		args.put("identifiers", encTerms);
 		args.put("caller_identity", StringManager.CallerIdentity);
-		System.out.println("URL: "+url+"?species="+Integer.toString(taxon)+"&caller_identity="+StringManager.CallerIdentity+"&identifiers="+encTerms);
-		Object results;
+		manager.info("URL: "+url+"?species="+Integer.toString(taxon)+"&caller_identity="+StringManager.CallerIdentity+"&identifiers="+encTerms);
 		// Get the results
-		results = HttpUtils.postJSON(url, args, manager);
+		JSONObject results = HttpUtils.postJSON(url, args, manager);
 
 		if (results == null) return null;
 		// System.out.println("Got results");
-		annotations = Annotation.getAnnotations(results, terms, useSTITCH);
+		annotations = Annotation.getAnnotations(results, terms);
 		// System.out.println("Get annotations returns "+annotations.size());
 		return annotations;
 	}

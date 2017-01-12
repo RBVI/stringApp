@@ -43,7 +43,8 @@ public class AddTermsTask extends AbstractTask {
 		JFrame parent = manager.getService(CySwingApplication.class).getJFrame();
 		// Get AddTerms dialog
 		JDialog termsDialog = new JDialog(parent, "Query for additional nodes");
-		GetTermsPanel termsPanel = new GetTermsPanel(manager, stringNetwork, false);
+		String database = ModelUtils.getDatabase(network);
+		GetTermsPanel termsPanel = new GetTermsPanel(manager, stringNetwork, database);
 		termsDialog.setContentPane(termsPanel);
 		// Pack it and display it
 		termsDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

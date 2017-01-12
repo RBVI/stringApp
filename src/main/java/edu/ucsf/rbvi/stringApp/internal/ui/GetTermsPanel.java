@@ -87,21 +87,21 @@ public class GetTermsPanel extends JPanel {
 	NumberFormat formatter = new DecimalFormat("#0.00");
 	NumberFormat intFormatter = new DecimalFormat("#0");
 	private boolean ignore = false;
-	private boolean useSTITCH = false;
+	private String useDATABASE = StringManager.STRINGDB;
 
-	public GetTermsPanel(final StringManager manager, final boolean useSTITCH) {
+	public GetTermsPanel(final StringManager manager, final String useDATABASE) {
 		super(new GridBagLayout());
 		this.manager = manager;
-		this.useSTITCH = useSTITCH;
+		this.useDATABASE = useDATABASE;
 		init();
 	}
 
-	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, boolean useSTITCH) {
+	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, String useDATABASE) {
 		super(new GridBagLayout());
 		this.manager = manager;
 		this.stringNetwork = stringNetwork;
 		this.initialStringNetwork = stringNetwork;
-		this.useSTITCH = useSTITCH;
+		this.useDATABASE = useDATABASE;
 		init();
 	}
 
@@ -167,7 +167,7 @@ public class GetTermsPanel extends JPanel {
 		EasyGBC c = new EasyGBC();
 
 		String label = "Enter protein names or identifiers:";
-		if (useSTITCH)
+		if (useDATABASE.equals(StringManager.STITCHDB))
 			label = "Enter protein or compound names or identifiers:";
 		JLabel searchLabel = new JLabel(label);
 		c.noExpand().anchor("northwest").insets(0,5,0,5);
@@ -449,7 +449,7 @@ public class GetTermsPanel extends JPanel {
 		// System.out.println("Importing "+stringIds);
 		TaskFactory factory = new ImportNetworkTaskFactory(stringNetwork, speciesCombo.getSelectedItem().toString(), 
 		                                                   taxon, confidence, additionalNodes, stringIds,
-																											 queryTermMap, useSTITCH);
+																											 queryTermMap, useDATABASE);
 		cancel();
 		manager.execute(factory.createTaskIterator());
 	}
@@ -607,7 +607,7 @@ public class GetTermsPanel extends JPanel {
 			manager.info("Getting annotations for "+species.getName()+"terms: "+terms);
 
 			// Launch a task to get the annotations. 
-			manager.execute(new TaskIterator(new GetAnnotationsTask(stringNetwork, taxon, terms, useSTITCH)),this);
+			manager.execute(new TaskIterator(new GetAnnotationsTask(stringNetwork, taxon, terms, useDATABASE)),this);
 		}
 
 		@Override

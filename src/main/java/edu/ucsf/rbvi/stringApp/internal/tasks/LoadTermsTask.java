@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.simple.JSONObject;
+
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
@@ -37,7 +39,7 @@ public class LoadTermsTask extends AbstractTask {
 	final int additionalNodes;
 	final List<String> stringIds;
 	final Map<String, String> queryTermMap;
-	boolean useSTITCH;
+	String useDATABASE;
 
 	@Tunable(description="Re-layout network?")
 	public boolean relayout = false;
@@ -45,7 +47,7 @@ public class LoadTermsTask extends AbstractTask {
 	public LoadTermsTask(final StringNetwork stringNet, final String species, final int taxonId, 
 	                     final int confidence, final int additionalNodes,
 								     	 final List<String>stringIds,
-								    	 final Map<String, String> queryTermMap, final boolean useSTITCH) {
+								    	 final Map<String, String> queryTermMap, final String useDATABASE) {
 		this.stringNet = stringNet;
 		this.taxonId = taxonId;
 		this.additionalNodes = additionalNodes;
@@ -53,7 +55,7 @@ public class LoadTermsTask extends AbstractTask {
 		this.stringIds = stringIds;
 		this.species = species;
 		this.queryTermMap = queryTermMap;
-		this.useSTITCH = useSTITCH;
+		this.useDATABASE = useDATABASE;
 	}
 
 	public void run(TaskMonitor monitor) {
@@ -74,7 +76,7 @@ public class LoadTermsTask extends AbstractTask {
 
 		// String url = "http://api.jensenlab.org/network?entities="+URLEncoder.encode(ids.trim())+"&score="+conf;
 		Map<String, String> args = new HashMap<>();
-		args.put("database","stitch");
+		args.put("database", useDATABASE);
 		args.put("entities",ids.trim());
 		args.put("score", conf);
 		if (additionalNodes > 0)
@@ -83,13 +85,13 @@ public class LoadTermsTask extends AbstractTask {
 
 		monitor.setStatusMessage("Getting additional terms from "+manager.getNetworkURL());
 
-		Object results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+		JSONObject results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
 
 		monitor.setStatusMessage("Augmenting network");
 
 		List<CyEdge> newEdges = new ArrayList<>();
 		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges,
-		                                                          results, queryTermMap);
+		                                                          results, queryTermMap, useDATABASE);
 
 		monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
 

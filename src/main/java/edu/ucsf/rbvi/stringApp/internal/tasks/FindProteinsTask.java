@@ -59,17 +59,18 @@ public class FindProteinsTask extends AbstractTask {
 		args.put("retmode","json");
 		args.put("retmax","10000");
 		args.put("term","\""+query+"\"");
-		Object object = HttpUtils.getJSON("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+		JSONObject object = HttpUtils.getJSON("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
 		                                  args, manager);
-		if (!(object instanceof JSONObject)) {
+		JSONObject result = ModelUtils.getResultsFromJSON(object, JSONObject.class);
+		if (result == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"Pubmed returned no results");
-			System.out.println("object wrong type: "+object.toString());
+			// System.out.println("object wrong type: "+object.toString());
 			return;
 		}
-		JSONObject json = (JSONObject)((JSONObject) object).get("esearchresult");
+		JSONObject json = (JSONObject)result.get("esearchresult");
 		if (json == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"Pubmed returned no results");
-			System.out.println("object doesn't contain esearchresult: "+object.toString());
+			// System.out.println("object doesn't contain esearchresult: "+object.toString());
 			return;
 		}
 
@@ -77,7 +78,7 @@ public class FindProteinsTask extends AbstractTask {
 		int count = Integer.parseInt((String)json.get("count"));
 		if (count == 0) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"Pubmed returned no results");
-			System.out.println("object doesn't contain count: "+json.toString());
+			// System.out.println("object doesn't contain count: "+json.toString());
 			return;
 		}
 		monitor.showMessage(TaskMonitor.Level.INFO,"Pubmed returned "+count+" results");
@@ -97,13 +98,13 @@ public class FindProteinsTask extends AbstractTask {
 		else
 			args.put("type2", Integer.toString(species.getSelectedValue().getTaxId()));
 		monitor.setTitle("Querying STRING");
-		Object tmobject = HttpUtils.postJSON(manager.getTextMiningURL(), args, manager);
+		JSONObject tmobject = HttpUtils.postJSON(manager.getTextMiningURL(), args, manager);
 		if (tmobject == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results");
 			return;
 		}
 
-		ModelUtils.createTMNetworkFromJSON(manager, species.getSelectedValue(), tmobject, query);
+		ModelUtils.createTMNetworkFromJSON(manager, species.getSelectedValue(), tmobject, query, StringManager.STRINGDB);
 	}
 
 	@ProvidesTitle

@@ -34,19 +34,19 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 
-	@Tunable (description="Protein query", required=true)
+	@Tunable(description = "Protein query", required = true)
 	public String query = null;
 
-	@Tunable (description="Species", context="nogui")
+	@Tunable(description = "Species", context = "nogui")
 	public String species = null;
 
 	@Tunable (description="Taxon ID", context="nogui")
 	public int taxonID = -1;
 
-	@Tunable (description="Number of proteins")
+	@Tunable(description = "Number of proteins")
 	public BoundedInteger limit = new BoundedInteger(1, 10, 10000, false, false);
 
-	@Tunable (description="Confidence cutoff")
+	@Tunable(description = "Confidence cutoff")
 	public BoundedDouble cutoff = new BoundedDouble(0.0, 0.4, 1.0, false, false);
 
 	private List<Species> speciesList;
@@ -57,7 +57,7 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 		this.manager = manager;
 		speciesList = Species.getSpecies();
 		// Set Human as the default
-		for (Species s: speciesList) {
+		for (Species s : speciesList) {
 			if (s.toString().equals("Homo sapiens")) {
 				species = s.toString();
 				break;
@@ -65,12 +65,12 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 		}
 	}
 
-	public void run(TaskMonitor monitor)  {
+	public void run(TaskMonitor monitor) {
 		monitor.setTitle("STRING Protein Query");
 		boolean found;
 		Species sp = null;
-		for (Species s: speciesList) {
-			if (s.toString().equals(species) || s.getTaxId() == taxonID) {
+		for (Species s : speciesList) {
+			if (s.toString().equalsIgnoreCase(species) || s.getTaxId() == taxonID) {
 				found = true;
 				sp = s;
 				break;
@@ -82,17 +82,19 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 		}
 
 		StringNetwork stringNetwork = new StringNetwork(manager);
-		int confidence = (int)(cutoff.getValue()*100);
+		int confidence = (int) (cutoff.getValue() * 100);
 
 		// We want the query with newlines, so we need to convert
-		query = query.replace(",","\n");
+		query = query.replace(",", "\n");
 		// Now, strip off any blank lines
-		query = query.replaceAll("(?m)^\\s*","");
+		query = query.replaceAll("(?m)^\\s*", "");
 
 		// Get the annotations
-		Map<String, List<Annotation>> annotations = stringNetwork.getAnnotations(sp.getTaxId(), query, false);
+		Map<String, List<Annotation>> annotations = stringNetwork.getAnnotations(sp.getTaxId(),
+				query, StringManager.STRINGDB);
 		if (annotations == null || annotations.size() == 0) {
-			monitor.showMessage(TaskMonitor.Level.ERROR, "Query '"+query+"' returned no results");
+			monitor.showMessage(TaskMonitor.Level.ERROR,
+					"Query '" + query + "' returned no results");
 			return;
 		}
 
@@ -100,16 +102,15 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 
 		if (!resolved) {
 			// Resolve the annotations by choosing the first stringID for each
-			for (String term: annotations.keySet()) {
+			for (String term : annotations.keySet()) {
 				stringNetwork.addResolvedStringID(term, annotations.get(term).get(0).getStringId());
 			}
 		}
 
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
-		LoadInteractions load = new LoadInteractions(stringNetwork, sp.toString(), sp.getTaxId(), 
-                                                 confidence, limit.getValue(),
-																								 stringIds, queryTermMap, "", false);
+		LoadInteractions load = new LoadInteractions(stringNetwork, sp.toString(), sp.getTaxId(),
+				confidence, limit.getValue(), stringIds, queryTermMap, "", StringManager.STRINGDB);
 		manager.execute(new TaskIterator(load), true);
 		loadedNetwork = stringNetwork.getNetwork();
 	}
@@ -117,16 +118,19 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 	@Override
 	public <R> R getResults(Class<? extends R> clzz) {
 		// Return the network we created
-		if (loadedNetwork == null) return null;
+		if (loadedNetwork == null)
+			return null;
 
 		if (clzz.equals(CyNetwork.class)) {
-			return (R)loadedNetwork;
+			return (R) loadedNetwork;
 		} else if (clzz.equals(Long.class)) {
-			return (R)loadedNetwork.getSUID();
+			return (R) loadedNetwork.getSUID();
 		} else if (clzz.equals(String.class)) {
-			String resp = "Loaded network '"+loadedNetwork.getRow(loadedNetwork).get(CyNetwork.NAME, String.class);
-			resp += "' with "+loadedNetwork.getNodeCount()+" nodes and "+loadedNetwork.getEdgeCount()+" edges";
-			return (R)resp;
+			String resp = "Loaded network '"
+					+ loadedNetwork.getRow(loadedNetwork).get(CyNetwork.NAME, String.class);
+			resp += "' with " + loadedNetwork.getNodeCount() + " nodes and "
+					+ loadedNetwork.getEdgeCount() + " edges";
+			return (R) resp;
 		}
 		return null;
 	}
