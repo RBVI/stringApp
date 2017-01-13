@@ -7,20 +7,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
-import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyIdentifiable;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
-
 import org.cytoscape.view.model.View;
-
-import org.apache.commons.codec.binary.Base64;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.EntityIdentifier;
@@ -566,6 +561,25 @@ public class ModelUtils {
 		if (network.getRow(ident) != null) 
 			return network.getRow(ident).get(column, String.class);
 		return null;
+	}
+
+	public static List<String> getNetworkSpeciesTaxons(CyNetwork network) {
+		List<String> netSpeciesNames = new ArrayList<String>();
+		for (CyNode node : network.getNodeList()) {
+			final String species = network.getRow(node).get(SPECIES, String.class);
+			if (species != null && !netSpeciesNames.contains(species)) {
+				netSpeciesNames.add(species);
+			}
+		}
+		List<String> netSpeciesTaxons = new ArrayList<String>();
+		for (Species sp : Species.getSpecies()) {
+			for (String netSp : netSpeciesNames) {
+				if (netSp.equals(sp.getName())) {
+					netSpeciesTaxons.add(String.valueOf(sp.getTaxId()));
+				}
+			}
+		}
+		return netSpeciesTaxons;
 	}
 
 	public static <T> T getResultsFromJSON(JSONObject json, Class<? extends T> clazz) {

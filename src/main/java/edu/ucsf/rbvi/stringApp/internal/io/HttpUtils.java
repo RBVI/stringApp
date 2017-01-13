@@ -8,10 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -19,15 +21,11 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
@@ -172,6 +170,52 @@ public class HttpUtils {
 			}
 			return builder.toString();
 		}
+	}
+
+	public static Object postXML(String url, Map<String, String> queryMap, StringManager manager) {
+
+		// Set up our connection
+		CloseableHttpClient client = HttpClients.createDefault();
+		HttpPost request = new HttpPost(url);
+		List<NameValuePair> nvps = HttpUtils.getArguments(queryMap);
+
+		Object xmlDocument = null;
+		CloseableHttpResponse response1 = null;
+		try {
+			request.setEntity(new UrlEncodedFormEntity(nvps));
+			response1 = client.execute(request);
+			HttpEntity entity1 = response1.getEntity();
+			InputStream entityStream = entity1.getContent();
+			if (entity1.getContentLength() == 0) {
+				return null;
+			}
+			//BufferedReader reader = new BufferedReader(new InputStreamReader(entityStream));
+			//String lin;
+			//while ((lin = reader.readLine()) != null) {
+				// System.out.println(lin);
+			//}
+
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			xmlDocument = builder.parse(entityStream);
+			
+			// and ensure it is fully consumed
+			EntityUtils.consume(entity1);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			manager.error("Unable to parse response from server: " + e.getMessage());
+			return null;
+		} finally {
+			try {
+				response1.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		// StringBuilder builder = new StringBuilder();
+		return xmlDocument;
 	}
 
 	public static List<NameValuePair> getArguments(Map<String, String> args) {
