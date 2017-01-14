@@ -469,7 +469,7 @@ public class ModelUtils {
 			{
 				// Construct instructions for enhanced graphics label
 				String enhancedLabel = "label: attribute=name labelsize=10 outline=false ";
-				enhancedLabel += "background=true color=black dropShadow=false";
+				enhancedLabel += "background=true color=black dropShadow=true";
 				row.set(ELABEL_STYLE, enhancedLabel);
 			}
 		}
