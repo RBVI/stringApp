@@ -131,6 +131,11 @@ public class ViewUtils {
 				vpd.setDependency(false);
 		}
 
+		// Get all of the factories we'll need
+		VisualMappingFunctionFactory continuousFactory = 
+		                 manager.getService(VisualMappingFunctionFactory.class, "(mapping.type=continuous)");
+		VisualMappingFunctionFactory discreteFactory = 
+	                 manager.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
 		VisualMappingFunctionFactory passthroughFactory = 
 		                 manager.getService(VisualMappingFunctionFactory.class, "(mapping.type=passthrough)");
 		VisualLexicon lex = manager.getService(RenderingEngineManager.class).getDefaultVisualLexicon();
@@ -145,8 +150,6 @@ public class ViewUtils {
 		}
 
 		// Set the edge width to be dependent on the total score
-		VisualMappingFunctionFactory continuousFactory = 
-		                 manager.getService(VisualMappingFunctionFactory.class, "(mapping.type=continuous)");
 		{
 			ContinuousMapping<Double,Double> cMapping = 
 				(ContinuousMapping) continuousFactory.createVisualMappingFunction(ModelUtils.SCORE, Double.class, 
@@ -167,6 +170,40 @@ public class ViewUtils {
 			stringStyle.addVisualMappingFunction(cMapping);
 		}
 
+
+		// If we have enhancedGrahpics loaded, automatically use it
+		if (manager.haveEnhancedGraphics()) {
+			// Set up the passthrough mapping for the label
+			{
+				VisualProperty customGraphics = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_3");
+				PassthroughMapping pMapping = 
+					(PassthroughMapping) passthroughFactory.createVisualMappingFunction(ModelUtils.ELABEL_STYLE, 
+					                                                                    String.class, customGraphics);
+				stringStyle.addVisualMappingFunction(pMapping);
+			}
+
+			// Set up our labels to be in the upper right quadrant
+			{
+				VisualProperty customGraphicsP = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_POSITION_3");
+				Object upperRight = customGraphicsP.parseSerializableString("NE,C,c,0.00,0.00");
+				stringStyle.setDefaultValue(customGraphicsP, upperRight);
+				if (useStitch) {
+					Object top = customGraphicsP.parseSerializableString("N,C,c,0.00,-8.00");
+					DiscreteMapping<String,Object> dMapping = 
+						(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 
+											   	                                              customGraphicsP);
+					dMapping.putMapValue("compound", top);
+					dMapping.putMapValue("protein", upperRight);
+					stringStyle.addVisualMappingFunction(dMapping);
+				}
+			}
+
+			// Finally, disable the "standard" label passthrough
+			{
+				stringStyle.removeVisualMappingFunction(BasicVisualLexicon.NODE_LABEL);
+			}
+		}
+
 		// Set up all of our special mappings if we have a stitch network
 		if (useStitch) {
 
@@ -175,9 +212,6 @@ public class ViewUtils {
 
 			// Set the node to be transparent if it's a compound.  We
 			// need to do this because Cytoscape doesn't have a "pill" shape
-			VisualMappingFunctionFactory discreteFactory = 
-		                 manager.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
-
 			{
 				DiscreteMapping<String,Integer> dMapping = 
 					(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 
@@ -219,7 +253,7 @@ public class ViewUtils {
 
 			// TODO: Set the label position
 			// We need to export ObjectPosition in the API in order to be able to do this, unfortunately
-			{
+			if (!manager.haveEnhancedGraphics()) {
 				VisualProperty labelPosition = lex.lookup(CyNode.class, "NODE_LABEL_POSITION");
 				DiscreteMapping<String,Object> dMapping = 
 					(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 

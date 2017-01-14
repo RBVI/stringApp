@@ -29,6 +29,7 @@ public class ModelUtils {
 	// Node information
 	public static String CANONICAL = "canonical name";
 	public static String CV_STYLE = "chemViz Passthrough";
+	public static String ELABEL_STYLE = "enhancedLabel Passthrough";
 	public static String ID = "@id";
 	public static String DESCRIPTION = "description";
 	public static String DISEASE_SCORE = "disease score";
@@ -320,6 +321,7 @@ public class ModelUtils {
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STRINGID);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STYLE);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, TYPE);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, ELABEL_STYLE);
 		if (useDATABASE.equals(Databases.STITCH.getAPIName())) {
 			createColumnIfNeeded(network.getDefaultNodeTable(), String.class, CV_STYLE);
 			createColumnIfNeeded(network.getDefaultNodeTable(), String.class, SMILES);
@@ -463,6 +465,12 @@ public class ModelUtils {
 					}
 					row.set(key, value);
 				}
+			}
+			{
+				// Construct instructions for enhanced graphics label
+				String enhancedLabel = "label: attribute=name labelsize=10 outline=false ";
+				enhancedLabel += "background=true color=black dropShadow=false";
+				row.set(ELABEL_STYLE, enhancedLabel);
 			}
 		}
 		if (queryTermMap != null && queryTermMap.containsKey(stringId)) {

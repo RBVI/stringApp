@@ -28,6 +28,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeConfidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExpandNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetNetworkTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.VersionTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.FindProteinsTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.OpenEvidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.SetConfidenceTaskFactory;
@@ -62,8 +63,7 @@ public class CyActivator extends AbstractCyActivator {
 		StringManager manager = new StringManager(registrar);
 
 		// Get our version number
-		Dictionary headers = bc.getBundle().getHeaders();
-		String version = (String) headers.get("Bundle-Version");
+		String version = bc.getBundle().getVersion().toString();
 		manager.setVersion(version);
 
 		{
@@ -117,6 +117,14 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "pubmed query");
 			registerService(bc, getNetwork, TaskFactory.class, props);
+		}
+
+		{
+			VersionTaskFactory versionFactory = new VersionTaskFactory(version);
+			Properties versionProps = new Properties();
+			versionProps.setProperty(COMMAND_NAMESPACE, "string");
+			versionProps.setProperty(COMMAND, "version");
+			registerService(bc, versionFactory, TaskFactory.class, versionProps);
 		}
 
 		{

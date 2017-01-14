@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.CyUserLog;
+import org.cytoscape.command.AvailableCommands;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
@@ -34,6 +35,7 @@ public class StringManager implements NetworkAddedListener {
 	final Logger logger = Logger.getLogger(CyUserLog.NAME);
 	final TaskManager<?,?> dialogTaskManager;
 	final SynchronousTaskManager<?> synchronousTaskManager;
+	final AvailableCommands availableCommands;
 	private boolean showImage = true;
 	private boolean ignore = false;
 	private Map<CyNetwork, StringNetwork> stringNetworkMap;
@@ -51,6 +53,7 @@ public class StringManager implements NetworkAddedListener {
 		// Get our task managers
 		dialogTaskManager = registrar.getService(TaskManager.class);
 		synchronousTaskManager = registrar.getService(SynchronousTaskManager.class);
+		availableCommands = registrar.getService(AvailableCommands.class);
 		cyEventHelper = registrar.getService(CyEventHelper.class);
 		stringNetworkMap = new HashMap<>();
 	}
@@ -231,6 +234,10 @@ public class StringManager implements NetworkAddedListener {
 	public void setVersion(String version) {
 		String v = version.replace('.', '_');
 		StringManager.CallerIdentity = "string_app_v"+v;
+	}
+
+	public boolean haveEnhancedGraphics() {
+		return availableCommands.getNamespaces().contains("enhancedGraphics");
 	}
 
 }
