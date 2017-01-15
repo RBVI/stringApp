@@ -23,13 +23,18 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 
 	public static final String colID = "id";
 	public static final String colName = "name";
-	public static final String colDescription = "pathwayDescription";
+	public static final String colDescription = "termDescription";
 	public static final String colPvalue = "pValue";
 	public static final String colBonferroni = "bonferroni";
 	public static final String colFDR = "falseDiscoveryRate";
 	public static final String colGenes = "enrichedGenes";
 	public static final String colGenesSUID = "nodes.SUID";
 	public static final String colGenesCount = "countInGeneSet";
+
+	public static final String colTableSUID = "enrichment.SUID";
+	
+	public static final String[] swingColumns  = new String[] {colName, colDescription, colFDR, colGenesCount, colGenes, colGenesSUID};
+	public static final int nodeSUIDColumn = 5;
 
 	public EnrichmentTerm(String name, String description, double pvalue, double bonfPValue,
 			double fdrPValue) {

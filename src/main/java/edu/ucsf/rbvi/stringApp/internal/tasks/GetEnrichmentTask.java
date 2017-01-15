@@ -1,26 +1,20 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+import java.util.Set;
 
-import org.cytoscape.application.swing.CySwingApplication;
-import org.cytoscape.application.swing.CytoPanel;
-import org.cytoscape.application.swing.CytoPanelComponent;
-import org.cytoscape.application.swing.CytoPanelComponent2;
-import org.cytoscape.application.swing.CytoPanelName;
-import org.cytoscape.application.swing.CytoPanelState;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetwork;
-import org.cytoscape.model.CyNetworkTableManager;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.model.CyTableFactory;
 import org.cytoscape.model.CyTableManager;
+import org.cytoscape.model.SavePolicy;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ProvidesTitle;
@@ -34,7 +28,6 @@ import org.w3c.dom.NodeList;
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
-import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class GetEnrichmentTask extends AbstractTask {
@@ -43,6 +36,7 @@ public class GetEnrichmentTask extends AbstractTask {
 	final CyNetworkView netView;
 	final Map<String, List<EnrichmentTerm>> enrichmentResult;
 	final Map<String, Long> stringNodesMap;
+	final ShowEnrichmentPanelTaskFactory showFactory;
 
 	@Tunable(description = "Enrichment cutoff", gravity = 1.0)
 	public double cutoff = 0.05;
@@ -65,10 +59,12 @@ public class GetEnrichmentTask extends AbstractTask {
 	@Tunable(description = "InterPro domains", gravity = 7.0)
 	public boolean interPro = false;
 
-	public GetEnrichmentTask(StringManager manager, CyNetwork network, CyNetworkView netView) {
+	public GetEnrichmentTask(StringManager manager, CyNetwork network, CyNetworkView netView,
+			ShowEnrichmentPanelTaskFactory showFactory) {
 		this.manager = manager;
 		this.network = network;
 		this.netView = netView;
+		this.showFactory = showFactory;
 		enrichmentResult = new HashMap<>();
 		stringNodesMap = new HashMap<>();
 	}
@@ -102,6 +98,9 @@ public class GetEnrichmentTask extends AbstractTask {
 				}
 			}
 		}
+
+		// TODO: clear old results
+		deleteOldTables();
 
 		String[] selectedNodes = selected.split("\n");
 		if (goProcess) {
@@ -137,8 +136,8 @@ public class GetEnrichmentTask extends AbstractTask {
 			saveEnrichmentTable(EnrichmentTerm.termTables[5], EnrichmentTerm.termCategories[5]);
 		}
 
-		createEnrichmentPanel();
 		if (enrichmentResult.size() > 0) {
+			insertTasksAfterCurrentTask(showFactory.createTaskIterator(true));
 		}
 	}
 
@@ -159,6 +158,7 @@ public class GetEnrichmentTask extends AbstractTask {
 		xmlQuery += "</hits></experiment>";
 		// System.out.println(xmlQuery);
 		queryMap.put("xml", xmlQuery);
+		// TODO: Change to using SAXParser
 		Object results = HttpUtils.postXML(EnrichmentTerm.enrichmentURL, queryMap, manager);
 		if (!(results instanceof Document)) {
 			return;
@@ -235,10 +235,17 @@ public class GetEnrichmentTask extends AbstractTask {
 						if (geneNode instanceof Element) {
 							String enrGene = ((Element) geneNode).getTextContent();
 							if (enrGene != null) {
-								enrGenes.add(enrGene);
+								String nodeName = enrGene;
 								if (stringNodesMap.containsKey(enrGene)) {
-									enrNodes.add(stringNodesMap.get(enrGene));
+									final Long nodeSUID = stringNodesMap.get(enrGene);
+									enrNodes.add(nodeSUID);
+									if (network.getDefaultNodeTable()
+											.getColumn(CyNetwork.NAME) != null) {
+										nodeName = network.getDefaultNodeTable().getRow(nodeSUID)
+												.get(CyNetwork.NAME, String.class);
+									}
 								}
+								enrGenes.add(nodeName);
 							}
 						}
 					}
@@ -272,62 +279,65 @@ public class GetEnrichmentTask extends AbstractTask {
 		}
 
 		// print enriched terms
-		Collections.sort(enrichmentTerms);
-		for (EnrichmentTerm term : enrichmentTerms) {
-			if (term.getFDRPValue() <= cutoff) {
-				System.out.println(term);
-			} else {
-				break;
-			}
-		}
+		// Collections.sort(enrichmentTerms);
+		// for (EnrichmentTerm term : enrichmentTerms) {
+		// if (term.getFDRPValue() <= cutoff) {
+		// System.out.println(term);
+		// } else {
+		// break;
+		// }
+		// }
 	}
 
 	private void saveEnrichmentTable(String tableName, String enrichmentCategory) {
 		CyTableFactory tableFactory = manager.getService(CyTableFactory.class);
 		CyTableManager tableManager = manager.getService(CyTableManager.class);
-		CyNetworkTableManager netTableManager = manager.getService(CyNetworkTableManager.class);
+		// CyNetworkTableManager netTableManager = manager.getService(CyNetworkTableManager.class);
 
 		// Step 1: create a new table
 		// CyTable table = netTableManager.getTable(network, CyNetwork.class, tableName);
-		CyTable table = null;
-		Map<String, CyTable> tables = netTableManager.getTables(network, CyNetwork.class);
-		for (String existTableName : tables.keySet()) {
-			// System.out.println(existTableName);
-			if (existTableName.equals(tableName)) {
-				System.out.println("use existing table: " + existTableName);
-				table = tables.get(existTableName);
-				// break;
-			}
-		}
-		if (table == null) {
-			System.out.println("create new table: " + tableName);
-			table = tableFactory.createTable(tableName, EnrichmentTerm.colID, Long.class, false,
-					true);
-			netTableManager.setTable(network, CyNetwork.class, tableName, table);
-			tableManager.addTable(table);
-		} else {
-			// empty table
-			List<Long> rows = new ArrayList<Long>();
-			for (CyRow row : table.getAllRows()) {
-				rows.add(row.get(EnrichmentTerm.colID, Long.class));
-			}
-			table.deleteRows(rows);
+		// CyTable table = null;
+		// Set<CyTable> tables = tableManager.getAllTables(true);
+		// for (CyTable existTable : tables) {
+		// // System.out.println(existTableName);
+		// if (existTable.getTitle().equals(tableName)) {
+		// System.out.println("use existing table: " + tableName);
+		// table = existTable;
+		// // break;
+		// }
+		// }
+		// if (table == null) {
+		// System.out.println("create new table: " + tableName);
+		CyTable table = tableFactory.createTable(tableName, EnrichmentTerm.colID, Long.class, false,
+				true);
+		table.setSavePolicy(SavePolicy.SESSION_FILE);
+		tableManager.addTable(table);
+		// netTableManager.setTable(network, CyNetwork.class, tableName, table);
+		// } else {
+		// // empty table
+		// List<Long> rows = new ArrayList<Long>();
+		// for (CyRow row : table.getAllRows()) {
+		// rows.add(row.get(EnrichmentTerm.colID, Long.class));
+		// }
+		// table.deleteRows(rows);
 
-			// netTableManager.removeTable(network, CyNetwork.class, tableName);
-			// tableManager.deleteTable(table.getSUID());
-			// table.deleteColumn("selected");
-			// table.deleteColumn(EnrichmentTerm.colGenesSUID);
-			// table.deleteColumn(EnrichmentTerm.colName);
-			// table.deleteColumn(EnrichmentTerm.colDescription);
-			// table.deleteColumn(EnrichmentTerm.colFDR);
-			// table.deleteColumn(EnrichmentTerm.colGenesCount);
-			// table.deleteColumn(EnrichmentTerm.colGenes);
-		}
+		// netTableManager.removeTable(network, CyNetwork.class, tableName);
+		// tableManager.deleteTable(table.getSUID());
+		// table.deleteColumn("selected");
+		// table.deleteColumn(EnrichmentTerm.colGenesSUID);
+		// table.deleteColumn(EnrichmentTerm.colName);
+		// table.deleteColumn(EnrichmentTerm.colDescription);
+		// table.deleteColumn(EnrichmentTerm.colFDR);
+		// table.deleteColumn(EnrichmentTerm.colGenesCount);
+		// table.deleteColumn(EnrichmentTerm.colGenes);
+		// }
 		// create columns for the table
-		if (table.getColumn(CyNetwork.SELECTED) == null) {
-			table.createColumn(CyNetwork.SELECTED, Boolean.class, false);
-		}
-		if (table.getColumn(EnrichmentTerm.colGenesSUID) == null) {
+		// if (table.getColumn(CyNetwork.SELECTED) == null) {
+		// table.createColumn(CyNetwork.SELECTED, Boolean.class, false);
+		// }
+		if (table.getColumn(EnrichmentTerm.colGenesSUID) == null)
+
+		{
 			table.createListColumn(EnrichmentTerm.colGenesSUID, Long.class, false);
 		}
 		if (table.getColumn(EnrichmentTerm.colName) == null) {
@@ -348,8 +358,6 @@ public class GetEnrichmentTask extends AbstractTask {
 
 		// table.createColumn(EnrichmentTerm.colPvalue, Double.class, false);
 		// table.createColumn(EnrichmentTerm.colBonferroni, Double.class, false);
-		// clusterRow.set(NODES_SUID,
-		// cluster.getNodes().stream().map(CyNode::getSUID).collect(Collectors.toList()));
 
 		// Step 2: populate the table with some data
 		List<EnrichmentTerm> processTerms = enrichmentResult.get(enrichmentCategory);
@@ -364,25 +372,64 @@ public class GetEnrichmentTask extends AbstractTask {
 			row.set(EnrichmentTerm.colGenesSUID, term.getNodesSUID());
 		}
 
+		// Save table SUID in the network table
+		CyTable netTable = network.getDefaultNetworkTable();
+		if (netTable.getColumn(EnrichmentTerm.colTableSUID) == null) {
+			netTable.createListColumn(EnrichmentTerm.colTableSUID, Long.class, false);
+		}
+		List<Long> saveSUIDs = (List<Long>) netTable.getRow(network.getSUID())
+				.get(EnrichmentTerm.colTableSUID, List.class);
+		if (saveSUIDs == null) {
+			saveSUIDs = new ArrayList<Long>();
+		}
+		saveSUIDs.add(table.getSUID());
+		netTable.getRow(network.getSUID()).set(EnrichmentTerm.colTableSUID, saveSUIDs);
 	}
 
 	private void deleteOldTables() {
 		CyEventHelper eventHelper = manager.getService(CyEventHelper.class);
 		CyTableManager tableManager = manager.getService(CyTableManager.class);
-		CyNetworkTableManager netTableManager = manager.getService(CyNetworkTableManager.class);
-		Map<String, CyTable> tablesMap = netTableManager.getTables(network, CyNetwork.class);
-		List<String> tableNames = new ArrayList<String>(tablesMap.keySet());
-		for (String existTableName : tableNames) {
-			for (String tableName : EnrichmentTerm.termTables) {
-				if (tableName.equals(existTableName)) {
-					System.out.println("try to remove table: " + tableName);
-					CyTable table = tablesMap.get(tableName);
-					netTableManager.removeTable(network, CyNetwork.class, tableName);
-					tableManager.deleteTable(table.getSUID());
-					eventHelper.flushPayloadEvents();
+		Set<CyTable> oldTables = new HashSet<CyTable>();
+		// Set<String> tableNames = new HashSet<String>(Arrays.asList(EnrichmentTerm.termTables));
+		// Set<CyTable> currTables = tableManager.getAllTables(true);
+		// for (CyTable current : currTables) {
+		// if (tableNames.contains(current.getTitle())) {
+		// oldTables.add(current);
+		// }
+		// }
+		if (network.getDefaultNetworkTable().getColumn(EnrichmentTerm.colTableSUID) != null) {
+			List<Long> tableSUIDs = network.getDefaultNetworkTable().getRow(network.getSUID())
+					.get(EnrichmentTerm.colTableSUID, List.class);
+			if (tableSUIDs == null) {
+				// nothing to delete
+				return;
+			}
+			for (Long suid : tableSUIDs) {
+				if (tableManager.getTable(suid) != null) {
+					oldTables.add(tableManager.getTable(suid));
 				}
 			}
+			network.getDefaultNetworkTable().getRow(network.getSUID())
+					.set(EnrichmentTerm.colTableSUID, new ArrayList<Long>());
 		}
+		for (CyTable table : oldTables) {
+			tableManager.deleteTable(table.getSUID());
+			eventHelper.flushPayloadEvents();
+		}
+		// CyNetworkTableManager netTableManager = manager.getService(CyNetworkTableManager.class);
+		// Map<String, CyTable> tablesMap = netTableManager.getTables(network, CyNetwork.class);
+		// List<String> tableNames = new ArrayList<String>(tablesMap.keySet());
+		// for (String existTableName : tableNames) {
+		// for (String tableName : EnrichmentTerm.termTables) {
+		// if (tableName.equals(existTableName)) {
+		// System.out.println("try to remove table: " + tableName);
+		// CyTable table = tablesMap.get(tableName);
+		// netTableManager.removeTable(network, CyNetwork.class, tableName);
+		// tableManager.deleteTable(table.getSUID());
+		// eventHelper.flushPayloadEvents();
+		// }
+		// }
+		// }
 		// for (String tableName : EnrichmentTerm.termTables) {
 		// if (tables.keySet().contains(tableName)) {
 		// CyTable table = tables.get(tableName);
@@ -392,37 +439,9 @@ public class GetEnrichmentTask extends AbstractTask {
 		// }
 	}
 
-	private void createEnrichmentPanel() {
-		CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
-		CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.SOUTH);
-
-		// If the panel is not already registered, create it
-		if (cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment") < 0) {
-			CytoPanelComponent2 panel = new EnrichmentCytoPanel(manager);
-
-			// Register it
-			manager.registerService(panel, CytoPanelComponent.class, new Properties());
-			// manager.registerService(panel, RowsSetListener.class, new Properties());
-
-			if (cytoPanel.getState() == CytoPanelState.HIDE)
-				cytoPanel.setState(CytoPanelState.DOCK);
-
-		}
-		// else if (cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment") >= 0) {
-		// int compIndex = cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment");
-		// Component panel = cytoPanel.getComponentAt(compIndex);
-		// if (panel instanceof CytoPanelComponent2) {
-		// // Unregister it
-		// manager.unregisterService(panel, CytoPanelComponent.class);
-		// manager.unregisterService(panel, RowsSetListener.class);
-		// }
-		// }
-
-	}
-
 	@ProvidesTitle
 	public String getTitle() {
-		return "Get Enrichment";
+		return "Retrieve functional enrichment";
 	}
 
 }

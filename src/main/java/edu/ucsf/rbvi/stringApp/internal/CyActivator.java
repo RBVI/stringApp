@@ -7,7 +7,6 @@ import static org.cytoscape.work.ServiceProperties.MENU_GRAVITY;
 import static org.cytoscape.work.ServiceProperties.PREFERRED_MENU;
 import static org.cytoscape.work.ServiceProperties.TITLE;
 
-import java.util.Dictionary;
 import java.util.Properties;
 
 import org.cytoscape.application.swing.CySwingApplication;
@@ -28,12 +27,13 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeConfidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExpandNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetNetworkTaskFactory;
-import edu.ucsf.rbvi.stringApp.internal.tasks.VersionTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.FindProteinsTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.OpenEvidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.SetConfidenceTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.VersionTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.ui.DiseaseNetworkWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.ui.StitchWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.ui.StringWebServiceClient;
@@ -172,16 +172,6 @@ public class CyActivator extends AbstractCyActivator {
 			registerService(bc, addTerms, NetworkTaskFactory.class, props);
 		}
 
-
-		{
-			GetEnrichmentTaskFactory getEnrichment = new GetEnrichmentTaskFactory(manager);
-			Properties props = new Properties();
-			props.setProperty(PREFERRED_MENU, "Apps.STRING");
-			props.setProperty(TITLE, "Get enrichment");
-			props.setProperty(MENU_GRAVITY, "4.0");
-			props.setProperty(IN_MENU_BAR, "true");
-			registerService(bc, getEnrichment, NetworkTaskFactory.class, props);
-		}
 		
 		{
 			SetConfidenceTaskFactory setConfidence = new SetConfidenceTaskFactory(manager);
@@ -194,9 +184,22 @@ public class CyActivator extends AbstractCyActivator {
 		}
 
 		
+		GetEnrichmentTaskFactory getEnrichment = new GetEnrichmentTaskFactory(manager);
+		Properties propsEnrichment = new Properties();
+		propsEnrichment.setProperty(PREFERRED_MENU, "Apps.STRING");
+		propsEnrichment.setProperty(TITLE, "Retrieve functional enrichment");
+		propsEnrichment.setProperty(MENU_GRAVITY, "4.0");
+		propsEnrichment.setProperty(IN_MENU_BAR, "true");
+		registerService(bc, getEnrichment, NetworkTaskFactory.class, propsEnrichment);
+
 		if (haveGUI) {
 			ShowResultsPanelTaskFactory showResults = new ShowResultsPanelTaskFactory(manager);
 			showResults.reregister();
+
+			ShowEnrichmentPanelTaskFactory showEnrichment = new ShowEnrichmentPanelTaskFactory(manager);
+			showEnrichment.reregister();
+			getEnrichment.setShowEnrichmentPanelFactory(showEnrichment);
+			
 			/*
 			Properties props = new Properties();
 			props.setProperty(PREFERRED_MENU, "Apps.String");
