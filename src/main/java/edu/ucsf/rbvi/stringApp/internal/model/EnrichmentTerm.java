@@ -30,10 +30,10 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	public static final String colGenes = "enrichedGenes";
 	public static final String colGenesSUID = "nodes.SUID";
 	public static final String colGenesCount = "countInGeneSet";
+	public static final String colNetworkSUID = "network.SUID";
 
-	public static final String colTableSUID = "enrichment.SUID";
-	
-	public static final String[] swingColumns  = new String[] {colName, colDescription, colFDR, colGenesCount, colGenes, colGenesSUID};
+	public static final String[] swingColumns = new String[] { colName, colDescription, colFDR,
+			colGenesCount, colGenes, colGenesSUID };
 	public static final int nodeSUIDColumn = 5;
 
 	public EnrichmentTerm(String name, String description, double pvalue, double bonfPValue,

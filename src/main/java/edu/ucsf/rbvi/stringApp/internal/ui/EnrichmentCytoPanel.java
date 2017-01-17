@@ -27,12 +27,12 @@ import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
-import org.cytoscape.model.CyTableManager;
 import org.cytoscape.model.events.RowsSetEvent;
 import org.cytoscape.model.events.RowsSetListener;
 
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class EnrichmentCytoPanel extends JPanel
 		implements CytoPanelComponent2, ListSelectionListener, ActionListener, RowsSetListener {
@@ -126,24 +126,12 @@ public class EnrichmentCytoPanel extends JPanel
 		if (network == null)
 			return;
 
-		CyTable netTable = network.getDefaultNetworkTable();
-		if (netTable.getColumn(EnrichmentTerm.colTableSUID) == null) {
-			return;
-		}
-		List<Long> tableSUIDs = netTable.getRow(network.getSUID()).get(EnrichmentTerm.colTableSUID,
-				List.class);
-		if (tableSUIDs == null) {
-			return;
-		}
-		CyTableManager tableManager = manager.getService(CyTableManager.class);
-		Set<CyTable> currTables = tableManager.getAllTables(true);
+		Set<CyTable> currTables = ModelUtils.getEnrichmentTables(manager, network);
 		availableTables = new ArrayList<String>();
 		for (CyTable currTable : currTables) {
-			if (tableSUIDs.contains(currTable.getSUID())) {
-				// System.out.println("createjTtable: " + currTable.getTitle());
-				createJTable(currTable);
-				availableTables.add(currTable.getTitle());
-			}
+			// System.out.println("createjTtable: " + currTable.getTitle());
+			createJTable(currTable);
+			availableTables.add(currTable.getTitle());
 		}
 		if (availableTables.size() == 0) {
 			return;
