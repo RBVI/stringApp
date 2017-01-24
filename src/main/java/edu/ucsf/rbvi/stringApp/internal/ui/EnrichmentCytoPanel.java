@@ -6,6 +6,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,9 +25,11 @@ import javax.swing.table.TableColumnModel;
 import org.cytoscape.application.swing.CytoPanelComponent2;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
+import org.cytoscape.model.events.RowSetRecord;
 import org.cytoscape.model.events.RowsSetEvent;
 import org.cytoscape.model.events.RowsSetListener;
 
@@ -45,13 +48,13 @@ public class EnrichmentCytoPanel extends JPanel
 	String showTable;
 	JComboBox<String> boxTables;
 	List<String> availableTables;
+	boolean createBoxTables = true;
 
 	public EnrichmentCytoPanel(StringManager manager) {
 		this.manager = manager;
 		enrichmentTables = new HashMap<String, JTable>();
 		showTable = null;
 		this.setLayout(new BorderLayout());
-		init();
 		initPanel();
 	}
 
@@ -102,6 +105,7 @@ public class EnrichmentCytoPanel extends JPanel
 		}
 	}
 
+	// TODO: make this network-specific
 	public void actionPerformed(ActionEvent e) {
 		if (boxTables.getSelectedItem() == null) {
 			return;
@@ -109,27 +113,24 @@ public class EnrichmentCytoPanel extends JPanel
 		// System.out.println("change selected table");
 		showTable = (String) boxTables.getSelectedItem();
 		// TODO: do some cleanup for old table?
+		createBoxTables = false;
 		initPanel();
-	}
-
-	private void init() {
-
+		createBoxTables = true;
 	}
 
 	public void initPanel() {
-		// System.out.println("init enrichment panel");
-		// if (boxTables != null) {
-		// boxTables.removeActionListener(this);
-		// }
-		this.removeAll();
 		CyNetwork network = manager.getCurrentNetwork();
 		if (network == null)
 			return;
+		initPanel(network);
+	}
+
+	public void initPanel(CyNetwork network) {
+		this.removeAll();
 
 		Set<CyTable> currTables = ModelUtils.getEnrichmentTables(manager, network);
 		availableTables = new ArrayList<String>();
 		for (CyTable currTable : currTables) {
-			// System.out.println("createjTtable: " + currTable.getTitle());
 			createJTable(currTable);
 			availableTables.add(currTable.getTitle());
 		}
@@ -137,13 +138,14 @@ public class EnrichmentCytoPanel extends JPanel
 			return;
 		}
 		boxTables = new JComboBox<String>(availableTables.toArray(new String[0]));
-		if (showTable != null) {
-			boxTables.setSelectedItem(showTable);
-		} else if (boxTables.getSelectedItem() != null) {
-			showTable = (String) boxTables.getSelectedItem();
-		} else {
-			showTable = availableTables.get(0);
+		if (createBoxTables) {
+			if (availableTables.contains(EnrichmentTerm.termTables[0])) {
+				showTable = EnrichmentTerm.termTables[0];
+			} else {
+				showTable = availableTables.get(0);
+			}
 		}
+		boxTables.setSelectedItem(showTable);
 		boxTables.addActionListener(this);
 
 		topPanel = new JPanel(new BorderLayout());
@@ -169,20 +171,9 @@ public class EnrichmentCytoPanel extends JPanel
 
 		this.revalidate();
 		this.repaint();
-		// this.requestFocusInWindow();
 	}
 
 	private void createJTable(CyTable cyTable) {
-		// Set<String> columns = CyTableUtil.getColumnNames(cyTable);
-		// String[] columnNames = new String[columns.size()];
-		// int c = 0;
-		// for (String column : columns) {
-		// columnNames[c] = column;
-		// if (column.equals(EnrichmentTerm.colGenesSUID)) {
-		// nodeColumn = c;
-		// }
-		// c++;
-		// }
 		List<CyRow> rows = cyTable.getAllRows();
 		Object[][] data = new Object[rows.size()][EnrichmentTerm.swingColumns.length];
 		int i = 0;
@@ -227,22 +218,23 @@ public class EnrichmentCytoPanel extends JPanel
 	}
 
 	public void handleEvent(RowsSetEvent rse) {
-		CyNetwork network = manager.getCurrentNetwork();
-		if (network == null)
-			return;
-		if (!rse.getSource().equals(network.getDefaultNetworkTable())
-				|| !rse.containsColumn(CyNetwork.SELECTED))
-			return;
-
-		// for (RowSetRecord rsr : rse.getColumnRecords(CyNetwork.SELECTED)) {
-		// if ((Boolean) rsr.getValue() == true) {
-		// CyRow row = rsr.getRow();
-		// // This is a hack to avoid double selection...
-		// if (row.toString().indexOf("FACADE") >= 0)
-		// continue;
-		// System.out.println("selected: " + row.get(CyIdentifiable.SUID, Long.class));
-		//
-		// }
-		// }
+		CyNetworkManager networkManager = manager.getService(CyNetworkManager.class);
+		CyNetwork selectedNetwork = null;
+		if (rse.containsColumn(CyNetwork.SELECTED)) {
+			Collection<RowSetRecord> columnRecords = rse.getColumnRecords(CyNetwork.SELECTED);
+			for (RowSetRecord rec : columnRecords) {
+				CyRow row = rec.getRow();
+				if (row.toString().indexOf("FACADE") >= 0)
+					continue;
+				Long networkID = row.get(CyNetwork.SUID, Long.class);
+				Boolean selectedValue = (Boolean) rec.getValue();
+				if (selectedValue && networkManager.networkExists(networkID)) {
+					selectedNetwork = networkManager.getNetwork(networkID);
+				}
+			}
+		}
+		if (selectedNetwork != null) {
+			initPanel(selectedNetwork);
+		}
 	}
 }

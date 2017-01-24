@@ -29,7 +29,6 @@ public class ShowEnrichmentPanelTask extends AbstractTask {
 	}
 
 	public void run(TaskMonitor monitor) {
-		System.out.println("");
 		if (show)
 			monitor.setTitle("Show enrichment panel");
 		else
@@ -40,7 +39,6 @@ public class ShowEnrichmentPanelTask extends AbstractTask {
 
 		// If the panel is not already registered, create it
 		if (show && cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment") < 0) {
-			System.out.println("create panel");
 			CytoPanelComponent2 panel = new EnrichmentCytoPanel(manager);
 
 			// Register it
@@ -50,12 +48,14 @@ public class ShowEnrichmentPanelTask extends AbstractTask {
 			if (cytoPanel.getState() == CytoPanelState.HIDE)
 				cytoPanel.setState(CytoPanelState.DOCK);
 
+			cytoPanel.setSelectedIndex(
+					cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment"));
+
 		} else if (show && cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment") >= 0) {
-			EnrichmentCytoPanel panel = new EnrichmentCytoPanel(manager);
-			System.out.println("update panel");
+			EnrichmentCytoPanel panel = (EnrichmentCytoPanel) cytoPanel.getComponentAt(
+					cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment"));
 			panel.initPanel();
 		} else if (!show && cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment") >= 0) {
-			System.out.println("unregister panel");
 			int compIndex = cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment");
 			Component panel = cytoPanel.getComponentAt(compIndex);
 			if (panel instanceof CytoPanelComponent2) {

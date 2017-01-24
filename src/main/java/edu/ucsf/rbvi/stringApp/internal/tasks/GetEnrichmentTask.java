@@ -17,6 +17,8 @@ import org.cytoscape.model.SavePolicy;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ProvidesTitle;
+import org.cytoscape.work.SynchronousTaskManager;
+import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 import org.w3c.dom.Document;
@@ -36,6 +38,7 @@ public class GetEnrichmentTask extends AbstractTask {
 	final Map<String, List<EnrichmentTerm>> enrichmentResult;
 	final Map<String, Long> stringNodesMap;
 	final ShowEnrichmentPanelTaskFactory showFactory;
+	TaskMonitor monitor;
 
 	@Tunable(description = "Enrichment cutoff", gravity = 1.0)
 	public double cutoff = 0.05;
@@ -66,10 +69,11 @@ public class GetEnrichmentTask extends AbstractTask {
 		this.showFactory = showFactory;
 		enrichmentResult = new HashMap<>();
 		stringNodesMap = new HashMap<>();
+		monitor = null;
 	}
 
 	public void run(TaskMonitor monitor) throws Exception {
-
+		this.monitor = monitor;
 		String selected = ModelUtils.getSelected(network, null).trim();
 		if (selected.length() == 0) {
 			selected = ModelUtils.getExisting(network).trim();
@@ -136,13 +140,14 @@ public class GetEnrichmentTask extends AbstractTask {
 		}
 
 		if (enrichmentResult.size() > 0) {
-			insertTasksAfterCurrentTask(showFactory.createTaskIterator(true));
+			SynchronousTaskManager<?> taskM = manager.getService(SynchronousTaskManager.class);
+			TaskIterator ti = showFactory.createTaskIterator(true);
+			taskM.execute(ti);
 		}
 	}
 
 	private void getEnrichment(String[] selectedNodes, String filter, String species,
 			String enrichmentCategory) {
-		System.out.println(enrichmentCategory);
 		Map<String, String> queryMap = new HashMap<String, String>();
 		String xmlQuery = "<experiment>";
 		if (filter.length() > 0) {
@@ -157,7 +162,7 @@ public class GetEnrichmentTask extends AbstractTask {
 		xmlQuery += "</hits></experiment>";
 		// System.out.println(xmlQuery);
 		queryMap.put("xml", xmlQuery);
-		// TODO: Change to using SAXParser
+		// TODO: Change to use SAXParser
 		Object results = HttpUtils.postXML(EnrichmentTerm.enrichmentURL, queryMap, manager);
 		if (!(results instanceof Document)) {
 			return;
@@ -268,13 +273,13 @@ public class GetEnrichmentTask extends AbstractTask {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		System.out.println("Number of terms: " + enrichmentTerms.size());
+		monitor.setStatusMessage("Number of terms: " + enrichmentTerms.size());
 
 		if (!enrichmentResult.containsKey(enrichmentCategory)) {
 			enrichmentResult.put(enrichmentCategory, enrichmentTerms);
 		} else {
 			// TODO: could it happen?
-			System.out.println("Retrieved terms for the same category already ...");
+			monitor.setStatusMessage("Retrieved terms for the same category already ...");
 		}
 
 		// print enriched terms
