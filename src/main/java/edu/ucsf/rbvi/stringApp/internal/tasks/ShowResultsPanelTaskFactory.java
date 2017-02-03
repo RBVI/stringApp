@@ -37,6 +37,7 @@ public class ShowResultsPanelTaskFactory extends AbstractTaskFactory {
 		manager.unregisterService(this, TaskFactory.class);
 		Properties props = new Properties();
 		props.setProperty(PREFERRED_MENU, "Apps.STRING");
+
 		if (ShowResultsPanelTask.isPanelRegistered(manager)) {
 			props.setProperty(TITLE, "Hide results panel");
 			show = false;
@@ -44,8 +45,9 @@ public class ShowResultsPanelTaskFactory extends AbstractTaskFactory {
 			props.setProperty(TITLE, "Show results panel");
 			show = true;
 		}
-		props.setProperty(MENU_GRAVITY, "4.0");
+		props.setProperty(MENU_GRAVITY, "6.0");
 		props.setProperty(IN_MENU_BAR, "true");
+		props.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 		manager.registerService(this, TaskFactory.class, props);
 	}
 

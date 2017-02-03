@@ -41,7 +41,7 @@ public class ShowEnrichmentPanelTaskFactory extends AbstractTaskFactory {
 			props.setProperty(TITLE, "Show enrichment panel");
 			show = true;
 		}
-		props.setProperty(MENU_GRAVITY, "4.0");
+		props.setProperty(MENU_GRAVITY, "5.0");
 		props.setProperty(IN_MENU_BAR, "true");
 		manager.registerService(this, TaskFactory.class, props);
 	}

@@ -6,6 +6,7 @@ import static org.cytoscape.work.ServiceProperties.IN_MENU_BAR;
 import static org.cytoscape.work.ServiceProperties.MENU_GRAVITY;
 import static org.cytoscape.work.ServiceProperties.PREFERRED_MENU;
 import static org.cytoscape.work.ServiceProperties.TITLE;
+import static org.cytoscape.work.ServiceProperties.INSERT_SEPARATOR_BEFORE;
 
 import java.util.Properties;
 
@@ -190,15 +191,17 @@ public class CyActivator extends AbstractCyActivator {
 		propsEnrichment.setProperty(TITLE, "Retrieve functional enrichment");
 		propsEnrichment.setProperty(MENU_GRAVITY, "4.0");
 		propsEnrichment.setProperty(IN_MENU_BAR, "true");
+		propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 		registerService(bc, getEnrichment, NetworkTaskFactory.class, propsEnrichment);
 
 		if (haveGUI) {
-			ShowResultsPanelTaskFactory showResults = new ShowResultsPanelTaskFactory(manager);
-			showResults.reregister();
-
 			ShowEnrichmentPanelTaskFactory showEnrichment = new ShowEnrichmentPanelTaskFactory(manager);
 			showEnrichment.reregister();
 			getEnrichment.setShowEnrichmentPanelFactory(showEnrichment);
+
+			ShowResultsPanelTaskFactory showResults = new ShowResultsPanelTaskFactory(manager);
+			showResults.reregister();
+
 			
 			/*
 			Properties props = new Properties();

@@ -45,7 +45,7 @@ public class ShowImagesTaskFactory extends AbstractNetworkViewTaskFactory {
 			props.setProperty(TITLE, "Don't show structure images");
 		else
 			props.setProperty(TITLE, "Show structure images");
-		props.setProperty(MENU_GRAVITY, "5.0");
+		props.setProperty(MENU_GRAVITY, "7.0");
 		props.setProperty(IN_MENU_BAR, "true");
 		manager.registerService(this, NetworkViewTaskFactory.class, props);
 	}

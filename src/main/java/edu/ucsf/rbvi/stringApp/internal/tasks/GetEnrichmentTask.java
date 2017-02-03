@@ -56,10 +56,10 @@ public class GetEnrichmentTask extends AbstractTask {
 	public boolean kegg = true;
 
 	@Tunable(description = "Pfam domains", gravity = 6.0)
-	public boolean pfam = false;
+	public boolean pfam = true;
 
 	@Tunable(description = "InterPro domains", gravity = 7.0)
-	public boolean interPro = false;
+	public boolean interPro = true;
 
 	public GetEnrichmentTask(StringManager manager, CyNetwork network, CyNetworkView netView,
 			ShowEnrichmentPanelTaskFactory showFactory) {
@@ -329,6 +329,10 @@ public class GetEnrichmentTask extends AbstractTask {
 
 		// Step 2: populate the table with some data
 		List<EnrichmentTerm> processTerms = enrichmentResult.get(enrichmentCategory);
+		if (processTerms.size() == 0) {
+			CyRow row = table.getRow((long)0);
+			row.set(EnrichmentTerm.colNetworkSUID, network.getSUID());
+		}
 		for (int i = 0; i < processTerms.size(); i++) {
 			EnrichmentTerm term = processTerms.get(i);
 			CyRow row = table.getRow((long) i);
