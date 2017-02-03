@@ -40,7 +40,7 @@ public class StringManager implements NetworkAddedListener {
 	private boolean ignore = false;
 	private Map<CyNetwork, StringNetwork> stringNetworkMap;
 
-	public static String ResolveURI = "http://string-db.org/api/";
+	public static String STRINGResolveURI = "http://string-db.org/api/";
 	public static String STITCHResolveURI = "http://stitch.embl.de/api/";
 	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
 	public static String URI = "http://api.jensenlab.org/";
@@ -175,10 +175,10 @@ public class StringManager implements NetworkAddedListener {
 	}
 
 	public String getResolveURL(String useDATABASE) {
-		if (useDATABASE.equals(Databases.STRING.getAPIName()))
+		if (useDATABASE.equals(Databases.STITCH.getAPIName()))
 			return STITCHResolveURI;
 
-		return ResolveURI;
+		return STRINGResolveURI;
 	}
 
 	public void info(String info) {
