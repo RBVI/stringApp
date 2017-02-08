@@ -110,4 +110,13 @@ public class Species implements Comparable<Species> {
 		return "";
 	}
 
+	public static int getSpeciesTaxId(String speciesName) {
+		for (Species sp : allSpecies) {
+			if (sp.getName().equals(speciesName)) {
+				return sp.getTaxId();
+			}
+		}
+		return -1;
+	}
+	
 }

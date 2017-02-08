@@ -89,6 +89,7 @@ public class GetTermsPanel extends JPanel {
 	NumberFormat intFormatter = new DecimalFormat("#0");
 	private boolean ignore = false;
 	private String useDATABASE = Databases.STRING.getAPIName();
+	private String netSpecies = "Homo sapiens";
 
 	public GetTermsPanel(final StringManager manager, final String useDATABASE) {
 		super(new GridBagLayout());
@@ -97,12 +98,15 @@ public class GetTermsPanel extends JPanel {
 		init();
 	}
 
-	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, String useDATABASE) {
+	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, String useDATABASE, String aNetSpecies) {
 		super(new GridBagLayout());
 		this.manager = manager;
 		this.stringNetwork = stringNetwork;
 		this.initialStringNetwork = stringNetwork;
 		this.useDATABASE = useDATABASE;
+		if (aNetSpecies != null) {
+			this.netSpecies = aNetSpecies;
+		}
 		init();
 	}
 
@@ -191,7 +195,7 @@ public class GetTermsPanel extends JPanel {
 
 		// Set Human as the default
 		for (Species s: speciesList) {
-			if (s.toString().equals("Homo sapiens")) {
+			if (s.toString().equals(netSpecies)) {
 				speciesCombo.setSelectedItem(s);
 				break;
 			}

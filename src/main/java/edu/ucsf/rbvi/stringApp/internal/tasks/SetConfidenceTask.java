@@ -1,28 +1,10 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
-import org.cytoscape.model.CyNode;
-import org.cytoscape.view.layout.CyLayoutAlgorithm;
-import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
-import org.cytoscape.view.model.CyNetworkView;
-import org.cytoscape.view.model.CyNetworkViewManager;
-import org.cytoscape.view.model.View;
 import org.cytoscape.work.AbstractTask;
-import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
-import org.cytoscape.work.Tunable;
-import org.cytoscape.work.util.BoundedDouble;
 
-import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
@@ -44,7 +26,7 @@ public class SetConfidenceTask extends AbstractTask {
 		monitor.setTitle("Set as STRING network");
 
 		double minScore = 1.0;
-		for (CyEdge edge: net.getEdgeList()) {
+		for (CyEdge edge : net.getEdgeList()) {
 			Double score = net.getRow(edge).get(ModelUtils.SCORE, Double.class);
 			if (score == null || score >= minScore)
 				continue;
@@ -52,8 +34,11 @@ public class SetConfidenceTask extends AbstractTask {
 		}
 
 		ModelUtils.setConfidence(net, minScore);
+
 		// TODO: Find a better way to set the database, e.g. check certain node column
 		ModelUtils.setDatabase(net, Databases.STRING.getAPIName());
+		ModelUtils.setNetSpecies(net, ModelUtils.getMostCommonNetSpecies(net));
+
 		StringNetwork stringNet = new StringNetwork(manager);
 		stringNet.setNetwork(net);
 		manager.addStringNetwork(stringNet, net);

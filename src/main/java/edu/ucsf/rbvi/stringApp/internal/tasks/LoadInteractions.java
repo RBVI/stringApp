@@ -75,13 +75,18 @@ public class LoadInteractions extends AbstractTask {
 
 		// String url = "http://api.jensenlab.org/network?entities="+URLEncoder.encode(ids.trim())+"&score="+conf;
 		Map<String, String> args = new HashMap<>();
-		args.put("database", useDATABASE);
+		// args.put("database", useDATABASE);
+		// TODO: Is it OK to always use stitch?
+		args.put("database", Databases.STITCH.getAPIName());
 		args.put("entities",ids.trim());
 		args.put("score", conf);
 		args.put("caller_identity", StringManager.CallerIdentity);
-		if (additionalNodes > 0)
+		if (additionalNodes > 0) {
 			args.put("additional", Integer.toString(additionalNodes));
-
+			if (useDATABASE.equals(Databases.STRING.getAPIName())) {
+				args.put("filter", taxonId + ".%%");
+			}
+		}
 		JSONObject results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
 
 		// This may change...
@@ -91,6 +96,7 @@ public class LoadInteractions extends AbstractTask {
 		// Set our confidence score
 		ModelUtils.setConfidence(network, ((double)confidence)/100.0);
 		ModelUtils.setDatabase(network, useDATABASE);
+		ModelUtils.setNetSpecies(network, species);
 		stringNet.setNetwork(network);
 
 		// System.out.println("Results: "+results.toString());

@@ -26,6 +26,7 @@ import org.cytoscape.work.Tunable;
 import org.cytoscape.work.TunableSetter;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
@@ -76,11 +77,16 @@ public class LoadTermsTask extends AbstractTask {
 
 		// String url = "http://api.jensenlab.org/network?entities="+URLEncoder.encode(ids.trim())+"&score="+conf;
 		Map<String, String> args = new HashMap<>();
-		args.put("database", useDATABASE);
+		// args.put("database", useDATABASE);
+		// TODO: Is it OK to always use stitch?
+		args.put("database", Databases.STITCH.getAPIName());
 		args.put("entities",ids.trim());
 		args.put("score", conf);
-		if (additionalNodes > 0)
+		if (additionalNodes > 0) {
 			args.put("additional", Integer.toString(additionalNodes));
+			if (useDATABASE.equals(Databases.STRING.getAPIName()))
+				args.put("filter", taxonId + ".%%");
+		}
 		args.put("existing", ModelUtils.getExisting(network).trim());
 
 		monitor.setStatusMessage("Getting additional terms from "+manager.getNetworkURL());

@@ -90,9 +90,10 @@ public class StringManager implements NetworkAddedListener {
 		return network;
 	}
 
-	public CyNetwork createStringNetwork(String name, StringNetwork stringNet, String useDATABASE) {
+	public CyNetwork createStringNetwork(String name, StringNetwork stringNet, String useDATABASE, String species) {
 		CyNetwork network = createNetwork(name);
 		ModelUtils.setDatabase(network, useDATABASE);
+		ModelUtils.setNetSpecies(network, species);
 		addStringNetwork(stringNet, network);
 		return network;
 	}

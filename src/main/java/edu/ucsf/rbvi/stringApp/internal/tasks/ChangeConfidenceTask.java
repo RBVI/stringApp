@@ -25,6 +25,7 @@ import org.cytoscape.work.Tunable;
 import org.cytoscape.work.util.BoundedFloat;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
@@ -88,7 +89,8 @@ public class ChangeConfidenceTask extends AbstractTask {
 			String database = ModelUtils.getDatabase(network);
 			Map<String, String> args = new HashMap<>();
 			args.put("existing", existing.trim());
-			args.put("database", database.trim());
+			// TODO: Is it OK to always use stitch?
+			args.put("database", Databases.STITCH.getAPIName());
 			args.put("score", confidence.getValue().toString());
 			args.put("maxscore", Float.toString(currentConfidence));
 			JSONObject results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);

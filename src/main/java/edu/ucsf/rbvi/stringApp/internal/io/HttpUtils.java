@@ -100,6 +100,7 @@ public class HttpUtils {
 
 		String args = HttpUtils.getStringArguments(queryMap);
 		manager.info("URL: "+url+"?"+args);
+		System.out.println("URL: "+url+"?"+args);
 
 		// The underlying HTTP connection is still held by the response object
 		// to allow the response content to be streamed directly from the network socket.

@@ -26,6 +26,7 @@ import org.json.simple.JSONObject;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
+import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
@@ -39,9 +40,9 @@ public class ExpandNetworkTask extends AbstractTask {
 	@Tunable (description="Number of nodes to expand network by", gravity=1.0)
 	public int additionalNodes = 10;
 
-	@Tunable (description="Expand from database", gravity=2.0)
-	public ListSingleSelection<String> databases = new ListSingleSelection<String>(
-			Databases.STRING.toString(), Databases.STITCH.toString());
+	@Tunable (description="Type of nodes to expand network by", gravity=2.0)
+	public ListSingleSelection<String> nodeTypes = new ListSingleSelection<String>(
+			"protein", "compound");
 	
 	@Tunable (description="Relayout network?", gravity=3.0)
 	public boolean relayout = false;
@@ -54,9 +55,7 @@ public class ExpandNetworkTask extends AbstractTask {
 		this.network = network;
 		this.netView = netView;
 		this.nodeView = null;
-		databases.setSelectedValue(Databases.STRING.toString());
-		if (ModelUtils.getDatabase(network) != null && ModelUtils.getDatabase(network).equals(Databases.STITCH.getAPIName()))
-			databases.setSelectedValue(Databases.STITCH.toString());
+		nodeTypes.setSelectedValue("protein");
 	}
 
 	public ExpandNetworkTask(final StringManager manager, final CyNetwork network, CyNetworkView netView, View<CyNode> nodeView) {
@@ -64,9 +63,7 @@ public class ExpandNetworkTask extends AbstractTask {
 		this.network = network;
 		this.netView = netView;
 		this.nodeView = nodeView;
-		databases.setSelectedValue(Databases.STRING.toString());
-		if (ModelUtils.getDatabase(network) != null && ModelUtils.getDatabase(network).equals(Databases.STITCH.getAPIName()))
-			databases.setSelectedValue(Databases.STITCH.toString());
+		nodeTypes.setSelectedValue("protein");
 	}
 
 	public void run(TaskMonitor monitor) {
@@ -86,6 +83,8 @@ public class ExpandNetworkTask extends AbstractTask {
 		// Get all of the current nodes for our "existing" list
 		String existing = ModelUtils.getExisting(network);
 		String selected = ModelUtils.getSelected(network, nodeView);
+		String species = ModelUtils.getNetSpecies(network);
+		int taxonId = Species.getSpeciesTaxId(species);
 		String url = "http://api.jensenlab.org/network";
 		Map<String, String> args = new HashMap<>();
 		args.put("existing",existing.trim());
@@ -98,8 +97,17 @@ public class ExpandNetworkTask extends AbstractTask {
 			args.put("score", conf.toString());
 		if (additionalNodes > 0)
 			args.put("additional", Integer.toString(additionalNodes));
-		String useDatabase = databases.getSelectedValue().toLowerCase();
-		args.put("database", useDatabase);
+		String nodeType = nodeTypes.getSelectedValue().toLowerCase();
+		String useDatabase = "";
+		if (nodeType.equals("protein")) {
+			useDatabase = Databases.STRING.getAPIName();
+			args.put("filter", taxonId + ".%%");
+		} else {
+			useDatabase = Databases.STITCH.getAPIName();
+			args.put("filter", "CIDm%%");			
+		}
+		// TODO: Is it OK to always use stitch?
+		args.put("database", Databases.STITCH.getAPIName());
 		monitor.setStatusMessage("Getting additional nodes from: "+url);
 
 		JSONObject results = HttpUtils.postJSON(url, args, manager);

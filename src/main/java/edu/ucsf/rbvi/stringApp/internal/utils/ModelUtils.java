@@ -62,6 +62,7 @@ public class ModelUtils {
 	// Network information
 	public static String CONFIDENCE = "confidence score";
 	public static String DATABASE = "database";
+	public static String NET_SPECIES = "species";
 
 	public static List<EntityIdentifier> getEntityIdsFromJSON(StringManager manager,
 			JSONObject object) {
@@ -173,6 +174,7 @@ public class ModelUtils {
 		// Create the network
 		CyNetwork newNetwork = manager.createNetwork(query);
 		setDatabase(newNetwork, useDATABASE);
+		setNetSpecies(newNetwork, species.getName());
 
 		List<CyNode> nodes = getJSON(manager, species, newNetwork, results);
 		return nodes;
@@ -197,10 +199,12 @@ public class ModelUtils {
 			String name = net.getRow(node).get(CyNetwork.NAME, String.class);
 			nodeMap.put(stringId, node);
 			nodeNameMap.put(stringId, name);
-			// if (isCompound(net, node))
-			// useDATABASE = StringManager.STITCHDB;
+			// TODO: Change network from string to stitch once we add compounds?
+			if (isCompound(net, node))
+				useDATABASE = Databases.STITCH.getAPIName();
 		}
-
+		setDatabase(net, useDATABASE);
+		
 		List<CyNode> nodes = getJSON(manager, species, net, nodeMap, nodeNameMap, queryTermMap,
 				newEdges, results, useDATABASE);
 		return nodes;
@@ -242,6 +246,7 @@ public class ModelUtils {
 		// Create the network
 		CyNetwork newNetwork = manager.createNetwork(netName);
 		setDatabase(newNetwork, useDATABASE);
+		setNetSpecies(newNetwork, species);
 
 		// Create a map to save the nodes
 		Map<String, CyNode> nodeMap = new HashMap<>();
@@ -276,6 +281,41 @@ public class ModelUtils {
 		if (network.getDefaultNetworkTable().getColumn(DATABASE) == null)
 			return null;
 		return network.getRow(network).get(DATABASE, String.class);
+	}
+
+	public static void setNetSpecies(CyNetwork network, String species) {
+		createColumnIfNeeded(network.getDefaultNetworkTable(), String.class, NET_SPECIES);
+		network.getRow(network).set(NET_SPECIES, species);
+	}
+
+	public static String getNetSpecies(CyNetwork network) {
+		if (network.getDefaultNetworkTable().getColumn(NET_SPECIES) == null)
+			return null;
+		return network.getRow(network).get(NET_SPECIES, String.class);
+	}
+
+	public static String getMostCommonNetSpecies(CyNetwork net) {
+		Map<String, Integer> species = new HashMap<String, Integer>();
+		for (CyNode node : net.getNodeList()) {
+			String nSpecies = net.getRow(node).get(SPECIES, String.class);
+			if (nSpecies == null || nSpecies.equals(""))
+				continue;
+			if (!species.containsKey(nSpecies)) {
+				species.put(nSpecies, new Integer(1));
+			} else {
+				int count = species.get(nSpecies).intValue() + 1;
+				species.put(nSpecies, new Integer(count));
+			}
+		}
+		String netSpecies = "";
+		int maxCount = 0;
+		for (Map.Entry<String, Integer> tempSp : species.entrySet()) {
+			if (netSpecies == "" || tempSp.getValue() > maxCount) {
+				netSpecies = tempSp.getKey();
+				maxCount = tempSp.getValue();
+			}
+		}
+		return netSpecies;
 	}
 
 	private static List<CyNode> getJSON(StringManager manager, Species species, CyNetwork network,
@@ -426,12 +466,7 @@ public class ModelUtils {
 		String id = (String) nodeObj.get("@id");
 		String namespace = id.substring(0, id.indexOf(":"));
 		String stringId = id.substring(id.indexOf(":") + 1);
-		// TODO: Figure out how to handle multiple species as well as stitch molecules
-		// String taxID = stringId.substring(0,stringId.indexOf("."));
-		// String nodeSpecies = Species.getSpeciesName(taxID);
-		// if (!"".equals(nodeSpecies) && !species.equals(nodeSpecies)) {
-		// species = nodeSpecies;
-		// }
+
 		if (nodeMap.containsKey(stringId))
 			return null;
 		// System.out.println("Node id = "+id+", stringID = "+stringId+", namespace="+namespace);
@@ -441,14 +476,26 @@ public class ModelUtils {
 		row.set(CyNetwork.NAME, name);
 		row.set(STRINGID, stringId);
 		row.set(ID, id);
-		if (species != null)
-			row.set(SPECIES, species);
 		row.set(NAMESPACE, namespace);
 		row.set(STYLE, "string:"); // We may overwrite this, if we get an image
 
 		String type = getType(id);
 		row.set(TYPE, type);
 
+		// TODO: Check if this is ok for handling multiple species as well as stitch molecules
+		if (type.equals("protein") && stringId.contains(".")) {				
+			String taxID = stringId.substring(0,stringId.indexOf("."));
+			String nodeSpecies = Species.getSpeciesName(taxID);
+			if (!"".equals(nodeSpecies) && !species.equals(nodeSpecies)) {
+				species = nodeSpecies;
+			}			
+		}
+		// TODO: Should compounds have a species?
+		// && !type.equals("compound")
+		if (species != null) {
+			row.set(SPECIES, species);
+		}
+		
 		for (Object objKey : nodeObj.keySet()) {
 			String key = (String) objKey;
 			// Look for our "special" columns
