@@ -77,7 +77,7 @@ public class LoadInteractions extends AbstractTask {
 		Map<String, String> args = new HashMap<>();
 		// args.put("database", useDATABASE);
 		// TODO: Is it OK to always use stitch?
-		args.put("database", Databases.STITCH.getAPIName());
+		args.put("database", useDATABASE);
 		args.put("entities",ids.trim());
 		args.put("score", conf);
 		args.put("caller_identity", StringManager.CallerIdentity);
@@ -85,6 +85,8 @@ public class LoadInteractions extends AbstractTask {
 			args.put("additional", Integer.toString(additionalNodes));
 			if (useDATABASE.equals(Databases.STRING.getAPIName())) {
 				args.put("filter", taxonId + ".%%");
+			} else {
+				args.put("filter", taxonId + ".%%|CIDm%%");
 			}
 		}
 		JSONObject results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
