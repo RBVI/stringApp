@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -49,6 +50,10 @@ public class EnrichmentCytoPanel extends JPanel
 	JComboBox<String> boxTables;
 	List<String> availableTables;
 	boolean createBoxTables = true;
+	JButton butDrawCharts;
+	final String colEnrichmentTerms = "enrichmentTerms";
+	final String colEnrichmentTermsPieChart = "enrichmentTermsPieChart";
+	final String colEnrichmentPieChart = "enrichmentPieChart";
 
 	public EnrichmentCytoPanel(StringManager manager) {
 		this.manager = manager;
@@ -90,7 +95,8 @@ public class EnrichmentCytoPanel extends JPanel
 		clearNetworkSelection(network);
 		// TODO: clear table selection when switching
 		JTable table = enrichmentTables.get(showTable);
-		if (table.getSelectedColumnCount() == 1 && table.getSelectedRow() > -1) {
+		if (table.getSelectedColumn() != 0 && table.getSelectedColumnCount() == 1
+				&& table.getSelectedRow() > -1) {
 			// System.out.println("get value at " + table.getSelectedRow() + " and " +
 			// EnrichmentTerm.nodeSUIDColumn);
 			Object cellContent = table.getModel().getValueAt(table.getSelectedRow(),
@@ -107,15 +113,21 @@ public class EnrichmentCytoPanel extends JPanel
 
 	// TODO: make this network-specific
 	public void actionPerformed(ActionEvent e) {
-		if (boxTables.getSelectedItem() == null) {
-			return;
+		if (e.getSource().equals(boxTables)) {
+			if (boxTables.getSelectedItem() == null) {
+				return;
+			}
+			// System.out.println("change selected table");
+			showTable = (String) boxTables.getSelectedItem();
+			// TODO: do some cleanup for old table?
+			createBoxTables = false;
+			initPanel();
+			createBoxTables = true;
+		} else if (e.getSource().equals(butDrawCharts)) {
+			// do something fancy here...
+			// piechart: attributelist="test3" colorlist="modulated" showlabels="false"
+			// drawCharts();
 		}
-		// System.out.println("change selected table");
-		showTable = (String) boxTables.getSelectedItem();
-		// TODO: do some cleanup for old table?
-		createBoxTables = false;
-		initPanel();
-		createBoxTables = true;
 	}
 
 	public void initPanel() {
@@ -148,8 +160,12 @@ public class EnrichmentCytoPanel extends JPanel
 		boxTables.setSelectedItem(showTable);
 		boxTables.addActionListener(this);
 
+		// butDrawCharts = new JButton("Draw pie charts");
+		// butDrawCharts.addActionListener(this);
+
 		topPanel = new JPanel(new BorderLayout());
 		topPanel.add(boxTables, BorderLayout.EAST);
+		// topPanel.add(butDrawCharts, BorderLayout.WEST);
 		this.add(topPanel, BorderLayout.NORTH);
 
 		JTable currentTable = enrichmentTables.get(showTable);
@@ -174,22 +190,12 @@ public class EnrichmentCytoPanel extends JPanel
 	}
 
 	private void createJTable(CyTable cyTable) {
-		List<CyRow> rows = cyTable.getAllRows();
-		Object[][] data = new Object[rows.size()][EnrichmentTerm.swingColumns.length];
-		int i = 0;
-		for (CyRow row : rows) {
-			int j = 0;
-			for (String column : EnrichmentTerm.swingColumns) {
-				data[i][j] = row.getRaw(column);
-				j++;
-			}
-			i++;
-		}
-
-		JTable jTable = new JTable(data, EnrichmentTerm.swingColumns);
+		EnrichmentTableModel tableModel = new EnrichmentTableModel(cyTable,
+				EnrichmentTerm.swingColumns);
+		JTable jTable = new JTable(tableModel);
 		TableColumnModel tcm = jTable.getColumnModel();
 		tcm.removeColumn(tcm.getColumn(EnrichmentTerm.nodeSUIDColumn));
-		jTable.setDefaultEditor(Object.class, null);
+		// jTable.setDefaultEditor(Object.class, null);
 		// jTable.setPreferredScrollableViewportSize(jTable.getPreferredSize());
 		jTable.setFillsViewportHeight(true);
 		jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);

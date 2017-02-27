@@ -31,10 +31,22 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	public static final String colGenesSUID = "nodes.SUID";
 	public static final String colGenesCount = "countInGeneSet";
 	public static final String colNetworkSUID = "network.SUID";
+	public static final String colShowChart = "showInPieChart";
 
 	public static final String[] swingColumns = new String[] { colName, colDescription, colFDR,
 			colGenesCount, colGenes, colGenesSUID };
 	public static final int nodeSUIDColumn = 5;
+
+	public EnrichmentTerm() {
+		this.name = "";
+		this.description = "";
+		this.pvalue = -1.0;
+		this.bonfPValue = -1.0;
+		this.fdrPValue = -1.0;
+		this.genes = new ArrayList<String>();
+		this.nodes = new ArrayList<Long>();
+
+	}
 
 	public EnrichmentTerm(String name, String description, double pvalue, double bonfPValue,
 			double fdrPValue) {
@@ -51,12 +63,40 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 		return name;
 	}
 
-	public double getFDRPValue() {
-		return fdrPValue;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getDescription() {
 		return description;
+	}
+
+	public void setDescription(String desc) {
+		this.description = desc;
+	}
+
+	public double getPValue() {
+		return pvalue;
+	}
+
+	public void setPValue(double pvalue) {
+		this.pvalue = pvalue;
+	}
+
+	public double getBonfPValue() {
+		return bonfPValue;
+	}
+
+	public void setBonfPValue(double bonfPValue) {
+		this.bonfPValue = bonfPValue;
+	}
+
+	public double getFDRPValue() {
+		return fdrPValue;
+	}
+
+	public void setFDRPValue(double fdrPValue) {
+		this.fdrPValue = fdrPValue;
 	}
 
 	public int getNumberGenes() {

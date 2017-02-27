@@ -2,6 +2,7 @@ package edu.ucsf.rbvi.stringApp.internal.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -18,6 +19,10 @@ import org.cytoscape.model.CyTableManager;
 import org.cytoscape.view.model.View;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
@@ -359,23 +364,23 @@ public class ModelUtils {
 			Map<String, CyNode> nodeMap, Map<String, String> nodeNameMap,
 			Map<String, String> queryTermMap, List<CyEdge> newEdges, JSONObject json,
 			String useDATABASE) {
-
+		
 		List<CyNode> newNodes = new ArrayList<>();
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, CANONICAL);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STRINGID);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, DESCRIPTION);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, ID);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, NAMESPACE);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, TYPE);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, QUERYTERM);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, SEQUENCE);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, SPECIES);
-		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STRINGID);
-		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STYLE);
-		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, TYPE);
-		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, ELABEL_STYLE);
 		if (useDATABASE.equals(Databases.STITCH.getAPIName())) {
-			createColumnIfNeeded(network.getDefaultNodeTable(), String.class, CV_STYLE);
 			createColumnIfNeeded(network.getDefaultNodeTable(), String.class, SMILES);
+			createColumnIfNeeded(network.getDefaultNodeTable(), String.class, CV_STYLE);
 		}
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STYLE);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, ELABEL_STYLE);
 
 		createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, SCORE);
 
@@ -384,6 +389,7 @@ public class ModelUtils {
 		// Get the nodes
 		JSONArray nodes = (JSONArray) json.get("nodes");
 		if (nodes != null && nodes.size() > 0) {
+			createColumnsFromJSON(nodes, network.getDefaultNodeTable());
 			for (Object nodeObj : nodes) {
 				if (nodeObj instanceof JSONObject) {
 					JSONObject nodeJSON = (JSONObject) nodeObj;
@@ -407,6 +413,41 @@ public class ModelUtils {
 		return newNodes;
 	}
 
+	public static void createColumnsFromJSON(JSONArray nodes, CyTable table) {
+		Map<String, Class<?>> jsonKeysClass = new HashMap<String, Class<?>>();
+		Set<String> listKeys = new HashSet<>();
+		for (Object nodeObj : nodes) {
+			if (nodeObj instanceof JSONObject) {
+				JSONObject nodeJSON = (JSONObject) nodeObj;
+				for (Object objKey : nodeJSON.keySet()) {
+					String key = (String) objKey;
+					if (jsonKeysClass.containsKey(key)) {
+						continue;
+					}
+					Object value = nodeJSON.get(key);
+					if (value instanceof JSONArray) {
+						JSONArray list = (JSONArray) value;
+						Object element = list.get(0);
+						jsonKeysClass.put(key, element.getClass());
+						listKeys.add(key);
+					} else {
+						jsonKeysClass.put(key, value.getClass());
+					}
+				}
+			}
+		}
+		List<String> jsonKeysSorted = new ArrayList<String>(jsonKeysClass.keySet());
+		Collections.sort(jsonKeysSorted);
+		for (String jsonKey : jsonKeysSorted) {
+			if (listKeys.contains(jsonKey)) {
+				createListColumnIfNeeded(table, jsonKeysClass.get(jsonKey), jsonKey);
+			} else {
+				createColumnIfNeeded(table, jsonKeysClass.get(jsonKey), jsonKey);
+			}
+		}
+
+	}
+	
 	public static boolean isMergedStringNetwork(CyNetwork network) {
 		CyTable nodeTable = network.getDefaultNodeTable();
 		if (nodeTable.getColumn(ID) == null)
@@ -514,22 +555,23 @@ public class ModelUtils {
 				// It's not one of our "standard" attributes, create a column for it (if necessary)
 				// and then add it
 				Object value = nodeObj.get(key);
-				if (value instanceof JSONArray) {
-					JSONArray list = (JSONArray) value;
-					if (!columnMap.contains(key)) {
-						Object element = list.get(0);
-						createListColumnIfNeeded(network.getDefaultNodeTable(), element.getClass(),
-								key);
-						columnMap.add(key);
-					}
-					row.set(key, list);
-				} else {
-					if (!columnMap.contains(key)) {
-						createColumnIfNeeded(network.getDefaultNodeTable(), value.getClass(), key);
-						columnMap.add(key);
-					}
-					row.set(key, value);
-				}
+				row.set(key, value);
+				// if (value instanceof JSONArray) {
+				// JSONArray list = (JSONArray) value;
+				// if (!columnMap.contains(key)) {
+				// Object element = list.get(0);
+				// createListColumnIfNeeded(network.getDefaultNodeTable(), element.getClass(),
+				// key);
+				// columnMap.add(key);
+				// }
+				// row.set(key, list);
+				// } else {
+				// if (!columnMap.contains(key)) {
+				// createColumnIfNeeded(network.getDefaultNodeTable(), value.getClass(), key);
+				// columnMap.add(key);
+				// }
+				// row.set(key, value);
+				// }
 			}
 			{
 				// Construct instructions for enhanced graphics label
@@ -695,4 +737,125 @@ public class ModelUtils {
 		return netTables;
 	}
 
+	public static List<EnrichmentTerm> parseXMLDOM(Object results, double cutoff, CyNetwork network,
+			Map<String, Long> stringNodesMap, StringManager manager) {
+		if (!(results instanceof Document)) {
+			return null;
+		}
+		List<EnrichmentTerm> enrichmentTerms = new ArrayList<EnrichmentTerm>();
+		try {
+			Element root = ((Document) results).getDocumentElement();
+			root.normalize();
+			NodeList nList = ((Document) results).getElementsByTagName("status");
+			for (int i = 0; i < nList.getLength(); i++) {
+				final Node nNode = nList.item(i);
+				if (nNode instanceof Element) {
+					if (((Element) nNode).getElementsByTagName("code").getLength() > 0) {
+						String status = ((Element) nNode).getElementsByTagName("code").item(0)
+								.getTextContent();
+						if (!status.equals("ok")) {
+							String message = "";
+							if (((Element) nNode).getElementsByTagName("message").getLength() > 0) {
+								message = ((Element) nNode).getElementsByTagName("message").item(0)
+										.getTextContent();
+							}
+							System.out.println("Error from ernichment server: " + message);
+							manager.error("Error from ernichment server: " + message);
+							return null;
+						}
+					}
+					if (((Element) nNode).getElementsByTagName("warning").getLength() > 0) {
+						String warning = ((Element) nNode).getElementsByTagName("warning").item(0)
+								.getTextContent();
+						System.out.println("Warning from enrichment server: " + warning);
+						manager.info("Warning from enrichment server: " + warning);
+					}
+				}
+			}
+			nList = ((Document) results).getElementsByTagName("term");
+			for (int i = 0; i < nList.getLength(); i++) {
+				final Node nNode = nList.item(i);
+				// <term>
+				// <name>GO:0008585</name>
+				// <description>female gonad development</description>
+				// <numberOfGenes>1</numberOfGenes>
+				// <pvalue>1E0</pvalue>
+				// <bonferroni>1E0</bonferroni>
+				// <fdr>1E0</fdr>
+				// <genes><gene>9606.ENSP00000269260</gene></genes>
+				// </term>
+				if (nNode instanceof Element) {
+					Element eElement = (Element) nNode;
+					double pvalue = -1;
+					if (eElement.getElementsByTagName("pvalue").getLength() > 0) {
+						pvalue = Double.valueOf(
+								eElement.getElementsByTagName("pvalue").item(0).getTextContent())
+								.doubleValue();
+					}
+					double bonf = -1;
+					if (eElement.getElementsByTagName("bonferroni").getLength() > 0) {
+						bonf = Double.valueOf(eElement.getElementsByTagName("bonferroni").item(0)
+								.getTextContent()).doubleValue();
+					}
+					double fdr = -1;
+					if (eElement.getElementsByTagName("fdr").getLength() > 0) {
+						fdr = Double.valueOf(
+								eElement.getElementsByTagName("fdr").item(0).getTextContent())
+								.doubleValue();
+					}
+					String name = "";
+					if (eElement.getElementsByTagName("name").getLength() > 0) {
+						name = eElement.getElementsByTagName("name").item(0).getTextContent();
+
+					}
+					NodeList genesList = eElement.getElementsByTagName("gene");
+					List<String> enrGenes = new ArrayList<String>();
+					List<Long> enrNodes = new ArrayList<Long>();
+					for (int j = 0; j < genesList.getLength(); j++) {
+						final Node geneNode = genesList.item(j);
+						if (geneNode instanceof Element) {
+							String enrGene = ((Element) geneNode).getTextContent();
+							if (enrGene != null) {
+								String nodeName = enrGene;
+								if (stringNodesMap.containsKey(enrGene)) {
+									final Long nodeSUID = stringNodesMap.get(enrGene);
+									enrNodes.add(nodeSUID);
+									if (network.getDefaultNodeTable()
+											.getColumn(CyNetwork.NAME) != null) {
+										nodeName = network.getDefaultNodeTable().getRow(nodeSUID)
+												.get(CyNetwork.NAME, String.class);
+									}
+								}
+								enrGenes.add(nodeName);
+							}
+						}
+					}
+					String descr = "";
+					if (eElement.getElementsByTagName("description").getLength() > 0) {
+						descr = eElement.getElementsByTagName("description").item(0)
+								.getTextContent();
+					}
+					// else {
+					// System.out.println("Term without description: " + name);
+					// System.out.println(enrGenes);
+					// }
+					if (!name.equals("") && fdr > -1 && fdr <= cutoff) {
+						EnrichmentTerm enrTerm = new EnrichmentTerm(name, descr, pvalue, bonf, fdr);
+						enrTerm.setGenes(enrGenes);
+						enrTerm.setNodesSUID(enrNodes);
+						enrichmentTerms.add(enrTerm);
+					}
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+		// monitor.setStatusMessage("Number of terms: " + enrichmentTerms.size());
+		return enrichmentTerms;
+	}
+
+
+
+	
 }

@@ -84,6 +84,10 @@ public class ExpandNetworkTask extends AbstractTask {
 		String existing = ModelUtils.getExisting(network);
 		String selected = ModelUtils.getSelected(network, nodeView);
 		String species = ModelUtils.getNetSpecies(network);
+		if (species == null) {
+			species = ModelUtils.getMostCommonNetSpecies(network);
+			ModelUtils.setNetSpecies(network, species);
+		}
 		int taxonId = Species.getSpeciesTaxId(species);
 		String url = "http://api.jensenlab.org/network";
 		Map<String, String> args = new HashMap<>();
@@ -101,7 +105,8 @@ public class ExpandNetworkTask extends AbstractTask {
 		String useDatabase = "";
 		if (nodeType.equals("protein")) {
 			useDatabase = Databases.STRING.getAPIName();
-			args.put("filter", taxonId + ".%%");
+			if (taxonId != -1) 
+				args.put("filter", taxonId + ".%%");
 		} else {
 			useDatabase = Databases.STITCH.getAPIName();
 			args.put("filter", "CIDm%%");			

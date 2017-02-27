@@ -77,7 +77,7 @@ public class LoadInteractions extends AbstractTask {
 		Map<String, String> args = new HashMap<>();
 		// args.put("database", useDATABASE);
 		// TODO: Is it OK to always use stitch?
-		args.put("database", useDATABASE);
+		args.put("database", Databases.STITCH.getAPIName());
 		args.put("entities",ids.trim());
 		args.put("score", conf);
 		args.put("caller_identity", StringManager.CallerIdentity);

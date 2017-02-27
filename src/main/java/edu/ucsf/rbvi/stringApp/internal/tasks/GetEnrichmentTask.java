@@ -1,11 +1,15 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+
+import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.application.swing.CytoPanel;
+import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
@@ -20,11 +24,8 @@ import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.SynchronousTaskManager;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.TaskMonitor.Level;
 import org.cytoscape.work.Tunable;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
@@ -39,6 +40,7 @@ public class GetEnrichmentTask extends AbstractTask {
 	final Map<String, Long> stringNodesMap;
 	final ShowEnrichmentPanelTaskFactory showFactory;
 	TaskMonitor monitor;
+	// boolean guiMode;
 
 	@Tunable(description = "Enrichment cutoff", gravity = 1.0)
 	public double cutoff = 0.05;
@@ -74,6 +76,9 @@ public class GetEnrichmentTask extends AbstractTask {
 
 	public void run(TaskMonitor monitor) throws Exception {
 		this.monitor = monitor;
+		monitor.setTitle(this.getTitle());
+
+		// Get list of (selected) nodes
 		String selected = ModelUtils.getSelected(network, null).trim();
 		if (selected.length() == 0) {
 			selected = ModelUtils.getExisting(network).trim();
@@ -86,11 +91,14 @@ public class GetEnrichmentTask extends AbstractTask {
 		if (netSpecies.size() == 1) {
 			species = netSpecies.get(0);
 		} else {
+			monitor.showMessage(Level.ERROR,
+					"None or more than one species in the network. Enrichment will not be retrieved.");
 			System.out.println(
 					"None or more than one species in the network. Enrichment will not be retrieved.");
 			return;
 		}
-
+		// map of STRING ID to CyNodes
+		// TODO: Remove specific nodes from selected?
 		CyTable nodeTable = network.getDefaultNodeTable();
 		for (final CyNode node : network.getNodeList()) {
 			if (nodeTable.getColumn(ModelUtils.STRINGID) != null) {
@@ -102,41 +110,42 @@ public class GetEnrichmentTask extends AbstractTask {
 			}
 		}
 
-		// TODO: clear old results
+		// clear old results
 		deleteOldTables();
 
+		// retrieve enrichment
 		String[] selectedNodes = selected.split("\n");
 		if (goProcess) {
 			monitor.setStatusMessage("Retrieving functional enrichment for GO Biological Process.");
-			getEnrichment(selectedNodes, "fat", species, EnrichmentTerm.termCategories[0]);
-			saveEnrichmentTable(EnrichmentTerm.termTables[0], EnrichmentTerm.termCategories[0]);
+			if (getEnrichment(selectedNodes, "fat", species, EnrichmentTerm.termCategories[0]))
+				saveEnrichmentTable(EnrichmentTerm.termTables[0], EnrichmentTerm.termCategories[0]);
 		}
 		if (goFunction) {
 			monitor.setStatusMessage("Retrieving functional enrichment for GO Molecular Function.");
-			getEnrichment(selectedNodes, "fat", species, EnrichmentTerm.termCategories[1]);
-			saveEnrichmentTable(EnrichmentTerm.termTables[1], EnrichmentTerm.termCategories[1]);
+			if (getEnrichment(selectedNodes, "fat", species, EnrichmentTerm.termCategories[1]))
+				saveEnrichmentTable(EnrichmentTerm.termTables[1], EnrichmentTerm.termCategories[1]);
 		}
 		if (goCompartment) {
 			monitor.setStatusMessage(
 					"Retrieving functional enrichment for GO Cellular Compartment.");
-			getEnrichment(selectedNodes, "fat", species, EnrichmentTerm.termCategories[2]);
-			saveEnrichmentTable(EnrichmentTerm.termTables[2], EnrichmentTerm.termCategories[2]);
+			if (getEnrichment(selectedNodes, "fat", species, EnrichmentTerm.termCategories[2]))
+				saveEnrichmentTable(EnrichmentTerm.termTables[2], EnrichmentTerm.termCategories[2]);
 		}
 		if (kegg) {
 			monitor.setStatusMessage("Retrieving functional enrichment for KEGG Pathways.");
-			getEnrichment(selectedNodes, "", species, EnrichmentTerm.termCategories[3]);
-			saveEnrichmentTable(EnrichmentTerm.termTables[3], EnrichmentTerm.termCategories[3]);
+			if (getEnrichment(selectedNodes, "", species, EnrichmentTerm.termCategories[3]))
+				saveEnrichmentTable(EnrichmentTerm.termTables[3], EnrichmentTerm.termCategories[3]);
 		}
 		if (pfam) {
 			monitor.setStatusMessage("Retrieving functional enrichment for PFAM Protein Domains.");
-			getEnrichment(selectedNodes, "", species, EnrichmentTerm.termCategories[4]);
-			saveEnrichmentTable(EnrichmentTerm.termTables[4], EnrichmentTerm.termCategories[4]);
+			if (getEnrichment(selectedNodes, "", species, EnrichmentTerm.termCategories[4]))
+				saveEnrichmentTable(EnrichmentTerm.termTables[4], EnrichmentTerm.termCategories[4]);
 		}
 		if (interPro) {
 			monitor.setStatusMessage(
 					"Retrieving functional enrichment for INTERPRO Protein Domains and Features.");
-			getEnrichment(selectedNodes, "", species, EnrichmentTerm.termCategories[5]);
-			saveEnrichmentTable(EnrichmentTerm.termTables[5], EnrichmentTerm.termCategories[5]);
+			if (getEnrichment(selectedNodes, "", species, EnrichmentTerm.termCategories[5]))
+				saveEnrichmentTable(EnrichmentTerm.termTables[5], EnrichmentTerm.termCategories[5]);
 		}
 
 		if (enrichmentResult.size() > 0) {
@@ -146,7 +155,7 @@ public class GetEnrichmentTask extends AbstractTask {
 		}
 	}
 
-	private void getEnrichment(String[] selectedNodes, String filter, String species,
+	private boolean getEnrichment(String[] selectedNodes, String filter, String species,
 			String enrichmentCategory) {
 		Map<String, String> queryMap = new HashMap<String, String>();
 		String xmlQuery = "<experiment>";
@@ -162,135 +171,40 @@ public class GetEnrichmentTask extends AbstractTask {
 		xmlQuery += "</hits></experiment>";
 		// System.out.println(xmlQuery);
 		queryMap.put("xml", xmlQuery);
+
 		// TODO: Change to use SAXParser
-		Object results = HttpUtils.postXML(EnrichmentTerm.enrichmentURL, queryMap, manager);
-		if (!(results instanceof Document)) {
-			return;
-		}
-		List<EnrichmentTerm> enrichmentTerms = new ArrayList<EnrichmentTerm>();
-		try {
-			Element root = ((Document) results).getDocumentElement();
-			root.normalize();
-			NodeList nList = ((Document) results).getElementsByTagName("status");
-			for (int i = 0; i < nList.getLength(); i++) {
-				final Node nNode = nList.item(i);
-				if (nNode instanceof Element) {
-					if (((Element) nNode).getElementsByTagName("code").getLength() > 0) {
-						String status = ((Element) nNode).getElementsByTagName("code").item(0)
-								.getTextContent();
-						if (!status.equals("ok")) {
-							String message = "";
-							if (((Element) nNode).getElementsByTagName("message").getLength() > 0) {
-								message = ((Element) nNode).getElementsByTagName("message").item(0)
-										.getTextContent();
-							}
-							System.out.println("Error from ernichment server: " + message);
-							return;
-						}
-					}
-					if (((Element) nNode).getElementsByTagName("warning").getLength() > 0) {
-						String warning = ((Element) nNode).getElementsByTagName("warning").item(0)
-								.getTextContent();
-						System.out.println("Warning from enrichment server: " + warning);
-					}
-				}
-			}
-			nList = ((Document) results).getElementsByTagName("term");
-			for (int i = 0; i < nList.getLength(); i++) {
-				final Node nNode = nList.item(i);
-				// <term>
-				// <name>GO:0008585</name>
-				// <description>female gonad development</description>
-				// <numberOfGenes>1</numberOfGenes>
-				// <pvalue>1E0</pvalue>
-				// <bonferroni>1E0</bonferroni>
-				// <fdr>1E0</fdr>
-				// <genes><gene>9606.ENSP00000269260</gene></genes>
-				// </term>
-				if (nNode instanceof Element) {
-					Element eElement = (Element) nNode;
-					double pvalue = -1;
-					if (eElement.getElementsByTagName("pvalue").getLength() > 0) {
-						pvalue = Double.valueOf(
-								eElement.getElementsByTagName("pvalue").item(0).getTextContent())
-								.doubleValue();
-					}
-					double bonf = -1;
-					if (eElement.getElementsByTagName("bonferroni").getLength() > 0) {
-						bonf = Double.valueOf(eElement.getElementsByTagName("bonferroni").item(0)
-								.getTextContent()).doubleValue();
-					}
-					double fdr = -1;
-					if (eElement.getElementsByTagName("fdr").getLength() > 0) {
-						fdr = Double.valueOf(
-								eElement.getElementsByTagName("fdr").item(0).getTextContent())
-								.doubleValue();
-					}
-					String name = "";
-					if (eElement.getElementsByTagName("name").getLength() > 0) {
-						name = eElement.getElementsByTagName("name").item(0).getTextContent();
+		List<EnrichmentTerm> enrichmentTerms = null;
+		double time = System.currentTimeMillis();
+		// parse using DOM
+		Object results = HttpUtils.postXMLDOM(EnrichmentTerm.enrichmentURL, queryMap, manager);
+		// System.out.println(
+		//		"get xml data: " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+		time = System.currentTimeMillis();
+		enrichmentTerms = ModelUtils.parseXMLDOM(results, cutoff, network, stringNodesMap, manager);
+		//System.out
+		// 		.println("parse dom: " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+		time = System.currentTimeMillis();
+		// parse using SAX
+		//EnrichmentSAXHandler myHandler = new EnrichmentSAXHandler(network, stringNodesMap, cutoff);
+		//HttpUtils.postXMLSAX(EnrichmentTerm.enrichmentURL, queryMap, manager, myHandler);
+		// enrichmentTerms = myHandler.getParsedData();
 
-					}
-					NodeList genesList = eElement.getElementsByTagName("gene");
-					List<String> enrGenes = new ArrayList<String>();
-					List<Long> enrNodes = new ArrayList<Long>();
-					for (int j = 0; j < genesList.getLength(); j++) {
-						final Node geneNode = genesList.item(j);
-						if (geneNode instanceof Element) {
-							String enrGene = ((Element) geneNode).getTextContent();
-							if (enrGene != null) {
-								String nodeName = enrGene;
-								if (stringNodesMap.containsKey(enrGene)) {
-									final Long nodeSUID = stringNodesMap.get(enrGene);
-									enrNodes.add(nodeSUID);
-									if (network.getDefaultNodeTable()
-											.getColumn(CyNetwork.NAME) != null) {
-										nodeName = network.getDefaultNodeTable().getRow(nodeSUID)
-												.get(CyNetwork.NAME, String.class);
-									}
-								}
-								enrGenes.add(nodeName);
-							}
-						}
-					}
-					String descr = "";
-					if (eElement.getElementsByTagName("description").getLength() > 0) {
-						descr = eElement.getElementsByTagName("description").item(0)
-								.getTextContent();
-					}
-					// else {
-					// System.out.println("Term without description: " + name);
-					// System.out.println(enrGenes);
-					// }
-					if (!name.equals("") && fdr > -1 && fdr <= cutoff) {
-						EnrichmentTerm enrTerm = new EnrichmentTerm(name, descr, pvalue, bonf, fdr);
-						enrTerm.setGenes(enrGenes);
-						enrTerm.setNodesSUID(enrNodes);
-						enrichmentTerms.add(enrTerm);
-					}
-				}
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		monitor.setStatusMessage("Number of terms: " + enrichmentTerms.size());
-
-		if (!enrichmentResult.containsKey(enrichmentCategory)) {
-			enrichmentResult.put(enrichmentCategory, enrichmentTerms);
+		// save results
+		if (enrichmentTerms == null) {
+			monitor.showMessage(Level.ERROR,
+					"No terms retrieved from the server for this enrichment category.");
+			return false;
 		} else {
-			// TODO: could it happen?
-			monitor.setStatusMessage("Retrieved terms for the same category already ...");
+			enrichmentResult.put(enrichmentCategory, enrichmentTerms);
+			if (enrichmentTerms.size() == 0) {
+				monitor.setStatusMessage(
+						"No significant terms for this enrichment category and cut-off.");
+			} else {
+				monitor.setStatusMessage("Retrieved " + enrichmentTerms.size()
+						+ " significant terms for this enrichment category and cut-off.");
+			}
 		}
-
-		// print enriched terms
-		// Collections.sort(enrichmentTerms);
-		// for (EnrichmentTerm term : enrichmentTerms) {
-		// if (term.getFDRPValue() <= cutoff) {
-		// System.out.println(term);
-		// } else {
-		// break;
-		// }
-		// }
+		return true;
 	}
 
 	private void saveEnrichmentTable(String tableName, String enrichmentCategory) {
@@ -329,8 +243,11 @@ public class GetEnrichmentTask extends AbstractTask {
 
 		// Step 2: populate the table with some data
 		List<EnrichmentTerm> processTerms = enrichmentResult.get(enrichmentCategory);
+		if (processTerms == null) {
+			return;
+		}
 		if (processTerms.size() == 0) {
-			CyRow row = table.getRow((long)0);
+			CyRow row = table.getRow((long) 0);
 			row.set(EnrichmentTerm.colNetworkSUID, network.getSUID());
 		}
 		for (int i = 0; i < processTerms.size(); i++) {
@@ -354,6 +271,21 @@ public class GetEnrichmentTask extends AbstractTask {
 			tableManager.deleteTable(table.getSUID());
 			eventHelper.flushPayloadEvents();
 		}
+	}
+
+	private void showStatusReport() {
+		StringBuilder sb = new StringBuilder();
+		for (String enrCat : enrichmentResult.keySet()) {
+			sb.append(enrCat);
+			sb.append("\t");
+			sb.append(enrichmentResult.get(enrCat).size());
+			sb.append("\n");
+		}
+		System.out.println(sb.toString());
+		CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
+		CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.SOUTH);
+		JOptionPane.showMessageDialog(cytoPanel.getSelectedComponent(), sb.toString(),
+				"Retrieve functional enrichment status", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	@ProvidesTitle

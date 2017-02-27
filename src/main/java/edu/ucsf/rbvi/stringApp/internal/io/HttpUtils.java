@@ -173,14 +173,15 @@ public class HttpUtils {
 		}
 	}
 
-	public static Object postXML(String url, Map<String, String> queryMap, StringManager manager) {
+	public static Object postXMLDOM(String url, Map<String, String> queryMap,
+			StringManager manager) {
 
 		// Set up our connection
 		CloseableHttpClient client = HttpClients.createDefault();
 		HttpPost request = new HttpPost(url);
 		List<NameValuePair> nvps = HttpUtils.getArguments(queryMap);
 
-		Object xmlDocument = null;
+		Object xmlData = null;
 		CloseableHttpResponse response1 = null;
 		try {
 			request.setEntity(new UrlEncodedFormEntity(nvps));
@@ -188,21 +189,21 @@ public class HttpUtils {
 			HttpEntity entity1 = response1.getEntity();
 			InputStream entityStream = entity1.getContent();
 			if (entity1.getContentLength() == 0) {
+				manager.error("No reposnse from server");
 				return null;
 			}
-			//BufferedReader reader = new BufferedReader(new InputStreamReader(entityStream));
-			//String lin;
-			//while ((lin = reader.readLine()) != null) {
-				// System.out.println(lin);
-			//}
-
+			// BufferedReader reader = new BufferedReader(new InputStreamReader(entityStream));
+			// String lin;
+			// while ((lin = reader.readLine()) != null) {
+			// System.out.println(lin);
+			// }
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			xmlDocument = builder.parse(entityStream);
-			
+			xmlData = builder.parse(entityStream);
+
 			// and ensure it is fully consumed
 			EntityUtils.consume(entity1);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			manager.error("Unable to parse response from server: " + e.getMessage());
@@ -216,7 +217,7 @@ public class HttpUtils {
 		}
 
 		// StringBuilder builder = new StringBuilder();
-		return xmlDocument;
+		return xmlData;
 	}
 
 	public static List<NameValuePair> getArguments(Map<String, String> args) {
