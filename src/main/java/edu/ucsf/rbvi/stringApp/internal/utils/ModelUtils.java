@@ -814,19 +814,19 @@ public class ModelUtils {
 					for (int j = 0; j < genesList.getLength(); j++) {
 						final Node geneNode = genesList.item(j);
 						if (geneNode instanceof Element) {
-							String enrGene = ((Element) geneNode).getTextContent();
-							if (enrGene != null) {
-								String nodeName = enrGene;
-								if (stringNodesMap.containsKey(enrGene)) {
-									final Long nodeSUID = stringNodesMap.get(enrGene);
+							String enrGeneEnsemblID = ((Element) geneNode).getTextContent();
+							if (enrGeneEnsemblID != null) {
+								String enrGeneNodeName = enrGeneEnsemblID;
+								if (stringNodesMap.containsKey(enrGeneEnsemblID)) {
+									final Long nodeSUID = stringNodesMap.get(enrGeneEnsemblID);
 									enrNodes.add(nodeSUID);
 									if (network.getDefaultNodeTable()
 											.getColumn(CyNetwork.NAME) != null) {
-										nodeName = network.getDefaultNodeTable().getRow(nodeSUID)
+										enrGeneNodeName = network.getDefaultNodeTable().getRow(nodeSUID)
 												.get(CyNetwork.NAME, String.class);
 									}
 								}
-								enrGenes.add(nodeName);
+								enrGenes.add(enrGeneNodeName);
 							}
 						}
 					}

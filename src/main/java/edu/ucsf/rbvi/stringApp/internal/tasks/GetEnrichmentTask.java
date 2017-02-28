@@ -27,6 +27,7 @@ import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.TaskMonitor.Level;
 import org.cytoscape.work.Tunable;
 
+import edu.ucsf.rbvi.stringApp.internal.io.EnrichmentSAXHandler;
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
@@ -174,20 +175,21 @@ public class GetEnrichmentTask extends AbstractTask {
 
 		// TODO: Change to use SAXParser
 		List<EnrichmentTerm> enrichmentTerms = null;
+		System.out.println(enrichmentCategory);
 		double time = System.currentTimeMillis();
 		// parse using DOM
-		Object results = HttpUtils.postXMLDOM(EnrichmentTerm.enrichmentURL, queryMap, manager);
+		// Object results = HttpUtils.postXMLDOM(EnrichmentTerm.enrichmentURL, queryMap, manager);
 		// System.out.println(
-		//		"get xml data: " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
-		time = System.currentTimeMillis();
-		enrichmentTerms = ModelUtils.parseXMLDOM(results, cutoff, network, stringNodesMap, manager);
-		//System.out
-		// 		.println("parse dom: " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
-		time = System.currentTimeMillis();
+		//		"get dom xml data as a dom document: " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+		// time = System.currentTimeMillis();
+		// enrichmentTerms = ModelUtils.parseXMLDOM(results, cutoff, network, stringNodesMap, manager);
+		// System.out
+		// 		.println("from dom document to java structure: " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+		// time = System.currentTimeMillis();
 		// parse using SAX
-		//EnrichmentSAXHandler myHandler = new EnrichmentSAXHandler(network, stringNodesMap, cutoff);
-		//HttpUtils.postXMLSAX(EnrichmentTerm.enrichmentURL, queryMap, manager, myHandler);
-		// enrichmentTerms = myHandler.getParsedData();
+		EnrichmentSAXHandler myHandler = new EnrichmentSAXHandler(network, stringNodesMap, cutoff);
+		HttpUtils.postXMLSAX(EnrichmentTerm.enrichmentURL, queryMap, manager, myHandler);
+		enrichmentTerms = myHandler.getParsedData();
 
 		// save results
 		if (enrichmentTerms == null) {

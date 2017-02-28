@@ -10,6 +10,8 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -26,18 +28,23 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
 public class HttpUtils {
-	public static JSONObject getJSON(String url, Map<String, String> queryMap, StringManager manager) {
-		RequestConfig globalConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.IGNORE_COOKIES).build();
+	public static JSONObject getJSON(String url, Map<String, String> queryMap,
+			StringManager manager) {
+		RequestConfig globalConfig = RequestConfig.custom()
+				.setCookieSpec(CookieSpecs.IGNORE_COOKIES).build();
 
 		// Set up our connection
-		CloseableHttpClient client = HttpClients.custom().setDefaultRequestConfig(globalConfig).build();
+		CloseableHttpClient client = HttpClients.custom().setDefaultRequestConfig(globalConfig)
+				.build();
 		String args = HttpUtils.getStringArguments(queryMap);
-		HttpGet request = new HttpGet(url+"?"+args);
-		manager.info("URL: "+url+"?"+args);
+		HttpGet request = new HttpGet(url + "?" + args);
+		manager.info("URL: " + url + "?" + args);
 		// List<NameValuePair> nvps = HttpUtils.getArguments(queryMap);
 		JSONObject jsonObject = new JSONObject();
 
@@ -47,7 +54,7 @@ public class HttpUtils {
 		// the user MUST call CloseableHttpResponse#close() from a finally clause.
 		// Please note that if response content is not fully consumed the underlying
 		// connection cannot be safely re-used and will be shut down and discarded
-		// by the connection manager. 
+		// by the connection manager.
 		CloseableHttpResponse response1 = null;
 		try {
 			// request.setEntity(new UrlEncodedFormEntity(nvps));
@@ -56,11 +63,11 @@ public class HttpUtils {
 			HttpEntity entity1 = response1.getEntity();
 			InputStream entityStream = entity1.getContent();
 			if (entity1.getContentLength() == 0)
-			 	return null;
+				return null;
 			BufferedReader reader = new BufferedReader(new InputStreamReader(entityStream));
 			// String lin;
 			// while ((lin=reader.readLine()) != null) {
-			//  	System.out.println(lin);
+			// System.out.println(lin);
 			// }
 			JSONParser parser = new JSONParser();
 			Object obj = parser.parse(reader);
@@ -73,14 +80,15 @@ public class HttpUtils {
 		} finally {
 			try {
 				response1.close();
-			} catch(Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		return jsonObject;
 	}
 
-	public static Object testJSON(String url, Map<String, String> queryMap, StringManager manager, String json) {
+	public static Object testJSON(String url, Map<String, String> queryMap, StringManager manager,
+			String json) {
 		Object jsonObject = null;
 		try {
 			JSONParser parser = new JSONParser();
@@ -91,7 +99,8 @@ public class HttpUtils {
 		return jsonObject;
 	}
 
-	public static JSONObject postJSON(String url, Map<String, String> queryMap, StringManager manager) {
+	public static JSONObject postJSON(String url, Map<String, String> queryMap,
+			StringManager manager) {
 		// Set up our connection
 		CloseableHttpClient client = HttpClients.createDefault();
 		HttpPost request = new HttpPost(url);
@@ -99,8 +108,8 @@ public class HttpUtils {
 		JSONObject jsonObject = new JSONObject();
 
 		String args = HttpUtils.getStringArguments(queryMap);
-		manager.info("URL: "+url+"?"+args);
-		System.out.println("URL: "+url+"?"+args);
+		manager.info("URL: " + url + "?" + args);
+		System.out.println("URL: " + url + "?" + args);
 
 		// The underlying HTTP connection is still held by the response object
 		// to allow the response content to be streamed directly from the network socket.
@@ -108,7 +117,7 @@ public class HttpUtils {
 		// the user MUST call CloseableHttpResponse#close() from a finally clause.
 		// Please note that if response content is not fully consumed the underlying
 		// connection cannot be safely re-used and will be shut down and discarded
-		// by the connection manager. 
+		// by the connection manager.
 		CloseableHttpResponse response1 = null;
 		try {
 			request.setEntity(new UrlEncodedFormEntity(nvps));
@@ -120,11 +129,8 @@ public class HttpUtils {
 				return null;
 			BufferedReader reader = new BufferedReader(new InputStreamReader(entityStream));
 			/*
-			String lin;
-			while ((lin=reader.readLine()) != null) {
-				System.out.println(lin);
-			}
-			*/
+			 * String lin; while ((lin=reader.readLine()) != null) { System.out.println(lin); }
+			 */
 			JSONParser parser = new JSONParser();
 			Object obj = parser.parse(reader);
 			jsonObject.put(StringManager.RESULT, obj);
@@ -133,12 +139,12 @@ public class HttpUtils {
 			EntityUtils.consume(entity1);
 		} catch (Exception e) {
 			e.printStackTrace();
-			manager.error("Unable to parse JSON from server: "+e.getMessage());
+			manager.error("Unable to parse JSON from server: " + e.getMessage());
 			return null;
 		} finally {
 			try {
 				response1.close();
-			} catch(Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -158,7 +164,7 @@ public class HttpUtils {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(entity1.getContent()));
 			String line;
 			while ((line = reader.readLine()) != null) {
-				builder.append(line+"\n");
+				builder.append(line + "\n");
 			}
 			EntityUtils.consume(entity1);
 		} catch (Exception e) {
@@ -166,7 +172,7 @@ public class HttpUtils {
 		} finally {
 			try {
 				response1.close();
-			} catch(Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			return builder.toString();
@@ -177,15 +183,24 @@ public class HttpUtils {
 			StringManager manager) {
 
 		// Set up our connection
+		double time = System.currentTimeMillis();
 		CloseableHttpClient client = HttpClients.createDefault();
 		HttpPost request = new HttpPost(url);
 		List<NameValuePair> nvps = HttpUtils.getArguments(queryMap);
-
+		System.out.println(
+				"connection setup " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+		time = System.currentTimeMillis();
 		Object xmlData = null;
 		CloseableHttpResponse response1 = null;
 		try {
 			request.setEntity(new UrlEncodedFormEntity(nvps));
+			System.out.println(
+					"set entity " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+			time = System.currentTimeMillis();
 			response1 = client.execute(request);
+			System.out.println(
+					"execute request " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+			time = System.currentTimeMillis();
 			HttpEntity entity1 = response1.getEntity();
 			InputStream entityStream = entity1.getContent();
 			if (entity1.getContentLength() == 0) {
@@ -200,6 +215,9 @@ public class HttpUtils {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			xmlData = builder.parse(entityStream);
+			System.out.println(
+					"actual DOM parsing " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+			time = System.currentTimeMillis();
 
 			// and ensure it is fully consumed
 			EntityUtils.consume(entity1);
@@ -220,9 +238,67 @@ public class HttpUtils {
 		return xmlData;
 	}
 
+	public static void postXMLSAX(String url, Map<String, String> queryMap, StringManager manager,
+			EnrichmentSAXHandler myHandler) {
+
+		// double time = System.currentTimeMillis();
+		// Set up our connection
+		CloseableHttpClient client = HttpClients.createDefault();
+		HttpPost request = new HttpPost(url);
+		List<NameValuePair> nvps = HttpUtils.getArguments(queryMap);
+		// System.out.println(
+		// "set up connection: " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+		// time = System.currentTimeMillis();
+
+		CloseableHttpResponse response1 = null;
+		try {
+			request.setEntity(new UrlEncodedFormEntity(nvps));
+			response1 = client.execute(request);
+			// System.out.println(
+			// "execute request: " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+			// time = System.currentTimeMillis();
+			HttpEntity entity1 = response1.getEntity();
+			InputStream entityStream = entity1.getContent();
+			// System.out.println(
+			// "get content: " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+			// time = System.currentTimeMillis();
+			if (entity1.getContentLength() == 0) {
+				manager.error("No reposnse from server");
+				return;
+			}
+			SAXParserFactory spf = SAXParserFactory.newInstance();
+			spf.setNamespaceAware(true);
+			SAXParser saxParser = spf.newSAXParser();
+			XMLReader xmlReader = saxParser.getXMLReader();
+			xmlReader.setContentHandler(myHandler);
+			// System.out.println("create SAX parser: " + (System.currentTimeMillis() - time) / 1000
+			// + " seconds.");
+			// time = System.currentTimeMillis();
+
+			xmlReader.parse(new InputSource(entityStream));
+			// System.out.println(
+			// "actual SAX parsing: " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+			// time = System.currentTimeMillis();
+
+			// and ensure it is fully consumed
+			EntityUtils.consume(entity1);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			manager.error("Unable to parse response from server: " + e.getMessage());
+			return;
+		} finally {
+			try {
+				response1.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	public static List<NameValuePair> getArguments(Map<String, String> args) {
 		List<NameValuePair> nvps = new ArrayList<>();
-		for (String key: args.keySet()) {
+		for (String key : args.keySet()) {
 			nvps.add(new BasicNameValuePair(key, args.get(key)));
 		}
 		return nvps;
@@ -231,13 +307,15 @@ public class HttpUtils {
 	public static String getStringArguments(Map<String, String> args) {
 		String s = null;
 		try {
-			for (String key: args.keySet()) {
-				if (s != null) 
-					s += "&"+key+"="+URLEncoder.encode(args.get(key));
+			for (String key : args.keySet()) {
+				if (s != null)
+					s += "&" + key + "=" + URLEncoder.encode(args.get(key));
 				else
-					s = key+"="+URLEncoder.encode(args.get(key));
+					s = key + "=" + URLEncoder.encode(args.get(key));
 			}
-		} catch (Exception e) { e.printStackTrace(); }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return s;
 	}
 
