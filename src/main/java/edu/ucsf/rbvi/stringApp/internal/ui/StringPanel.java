@@ -79,11 +79,11 @@ public class StringPanel extends JPanel
 			textArea.setEditable(false);
 			String message = "<h3 style=\"margin-left: 5px;margin-bottom: 0px;\">CrossLinks</h3>";
 			message += "<table style=\"margin-left: 10px;margin-top: 0px;\">";
-			if (sNode.getUniprot() != null) {
+			if (sNode.haveUniprot()) {
 				message += "<tr><td>Uniprot: </td>";
 				message += "<td><a href=\""+sNode.getUniprotURL()+"\">"+sNode.getUniprot()+"</a></td></tr>";
 			}
-			if (sNode.getGeneCardURL() != null) {
+			if (sNode.haveGeneCard()) {
 				message += "<tr><td>GeneCard: </td>";
 				message += "<td><a href=\""+sNode.getGeneCardURL()+"\">"+sNode.getUniprot()+"</a></td></tr>";
 			}
@@ -106,6 +106,11 @@ public class StringPanel extends JPanel
 			if (sNode.havePharos()) {
 				message += "<tr><td>Pharos: </td>";
 				message += "<td><a href=\""+sNode.getPharosURL()+"\">"+sNode.getPharos()+"</a></td></tr>";
+			}
+
+			if (sNode.havePubChem()) {
+				message += "<tr><td>PubChem: </td>";
+				message += "<td><a href=\""+sNode.getPubChemURL()+"\">"+sNode.getPubChem()+"</a></td></tr>";
 			}
 
 			message += "</table>";

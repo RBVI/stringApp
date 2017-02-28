@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyIdentifiable;
@@ -58,6 +59,8 @@ public class ModelUtils {
 	public static int NEXPERIMENTS = 50;
 	public static int NKNOWLEDGE = 50;
 
+	//public static Pattern cidmPattern = Pattern.compile("\\(CIDm\\)0*");
+	public static Pattern cidmPattern = Pattern.compile("CIDm0*");
 	// public static String DISEASEINFO =
 	// "http://diseases.jensenlab.org/Entity?type1=9606&type2=-26";
 
