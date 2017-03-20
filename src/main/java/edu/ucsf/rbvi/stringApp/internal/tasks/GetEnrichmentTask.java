@@ -121,16 +121,22 @@ public class GetEnrichmentTask extends AbstractTask {
 			if (getEnrichment(selectedNodes, "fat", species, EnrichmentTerm.termCategories[0]))
 				saveEnrichmentTable(EnrichmentTerm.termTables[0], EnrichmentTerm.termCategories[0]);
 		}
-		if (goFunction) {
-			monitor.setStatusMessage("Retrieving functional enrichment for GO Molecular Function.");
-			if (getEnrichment(selectedNodes, "fat", species, EnrichmentTerm.termCategories[1]))
-				saveEnrichmentTable(EnrichmentTerm.termTables[1], EnrichmentTerm.termCategories[1]);
-		}
 		if (goCompartment) {
 			monitor.setStatusMessage(
 					"Retrieving functional enrichment for GO Cellular Compartment.");
 			if (getEnrichment(selectedNodes, "fat", species, EnrichmentTerm.termCategories[2]))
 				saveEnrichmentTable(EnrichmentTerm.termTables[2], EnrichmentTerm.termCategories[2]);
+		}
+		if (goFunction) {
+			monitor.setStatusMessage("Retrieving functional enrichment for GO Molecular Function.");
+			if (getEnrichment(selectedNodes, "fat", species, EnrichmentTerm.termCategories[1]))
+				saveEnrichmentTable(EnrichmentTerm.termTables[1], EnrichmentTerm.termCategories[1]);
+		}
+		if (interPro) {
+			monitor.setStatusMessage(
+					"Retrieving functional enrichment for INTERPRO Protein Domains and Features.");
+			if (getEnrichment(selectedNodes, "", species, EnrichmentTerm.termCategories[5]))
+				saveEnrichmentTable(EnrichmentTerm.termTables[5], EnrichmentTerm.termCategories[5]);
 		}
 		if (kegg) {
 			monitor.setStatusMessage("Retrieving functional enrichment for KEGG Pathways.");
@@ -141,12 +147,6 @@ public class GetEnrichmentTask extends AbstractTask {
 			monitor.setStatusMessage("Retrieving functional enrichment for PFAM Protein Domains.");
 			if (getEnrichment(selectedNodes, "", species, EnrichmentTerm.termCategories[4]))
 				saveEnrichmentTable(EnrichmentTerm.termTables[4], EnrichmentTerm.termCategories[4]);
-		}
-		if (interPro) {
-			monitor.setStatusMessage(
-					"Retrieving functional enrichment for INTERPRO Protein Domains and Features.");
-			if (getEnrichment(selectedNodes, "", species, EnrichmentTerm.termCategories[5]))
-				saveEnrichmentTable(EnrichmentTerm.termTables[5], EnrichmentTerm.termCategories[5]);
 		}
 
 		if (enrichmentResult.size() > 0) {
@@ -172,11 +172,11 @@ public class GetEnrichmentTask extends AbstractTask {
 		xmlQuery += "</hits></experiment>";
 		// System.out.println(xmlQuery);
 		queryMap.put("xml", xmlQuery);
-
-		// TODO: Change to use SAXParser
+		
+		// get and parse enrichment results
 		List<EnrichmentTerm> enrichmentTerms = null;
-		System.out.println(enrichmentCategory);
-		double time = System.currentTimeMillis();
+		// System.out.println(enrichmentCategory);
+		// double time = System.currentTimeMillis();
 		// parse using DOM
 		// Object results = HttpUtils.postXMLDOM(EnrichmentTerm.enrichmentURL, queryMap, manager);
 		// System.out.println(
@@ -188,7 +188,8 @@ public class GetEnrichmentTask extends AbstractTask {
 		// time = System.currentTimeMillis();
 		// parse using SAX
 		EnrichmentSAXHandler myHandler = new EnrichmentSAXHandler(network, stringNodesMap, cutoff);
-		HttpUtils.postXMLSAX(EnrichmentTerm.enrichmentURL, queryMap, manager, myHandler);
+		// TODO: change for release
+		HttpUtils.postXMLSAX(EnrichmentTerm.enrichmentURLTest, queryMap, manager, myHandler);
 		enrichmentTerms = myHandler.getParsedData();
 
 		// save results

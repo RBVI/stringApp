@@ -50,19 +50,47 @@ public class StringNetwork {
 			return new HashMap<String, List<Annotation>>();
 		}
 
-		String url = manager.getResolveURL(useDATABASE)+"json/resolveList";
+		// always call the string API first to resolve all potential protein IDs
+		String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/resolveList";
 		Map<String, String> args = new HashMap<>();
-		args.put("species", Integer.toString(taxon));
+		args.put("species", Integer.toString(taxon));			
 		args.put("identifiers", encTerms);
 		args.put("caller_identity", StringManager.CallerIdentity);
 		manager.info("URL: "+url+"?species="+Integer.toString(taxon)+"&caller_identity="+StringManager.CallerIdentity+"&identifiers="+encTerms);
 		// Get the results
 		JSONObject results = HttpUtils.postJSON(url, args, manager);
 
-		if (results == null) return null;
-		// System.out.println("Got results");
-		annotations = Annotation.getAnnotations(results, terms);
-		// System.out.println("Get annotations returns "+annotations.size());
+		if (results != null) {
+			// System.out.println("Got results");
+			annotations = Annotation.getAnnotations(results, terms);
+			// System.out.println("Get annotations returns "+annotations.size());
+		}
+		
+		// then, call other APIs to get resolve them
+		// resolve compounds 
+		if (useDATABASE.equals(Databases.STITCH.getAPIName())) {
+			url = manager.getResolveURL(Databases.STITCH.getAPIName())+"json/resolveList";
+			args = new HashMap<>();
+			args.put("species", "CIDm");
+			args.put("identifiers", encTerms);
+			args.put("caller_identity", StringManager.CallerIdentity);
+			manager.info("URL: "+url+"?species="+Integer.toString(taxon)+"&caller_identity="+StringManager.CallerIdentity+"&identifiers="+encTerms);
+			// Get the results
+			results = HttpUtils.postJSON(url, args, manager);
+
+			if (results != null) {
+				Map<String, List<Annotation>> stitchAnnotations = Annotation.getAnnotations(results,
+						terms);
+				for (String stitchAnn : stitchAnnotations.keySet()) {
+					List<Annotation> allAnn = stitchAnnotations.get(stitchAnn);
+					if (annotations.containsKey(stitchAnn)) {
+						allAnn.addAll(annotations.get(stitchAnn));
+					}
+					annotations.put(stitchAnn, allAnn);
+				}
+			}
+		}
+		
 		return annotations;
 	}
 

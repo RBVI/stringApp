@@ -77,8 +77,8 @@ public class Annotation {
 			}
 
 			// Temporary HACK
-			if (stringId.startsWith("-1.CID1"))
-				stringId = stringId.replaceFirst("-1.CID1","CIDm");
+			// if (stringId.startsWith("-1.CID1"))
+			// 	stringId = stringId.replaceFirst("-1.CID1","CIDm");
 
 			Annotation newAnnotation = new Annotation(preferredName, stringId, taxId, terms[queryIndex], annotation);
 			if (!map.containsKey(terms[queryIndex])) {

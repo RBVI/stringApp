@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,10 +16,12 @@ import java.util.Set;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumnModel;
@@ -147,43 +150,50 @@ public class EnrichmentCytoPanel extends JPanel
 			availableTables.add(currTable.getTitle());
 		}
 		if (availableTables.size() == 0) {
-			return;
-		}
-		boxTables = new JComboBox<String>(availableTables.toArray(new String[0]));
-		if (createBoxTables) {
-			if (availableTables.contains(EnrichmentTerm.termTables[0])) {
-				showTable = EnrichmentTerm.termTables[0];
-			} else {
-				showTable = availableTables.get(0);
+			mainPanel = new JPanel(new BorderLayout());
+			JLabel label = new JLabel("No enrichment has been retrieved for this network.",
+					SwingConstants.CENTER);
+			mainPanel.add(label, BorderLayout.CENTER);
+			this.add(mainPanel, BorderLayout.CENTER);
+			// return;
+		} else {
+			Collections.sort(availableTables);
+			boxTables = new JComboBox<String>(availableTables.toArray(new String[0]));
+			if (createBoxTables) {
+				if (availableTables.contains(EnrichmentTerm.termTables[0])) {
+					showTable = EnrichmentTerm.termTables[0];
+				} else {
+					showTable = availableTables.get(0);
+				}
 			}
+			boxTables.setSelectedItem(showTable);
+			boxTables.addActionListener(this);
+
+			// butDrawCharts = new JButton("Draw pie charts");
+			// butDrawCharts.addActionListener(this);
+
+			topPanel = new JPanel(new BorderLayout());
+			topPanel.add(boxTables, BorderLayout.EAST);
+			// topPanel.add(butDrawCharts, BorderLayout.WEST);
+			this.add(topPanel, BorderLayout.NORTH);
+
+			JTable currentTable = enrichmentTables.get(showTable);
+			// System.out.println("show table: " + showTable);
+			mainPanel = new JPanel(new BorderLayout());
+			scrollPane = new JScrollPane(currentTable);
+			mainPanel.setLayout(new GridLayout(1, 1));
+			mainPanel.add(scrollPane, BorderLayout.CENTER);
+			this.add(mainPanel, BorderLayout.CENTER);
+
+			// JScrollPane scrollPane2 = new JScrollPane(currentTable);
+			// scrollPane.setViewportView(jTable);
+			// scrollPane2.add(currentTable);
+
+			// subPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
+			// showTable, TitledBorder.CENTER, TitledBorder.TOP));
+			// subPanel.add(scrollPane2);
+			// mainPanel.add(subPanel, BorderLayout.CENTER);
 		}
-		boxTables.setSelectedItem(showTable);
-		boxTables.addActionListener(this);
-
-		// butDrawCharts = new JButton("Draw pie charts");
-		// butDrawCharts.addActionListener(this);
-
-		topPanel = new JPanel(new BorderLayout());
-		topPanel.add(boxTables, BorderLayout.EAST);
-		// topPanel.add(butDrawCharts, BorderLayout.WEST);
-		this.add(topPanel, BorderLayout.NORTH);
-
-		JTable currentTable = enrichmentTables.get(showTable);
-		// System.out.println("show table: " + showTable);
-		mainPanel = new JPanel(new BorderLayout());
-		scrollPane = new JScrollPane(currentTable);
-		mainPanel.setLayout(new GridLayout(1, 1));
-		mainPanel.add(scrollPane, BorderLayout.CENTER);
-		this.add(mainPanel, BorderLayout.CENTER);
-
-		// JScrollPane scrollPane2 = new JScrollPane(currentTable);
-		// scrollPane.setViewportView(jTable);
-		// scrollPane2.add(currentTable);
-
-		// subPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
-		// showTable, TitledBorder.CENTER, TitledBorder.TOP));
-		// subPanel.add(scrollPane2);
-		// mainPanel.add(subPanel, BorderLayout.CENTER);
 
 		this.revalidate();
 		this.repaint();
@@ -198,6 +208,7 @@ public class EnrichmentCytoPanel extends JPanel
 		// jTable.setDefaultEditor(Object.class, null);
 		// jTable.setPreferredScrollableViewportSize(jTable.getPreferredSize());
 		jTable.setFillsViewportHeight(true);
+		jTable.setAutoCreateRowSorter(true);
 		jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		jTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jTable.getSelectionModel().addListSelectionListener(this);
