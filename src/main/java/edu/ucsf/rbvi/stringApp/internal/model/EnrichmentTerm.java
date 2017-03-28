@@ -15,8 +15,8 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	public static final String enrichmentURLTest = "http://gamma.string-db.org/cgi/webservices/enrichmentWrapper.pl";
 	public static final String enrichmentURL = "http://version-10.string-db.org/cgi/webservices/enrichmentWrapper.pl";
 
-	public static final String[] termCategories = new String[] { "Process", "Function", "Component",
-			"KEGG", "Pfam", "InterPro" };
+	public static final String[] termCategories = new String[] { "Process", "Component", "Function",
+			"InterPro", "KEGG", "Pfam" };
 	public static final String[] termTables = new String[] {
 			"STRING Enrichment: GO Biological Process", "STRING Enrichment: GO Cellular Component",
 			"STRING Enrichment: GO Molecular Function", "STRING Enrichment: InterPro",

@@ -46,6 +46,7 @@ public class EnrichmentCytoPanel extends JPanel
 
 	final StringManager manager;
 	Map<String, JTable> enrichmentTables;
+	List<CyNode> analyzedNodes;
 	JPanel topPanel;
 	JPanel mainPanel;
 	JScrollPane scrollPane;
@@ -54,13 +55,15 @@ public class EnrichmentCytoPanel extends JPanel
 	List<String> availableTables;
 	boolean createBoxTables = true;
 	JButton butDrawCharts;
+	JButton butAnalyzedNodes;
 	final String colEnrichmentTerms = "enrichmentTerms";
 	final String colEnrichmentTermsPieChart = "enrichmentTermsPieChart";
 	final String colEnrichmentPieChart = "enrichmentPieChart";
 
-	public EnrichmentCytoPanel(StringManager manager) {
+	public EnrichmentCytoPanel(StringManager manager, List<CyNode> analyzedNodes) {
 		this.manager = manager;
 		enrichmentTables = new HashMap<String, JTable>();
+		this.analyzedNodes = analyzedNodes;
 		showTable = null;
 		this.setLayout(new BorderLayout());
 		initPanel();
@@ -130,6 +133,15 @@ public class EnrichmentCytoPanel extends JPanel
 			// do something fancy here...
 			// piechart: attributelist="test3" colorlist="modulated" showlabels="false"
 			// drawCharts();
+		} else if (e.getSource().equals(butAnalyzedNodes)) {
+			CyNetwork network = manager.getCurrentNetwork();
+			if (network == null || analyzedNodes == null)
+				return;
+			for (CyNode node : analyzedNodes) {
+				network.getDefaultNodeTable().getRow(node.getSUID()).set(CyNetwork.SELECTED, true);
+				// System.out.println("select node: " + nodeID);
+			}
+
 		}
 	}
 
@@ -172,9 +184,13 @@ public class EnrichmentCytoPanel extends JPanel
 			// butDrawCharts = new JButton("Draw pie charts");
 			// butDrawCharts.addActionListener(this);
 
+			butAnalyzedNodes = new JButton("Select analyzed nodes");
+			butAnalyzedNodes.addActionListener(this);
+
 			topPanel = new JPanel(new BorderLayout());
 			topPanel.add(boxTables, BorderLayout.EAST);
 			// topPanel.add(butDrawCharts, BorderLayout.WEST);
+			topPanel.add(butAnalyzedNodes, BorderLayout.WEST);
 			this.add(topPanel, BorderLayout.NORTH);
 
 			JTable currentTable = enrichmentTables.get(showTable);
@@ -254,4 +270,9 @@ public class EnrichmentCytoPanel extends JPanel
 			initPanel(selectedNetwork);
 		}
 	}
+
+	public void setAnalyzedNodes(List<CyNode> analyzedNodes) {
+		this.analyzedNodes = analyzedNodes;
+	}
+
 }

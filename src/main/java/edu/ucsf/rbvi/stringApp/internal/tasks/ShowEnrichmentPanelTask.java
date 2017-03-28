@@ -1,6 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
 import java.awt.Component;
+import java.util.List;
 import java.util.Properties;
 
 import org.cytoscape.application.swing.CySwingApplication;
@@ -9,6 +10,7 @@ import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelComponent2;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.application.swing.CytoPanelState;
+import org.cytoscape.model.CyNode;
 import org.cytoscape.model.events.RowsSetListener;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
@@ -19,13 +21,15 @@ import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
 public class ShowEnrichmentPanelTask extends AbstractTask {
 	final StringManager manager;
 	final boolean show;
+	final List<CyNode> analyzedNodes;
 	final ShowEnrichmentPanelTaskFactory factory;
 
 	public ShowEnrichmentPanelTask(final StringManager manager,
-			ShowEnrichmentPanelTaskFactory factory, boolean show) {
+			ShowEnrichmentPanelTaskFactory factory, boolean show, List<CyNode> analyzedNodes) {
 		this.manager = manager;
 		this.factory = factory;
 		this.show = show;
+		this.analyzedNodes = analyzedNodes;
 	}
 
 	public void run(TaskMonitor monitor) {
@@ -39,7 +43,7 @@ public class ShowEnrichmentPanelTask extends AbstractTask {
 
 		// If the panel is not already registered, create it
 		if (show && cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment") < 0) {
-			CytoPanelComponent2 panel = new EnrichmentCytoPanel(manager);
+			CytoPanelComponent2 panel = new EnrichmentCytoPanel(manager, analyzedNodes);
 
 			// Register it
 			manager.registerService(panel, CytoPanelComponent.class, new Properties());
@@ -54,6 +58,7 @@ public class ShowEnrichmentPanelTask extends AbstractTask {
 		} else if (show && cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment") >= 0) {
 			EnrichmentCytoPanel panel = (EnrichmentCytoPanel) cytoPanel.getComponentAt(
 					cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment"));
+			panel.setAnalyzedNodes(analyzedNodes);
 			panel.initPanel();
 		} else if (!show && cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment") >= 0) {
 			int compIndex = cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment");

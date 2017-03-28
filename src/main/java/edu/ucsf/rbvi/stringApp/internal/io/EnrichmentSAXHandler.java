@@ -24,6 +24,9 @@ public class EnrichmentSAXHandler extends DefaultHandler {
 	private List<String> currGeneList;
 	private List<Long> currNodeList;
 	private StringBuilder content;
+	private String warning;
+	private String status;
+	private String status_code;
 
 	private boolean in_status = false;
 	private boolean in_code = false;
@@ -70,6 +73,8 @@ public class EnrichmentSAXHandler extends DefaultHandler {
 		this.network = network;
 		this.stringNodesMap = stringNodesMap;
 		this.enrichmentCutoff = enrichmentCutoff;
+		status = null;
+		warning = null;
 	}
 
 	public void startDocument() throws SAXException {
@@ -97,6 +102,10 @@ public class EnrichmentSAXHandler extends DefaultHandler {
 
 		if (key.equals(tag_status)) {
 			in_status = true;
+		} else if (key.equals(tag_code)) {
+			in_code = true;
+		} else if (key.equals(tag_warning)) {
+			in_warning = true;
 		} else if (key.equals(tag_term)) {
 			in_term = true;
 			currTerm = new EnrichmentTerm();
@@ -125,7 +134,14 @@ public class EnrichmentSAXHandler extends DefaultHandler {
 			throws SAXException {
 		String key = localName;
 		if (key.equals(tag_status)) {
+			status = content.toString();
 			in_status = false;
+		} else if (key.equals(tag_code)) {
+			status_code = content.toString();
+			in_code = false;
+		} else if (key.equals(tag_warning)) {
+			warning = content.toString();
+			in_warning = false;
 		} else if (key.equals(tag_term)) {
 			in_term = false;
 			if (currTerm.getFDRPValue() <= enrichmentCutoff)
@@ -177,7 +193,23 @@ public class EnrichmentSAXHandler extends DefaultHandler {
 		content.append(ch, start, length);
 	}
 
+	public boolean isStatusOK() {
+		if (status != null && status.equals("ok")) {
+			return true;
+		}
+		return false;
+	}
+	
+	public String getStatusCode() {
+		return status_code;
+	}
+
+	public String getWarning() {
+		return warning;
+	}
+
 	public List<EnrichmentTerm> getParsedData() {
 		return enrichmentTerms;
 	}
 }
+

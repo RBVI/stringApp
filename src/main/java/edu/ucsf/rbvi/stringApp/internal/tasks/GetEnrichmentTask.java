@@ -1,5 +1,6 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import org.cytoscape.model.CyTable;
 import org.cytoscape.model.CyTableFactory;
 import org.cytoscape.model.CyTableManager;
 import org.cytoscape.model.SavePolicy;
+import org.cytoscape.task.analyze.AnalyzeNetworkCollectionTaskFactory;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ProvidesTitle;
@@ -40,6 +42,7 @@ public class GetEnrichmentTask extends AbstractTask {
 	final Map<String, List<EnrichmentTerm>> enrichmentResult;
 	final Map<String, Long> stringNodesMap;
 	final ShowEnrichmentPanelTaskFactory showFactory;
+	List<CyNode> analyzedNodes;
 	TaskMonitor monitor;
 	// boolean guiMode;
 
@@ -80,13 +83,14 @@ public class GetEnrichmentTask extends AbstractTask {
 		monitor.setTitle(this.getTitle());
 
 		// Get list of (selected) nodes
-		String selected = ModelUtils.getSelected(network, null).trim();
+		String selected = getSelected(network).trim();
 		if (selected.length() == 0) {
-			selected = ModelUtils.getExisting(network).trim();
+			selected = getExisting(network).trim();
 		}
 		if (selected.length() == 0) {
 			return;
 		}
+		// System.out.println(selected);
 		List<String> netSpecies = ModelUtils.getNetworkSpeciesTaxons(network);
 		String species = null;
 		if (netSpecies.size() == 1) {
@@ -151,13 +155,17 @@ public class GetEnrichmentTask extends AbstractTask {
 
 		if (enrichmentResult.size() > 0) {
 			SynchronousTaskManager<?> taskM = manager.getService(SynchronousTaskManager.class);
-			TaskIterator ti = showFactory.createTaskIterator(true);
+			TaskIterator ti = showFactory.createTaskIterator(true, analyzedNodes);
 			taskM.execute(ti);
+		} else {
+			// TODO: Some error message to the user
+			monitor.setStatusMessage(
+					"Enrichment retrieval returned no results, possibly due to an error.");
 		}
 	}
 
 	private boolean getEnrichment(String[] selectedNodes, String filter, String species,
-			String enrichmentCategory) {
+			String enrichmentCategory) throws Exception {
 		Map<String, String> queryMap = new HashMap<String, String>();
 		String xmlQuery = "<experiment>";
 		if (filter.length() > 0) {
@@ -172,7 +180,7 @@ public class GetEnrichmentTask extends AbstractTask {
 		xmlQuery += "</hits></experiment>";
 		// System.out.println(xmlQuery);
 		queryMap.put("xml", xmlQuery);
-		
+
 		// get and parse enrichment results
 		List<EnrichmentTerm> enrichmentTerms = null;
 		// System.out.println(enrichmentCategory);
@@ -180,23 +188,38 @@ public class GetEnrichmentTask extends AbstractTask {
 		// parse using DOM
 		// Object results = HttpUtils.postXMLDOM(EnrichmentTerm.enrichmentURL, queryMap, manager);
 		// System.out.println(
-		//		"get dom xml data as a dom document: " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+		// "get dom xml data as a dom document: " + (System.currentTimeMillis() - time) / 1000 + "
+		// seconds.");
 		// time = System.currentTimeMillis();
-		// enrichmentTerms = ModelUtils.parseXMLDOM(results, cutoff, network, stringNodesMap, manager);
+		// enrichmentTerms = ModelUtils.parseXMLDOM(results, cutoff, network, stringNodesMap,
+		// manager);
 		// System.out
-		// 		.println("from dom document to java structure: " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+		// .println("from dom document to java structure: " + (System.currentTimeMillis() - time) /
+		// 1000 + " seconds.");
 		// time = System.currentTimeMillis();
 		// parse using SAX
 		EnrichmentSAXHandler myHandler = new EnrichmentSAXHandler(network, stringNodesMap, cutoff);
 		// TODO: change for release
 		HttpUtils.postXMLSAX(EnrichmentTerm.enrichmentURLTest, queryMap, manager, myHandler);
+		if (!myHandler.isStatusOK()) {
+			// monitor.showMessage(Level.ERROR, "Error returned by enrichment webservice: " +
+			// myHandler.getStatusCode());
+			// return false;
+			throw new Exception(
+					"Error returned by enrichment webservice: " + myHandler.getStatusCode());
+		} else if (myHandler.getWarning() != null) {
+			monitor.showMessage(Level.WARN,
+					"Warning returned by enrichment webservice: " + myHandler.getWarning());
+		}
 		enrichmentTerms = myHandler.getParsedData();
 
 		// save results
 		if (enrichmentTerms == null) {
-			monitor.showMessage(Level.ERROR,
-					"No terms retrieved from the server for this enrichment category.");
-			return false;
+			// monitor.showMessage(Level.ERROR,
+			// "No terms retrieved from the enrichment webservice for this category.");
+			throw new Exception(
+					"No terms retrieved from the enrichment webservice for this category.");
+			// return false;
 		} else {
 			enrichmentResult.put(enrichmentCategory, enrichmentTerms);
 			if (enrichmentTerms.size() == 0) {
@@ -274,6 +297,37 @@ public class GetEnrichmentTask extends AbstractTask {
 			tableManager.deleteTable(table.getSUID());
 			eventHelper.flushPayloadEvents();
 		}
+	}
+
+	private String getExisting(CyNetwork network) {
+		StringBuilder str = new StringBuilder();
+		analyzedNodes = new ArrayList<CyNode>();
+		for (CyNode node : network.getNodeList()) {
+			String stringID = network.getRow(node).get(ModelUtils.STRINGID, String.class);
+			String type = network.getRow(node).get(ModelUtils.TYPE, String.class);
+			if (stringID != null && stringID.length() > 0 && type != null && type.equals("protein")) {
+				str.append(stringID + "\n");
+				analyzedNodes.add(node);
+			}
+		}
+		return str.toString();
+	}
+
+	private String getSelected(CyNetwork network) {
+		StringBuilder selectedStr = new StringBuilder();
+		analyzedNodes = new ArrayList<CyNode>();
+		for (CyNode node : network.getNodeList()) {
+			if (network.getRow(node).get(CyNetwork.SELECTED, Boolean.class)) {
+				String stringID = network.getRow(node).get(ModelUtils.STRINGID, String.class);
+				String type = network.getRow(node).get(ModelUtils.TYPE, String.class);
+				if (stringID != null && stringID.length() > 0 && type != null
+						&& type.equals("protein")) {
+					selectedStr.append(stringID + "\n");
+					analyzedNodes.add(node);
+				}
+			}
+		}
+		return selectedStr.toString();
 	}
 
 	private void showStatusReport() {

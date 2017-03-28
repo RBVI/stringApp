@@ -5,9 +5,11 @@ import static org.cytoscape.work.ServiceProperties.MENU_GRAVITY;
 import static org.cytoscape.work.ServiceProperties.PREFERRED_MENU;
 import static org.cytoscape.work.ServiceProperties.TITLE;
 
+import java.util.List;
 import java.util.Properties;
 
 import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyNode;
 import org.cytoscape.work.AbstractTaskFactory;
 import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
@@ -23,11 +25,11 @@ public class ShowEnrichmentPanelTaskFactory extends AbstractTaskFactory {
 	}
 
 	public TaskIterator createTaskIterator() {
-		return new TaskIterator(new ShowEnrichmentPanelTask(manager, this, show));
+		return new TaskIterator(new ShowEnrichmentPanelTask(manager, this, show, null));
 	}
 
-	public TaskIterator createTaskIterator(boolean show) {
-		return new TaskIterator(new ShowEnrichmentPanelTask(manager, this, show));
+	public TaskIterator createTaskIterator(boolean show, List<CyNode> analyzedNodes) {
+		return new TaskIterator(new ShowEnrichmentPanelTask(manager, this, show, analyzedNodes));
 	}
 
 	public void reregister() {
