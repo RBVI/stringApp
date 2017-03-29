@@ -16,7 +16,7 @@ public class StitchWebServiceClient extends AbstractWebServiceGUIClient
 	public StitchWebServiceClient(StringManager manager) {
 		super(manager.getNetworkURL(), "STITCH: protein/compound query", "<html>STITCH is a resource to explore known and predicted interactions of chemicals and proteins. Chemicals are linked to other chemicals and proteins by evidence derived from experiments, databases and the literature.  <p>STITCH contains interactions for between 300,000 small molecules and 2.6 million proteins from 1133 organisms.</p></html>");
 		this.manager = manager;
-		super.gui = new GetTermsPanel(manager, Databases.STITCH.getAPIName());
+		super.gui = new GetTermsPanel(manager, Databases.STITCH.getAPIName(), false);
 	}
 
 	public TaskIterator createTaskIterator(Object query) {

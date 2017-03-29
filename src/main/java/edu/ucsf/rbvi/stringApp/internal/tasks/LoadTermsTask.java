@@ -84,8 +84,11 @@ public class LoadTermsTask extends AbstractTask {
 		args.put("score", conf);
 		if (additionalNodes > 0) {
 			args.put("additional", Integer.toString(additionalNodes));
-			if (useDATABASE.equals(Databases.STRING.getAPIName()))
+			if (useDATABASE.equals(Databases.STRING.getAPIName())) {
 				args.put("filter", taxonId + ".%%");
+			} else {
+				args.put("filter", taxonId + ".%%|CIDm%%");
+			}
 		}
 		args.put("existing", ModelUtils.getExisting(network).trim());
 

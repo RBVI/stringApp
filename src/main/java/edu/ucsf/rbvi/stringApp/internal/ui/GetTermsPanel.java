@@ -90,15 +90,17 @@ public class GetTermsPanel extends JPanel {
 	private boolean ignore = false;
 	private String useDATABASE = Databases.STRING.getAPIName();
 	private String netSpecies = "Homo sapiens";
+	private boolean queryAddNodes = false;
 
-	public GetTermsPanel(final StringManager manager, final String useDATABASE) {
+	public GetTermsPanel(final StringManager manager, final String useDATABASE, boolean queryAddNodes) {
 		super(new GridBagLayout());
 		this.manager = manager;
 		this.useDATABASE = useDATABASE;
+		this.queryAddNodes = queryAddNodes;
 		init();
 	}
 
-	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, String useDATABASE, String aNetSpecies) {
+	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, String useDATABASE, String aNetSpecies, boolean queryAddNodes) {
 		super(new GridBagLayout());
 		this.manager = manager;
 		this.stringNetwork = stringNetwork;
@@ -107,6 +109,7 @@ public class GetTermsPanel extends JPanel {
 		if (aNetSpecies != null) {
 			this.netSpecies = aNetSpecies;
 		}
+		this.queryAddNodes = queryAddNodes;
 		init();
 	}
 
@@ -127,7 +130,8 @@ public class GetTermsPanel extends JPanel {
 			}
 		}
 		JPanel speciesBox = createSpeciesComboBox(speciesList);
-		add(speciesBox, c.expandHoriz().insets(0,5,0,5));
+		if (!queryAddNodes)
+			add(speciesBox, c.expandHoriz().insets(0,5,0,5));
 
 		// Create the search list panel
 		mainSearchPanel = createSearchPanel();

@@ -34,7 +34,7 @@ public class AddTermsTask extends AbstractTask {
 		JDialog termsDialog = new JDialog(parent, "Query for additional nodes");
 		String database = ModelUtils.getDatabase(network);
 		String species = ModelUtils.getNetSpecies(network);
-		GetTermsPanel termsPanel = new GetTermsPanel(manager, stringNetwork, database, species);
+		GetTermsPanel termsPanel = new GetTermsPanel(manager, stringNetwork, database, species, true);
 		termsDialog.setContentPane(termsPanel);
 		// Pack it and display it
 		termsDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
