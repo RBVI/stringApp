@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,6 +25,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
 import org.cytoscape.application.swing.CytoPanelComponent2;
@@ -221,6 +223,7 @@ public class EnrichmentCytoPanel extends JPanel
 		JTable jTable = new JTable(tableModel);
 		TableColumnModel tcm = jTable.getColumnModel();
 		tcm.removeColumn(tcm.getColumn(EnrichmentTerm.nodeSUIDColumn));
+		tcm.getColumn(EnrichmentTerm.fdrColumn).setCellRenderer(new DecimalFormatRenderer());
 		// jTable.setDefaultEditor(Object.class, null);
 		// jTable.setPreferredScrollableViewportSize(jTable.getPreferredSize());
 		jTable.setFillsViewportHeight(true);
@@ -230,15 +233,6 @@ public class EnrichmentCytoPanel extends JPanel
 		jTable.getSelectionModel().addListSelectionListener(this);
 
 		enrichmentTables.put(cyTable.getTitle(), jTable);
-		// DefaultTableModel tableModel = new DefaultTableModel(data, columnNames) {
-		// @Override
-		// public boolean isCellEditable(int row, int column) {
-		// // all cells false
-		// return false;
-		// }
-		//
-		// };
-		// jTable.setModel(tableModel);
 	}
 
 	private void clearNetworkSelection(CyNetwork network) {
@@ -273,6 +267,18 @@ public class EnrichmentCytoPanel extends JPanel
 
 	public void setAnalyzedNodes(List<CyNode> analyzedNodes) {
 		this.analyzedNodes = analyzedNodes;
+	}
+
+	static class DecimalFormatRenderer extends DefaultTableCellRenderer {
+		private static final DecimalFormat formatter = new DecimalFormat("0.#####E0");
+
+		public Component getTableCellRendererComponent(JTable table, Object value,
+				boolean isSelected, boolean hasFocus, int row, int column) {
+			if ((Double) value < 0.001)
+				value = formatter.format((Number) value);
+			return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
+					column);
+		}
 	}
 
 }

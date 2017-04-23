@@ -37,6 +37,7 @@ public class StringManager implements NetworkAddedListener {
 	final SynchronousTaskManager<?> synchronousTaskManager;
 	final AvailableCommands availableCommands;
 	private boolean showImage = true;
+	private boolean showEnhancedLabels;
 	private boolean ignore = false;
 	private Map<CyNetwork, StringNetwork> stringNetworkMap;
 
@@ -56,6 +57,10 @@ public class StringManager implements NetworkAddedListener {
 		availableCommands = registrar.getService(AvailableCommands.class);
 		cyEventHelper = registrar.getService(CyEventHelper.class);
 		stringNetworkMap = new HashMap<>();
+		if (haveEnhancedGraphics())
+			showEnhancedLabels = true;
+		else
+			showEnhancedLabels = false;
 	}
 
 	public CyNetwork createNetwork(String name) {
@@ -130,6 +135,9 @@ public class StringManager implements NetworkAddedListener {
 
 	public boolean showImage() { return showImage; }
 	public void setShowImage(boolean set) { showImage = set; }
+
+	public boolean showEnhancedLabels() { return showEnhancedLabels; }
+	public void setShowEnhancedLabels(boolean set) { showEnhancedLabels = set; }
 
 	public void flushEvents() {
 		cyEventHelper.flushPayloadEvents();

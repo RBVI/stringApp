@@ -552,7 +552,8 @@ public class ModelUtils {
 			} else if (key.equals("image")) {
 				row.set(STYLE, "string:" + nodeObj.get("image"));
 			} else if (key.equals("smiles")) {
-				row.set(CV_STYLE, "chemviz:" + nodeObj.get("smiles"));
+				if (nodeObj.get("image").equals("image:"))
+					row.set(CV_STYLE, "chemviz:" + nodeObj.get("smiles"));
 				row.set(key, nodeObj.get("smiles"));
 			} else {
 				// It's not one of our "standard" attributes, create a column for it (if necessary)
@@ -579,7 +580,7 @@ public class ModelUtils {
 			{
 				// Construct instructions for enhanced graphics label
 				String enhancedLabel = "label: attribute=name labelsize=10 outline=false ";
-				enhancedLabel += "background=true color=black dropShadow=true";
+				enhancedLabel += "background=true color=black dropShadow=false";
 				row.set(ELABEL_STYLE, enhancedLabel);
 			}
 		}

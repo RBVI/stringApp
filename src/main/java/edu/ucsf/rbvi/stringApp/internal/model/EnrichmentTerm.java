@@ -37,6 +37,7 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	public static final String[] swingColumns = new String[] { colName, colDescription, colFDR,
 			colGenesCount, colGenes, colGenesSUID };
 	public static final int nodeSUIDColumn = 5;
+	public static final int fdrColumn = 2;
 
 	public EnrichmentTerm() {
 		this.name = "";

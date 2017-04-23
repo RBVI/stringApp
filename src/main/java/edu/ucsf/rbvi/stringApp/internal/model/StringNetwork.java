@@ -82,7 +82,7 @@ public class StringNetwork {
 				Map<String, List<Annotation>> stitchAnnotations = Annotation.getAnnotations(results,
 						terms);
 				for (String stitchAnn : stitchAnnotations.keySet()) {
-					List<Annotation> allAnn = stitchAnnotations.get(stitchAnn);
+					List<Annotation> allAnn = new ArrayList<Annotation>(stitchAnnotations.get(stitchAnn));
 					if (annotations.containsKey(stitchAnn)) {
 						allAnn.addAll(annotations.get(stitchAnn));
 					}

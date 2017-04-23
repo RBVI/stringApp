@@ -40,7 +40,8 @@ public class ViewUtils {
 		VisualStyle stringStyle = createStyle(manager, network, useStitch);
 
 		updateColorMap(manager, stringStyle, netView);
-
+		updateEnhancedLabels(manager, stringStyle, netView, manager.showEnhancedLabels());
+		
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
 		vmm.setVisualStyle(stringStyle, netView);
 		vmm.setCurrentVisualStyle(stringStyle);
@@ -172,37 +173,40 @@ public class ViewUtils {
 
 
 		// If we have enhancedGrahpics loaded, automatically use it
-		if (manager.haveEnhancedGraphics()) {
-			// Set up the passthrough mapping for the label
-			{
-				VisualProperty customGraphics = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_3");
-				PassthroughMapping pMapping = 
-					(PassthroughMapping) passthroughFactory.createVisualMappingFunction(ModelUtils.ELABEL_STYLE, 
-					                                                                    String.class, customGraphics);
-				stringStyle.addVisualMappingFunction(pMapping);
-			}
-
-			// Set up our labels to be in the upper right quadrant
-			{
-				VisualProperty customGraphicsP = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_POSITION_3");
-				Object upperRight = customGraphicsP.parseSerializableString("NE,C,c,0.00,0.00");
-				stringStyle.setDefaultValue(customGraphicsP, upperRight);
-				if (useStitch) {
-					Object top = customGraphicsP.parseSerializableString("N,C,c,0.00,-8.00");
-					DiscreteMapping<String,Object> dMapping = 
-						(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 
-											   	                                              customGraphicsP);
-					dMapping.putMapValue("compound", top);
-					dMapping.putMapValue("protein", upperRight);
-					stringStyle.addVisualMappingFunction(dMapping);
-				}
-			}
-
-			// Finally, disable the "standard" label passthrough
-			{
-				stringStyle.removeVisualMappingFunction(BasicVisualLexicon.NODE_LABEL);
-			}
-		}
+		// if (manager.haveEnhancedGraphics() && manager.showEnhancedLabels()) {
+		// // Set up the passthrough mapping for the label
+		// {
+		// VisualProperty customGraphics = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_3");
+		// PassthroughMapping pMapping =
+		// (PassthroughMapping)
+		// passthroughFactory.createVisualMappingFunction(ModelUtils.ELABEL_STYLE,
+		// String.class, customGraphics);
+		// stringStyle.addVisualMappingFunction(pMapping);
+		// }
+		//
+		// // Set up our labels to be in the upper right quadrant
+		// {
+		// VisualProperty customGraphicsP = lex.lookup(CyNode.class,
+		// "NODE_CUSTOMGRAPHICS_POSITION_3");
+		// Object upperRight = customGraphicsP.parseSerializableString("NE,C,c,0.00,0.00");
+		// stringStyle.setDefaultValue(customGraphicsP, upperRight);
+		// if (useStitch) {
+		// Object top = customGraphicsP.parseSerializableString("N,C,c,0.00,-8.00");
+		// DiscreteMapping<String,Object> dMapping =
+		// (DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE,
+		// String.class,
+		// customGraphicsP);
+		// dMapping.putMapValue("compound", top);
+		// dMapping.putMapValue("protein", upperRight);
+		// stringStyle.addVisualMappingFunction(dMapping);
+		// }
+		// }
+		//
+		// // Finally, disable the "standard" label passthrough
+		// {
+		// stringStyle.removeVisualMappingFunction(BasicVisualLexicon.NODE_LABEL);
+		// }
+		// }
 
 		// Set up all of our special mappings if we have a stitch network
 		if (useStitch) {
@@ -253,17 +257,18 @@ public class ViewUtils {
 
 			// TODO: Set the label position
 			// We need to export ObjectPosition in the API in order to be able to do this, unfortunately
-			if (!manager.haveEnhancedGraphics()) {
-				VisualProperty labelPosition = lex.lookup(CyNode.class, "NODE_LABEL_POSITION");
-				DiscreteMapping<String,Object> dMapping = 
-					(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 
-											   	                                              labelPosition);
-				Object top = labelPosition.parseSerializableString("N,S,c,0.00,0.00");
-				Object upperRight = labelPosition.parseSerializableString("NE,S,c,0.00,0.00");
-				dMapping.putMapValue("compound", top);
-				dMapping.putMapValue("protein", upperRight);
-				stringStyle.addVisualMappingFunction(dMapping);
-			}
+			// if (!manager.haveEnhancedGraphics() || !manager.showEnhancedLabels()) {
+			// VisualProperty labelPosition = lex.lookup(CyNode.class, "NODE_LABEL_POSITION");
+			// DiscreteMapping<String,Object> dMapping =
+			// (DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE,
+			// String.class,
+			// labelPosition);
+			// Object top = labelPosition.parseSerializableString("N,S,c,0.00,0.00");
+			// Object upperRight = labelPosition.parseSerializableString("NE,S,c,0.00,0.00");
+			// dMapping.putMapValue("compound", top);
+			// dMapping.putMapValue("protein", upperRight);
+			// stringStyle.addVisualMappingFunction(dMapping);
+			// }
 
 			// Set up a passthrough for chemViz
 			{
@@ -280,14 +285,83 @@ public class ViewUtils {
 					(DiscreteMapping) discreteFactory.createVisualMappingFunction(CyEdge.INTERACTION, String.class, 
 											   	                                    BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT);
 				dMapping.putMapValue("pp", new Color(31,41,61));
-				dMapping.putMapValue("cc", Color.RED);
-				dMapping.putMapValue("pc", Color.GREEN);
+				dMapping.putMapValue("cc", new Color(255,0,0));
+				dMapping.putMapValue("pc", new Color(0,128,0));
 				stringStyle.addVisualMappingFunction(dMapping);
 			}
 		}
 
 		vmm.addVisualStyle(stringStyle);
 		return stringStyle;
+	}
+
+	public static void updateEnhancedLabels(StringManager manager, VisualStyle stringStyle, CyNetworkView view, boolean show) {
+
+		boolean useStitch = false;
+		if (view.getModel().getDefaultNodeTable().getColumn(ModelUtils.TYPE) != null)
+			useStitch = true;
+
+		VisualMappingFunctionFactory discreteFactory = 
+            manager.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
+		VisualMappingFunctionFactory passthroughFactory = 
+            manager.getService(VisualMappingFunctionFactory.class, "(mapping.type=passthrough)");
+		VisualLexicon lex = manager.getService(RenderingEngineManager.class).getDefaultVisualLexicon();
+		// Set up the passthrough mapping for the label
+		if (show && manager.haveEnhancedGraphics()) {
+			{
+				VisualProperty customGraphics = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_3");
+				PassthroughMapping pMapping = 
+					(PassthroughMapping) passthroughFactory.createVisualMappingFunction(ModelUtils.ELABEL_STYLE, 
+					                                                                    String.class, customGraphics);
+				stringStyle.addVisualMappingFunction(pMapping);
+			}
+	
+			// Set up our labels to be in the upper right quadrant
+			{
+				VisualProperty customGraphicsP = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_POSITION_3");
+				Object upperRight = customGraphicsP.parseSerializableString("NE,C,c,0.00,0.00");
+				stringStyle.setDefaultValue(customGraphicsP, upperRight);
+				if (useStitch) {
+					Object top = customGraphicsP.parseSerializableString("N,C,c,0.00,-8.00");
+					DiscreteMapping<String,Object> dMapping = 
+						(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 
+											   	                                              customGraphicsP);
+					dMapping.putMapValue("compound", top);
+					dMapping.putMapValue("protein", upperRight);
+					stringStyle.addVisualMappingFunction(dMapping);
+				}
+			}
+	
+			// Finally, disable the "standard" label passthrough and position
+			{
+				stringStyle.removeVisualMappingFunction(BasicVisualLexicon.NODE_LABEL);
+				stringStyle.removeVisualMappingFunction(lex.lookup(CyNode.class, "NODE_LABEL_POSITION"));
+			}
+		} else {
+			stringStyle
+					.removeVisualMappingFunction(lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_3"));
+			stringStyle.removeVisualMappingFunction(
+					lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_POSITION_3"));
+
+			{
+				PassthroughMapping pMapping = (PassthroughMapping) passthroughFactory
+						.createVisualMappingFunction("Name", String.class,
+								BasicVisualLexicon.NODE_LABEL);
+				stringStyle.addVisualMappingFunction(pMapping);
+			}
+			
+			{
+				VisualProperty labelPosition = lex.lookup(CyNode.class, "NODE_LABEL_POSITION");
+				DiscreteMapping<String,Object> dMapping = 
+					(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 
+											   	                                              labelPosition);
+				Object top = labelPosition.parseSerializableString("N,S,c,0.00,0.00");
+				Object upperRight = labelPosition.parseSerializableString("NE,S,c,0.00,0.00");
+				dMapping.putMapValue("compound", top);
+				dMapping.putMapValue("protein", upperRight);
+				stringStyle.addVisualMappingFunction(dMapping);
+			}
+		}
 	}
 
 	private static void updateColorMap(StringManager manager, VisualStyle style, CyNetworkView view) {

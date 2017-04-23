@@ -31,6 +31,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.GetNetworkTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.FindProteinsTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.OpenEvidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.SetConfidenceTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
@@ -251,6 +252,12 @@ public class CyActivator extends AbstractCyActivator {
 			// Register our "show image" toggle
 			ShowImagesTaskFactory showImagesTF = new ShowImagesTaskFactory(manager);
 			showImagesTF.reregister();
+		}
+
+		{
+			// Register our "show enhanced labels" toggle
+			ShowEnhancedLabelsTaskFactory showEnhancedLabelsTF = new ShowEnhancedLabelsTaskFactory(manager);
+			showEnhancedLabelsTF.reregister();
 		}
 
 		{
