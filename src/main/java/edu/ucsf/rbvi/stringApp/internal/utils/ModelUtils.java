@@ -396,7 +396,7 @@ public class ModelUtils {
 			for (Object nodeObj : nodes) {
 				if (nodeObj instanceof JSONObject) {
 					JSONObject nodeJSON = (JSONObject) nodeObj;
-					CyNode newNode = createNode(network, nodeJSON, species, nodeMap, nodeNameMap,
+					CyNode newNode = createNode(manager, network, nodeJSON, species, nodeMap, nodeNameMap,
 							queryTermMap, columnMap);
 					if (newNode != null)
 						newNodes.add(newNode);
@@ -503,9 +503,11 @@ public class ModelUtils {
 		return selectedStr.toString();
 	}
 
-	private static CyNode createNode(CyNetwork network, JSONObject nodeObj, String species,
-			Map<String, CyNode> nodeMap, Map<String, String> nodeNameMap,
-			Map<String, String> queryTermMap, Set<String> columnMap) {
+	private static CyNode createNode(StringManager manager, CyNetwork network, JSONObject nodeObj, 
+	                                 String species,
+	                                 Map<String, CyNode> nodeMap, Map<String, String> nodeNameMap,
+	                                 Map<String, String> queryTermMap, Set<String> columnMap) {
+
 		String name = (String) nodeObj.get("name");
 		String id = (String) nodeObj.get("@id");
 		String namespace = id.substring(0, id.indexOf(":"));
@@ -552,7 +554,7 @@ public class ModelUtils {
 			} else if (key.equals("image")) {
 				row.set(STYLE, "string:" + nodeObj.get("image"));
 			} else if (key.equals("smiles")) {
-				if (nodeObj.get("image").equals("image:"))
+				if (manager.haveChemViz() || nodeObj.get("image").equals("image:"))
 					row.set(CV_STYLE, "chemviz:" + nodeObj.get("smiles"));
 				row.set(key, nodeObj.get("smiles"));
 			} else {

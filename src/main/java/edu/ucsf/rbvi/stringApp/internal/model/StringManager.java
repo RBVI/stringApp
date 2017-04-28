@@ -39,6 +39,7 @@ public class StringManager implements NetworkAddedListener {
 	private boolean showImage = true;
 	private boolean showEnhancedLabels;
 	private boolean ignore = false;
+	private Boolean haveChemViz = null;
 	private Map<CyNetwork, StringNetwork> stringNetworkMap;
 
 	public static String STRINGResolveURI = "http://string-db.org/api/";
@@ -247,6 +248,12 @@ public class StringManager implements NetworkAddedListener {
 
 	public boolean haveEnhancedGraphics() {
 		return availableCommands.getNamespaces().contains("enhancedGraphics");
+	}
+
+	public boolean haveChemViz() {
+		if (haveChemViz == null)
+			haveChemViz = availableCommands.getNamespaces().contains("chemviz");
+		return haveChemViz;
 	}
 
 }

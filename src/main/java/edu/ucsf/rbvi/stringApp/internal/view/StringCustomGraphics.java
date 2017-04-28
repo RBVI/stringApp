@@ -12,11 +12,13 @@ import javax.imageio.ImageIO;
 import org.apache.commons.codec.binary.Base64;
 
 import org.cytoscape.model.CyIdentifiable;
+import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.customgraphics.CyCustomGraphics;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class StringCustomGraphics implements CyCustomGraphics<StringLayer> {
 	StringManager manager;
@@ -57,7 +59,8 @@ public class StringCustomGraphics implements CyCustomGraphics<StringLayer> {
 	public int getWidth() { return width; }
 	public int getHeight() { return height; }
 	public List<StringLayer> getLayers(CyNetworkView networkView, View<? extends CyIdentifiable> nodeView) { 
-		if (manager.showImage())
+		if (manager.showImage() && 
+			  !(ModelUtils.isCompound(networkView.getModel(), (CyNode)nodeView.getModel()) && manager.haveChemViz()))
 			return Collections.singletonList(new StringLayer(manager, bi)); 
 		else
 			return Collections.singletonList(new StringLayer(manager, null)); 
