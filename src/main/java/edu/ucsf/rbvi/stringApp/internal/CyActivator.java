@@ -14,6 +14,7 @@ import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.model.events.NetworkAddedListener;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.service.util.CyServiceRegistrar;
+import org.cytoscape.session.events.SessionLoadedListener;
 import org.cytoscape.task.NetworkTaskFactory;
 import org.cytoscape.task.NetworkViewTaskFactory;
 import org.cytoscape.task.NodeViewTaskFactory;
@@ -69,8 +70,9 @@ public class CyActivator extends AbstractCyActivator {
 		manager.setVersion(version);
 
 		{
-			// Register our network added listener
+			// Register our network added listener and session loaded listener
 			registerService(bc, manager, NetworkAddedListener.class, new Properties());
+			registerService(bc, manager, SessionLoadedListener.class, new Properties());
 		}
 
 		{
@@ -252,12 +254,14 @@ public class CyActivator extends AbstractCyActivator {
 			// Register our "show image" toggle
 			ShowImagesTaskFactory showImagesTF = new ShowImagesTaskFactory(manager);
 			showImagesTF.reregister();
+			manager.setShowImagesTaskFactory(showImagesTF);
 		}
 
 		{
 			// Register our "show enhanced labels" toggle
 			ShowEnhancedLabelsTaskFactory showEnhancedLabelsTF = new ShowEnhancedLabelsTaskFactory(manager);
 			showEnhancedLabelsTF.reregister();
+			manager.setShowEnhancedLabelsTaskFactory(showEnhancedLabelsTF);
 		}
 
 		{

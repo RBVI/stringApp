@@ -16,7 +16,12 @@ import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.events.NetworkAddedEvent;
 import org.cytoscape.model.events.NetworkAddedListener;
+import org.cytoscape.property.CyProperty;
 import org.cytoscape.service.util.CyServiceRegistrar;
+import org.cytoscape.session.events.SessionAboutToBeLoadedEvent;
+import org.cytoscape.session.events.SessionAboutToBeLoadedListener;
+import org.cytoscape.session.events.SessionLoadedEvent;
+import org.cytoscape.session.events.SessionLoadedListener;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
@@ -27,17 +32,21 @@ import org.cytoscape.work.TaskObserver;
 import org.apache.log4j.Logger;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
-public class StringManager implements NetworkAddedListener {
+public class StringManager implements NetworkAddedListener, SessionLoadedListener {
 	final CyServiceRegistrar registrar;
 	final CyEventHelper cyEventHelper;
 	final Logger logger = Logger.getLogger(CyUserLog.NAME);
 	final TaskManager<?,?> dialogTaskManager;
 	final SynchronousTaskManager<?> synchronousTaskManager;
 	final AvailableCommands availableCommands;
+	private ShowImagesTaskFactory imagesTaskFactory;
+	private ShowEnhancedLabelsTaskFactory labelsTaskFactory;
 	private boolean showImage = true;
-	private boolean showEnhancedLabels;
+	private boolean showEnhancedLabels = true;
 	private boolean ignore = false;
 	private Boolean haveChemViz = null;
 	private Map<CyNetwork, StringNetwork> stringNetworkMap;
@@ -135,10 +144,18 @@ public class StringManager implements NetworkAddedListener {
 	}
 
 	public boolean showImage() { return showImage; }
-	public void setShowImage(boolean set) { showImage = set; }
+
+	public void setShowImage(boolean set) { 
+		showImage = set; 
+		ModelUtils.setStringProperty(this, ModelUtils.showStructureImagesFlag, new Boolean(set));
+	}
 
 	public boolean showEnhancedLabels() { return showEnhancedLabels; }
-	public void setShowEnhancedLabels(boolean set) { showEnhancedLabels = set; }
+	
+	public void setShowEnhancedLabels(boolean set) { 
+		showEnhancedLabels = set; 
+		ModelUtils.setStringProperty(this, ModelUtils.showEnhancedLabelsFlag, new Boolean(set));
+	}
 
 	public void flushEvents() {
 		cyEventHelper.flushPayloadEvents();
@@ -225,6 +242,37 @@ public class StringManager implements NetworkAddedListener {
 		}
 	}
 
+	public void handleEvent(SessionLoadedEvent arg0) {
+		Boolean sessionValueLabels = ModelUtils.getStringProperty(this,
+				ModelUtils.showEnhancedLabelsFlag);
+		// System.out.println("show labels: " + sessionValueLabels);
+		if (sessionValueLabels != null) {
+			showEnhancedLabels = sessionValueLabels;
+		} else {
+			ModelUtils.setStringProperty(this, ModelUtils.showEnhancedLabelsFlag,
+					new Boolean(showEnhancedLabels));
+		}
+		labelsTaskFactory.reregister();
+		
+		Boolean sessionValueImage = ModelUtils.getStringProperty(this, ModelUtils.showStructureImagesFlag);
+		// System.out.println("show image: " + sessionValueImage);
+		if (sessionValueImage != null) {
+			showImage = sessionValueImage;
+		} else {
+			ModelUtils.setStringProperty(this, ModelUtils.showStructureImagesFlag,
+					new Boolean(showImage));
+		}
+		imagesTaskFactory.reregister();
+	}
+
+	public void setShowImagesTaskFactory(ShowImagesTaskFactory factory) {
+		imagesTaskFactory = factory;		
+	}
+	
+	public void setShowEnhancedLabelsTaskFactory(ShowEnhancedLabelsTaskFactory factory) {
+		labelsTaskFactory = factory;		
+	}
+
 	public <T> T getService(Class<? extends T> clazz) {
 		return registrar.getService(clazz);
 	}
@@ -235,6 +283,10 @@ public class StringManager implements NetworkAddedListener {
 
 	public void registerService(Object service, Class<?> clazz, Properties props) {
 		registrar.registerService(service, clazz, props);
+	}
+
+	public void registerAllServices(CyProperty<Properties> service, Properties props) {
+		registrar.registerAllServices(service, props);
 	}
 
 	public void unregisterService(Object service, Class<?> clazz) {
@@ -256,4 +308,5 @@ public class StringManager implements NetworkAddedListener {
 		return haveChemViz;
 	}
 
+	
 }

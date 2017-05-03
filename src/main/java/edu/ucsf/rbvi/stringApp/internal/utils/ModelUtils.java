@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -17,6 +18,12 @@ import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.model.CyTableManager;
+import org.cytoscape.property.AbstractConfigDirPropsReader;
+import org.cytoscape.property.CyProperty;
+import org.cytoscape.property.CyProperty.SavePolicy;
+import org.cytoscape.property.SimpleCyProperty;
+import org.cytoscape.session.CySession;
+import org.cytoscape.session.CySessionManager;
 import org.cytoscape.view.model.View;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -72,6 +79,10 @@ public class ModelUtils {
 	public static String DATABASE = "database";
 	public static String NET_SPECIES = "species";
 
+	// Session information
+	public static String showStructureImagesFlag = "showStructureImages";
+	public static String showEnhancedLabelsFlag = "showEnhancedLabels";
+	
 	public static List<EntityIdentifier> getEntityIdsFromJSON(StringManager manager,
 			JSONObject object) {
 		JSONArray tmResults = getResultsFromJSON(object, JSONArray.class);
@@ -862,6 +873,52 @@ public class ModelUtils {
 	}
 
 
+	public static void setStringProperty(StringManager manager,
+			String propertyKey, Boolean propertyValue) {
+		CyProperty<Properties> sessionProperties = getPropertyService(manager, SavePolicy.SESSION_FILE);
+		Properties p = sessionProperties.getProperties();
+		p.setProperty(propertyKey, propertyValue.toString());
+	}
+
+	public static Boolean getStringProperty(StringManager manager,
+			String propertyKey) {
+		CyProperty<Properties> sessionProperties = getPropertyService(manager,
+				SavePolicy.SESSION_FILE);
+		Properties p = sessionProperties.getProperties();
+		if (p.getProperty(propertyKey) != null) 
+			return new Boolean(p.getProperty(propertyKey));
+		return null;
+	}
+	
+	private static CyProperty<Properties> getPropertyService(StringManager manager,
+			SavePolicy policy) {
+			String name = "stringApp";
+			// Do we already have a session with our properties
+			CySessionManager sessionManager = manager.getService(CySessionManager.class);
+			CySession session = sessionManager.getCurrentSession();
+			if (session != null) {
+				Set<CyProperty<?>> sessionProperties = session.getProperties();
+				for (CyProperty<?> cyProp : sessionProperties) {
+					if (cyProp.getName() != null && cyProp.getName().equals(name)) {
+						return (CyProperty<Properties>) cyProp;
+					}
+				}
+			}
+			// Either we have a null session or our properties aren't in this session
+			Properties props = new Properties();
+			CyProperty<Properties> service = new SimpleCyProperty(name, props, Properties.class,
+					SavePolicy.SESSION_FILE);
+			Properties serviceProps = new Properties();
+			serviceProps.setProperty("cyPropertyName", service.getName());
+			manager.registerAllServices(service, serviceProps);
+			return service;
+	}
+
+	public static class ConfigPropsReader extends AbstractConfigDirPropsReader {
+		ConfigPropsReader(SavePolicy policy, String name) {
+			super(name, "stringApp.props", policy);
+		}
+	}
 
 	
 }

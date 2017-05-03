@@ -1,6 +1,8 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
+import org.cytoscape.model.CyNetwork;
 import org.cytoscape.view.model.CyNetworkView;
+import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyle;
 import org.cytoscape.work.AbstractTask;
@@ -30,9 +32,12 @@ public class ShowEnhancedLabelsTask extends AbstractTask {
 			manager.setShowEnhancedLabels(true);
 
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
-		if (vmm.getVisualStyle(netView).getTitle().equals(ViewUtils.STYLE_NAME)) {
-			ViewUtils.updateEnhancedLabels(manager, vmm.getVisualStyle(netView), netView,
-					manager.showEnhancedLabels());
+		CyNetworkViewManager netManager = manager.getService(CyNetworkViewManager.class);
+		for (CyNetworkView currNetView : netManager.getNetworkViewSet()) {
+			if (vmm.getVisualStyle(currNetView).getTitle().startsWith(ViewUtils.STYLE_NAME)) {
+				ViewUtils.updateEnhancedLabels(manager, vmm.getVisualStyle(currNetView), currNetView,
+						manager.showEnhancedLabels());
+			}
 		}
 		netView.updateView();
 		factory.reregister();
