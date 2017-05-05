@@ -32,6 +32,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.GetNetworkTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.FindProteinsTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.OpenEvidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.SetConfidenceTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.SetLabelAttributeTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
@@ -177,6 +178,16 @@ public class CyActivator extends AbstractCyActivator {
 		}
 
 		
+		{
+			SetLabelAttributeTaskFactory setLabel = new SetLabelAttributeTaskFactory(manager);
+			Properties props = new Properties();
+			props.setProperty(PREFERRED_MENU, "Apps.STRING");
+			props.setProperty(TITLE, "Set STRING label attribute");
+			props.setProperty(MENU_GRAVITY, "9.0");
+			props.setProperty(IN_MENU_BAR, "true");
+			registerService(bc, setLabel, NetworkTaskFactory.class, props);
+		}
+
 		{
 			SetConfidenceTaskFactory setConfidence = new SetConfidenceTaskFactory(manager);
 			Properties props = new Properties();

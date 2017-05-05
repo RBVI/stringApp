@@ -117,9 +117,13 @@ public class DrawPill {
 		// For some reason, I can't make the compositing to work right.  The image is transparent,
 		// but when I composite it, the translucent areas come out white.  Doesn't make sense to
 		// me
+		// Note: draw image to be as wide as it is high to not stretch it and draw it in the middle
 		if (image != null) {
 			g2.setClip(nodeShape);
-			g2.drawImage(image, (int)xOff, (int)yOff, (int)bounds.getWidth(), (int)bounds.getHeight(), null);
+			if (bounds.getHeight() <= bounds.getWidth())
+				g2.drawImage(image, (int)(xOff+bounds.getWidth()/2-bounds.getHeight()/2), (int)yOff, (int)bounds.getHeight(), (int)bounds.getHeight(), null);
+			else
+				g2.drawImage(image, (int)(xOff), (int)yOff, (int)bounds.getWidth(), (int)bounds.getWidth(), null);
 			g2.setClip(null);
 		}
 

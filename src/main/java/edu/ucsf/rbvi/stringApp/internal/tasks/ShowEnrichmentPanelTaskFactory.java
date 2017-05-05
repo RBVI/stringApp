@@ -15,6 +15,7 @@ import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class ShowEnrichmentPanelTaskFactory extends AbstractTaskFactory {
 	final StringManager manager;
@@ -56,8 +57,10 @@ public class ShowEnrichmentPanelTaskFactory extends AbstractTaskFactory {
 		CyNetwork net = manager.getCurrentNetwork();
 		if (net == null)
 			return false;
-		// if (ModelUtils.isStringNetwork(net)) return true;
 
-		return true;
+		if (ModelUtils.isStringNetwork(net)) 
+			return true;
+
+		return false;
 	}
 }

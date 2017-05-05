@@ -335,7 +335,7 @@ public class ViewUtils {
 			// Finally, disable the "standard" label passthrough and position
 			{
 				stringStyle.removeVisualMappingFunction(BasicVisualLexicon.NODE_LABEL);
-				stringStyle.removeVisualMappingFunction(lex.lookup(CyNode.class, "NODE_LABEL_POSITION"));
+				// stringStyle.removeVisualMappingFunction(lex.lookup(CyNode.class, "NODE_LABEL_POSITION"));
 			}
 		} else {
 			stringStyle
@@ -350,17 +350,18 @@ public class ViewUtils {
 				stringStyle.addVisualMappingFunction(pMapping);
 			}
 			
-			{
-				VisualProperty labelPosition = lex.lookup(CyNode.class, "NODE_LABEL_POSITION");
-				DiscreteMapping<String,Object> dMapping = 
-					(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 
-											   	                                              labelPosition);
-				Object top = labelPosition.parseSerializableString("N,S,c,0.00,0.00");
-				Object upperRight = labelPosition.parseSerializableString("NE,S,c,0.00,0.00");
-				dMapping.putMapValue("compound", top);
-				dMapping.putMapValue("protein", upperRight);
-				stringStyle.addVisualMappingFunction(dMapping);
-			}
+			// {
+			// VisualProperty labelPosition = lex.lookup(CyNode.class, "NODE_LABEL_POSITION");
+			// DiscreteMapping<String,Object> dMapping =
+			// (DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE,
+			// String.class,
+			// labelPosition);
+			// Object top = labelPosition.parseSerializableString("N,S,c,0.00,0.00");
+			// Object upperRight = labelPosition.parseSerializableString("NE,S,c,0.00,0.00");
+			// dMapping.putMapValue("compound", top);
+			// dMapping.putMapValue("protein", upperRight);
+			// stringStyle.addVisualMappingFunction(dMapping);
+			// }
 		}
 	}
 

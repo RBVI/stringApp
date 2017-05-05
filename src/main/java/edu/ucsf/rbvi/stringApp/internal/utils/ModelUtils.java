@@ -592,8 +592,9 @@ public class ModelUtils {
 			}
 			{
 				// Construct instructions for enhanced graphics label
-				String enhancedLabel = "label: attribute=name labelsize=10 outline=false ";
-				enhancedLabel += "background=true color=black dropShadow=false";
+				String enhancedLabel = "label: attribute=name labelsize=10 ";
+				enhancedLabel += "outline=true outlineColor=white outlineTransparency=95 outlineWidth=10 ";
+				enhancedLabel += "background=false color=black dropShadow=false";
 				row.set(ELABEL_STYLE, enhancedLabel);
 			}
 		}

@@ -67,9 +67,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		availableCommands = registrar.getService(AvailableCommands.class);
 		cyEventHelper = registrar.getService(CyEventHelper.class);
 		stringNetworkMap = new HashMap<>();
-		if (haveEnhancedGraphics())
-			showEnhancedLabels = true;
-		else
+		if (!haveEnhancedGraphics())
 			showEnhancedLabels = false;
 	}
 
