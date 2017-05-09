@@ -89,7 +89,6 @@ public class ExpandNetworkTask extends AbstractTask {
 			ModelUtils.setNetSpecies(network, species);
 		}
 		int taxonId = Species.getSpeciesTaxId(species);
-		String url = "http://api.jensenlab.org/network";
 		Map<String, String> args = new HashMap<>();
 		args.put("existing",existing.trim());
 		if (selected != null && selected.length() > 0)
@@ -113,9 +112,14 @@ public class ExpandNetworkTask extends AbstractTask {
 		}
 		// TODO: Is it OK to always use stitch?
 		args.put("database", Databases.STITCH.getAPIName());
-		monitor.setStatusMessage("Getting additional nodes from: "+url);
+		monitor.setStatusMessage("Getting additional nodes from: "+manager.getNetworkURL());
 
-		JSONObject results = HttpUtils.postJSON(url, args, manager);
+		JSONObject results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+
+		if (results == null) {
+			monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results");
+			return;
+		}
 
 		monitor.setStatusMessage("Augmenting network");
 

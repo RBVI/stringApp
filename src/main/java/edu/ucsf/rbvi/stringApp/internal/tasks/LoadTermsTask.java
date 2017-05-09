@@ -96,6 +96,11 @@ public class LoadTermsTask extends AbstractTask {
 
 		JSONObject results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
 
+		if (results == null) {
+			monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results");
+			return;
+		}
+
 		monitor.setStatusMessage("Augmenting network");
 
 		List<CyEdge> newEdges = new ArrayList<>();

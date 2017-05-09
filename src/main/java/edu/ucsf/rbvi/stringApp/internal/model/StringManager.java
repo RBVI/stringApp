@@ -17,6 +17,7 @@ import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.events.NetworkAddedEvent;
 import org.cytoscape.model.events.NetworkAddedListener;
 import org.cytoscape.property.CyProperty;
+import org.cytoscape.property.CyProperty.SavePolicy;
 import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.session.events.SessionAboutToBeLoadedEvent;
 import org.cytoscape.session.events.SessionAboutToBeLoadedListener;
@@ -55,6 +56,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String STITCHResolveURI = "http://stitch.embl.de/api/";
 	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
 	public static String URI = "http://api.jensenlab.org/";
+	public static String alternativeAPIProperty = "alternativeAPI";
 	public static String CallerIdentity = "string_app";
 	public static String APIVERSION = "String-api-version";
 	public static String RESULT = "QueryResult";
@@ -145,14 +147,14 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	public void setShowImage(boolean set) { 
 		showImage = set; 
-		ModelUtils.setStringProperty(this, ModelUtils.showStructureImagesFlag, new Boolean(set));
+		ModelUtils.setStringProperty(this, ModelUtils.showStructureImagesFlag, new Boolean(set), SavePolicy.SESSION_FILE);
 	}
 
 	public boolean showEnhancedLabels() { return showEnhancedLabels; }
 	
 	public void setShowEnhancedLabels(boolean set) { 
 		showEnhancedLabels = set; 
-		ModelUtils.setStringProperty(this, ModelUtils.showEnhancedLabelsFlag, new Boolean(set));
+		ModelUtils.setStringProperty(this, ModelUtils.showEnhancedLabelsFlag, new Boolean(set), SavePolicy.SESSION_FILE);
 	}
 
 	public void flushEvents() {
@@ -183,20 +185,27 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		}
 	}
 
+	private String getDataAPIURL() {
+		String alternativeAPI = (String) ModelUtils.getStringProperty(this,
+				alternativeAPIProperty, SavePolicy.CONFIG_DIR);
+		if (alternativeAPI != null && alternativeAPI.length() > 0) return alternativeAPI;
+		return URI;
+	}
+	
 	public String getNetworkURL() {
-		return URI+"network";
+		return getDataAPIURL()+"network";
 	}
 
 	public String getTextMiningURL() {
-		return URI+"Textmining";
+		return getDataAPIURL()+"Textmining";
 	}
 
 	public String getEntityQueryURL() {
-		return URI+"EntityQuery";
+		return getDataAPIURL()+"EntityQuery";
 	}
 
 	public String getIntegrationURL() {
-		return URI+"Integration";
+		return getDataAPIURL()+"Integration";
 	}
 
 	public String getResolveURL(String useDATABASE) {
@@ -241,24 +250,25 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	}
 
 	public void handleEvent(SessionLoadedEvent arg0) {
-		Boolean sessionValueLabels = ModelUtils.getStringProperty(this,
-				ModelUtils.showEnhancedLabelsFlag);
+		String sessionValueLabels = ModelUtils.getStringProperty(this,
+				ModelUtils.showEnhancedLabelsFlag, SavePolicy.SESSION_FILE);
 		// System.out.println("show labels: " + sessionValueLabels);
 		if (sessionValueLabels != null) {
-			showEnhancedLabels = sessionValueLabels;
+			showEnhancedLabels = Boolean.parseBoolean(sessionValueLabels);
 		} else {
 			ModelUtils.setStringProperty(this, ModelUtils.showEnhancedLabelsFlag,
-					new Boolean(showEnhancedLabels));
+					new Boolean(showEnhancedLabels), SavePolicy.SESSION_FILE);
 		}
 		labelsTaskFactory.reregister();
-		
-		Boolean sessionValueImage = ModelUtils.getStringProperty(this, ModelUtils.showStructureImagesFlag);
+
+		String sessionValueImage = ModelUtils.getStringProperty(this,
+				ModelUtils.showStructureImagesFlag, SavePolicy.SESSION_FILE);
 		// System.out.println("show image: " + sessionValueImage);
 		if (sessionValueImage != null) {
-			showImage = sessionValueImage;
+			showImage = Boolean.parseBoolean(sessionValueImage);
 		} else {
 			ModelUtils.setStringProperty(this, ModelUtils.showStructureImagesFlag,
-					new Boolean(showImage));
+					new Boolean(showImage), SavePolicy.SESSION_FILE);
 		}
 		imagesTaskFactory.reregister();
 	}

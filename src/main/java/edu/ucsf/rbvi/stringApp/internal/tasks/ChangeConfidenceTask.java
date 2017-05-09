@@ -95,12 +95,14 @@ public class ChangeConfidenceTask extends AbstractTask {
 			args.put("maxscore", Float.toString(currentConfidence));
 			JSONObject results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
 
-			// This may change...
-			List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, database);
-
-			monitor.setStatusMessage("Adding "+newEdges.size()+" edges");
-
-			ModelUtils.setConfidence(network, confidence.getValue());
+			if (results != null) {
+				// This may change...
+				List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, database);
+	
+				monitor.setStatusMessage("Adding "+newEdges.size()+" edges");
+	
+				ModelUtils.setConfidence(network, confidence.getValue());
+			}
 		}
 
 		// If we have a view, re-apply the style and layout

@@ -879,22 +879,22 @@ public class ModelUtils {
 
 
 	public static void setStringProperty(StringManager manager,
-			String propertyKey, Boolean propertyValue) {
-		CyProperty<Properties> sessionProperties = getPropertyService(manager, SavePolicy.SESSION_FILE);
+			String propertyKey, Object propertyValue, SavePolicy savePolicy) {
+		CyProperty<Properties> sessionProperties = getPropertyService(manager, savePolicy);
 		Properties p = sessionProperties.getProperties();
 		p.setProperty(propertyKey, propertyValue.toString());
 	}
 
-	public static Boolean getStringProperty(StringManager manager,
-			String propertyKey) {
+	public static String getStringProperty(StringManager manager,
+			String propertyKey, SavePolicy savePolicy) {
 		CyProperty<Properties> sessionProperties = getPropertyService(manager,
-				SavePolicy.SESSION_FILE);
+				savePolicy);
 		Properties p = sessionProperties.getProperties();
 		if (p.getProperty(propertyKey) != null) 
-			return new Boolean(p.getProperty(propertyKey));
+			return p.getProperty(propertyKey);
 		return null;
 	}
-	
+
 	private static CyProperty<Properties> getPropertyService(StringManager manager,
 			SavePolicy policy) {
 			String name = "stringApp";
