@@ -187,19 +187,19 @@ public class HttpUtils {
 		CloseableHttpClient client = HttpClients.createDefault();
 		HttpPost request = new HttpPost(url);
 		List<NameValuePair> nvps = HttpUtils.getArguments(queryMap);
-		System.out.println(
-				"connection setup " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+		//System.out.println(
+		//		"connection setup " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
 		time = System.currentTimeMillis();
 		Object xmlData = null;
 		CloseableHttpResponse response1 = null;
 		try {
 			request.setEntity(new UrlEncodedFormEntity(nvps));
-			System.out.println(
-					"set entity " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+			//System.out.println(
+			//		"set entity " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
 			time = System.currentTimeMillis();
 			response1 = client.execute(request);
-			System.out.println(
-					"execute request " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+			//System.out.println(
+			//		"execute request " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
 			time = System.currentTimeMillis();
 			HttpEntity entity1 = response1.getEntity();
 			InputStream entityStream = entity1.getContent();
@@ -215,8 +215,8 @@ public class HttpUtils {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			xmlData = builder.parse(entityStream);
-			System.out.println(
-					"actual DOM parsing " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+			//System.out.println(
+			//		"actual DOM parsing " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
 			time = System.currentTimeMillis();
 
 			// and ensure it is fully consumed
@@ -259,6 +259,11 @@ public class HttpUtils {
 			// time = System.currentTimeMillis();
 			HttpEntity entity1 = response1.getEntity();
 			InputStream entityStream = entity1.getContent();
+			// BufferedReader reader = new BufferedReader(new InputStreamReader(entityStream));
+			// String lin;
+			// while ((lin = reader.readLine()) != null) {
+			// System.out.println(lin);
+			// }
 			// System.out.println(
 			// "get content: " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
 			// time = System.currentTimeMillis();

@@ -322,7 +322,7 @@ public class ViewUtils {
 				Object upperRight = customGraphicsP.parseSerializableString("NE,C,c,0.00,0.00");
 				stringStyle.setDefaultValue(customGraphicsP, upperRight);
 				if (useStitch) {
-					Object top = customGraphicsP.parseSerializableString("N,C,c,0.00,-8.00");
+					Object top = customGraphicsP.parseSerializableString("N,C,c,0.00,-5.00");
 					DiscreteMapping<String,Object> dMapping = 
 						(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 
 											   	                                              customGraphicsP);

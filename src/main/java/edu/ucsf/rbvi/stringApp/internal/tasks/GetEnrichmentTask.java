@@ -186,13 +186,9 @@ public class GetEnrichmentTask extends AbstractTask {
 		// System.out.println(enrichmentCategory);
 		// double time = System.currentTimeMillis();
 		// parse using DOM
-		// Object results = HttpUtils.postXMLDOM(EnrichmentTerm.enrichmentURL, queryMap, manager);
-		// System.out.println(
-		// "get dom xml data as a dom document: " + (System.currentTimeMillis() - time) / 1000 + "
-		// seconds.");
-		// time = System.currentTimeMillis();
-		// enrichmentTerms = ModelUtils.parseXMLDOM(results, cutoff, network, stringNodesMap,
-		// manager);
+		//Object results = HttpUtils.postXMLDOM(EnrichmentTerm.enrichmentURL, queryMap, manager);
+		//enrichmentTerms = ModelUtils.parseXMLDOM(results, cutoff, network, stringNodesMap, manager);
+		//System.out.println("dom output: " + enrichmentTerms.size());
 		// System.out
 		// .println("from dom document to java structure: " + (System.currentTimeMillis() - time) /
 		// 1000 + " seconds.");
@@ -200,13 +196,17 @@ public class GetEnrichmentTask extends AbstractTask {
 		// parse using SAX
 		EnrichmentSAXHandler myHandler = new EnrichmentSAXHandler(network, stringNodesMap, cutoff);
 		// TODO: change for release
-		HttpUtils.postXMLSAX(EnrichmentTerm.enrichmentURLTest, queryMap, manager, myHandler);
+		HttpUtils.postXMLSAX(EnrichmentTerm.enrichmentURL, queryMap, manager, myHandler);
 		if (!myHandler.isStatusOK()) {
 			// monitor.showMessage(Level.ERROR, "Error returned by enrichment webservice: " +
 			// myHandler.getStatusCode());
 			// return false;
-			throw new Exception(
+			if (myHandler.getStatusCode() != null)
+				throw new Exception(
 					"Error returned by enrichment webservice: " + myHandler.getStatusCode());
+			else
+				throw new Exception(
+						"Uknown error while receiving or parsing output from the enrichment service.");
 		} else if (myHandler.getWarning() != null) {
 			monitor.showMessage(Level.WARN,
 					"Warning returned by enrichment webservice: " + myHandler.getWarning());
@@ -305,7 +305,8 @@ public class GetEnrichmentTask extends AbstractTask {
 		for (CyNode node : network.getNodeList()) {
 			String stringID = network.getRow(node).get(ModelUtils.STRINGID, String.class);
 			String type = network.getRow(node).get(ModelUtils.TYPE, String.class);
-			if (stringID != null && stringID.length() > 0 && type != null && type.equals("protein")) {
+			if (stringID != null && stringID.length() > 0 && type != null
+					&& type.equals("protein")) {
 				str.append(stringID + "\n");
 				analyzedNodes.add(node);
 			}
