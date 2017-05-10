@@ -158,7 +158,10 @@ public class GetTermsPanel extends JPanel {
 		searchPanel.setPreferredSize(new Dimension(600,400));
 		EasyGBC c = new EasyGBC();
 
-		JLabel searchLabel = new JLabel("Enter protein or compound names:");
+		String label = "Enter protein names or identifiers:";
+		if (useDATABASE.equals(Databases.STITCH.getAPIName()))
+			label = "Enter protein or compound names or identifiers:";
+		JLabel searchLabel = new JLabel(label);
 		c.noExpand().anchor("northwest").insets(0,5,0,5);
 		searchPanel.add(searchLabel, c);
 		searchTerms = new JTextArea();
