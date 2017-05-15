@@ -274,8 +274,13 @@ public class EnrichmentCytoPanel extends JPanel
 
 		public Component getTableCellRendererComponent(JTable table, Object value,
 				boolean isSelected, boolean hasFocus, int row, int column) {
-			if ((Double) value < 0.001)
-				value = formatter.format((Number) value);
+			try {
+				if (value != null && (double) value < 0.001) {
+					value = formatter.format((Number) value);
+				}
+			} catch (Exception ex) {
+				// ignore and return original value
+			}
 			return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
 					column);
 		}
