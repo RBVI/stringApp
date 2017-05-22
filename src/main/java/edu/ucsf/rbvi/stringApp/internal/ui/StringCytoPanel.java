@@ -124,6 +124,10 @@ public class StringCytoPanel extends JPanel
 			String message = "";
 			Collection<RowSetRecord> record = arg0.getPayloadCollection();
 			for (RowSetRecord r: record) {
+				if (!r.getColumn().equals(CyNetwork.SELECTED)) {
+					continue;
+				}
+				
 				// Get the node
 				CyNode node = network.getNode(r.getRow().get(CyNetwork.SUID, Long.class));
 				if (node == null) continue;
