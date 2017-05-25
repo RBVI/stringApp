@@ -21,6 +21,8 @@ public class GetNetworkTaskFactory extends AbstractTaskFactory {
 			return new TaskIterator(new DiseaseQueryTask(manager));
 		else if (type.equals("pubmed"))
 			return new TaskIterator(new PubmedQueryTask(manager));
+		else if (type.equals("compound"))
+			return new TaskIterator(new CompoundQueryTask(manager));
 		return null;
 	}
 }
