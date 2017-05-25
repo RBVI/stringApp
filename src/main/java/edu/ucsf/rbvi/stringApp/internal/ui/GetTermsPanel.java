@@ -91,6 +91,8 @@ public class GetTermsPanel extends JPanel {
 	private String useDATABASE = Databases.STRING.getAPIName();
 	private String netSpecies = "Homo sapiens";
 	private boolean queryAddNodes = false;
+	private int confidence = 40;
+	private int additionalNodes = 0;
 
 	public GetTermsPanel(final StringManager manager, final String useDATABASE, boolean queryAddNodes) {
 		super(new GridBagLayout());
@@ -100,11 +102,20 @@ public class GetTermsPanel extends JPanel {
 		init();
 	}
 
-	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, String useDATABASE, String aNetSpecies, boolean queryAddNodes) {
+	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, 
+	                     String useDATABASE, String aNetSpecies, boolean queryAddNodes) {
+		this(manager, stringNetwork, useDATABASE, aNetSpecies, queryAddNodes, 40, 0);
+	}
+
+	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, 
+	                     String useDATABASE, String aNetSpecies, boolean queryAddNodes,
+											 int confidence, int additionalNodes) {
 		super(new GridBagLayout());
 		this.manager = manager;
 		this.stringNetwork = stringNetwork;
 		this.initialStringNetwork = stringNetwork;
+		this.confidence = confidence;
+		this.additionalNodes = additionalNodes;
 		this.useDATABASE = useDATABASE;
 		if (aNetSpecies != null) {
 			this.netSpecies = aNetSpecies;
@@ -274,7 +285,7 @@ public class GetTermsPanel extends JPanel {
 			}
 			confidenceSlider.setLabelTable(labels);
 			confidenceSlider.setPaintLabels(true);
-			confidenceSlider.setValue(40);
+			confidenceSlider.setValue(confidence);
 
 			confidenceSlider.addChangeListener(new ChangeListener() {
 				@Override
@@ -341,7 +352,7 @@ public class GetTermsPanel extends JPanel {
 			}
 			additionalNodesSlider.setLabelTable(labels);
 			additionalNodesSlider.setPaintLabels(true);
-			additionalNodesSlider.setValue(0);
+			additionalNodesSlider.setValue(additionalNodes);
 
 			additionalNodesSlider.addChangeListener(new ChangeListener() {
 				@Override
@@ -466,7 +477,7 @@ public class GetTermsPanel extends JPanel {
 		manager.execute(factory.createTaskIterator());
 	}
 
-	void createResolutionPanel() {
+	public void createResolutionPanel() {
 		mainSearchPanel.removeAll();
 		mainSearchPanel.revalidate();
 		mainSearchPanel.repaint();

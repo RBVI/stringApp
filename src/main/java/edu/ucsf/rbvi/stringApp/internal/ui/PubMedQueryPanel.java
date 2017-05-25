@@ -87,10 +87,13 @@ public class PubMedQueryPanel extends JPanel {
 	NumberFormat formatter = new DecimalFormat("#0.00");
 	NumberFormat intFormatter = new DecimalFormat("#0");
 	private boolean ignore = false;
+	private final Species species;
+	private int confidence = 40;
 
 	public PubMedQueryPanel(final StringManager manager) {
 		super(new GridBagLayout());
 		this.manager = manager;
+		this.species = null;
 		init();
 	}
 
@@ -99,7 +102,24 @@ public class PubMedQueryPanel extends JPanel {
 		this.manager = manager;
 		this.stringNetwork = stringNetwork;
 		this.initialStringNetwork = stringNetwork;
+		this.species = null;
 		init();
+	}
+
+	public PubMedQueryPanel(final StringManager manager, StringNetwork stringNetwork, String query,
+	                        final Species species, int confidence) {
+		super(new GridBagLayout());
+		this.manager = manager;
+		this.stringNetwork = stringNetwork;
+		this.initialStringNetwork = stringNetwork;
+		this.species = species;
+		this.confidence = confidence;
+		init();
+		pubmedQuery.setText(query);
+	}
+
+	public void doImport() {
+		importButton.doClick();
 	}
 
 	private void init() {
@@ -168,12 +188,16 @@ public class PubMedQueryPanel extends JPanel {
 		speciesPanel.add(speciesLabel, c);
 		speciesCombo = new JComboBox<Species>(speciesList.toArray(new Species[0]));
 
-		// Set Human as the default
-		for (Species s: speciesList) {
-			if (s.toString().equals("Homo sapiens")) {
-				speciesCombo.setSelectedItem(s);
-				break;
+		if (species == null) {
+			// Set Human as the default
+			for (Species s: speciesList) {
+				if (s.toString().equals("Homo sapiens")) {
+					speciesCombo.setSelectedItem(s);
+					break;
+				}
 			}
+		} else {
+			speciesCombo.setSelectedItem(species);
 		}
 		c.right().expandHoriz().insets(0,5,0,5);
 		speciesPanel.add(speciesCombo, c);
@@ -292,7 +316,7 @@ public class PubMedQueryPanel extends JPanel {
 			}
 			confidenceSlider.setLabelTable(labels);
 			confidenceSlider.setPaintLabels(true);
-			confidenceSlider.setValue(40);
+			confidenceSlider.setValue(confidence);
 
 			confidenceSlider.addChangeListener(new ChangeListener() {
 				@Override
