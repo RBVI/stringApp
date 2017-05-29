@@ -55,7 +55,7 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	private SearchOptionsPanel optionsPanel = null;
 
 	private static final Icon icon = new ImageIcon(
-      StringSearchTaskFactory.class.getResource("/images/string_logo.png"));
+      StringSearchTaskFactory.class.getResource("/images/pubmed_logo.png"));
 
 	private static URL stringURL() {
 		try {

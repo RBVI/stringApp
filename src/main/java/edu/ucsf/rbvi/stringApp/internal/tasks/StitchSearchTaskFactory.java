@@ -44,7 +44,7 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 	private SearchOptionsPanel optionsPanel = null;
 
 	private static final Icon icon = new ImageIcon(
-      StringSearchTaskFactory.class.getResource("/images/string_logo.png"));
+      StringSearchTaskFactory.class.getResource("/images/stitch_logo.png"));
 
 	private static URL stitchURL() {
 		try {
