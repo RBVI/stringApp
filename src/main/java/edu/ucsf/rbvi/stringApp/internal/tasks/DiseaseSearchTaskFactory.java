@@ -54,7 +54,7 @@ public class DiseaseSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	private StringNetwork stringNetwork = null;
 
 	private static final Icon icon = new ImageIcon(
-      StringSearchTaskFactory.class.getResource("/images/string_logo.png"));
+      StringSearchTaskFactory.class.getResource("/images/disease_logo.png"));
 
 	private static URL stringURL() {
 		try {
