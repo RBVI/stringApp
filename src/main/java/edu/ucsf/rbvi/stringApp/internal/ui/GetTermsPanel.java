@@ -211,7 +211,7 @@ public class GetTermsPanel extends JPanel {
 		c.noExpand().insets(0,5,0,5);
 		speciesPanel.add(speciesLabel, c);
 		speciesCombo = new JComboBox<Species>(speciesList.toArray(new Species[1]));
-		// JComboBoxDecorator.decorate(speciesCombo, true, true); 
+		JComboBoxDecorator.decorate(speciesCombo, true, true); 
 
 		// Set Human as the default
 		for (Species s: speciesList) {
