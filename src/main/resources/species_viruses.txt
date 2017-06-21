@@ -1,0 +1,2425 @@
+## taxon_id	STRING_type	STRING_name_compact	official_name_NCBI	interaction_partners	color
+394	periphery	Sinorhizobium fredii NGR234	Sinorhizobium fredii NGR234		#92B4AF
+882	periphery	Desulfovibrio vulgaris Hildenborough	Desulfovibrio vulgaris str. Hildenborough		#92B4AF
+883	periphery	Desulfovibrio vulgaris Miyazaki	Desulfovibrio vulgaris str. 'Miyazaki F'		#92B4AF
+1140	periphery	Synechococcus elongatus PCC7942	Synechococcus elongatus PCC 7942		#92B4AF
+1148	core	Synechocystis sp. PCC6803	Synechocystis sp. PCC 6803		#92B4AF
+2110	periphery	Mycoplasma agalactiae	Mycoplasma agalactiae		#92B4AF
+2850	core	Phaeodactylum tricornutum	Phaeodactylum tricornutum		#92B4AF
+3055	core	Chlamydomonas reinhardtii	Chlamydomonas reinhardtii		#92B4AF
+3218	core	Physcomitrella patens	Physcomitrella patens		#92B4AF
+3694	core	Populus trichocarpa	Populus trichocarpa		#92B4AF
+3702	core	Arabidopsis thaliana	Arabidopsis thaliana	10641	#92B4AF
+3711	core	Brassica rapa	Brassica rapa	12183	#92B4AF
+3847	core	Glycine max	Glycine max	12317,12321,12139,10651	#92B4AF
+4081	core	Solanum lycopersicum	Solanum lycopersicum	10840,370833,591166,12295,116056,49267,12321,11613,12145,12216	#92B4AF
+4113	core	Solanum tuberosum	Solanum tuberosum	10840,370833,12167,12321,37128,12216,12045,12183	#92B4AF
+4513	core	Hordeum vulgare	Hordeum vulgare	28375,12465,12040,12327,10821,12331	#92B4AF
+4533	periphery	Oryza brachyantha	Oryza brachyantha		#92B4AF
+4538	periphery	Oryza glaberrima	Oryza glaberrima	10821	#92B4AF
+4555	core	Setaria italica	Setaria italica	28355,12331	#92B4AF
+4558	periphery	Sorghum bicolor	Sorghum bicolor	279896,28355	#92B4AF
+4577	core	Zea mays	Zea mays	279896,59749,12040,10821,12138,12331,137556	#92B4AF
+4641	core	Musa acuminata	Musa acuminata		#92B4AF
+4787	core	Phytophthora infestans	Phytophthora infestans		#92B4AF
+4896	core	Schizosaccharomyces pombe	Schizosaccharomyces pombe		#92B4AF
+4929	periphery	Pichia guilliermondii	Pichia guilliermondii		#92B4AF
+4932	core	Saccharomyces cerevisiae	Saccharomyces cerevisiae	11008	#92B4AF
+4950	core	Torulaspora delbrueckii	Torulaspora delbrueckii		#92B4AF
+4952	core	Yarrowia lipolytica	Yarrowia lipolytica		#92B4AF
+4956	periphery	Zygosaccharomyces rouxii	Zygosaccharomyces rouxii		#92B4AF
+5022	core	Leptosphaeria maculans	Leptosphaeria maculans		#92B4AF
+5057	periphery	Aspergillus clavatus	Aspergillus clavatus		#92B4AF
+5059	periphery	Aspergillus flavus	Aspergillus flavus		#92B4AF
+5061	periphery	Aspergillus niger	Aspergillus niger		#92B4AF
+5062	periphery	Aspergillus oryzae	Aspergillus oryzae		#92B4AF
+5085	core	Aspergillus fumigatus	Aspergillus fumigatus		#92B4AF
+5141	core	Neurospora crassa	Neurospora crassa		#92B4AF
+5180	periphery	Sclerotinia sclerotiorum	Sclerotinia sclerotiorum		#92B4AF
+5270	core	Ustilago maydis	Ustilago maydis		#92B4AF
+5297	core	Puccinia graminis	Puccinia graminis		#92B4AF
+5306	periphery	Phanerochaete chrysosporium	Phanerochaete chrysosporium		#92B4AF
+5507	periphery	Fusarium oxysporum	Fusarium oxysporum		#92B4AF
+5518	core	Gibberella zeae	Gibberella zeae		#92B4AF
+5661	periphery	Leishmania donovani	Leishmania donovani		#92B4AF
+5664	periphery	Leishmania major	Leishmania major	58103	#92B4AF
+5691	periphery	Trypanosoma brucei	Trypanosoma brucei		#92B4AF
+5722	core	Trichomonas vaginalis	Trichomonas vaginalis	674953	#92B4AF
+5759	periphery	Entamoeba histolytica	Entamoeba histolytica		#92B4AF
+5762	periphery	Naegleria gruberi	Naegleria gruberi		#92B4AF
+5786	core	Dictyostelium purpureum	Dictyostelium purpureum		#92B4AF
+5811	periphery	Toxoplasma gondii	Toxoplasma gondii		#92B4AF
+5821	periphery	Plasmodium berghei	Plasmodium berghei		#92B4AF
+5825	periphery	Plasmodium chabaudi	Plasmodium chabaudi		#92B4AF
+5833	core	Plasmodium falciparum	Plasmodium falciparum		#92B4AF
+5850	periphery	Plasmodium knowlesi	Plasmodium knowlesi		#92B4AF
+5855	periphery	Plasmodium vivax	Plasmodium vivax		#92B4AF
+5911	periphery	Tetrahymena thermophila	Tetrahymena thermophila		#92B4AF
+6085	core	Hydra magnipapillata	Hydra magnipapillata		#92B4AF
+6183	core	Schistosoma mansoni	Schistosoma mansoni		#92B4AF
+6238	periphery	Caenorhabditis briggsae	Caenorhabditis briggsae		#92B4AF
+6239	core	Caenorhabditis elegans	Caenorhabditis elegans		#92B4AF
+6334	periphery	Trichinella spiralis	Trichinella spiralis		#92B4AF
+6669	core	Daphnia pulex	Daphnia pulex		#92B4AF
+6945	core	Ixodes scapularis	Ixodes scapularis		#92B4AF
+7029	core	Acyrthosiphon pisum	Acyrthosiphon pisum		#92B4AF
+7070	periphery	Tribolium castaneum	Tribolium castaneum		#92B4AF
+7091	core	Bombyx mori	Bombyx mori	1513210,1285589	#92B4AF
+7159	periphery	Aedes aegypti	Aedes aegypti	37124,11070,11053,11089,35304	#92B4AF
+7165	periphery	Anopheles gambiae	Anopheles gambiae		#92B4AF
+7176	periphery	Culex quinquefasciatus	Culex quinquefasciatus		#92B4AF
+7217	periphery	Drosophila ananassae	Drosophila ananassae		#92B4AF
+7222	periphery	Drosophila grimshawi	Drosophila grimshawi		#92B4AF
+7227	core	Drosophila melanogaster	Drosophila melanogaster	48981	#92B4AF
+7237	periphery	Drosophila pseudoobscura	Drosophila pseudoobscura		#92B4AF
+7244	periphery	Drosophila virilis	Drosophila virilis		#92B4AF
+7245	periphery	Drosophila yakuba	Drosophila yakuba		#92B4AF
+7260	periphery	Drosophila willistoni	Drosophila willistoni		#92B4AF
+7425	core	Nasonia vitripennis	Nasonia vitripennis		#92B4AF
+7460	core	Apis mellifera	Apis mellifera	92444	#92B4AF
+7668	periphery	Strongylocentrotus purpuratus	Strongylocentrotus purpuratus		#92B4AF
+7719	core	Ciona intestinalis	Ciona intestinalis		#92B4AF
+7739	core	Branchiostoma floridae	Branchiostoma floridae		#92B4AF
+7757	periphery	Petromyzon marinus	Petromyzon marinus		#92B4AF
+7897	core	Latimeria chalumnae	Latimeria chalumnae		#92B4AF
+7955	periphery	Danio rerio	Danio rerio		#92B4AF
+8049	core	Gadus morhua	Gadus morhua	55987	#92B4AF
+8083	core	Xiphophorus maculatus	Xiphophorus maculatus		#92B4AF
+8090	periphery	Oryzias latipes	Oryzias latipes		#92B4AF
+8128	core	Oreochromis niloticus	Oreochromis niloticus		#92B4AF
+8364	core	Xenopus Silurana	Xenopus (Silurana) tropicalis		#92B4AF
+9031	core	Gallus gallus	Gallus gallus	1511865,70796,11176,10995,10390,11886,694014,12618	#92B4AF
+9103	periphery	Meleagris gallopavo	Meleagris gallopavo	38525,1239437,10995	#92B4AF
+9258	core	Ornithorhynchus anatinus	Ornithorhynchus anatinus		#92B4AF
+9305	core	Sarcophilus harrisii	Sarcophilus harrisii		#92B4AF
+9315	periphery	Macropus eugenii	Macropus eugenii		#92B4AF
+9361	periphery	Dasypus novemcinctus	Dasypus novemcinctus		#92B4AF
+9371	periphery	Echinops telfairi	Echinops telfairi		#92B4AF
+9478	periphery	Tarsius syrichta	Tarsius syrichta		#92B4AF
+9483	core	Callithrix jacchus	Callithrix jacchus		#92B4AF
+9544	periphery	Macaca mulatta	Macaca mulatta		#92B4AF
+9593	core	Gorilla gorilla	Gorilla gorilla		#92B4AF
+9598	periphery	Pan troglodytes	Pan troglodytes	37124,11642,12092,1330524,10407	#92B4AF
+9601	periphery	Pongo abelii	Pongo abelii		#92B4AF
+9606	core	Homo sapiens	Homo sapiens	37296,687379,11269,38804,10298,1239565,32603,10279,11137,10258,11320,11053,11520,11983,1330524,10255,337042,90961,195054,99182,11034,11033,694009,11072,334203,11070,10407,63330,12461,334205,11623,333926,11620,11709,12092,194441,1348384,11588,687340,138950,687369,10335,10310,147711,186538,10359,35304,35305,37124,11089,11277,32604,11041,77763,10376,11082,95342,11234,46839,11069,12104,12475,11676,145856,194440,11060,194443,162145,11161,11250,11595,337041,337051,11552,11591,11593,11103,11292,36427,129951,11599,1511900	#92B4AF
+9615	core	Canis lupus	Canis lupus familiaris	35258,687385,12538	#92B4AF
+9646	core	Ailuropoda melanoleuca	Ailuropoda melanoleuca		#92B4AF
+9669	core	Mustela putorius	Mustela putorius furo		#92B4AF
+9685	periphery	Felis catus	Felis catus	12455,687384,11978,12538	#92B4AF
+9739	core	Tursiops truncatus	Tursiops truncatus		#92B4AF
+9785	core	Loxodonta africana	Loxodonta africana	12110	#92B4AF
+9796	periphery	Equus caballus	Equus caballus	312185,11072,12657,63330,11277,333919	#92B4AF
+9813	periphery	Procavia capensis	Procavia capensis		#92B4AF
+9823	periphery	Sus scrofa	Sus scrofa	12110,10276,35612,12104,11072,77763,11552,133704,687386,11320,11277,118140,10497,1218488,12288	#92B4AF
+9913	periphery	Bos taurus	Bos taurus	12110,12455,696856,1511873,11072,77763,40537,11099,40051,10561,11277,11593,74501,11303,11588,10245	#92B4AF
+9986	periphery	Oryctolagus cuniculus	Oryctolagus cuniculus	12455,10273,11976,10271	#92B4AF
+10020	periphery	Dipodomys ordii	Dipodomys ordii		#92B4AF
+10090	core	Mus musculus	Mus musculus	11191,11757,12104,11623,11786,694005,1511908,10366	#92B4AF
+10116	periphery	Rattus norvegicus	Rattus norvegicus	11191,12110	#92B4AF
+10141	periphery	Cavia porcellus	Cavia porcellus		#92B4AF
+10228	core	Trichoplax adhaerens	Trichoplax adhaerens		#92B4AF
+12957	core	Atta cephalotes	Atta cephalotes		#92B4AF
+13037	core	Danaus plexippus	Danaus plexippus		#92B4AF
+13616	core	Monodelphis domestica	Monodelphis domestica		#92B4AF
+13684	periphery	Phaeosphaeria nodorum	Phaeosphaeria nodorum		#92B4AF
+13735	core	Pelodiscus sinensis	Pelodiscus sinensis		#92B4AF
+15368	periphery	Brachypodium distachyon	Brachypodium distachyon		#92B4AF
+28377	periphery	Anolis carolinensis	Anolis carolinensis		#92B4AF
+29760	periphery	Vitis vinifera	Vitis vinifera	35288,55951,103722	#92B4AF
+29850	core	Gaeumannomyces graminis	Gaeumannomyces graminis		#92B4AF
+29875	core	Hypocrea virens	Hypocrea virens		#92B4AF
+30608	periphery	Microcebus murinus	Microcebus murinus		#92B4AF
+30611	core	Otolemur garnettii	Otolemur garnettii		#92B4AF
+31033	periphery	Takifugu rubripes	Takifugu rubripes		#92B4AF
+31234	periphery	Caenorhabditis remanei	Caenorhabditis remanei		#92B4AF
+31964	core	Clavibacter michiganensis sepedonicus	Clavibacter michiganensis subsp. sepedonicus		#92B4AF
+32049	core	Synechococcus sp. PCC7002	Synechococcus sp. PCC 7002		#92B4AF
+32051	periphery	Synechococcus sp. WH7803	Synechococcus sp. WH 7803		#92B4AF
+33169	core	Eremothecium gossypii	Eremothecium gossypii		#92B4AF
+33178	periphery	Aspergillus terreus	Aspergillus terreus		#92B4AF
+34740	periphery	Heliconius melpomene	Heliconius melpomene		#92B4AF
+35128	core	Thalassiosira pseudonana	Thalassiosira pseudonana		#92B4AF
+36630	core	Neosartorya fischeri	Neosartorya fischeri		#92B4AF
+36870	core	Wigglesworthia glossinidia Gb	Wigglesworthia glossinidia endosymbiont of Glossina brevipalpis		#92B4AF
+37347	periphery	Tupaia belangeri	Tupaia belangeri		#92B4AF
+37692	core	Phytoplasma mali	Candidatus Phytoplasma mali		#92B4AF
+39416	periphery	Tuber melanosporum	Tuber melanosporum		#92B4AF
+39946	periphery	Oryza sativa Indica	Oryza sativa Indica Group		#92B4AF
+39947	core	Oryza sativa Japonica	Oryza sativa Japonica Group		#92B4AF
+40041	periphery	Streptococcus equi	Streptococcus equi subsp. zooepidemicus		#92B4AF
+40559	core	Botryotinia fuckeliana	Botryotinia fuckeliana	129395,174142	#92B4AF
+41431	periphery	Cyanothece sp. PCC8801	Cyanothece sp. PCC 8801		#92B4AF
+43151	periphery	Anopheles darlingi	Anopheles darlingi		#92B4AF
+43179	core	Ictidomys tridecemlineatus	Ictidomys tridecemlineatus		#92B4AF
+43989	periphery	Cyanothece sp. ATCC51142	Cyanothece sp. ATCC 51142		#92B4AF
+44689	core	Dictyostelium discoideum	Dictyostelium discoideum		#92B4AF
+45157	periphery	Cyanidioschyzon merolae	Cyanidioschyzon merolae		#92B4AF
+45351	periphery	Nematostella vectensis	Nematostella vectensis		#92B4AF
+50743	periphery	unidentified eubacterium SCB49	unidentified eubacterium SCB49		#92B4AF
+51453	periphery	Hypocrea jecorina	Hypocrea jecorina		#92B4AF
+51511	periphery	Ciona savignyi	Ciona savignyi		#92B4AF
+52598	core	Sulfitobacter sp. EE36	Sulfitobacter sp. EE-36		#92B4AF
+54126	periphery	Pristionchus pacificus	Pristionchus pacificus		#92B4AF
+56780	core	Syntrophus aciditrophicus	Syntrophus aciditrophicus SB		#92B4AF
+58051	core	Moritella sp. PE36	Moritella sp. PE36		#92B4AF
+59196	core	Rickettsiella grylli	Rickettsiella grylli		#92B4AF
+59374	core	Fibrobacter succinogenes	Fibrobacter succinogenes subsp. succinogenes S85		#92B4AF
+59463	core	Myotis lucifugus	Myotis lucifugus		#92B4AF
+59689	periphery	Arabidopsis lyrata	Arabidopsis lyrata		#92B4AF
+59729	core	Taeniopygia guttata	Taeniopygia guttata		#92B4AF
+59748	periphery	Phytoplasma australiense	Candidatus Phytoplasma australiense		#92B4AF
+59919	periphery	Prochlorococcus marinus pastoris	Prochlorococcus marinus subsp. pastoris str. CCMP1986		#92B4AF
+59931	periphery	Synechococcus sp. WH7805	Synechococcus sp. WH 7805		#92B4AF
+61853	core	Nomascus leucogenys	Nomascus leucogenys		#92B4AF
+62928	core	Azoarcus sp. BH72	Azoarcus sp. BH72		#92B4AF
+62977	core	Acinetobacter sp. ADP1	Acinetobacter sp. ADP1		#92B4AF
+63737	core	Nostoc punctiforme	Nostoc punctiforme PCC 73102		#92B4AF
+64091	core	Halobacterium sp. NRC1	Halobacterium sp. NRC-1		#92B4AF
+64471	periphery	Synechococcus sp. CC9311	Synechococcus sp. CC9311		#92B4AF
+65071	core	Pythium ultimum	Pythium ultimum		#92B4AF
+65393	core	Cyanothece sp. PCC7424	Cyanothece sp. PCC 7424		#92B4AF
+66692	periphery	Bacillus clausii	Bacillus clausii KSM-K16		#92B4AF
+67593	periphery	Phytophthora sojae	Phytophthora sojae		#92B4AF
+69014	periphery	Thermococcus kodakarensis	Thermococcus kodakarensis KOD1		#92B4AF
+69042	periphery	Synechococcus sp. WH5701	Synechococcus sp. WH 5701		#92B4AF
+69293	core	Gasterosteus aculeatus	Gasterosteus aculeatus		#92B4AF
+70448	core	Ostreococcus tauri	Ostreococcus tauri		#92B4AF
+70601	periphery	Pyrococcus horikoshii	Pyrococcus horikoshii OT3		#92B4AF
+71421	core	Haemophilus influenzae	Haemophilus influenzae Rd KW20		#92B4AF
+74546	periphery	Prochlorococcus marinus MIT9312	Prochlorococcus marinus str. MIT 9312		#92B4AF
+74547	periphery	Prochlorococcus marinus MIT9313	Prochlorococcus marinus str. MIT 9313		#92B4AF
+76114	core	Aromatoleum aromaticum	Aromatoleum aromaticum EbN1		#92B4AF
+76869	periphery	Pseudomonas putida GB1	Pseudomonas putida GB-1		#92B4AF
+78245	core	Xanthobacter autotrophicus	Xanthobacter autotrophicus Py2		#92B4AF
+79929	periphery	Methanothermobacter marburgensis	Methanothermobacter marburgensis str. Marburg		#92B4AF
+83332	periphery	Mycobacterium tuberculosis H37Rv	Mycobacterium tuberculosis H37Rv		#92B4AF
+83406	periphery	gamma proteobacterium HdN1	gamma proteobacterium HdN1		#92B4AF
+84588	periphery	Synechococcus sp. WH8102	Synechococcus sp. WH 8102		#92B4AF
+85643	core	Thauera sp. MZ1T	Thauera sp. MZ1T		#92B4AF
+85962	periphery	Helicobacter pylori 26695	Helicobacter pylori 26695		#92B4AF
+85963	periphery	Helicobacter pylori J99	Helicobacter pylori J99		#92B4AF
+87626	periphery	Pseudoalteromonas tunicata	Pseudoalteromonas tunicata D2		#92B4AF
+88036	core	Selaginella moellendorffii	Selaginella moellendorffii		#92B4AF
+89187	periphery	Roseovarius nubinhibens	Roseovarius nubinhibens ISM		#92B4AF
+91464	periphery	Synechococcus sp. PCC7335	Synechococcus sp. PCC 7335		#92B4AF
+93059	periphery	Prochlorococcus marinus MIT9211	Prochlorococcus marinus str. MIT 9211		#92B4AF
+93060	periphery	Prochlorococcus marinus MIT9215	Prochlorococcus marinus str. MIT 9215		#92B4AF
+93061	periphery	Staphylococcus aureus NCTC8325	Staphylococcus aureus subsp. aureus NCTC 8325		#92B4AF
+93062	periphery	Staphylococcus aureus COL	Staphylococcus aureus subsp. aureus COL		#92B4AF
+94122	periphery	Shewanella sp. ANA3	Shewanella sp. ANA-3		#92B4AF
+96561	core	Desulfococcus oleovorans	Desulfococcus oleovorans Hxd3		#92B4AF
+99287	periphery	Salmonella enterica LT2	Salmonella enterica subsp. enterica serovar Typhimurium str. LT2		#92B4AF
+99883	periphery	Tetraodon nigroviridis	Tetraodon nigroviridis		#92B4AF
+100226	periphery	Streptomyces coelicolor	Streptomyces coelicolor A3(2)		#92B4AF
+101510	periphery	Rhodococcus jostii	Rhodococcus jostii RHA1		#92B4AF
+103690	periphery	Nostoc sp. PCC7120	Nostoc sp. PCC 7120		#92B4AF
+105559	periphery	Nitrosococcus watsonii	Nitrosococcus watsonii C-113		#92B4AF
+106370	core	Frankia sp. CcI3	Frankia sp. CcI3		#92B4AF
+107806	periphery	Buchnera aphidicola APS	Buchnera aphidicola str. APS (Acyrthosiphon pisum)		#92B4AF
+110662	periphery	Synechococcus sp. CC9605	Synechococcus sp. CC9605		#92B4AF
+114615	core	Bradyrhizobium sp. ORS278	Bradyrhizobium sp. ORS 278		#92B4AF
+115713	core	Chlamydophila pneumoniae CWL029	Chlamydophila pneumoniae CWL029		#92B4AF
+117187	core	Gibberella moniliformis	Gibberella moniliformis		#92B4AF
+118168	core	Microcoleus chthonoplastes	Microcoleus chthonoplastes PCC 7420		#92B4AF
+121225	core	Pediculus humanus	Pediculus humanus		#92B4AF
+122586	core	Neisseria meningitidis	Neisseria meningitidis MC58		#92B4AF
+123214	core	Persephonella marina	Persephonella marina EX-H1		#92B4AF
+132908	core	Pteropus vampyrus	Pteropus vampyrus		#92B4AF
+134676	core	Actinoplanes sp. SE50110	Actinoplanes sp. SE50/110		#92B4AF
+135651	periphery	Caenorhabditis brenneri	Caenorhabditis brenneri		#92B4AF
+137722	periphery	Azospirillum sp. B510	Azospirillum sp. B510		#92B4AF
+138119	core	Desulfitobacterium hafniense	Desulfitobacterium hafniense Y51		#92B4AF
+140110	core	Necteria haematococca	Necteria haematococca		#92B4AF
+146891	core	Prochlorococcus marinus  AS9601	Prochlorococcus marinus str. AS9601		#92B4AF
+148304	periphery	Magnaporthe poae	Magnaporthe poae		#92B4AF
+148305	core	Magnaporthe grisea	Magnaporthe grisea		#92B4AF
+153948	periphery	Nitrosomonas sp. AL212	Nitrosomonas sp. AL212		#92B4AF
+155864	periphery	Escherichia coli O157H7	Escherichia coli O157:H7 str. EDL933		#92B4AF
+156578	periphery	Alteromonadales bacterium	Alteromonadales bacterium TW-7		#92B4AF
+156586	periphery	Flavobacteria bacterium BBFL7	Flavobacteria bacterium BBFL7		#92B4AF
+156889	core	Magnetococcus marinus	Magnetococcus marinus MC-1		#92B4AF
+158189	core	Sphaerochaeta globus	Sphaerochaeta globus str. Buddy		#92B4AF
+158190	periphery	Sphaerochaeta pleomorpha	Sphaerochaeta pleomorpha str. Grapes		#92B4AF
+158878	core	Staphylococcus aureus Mu50	Staphylococcus aureus subsp. aureus Mu50		#92B4AF
+159087	core	Dechloromonas aromatica	Dechloromonas aromatica RCB		#92B4AF
+160488	periphery	Pseudomonas putida KT2440	Pseudomonas putida KT2440		#92B4AF
+160490	periphery	Streptococcus pyogenes	Streptococcus pyogenes M1 GAS		#92B4AF
+160492	core	Xylella fastidiosa	Xylella fastidiosa 9a5c		#92B4AF
+161528	core	Erythrobacter sp. SD21	Erythrobacter sp. SD-21		#92B4AF
+162425	periphery	Emericella nidulans	Emericella nidulans		#92B4AF
+163164	core	Wolbachia sp. Dm	Wolbachia endosymbiont of Drosophila melanogaster		#92B4AF
+164328	periphery	Phytophthora ramorum	Phytophthora ramorum		#92B4AF
+164757	periphery	Mycobacterium sp. JLS	Mycobacterium sp. JLS		#92B4AF
+166314	periphery	Synechococcus sp. WH8109	Synechococcus sp. WH 8109		#92B4AF
+167539	periphery	Prochlorococcus marinus marinus	Prochlorococcus marinus subsp. marinus str. CCMP1375		#92B4AF
+167542	periphery	Prochlorococcus marinus MIT9515	Prochlorococcus marinus str. MIT 9515		#92B4AF
+167546	periphery	Prochlorococcus marinus MIT9301	Prochlorococcus marinus str. MIT 9301		#92B4AF
+167555	periphery	Prochlorococcus marinus NATL1A	Prochlorococcus marinus str. NATL1A		#92B4AF
+167879	core	Colwellia psychrerythraea	Colwellia psychrerythraea 34H		#92B4AF
+169963	periphery	Listeria monocytogenes EGDe	Listeria monocytogenes EGD-e		#92B4AF
+170187	core	Streptococcus pneumoniae TIGR4	Streptococcus pneumoniae TIGR4		#92B4AF
+171101	periphery	Streptococcus pneumoniae R6	Streptococcus pneumoniae R6		#92B4AF
+176279	periphery	Staphylococcus epidermidis RP62A	Staphylococcus epidermidis RP62A		#92B4AF
+176280	periphery	Staphylococcus epidermidis ATCC12228	Staphylococcus epidermidis ATCC 12228		#92B4AF
+176299	periphery	Agrobacterium tumefaciens C58	Agrobacterium tumefaciens str. C58		#92B4AF
+177416	core	Francisella tularensis  tularensis	Francisella tularensis subsp. tularensis SCHU S4		#92B4AF
+177437	core	Desulfobacterium autotrophicum	Desulfobacterium autotrophicum HRM2		#92B4AF
+177439	core	Desulfotalea psychrophila	Desulfotalea psychrophila LSv54		#92B4AF
+178306	periphery	Pyrobaculum aerophilum	Pyrobaculum aerophilum str. IM2		#92B4AF
+180281	core	Cyanobium sp. PCC7001	Cyanobium sp. PCC 7001		#92B4AF
+182082	periphery	Chlamydophila pneumoniae TW183	Chlamydophila pneumoniae TW-183		#92B4AF
+184922	periphery	Giardia lamblia	Giardia lamblia ATCC 50803		#92B4AF
+186497	periphery	Pyrococcus furiosus	Pyrococcus furiosus DSM 3638		#92B4AF
+187272	core	Alkalilimnicola ehrlichii	Alkalilimnicola ehrlichii MLHE-1		#92B4AF
+187410	periphery	Yersinia pestis KIM10	Yersinia pestis KIM10		#92B4AF
+187420	core	Methanothermobacter thermautotrophicus	Methanothermobacter thermautotrophicus str. Delta H		#92B4AF
+188626	core	Dermacoccus sp. Ellin185	Dermacoccus sp. Ellin185		#92B4AF
+188937	periphery	Methanosarcina acetivorans	Methanosarcina acetivorans C2A		#92B4AF
+189518	core	Leptospira interrogans Lai	Leptospira interrogans serovar Lai str. 56601		#92B4AF
+190192	core	Methanopyrus kandleri	Methanopyrus kandleri AV19		#92B4AF
+190304	periphery	Fusobacterium nucleatum nucleatum	Fusobacterium nucleatum subsp. nucleatum ATCC 25586		#92B4AF
+190485	core	Xanthomonas campestris ATCC33913	Xanthomonas campestris pv. campestris str. ATCC 33913		#92B4AF
+190486	periphery	Xanthomonas axonopodis	Xanthomonas axonopodis pv. citri str. 306		#92B4AF
+190650	periphery	Caulobacter crescentus	Caulobacter crescentus CB15		#92B4AF
+192222	core	Campylobacter jejuni NCTC11168	Campylobacter jejuni subsp. jejuni NCTC 11168		#92B4AF
+192952	periphery	Methanosarcina mazei	Methanosarcina mazei Go1		#92B4AF
+194439	core	Chlorobium tepidum	Chlorobium tepidum TLS		#92B4AF
+195103	periphery	Clostridium perfringens ATCC13124	Clostridium perfringens ATCC 13124		#92B4AF
+196162	core	Nocardioides sp. JS614	Nocardioides sp. JS614		#92B4AF
+196164	periphery	Corynebacterium efficiens	Corynebacterium efficiens YS-314		#92B4AF
+196627	periphery	Corynebacterium glutamicum	Corynebacterium glutamicum ATCC 13032		#92B4AF
+197221	core	Thermosynechococcus elongatus	Thermosynechococcus elongatus BP-1		#92B4AF
+198094	periphery	Bacillus anthracis Ames	Bacillus anthracis str. Ames		#92B4AF
+198214	core	Shigella flexneri	Shigella flexneri 2a str. 301		#92B4AF
+198628	periphery	Dickeya dadantii 3937	Dickeya dadantii 3937		#92B4AF
+198804	periphery	Buchnera aphidicola Sg	Buchnera aphidicola str. Sg (Schizaphis graminum)		#92B4AF
+199310	periphery	Escherichia coli CFT073	Escherichia coli CFT073		#92B4AF
+203119	periphery	Clostridium thermocellum	Clostridium thermocellum ATCC 27405		#92B4AF
+203120	periphery	Leuconostoc mesenteroides	Leuconostoc mesenteroides subsp. mesenteroides ATCC 8293		#92B4AF
+203122	core	Saccharophagus degradans	Saccharophagus degradans 2-40		#92B4AF
+203123	core	Oenococcus oeni	Oenococcus oeni PSU-1		#92B4AF
+203124	core	Trichodesmium erythraeum	Trichodesmium erythraeum IMS101		#92B4AF
+203267	core	Tropheryma whipplei	Tropheryma whipplei str. Twist		#92B4AF
+203275	core	Tannerella forsythia	Tannerella forsythia ATCC 43037		#92B4AF
+203907	periphery	Blochmannia floridanus	Candidatus Blochmannia floridanus		#92B4AF
+204536	core	Sulfurihydrogenibium azorense	Sulfurihydrogenibium azorense Az-Fu1		#92B4AF
+204669	core	Koribacter versatilis	Candidatus Koribacter versatilis Ellin345		#92B4AF
+204773	core	Herminiimonas arsenicoxydans	Herminiimonas arsenicoxydans		#92B4AF
+205914	core	Haemophilus somnus	Haemophilus somnus 129PT		#92B4AF
+205918	periphery	Pseudomonas syringae syringae	Pseudomonas syringae pv. syringae B728a		#92B4AF
+205920	periphery	Ehrlichia chaffeensis	Ehrlichia chaffeensis str. Arkansas		#92B4AF
+205922	periphery	Pseudomonas fluorescens Pf01	Pseudomonas fluorescens Pf0-1		#92B4AF
+206672	periphery	Bifidobacterium longum	Bifidobacterium longum NCC2705		#92B4AF
+207559	periphery	Desulfovibrio alaskensis	Desulfovibrio alaskensis G20		#92B4AF
+207949	core	Bermanella marisrubri	Bermanella marisrubri		#92B4AF
+207954	core	Neptuniibacter caesariensis	Neptuniibacter caesariensis		#92B4AF
+208348	periphery	Puccinia triticina	Puccinia triticina		#92B4AF
+208596	periphery	Carnobacterium sp. 174	Carnobacterium sp. 17-4		#92B4AF
+208964	periphery	Pseudomonas aeruginosa	Pseudomonas aeruginosa PAO1		#92B4AF
+210007	periphery	Streptococcus mutans	Streptococcus mutans UA159		#92B4AF
+211110	periphery	Streptococcus agalactiae	Streptococcus agalactiae NEM316		#92B4AF
+211586	periphery	Shewanella oneidensis	Shewanella oneidensis MR-1		#92B4AF
+212042	core	Anaplasma phagocytophilum	Anaplasma phagocytophilum HZ		#92B4AF
+212717	core	Clostridium tetani	Clostridium tetani E88		#92B4AF
+213810	periphery	Ruminococcus champanellensis	Ruminococcus champanellensis 18P13		#92B4AF
+214092	core	Yersinia pestis CO92	Yersinia pestis CO92		#92B4AF
+214684	periphery	Cryptococcus neoformans JEC21	Cryptococcus neoformans var. neoformans JEC21		#92B4AF
+216432	core	Croceibacter atlanticus	Croceibacter atlanticus HTCC2559		#92B4AF
+216591	periphery	Burkholderia cenocepacia	Burkholderia cenocepacia J2315	264729	#92B4AF
+216594	periphery	Mycobacterium marinum	Mycobacterium marinum M		#92B4AF
+216595	periphery	Pseudomonas fluorescens SBW25	Pseudomonas fluorescens SBW25		#92B4AF
+216596	core	Rhizobium leguminosarum viciae	Rhizobium leguminosarum bv. viciae 3841		#92B4AF
+216895	core	Vibrio vulnificus	Vibrio vulnificus CMCP6		#92B4AF
+218491	core	Pectobacterium atrosepticum	Pectobacterium atrosepticum SCRI1043		#92B4AF
+218493	periphery	Salmonella bongori	Salmonella bongori NCTC 12419		#92B4AF
+218495	periphery	Streptococcus uberis	Streptococcus uberis 0140J		#92B4AF
+218497	periphery	Chlamydophila abortus	Chlamydophila abortus S26/3		#92B4AF
+219305	core	Micromonospora sp. ATCC39149	Micromonospora sp. ATCC 39149		#92B4AF
+220341	core	Salmonella enterica CT18	Salmonella enterica subsp. enterica serovar Typhi str. CT18		#92B4AF
+220664	periphery	Pseudomonas fluorescens Pf5	Pseudomonas fluorescens Pf-5		#92B4AF
+220668	periphery	Lactobacillus plantarum	Lactobacillus plantarum WCFS1		#92B4AF
+221109	core	Oceanobacillus iheyensis	Oceanobacillus iheyensis HTE831		#92B4AF
+221359	periphery	Synechococcus sp. RS9916	Synechococcus sp. RS9916		#92B4AF
+221360	periphery	Synechococcus sp. RS9917	Synechococcus sp. RS9917		#92B4AF
+221988	core	Mannheimia succiniciproducens	Mannheimia succiniciproducens MBEL55E		#92B4AF
+222891	periphery	Neorickettsia sennetsu	Neorickettsia sennetsu str. Miyayama		#92B4AF
+222929	core	Coccidioides posadasii	Coccidioides posadasii C735 delta SOWgp		#92B4AF
+223283	periphery	Pseudomonas syringae tomato	Pseudomonas syringae pv. tomato str. DC3000		#92B4AF
+223926	periphery	Vibrio parahaemolyticus	Vibrio parahaemolyticus RIMD 2210633		#92B4AF
+224308	periphery	Bacillus subtilis 168	Bacillus subtilis subsp. subtilis str. 168		#92B4AF
+224324	core	Aquifex aeolicus	Aquifex aeolicus VF5		#92B4AF
+224325	periphery	Archaeoglobus fulgidus	Archaeoglobus fulgidus DSM 4304		#92B4AF
+224326	periphery	Borrelia burgdorferi	Borrelia burgdorferi B31		#92B4AF
+224911	periphery	Bradyrhizobium japonicum USDA110	Bradyrhizobium japonicum USDA 110		#92B4AF
+224914	core	Brucella melitensis	Brucella melitensis bv. 1 str. 16M		#92B4AF
+224915	periphery	Buchnera aphidicola Bp	Buchnera aphidicola str. Bp (Baizongia pistaciae)		#92B4AF
+225849	periphery	Shewanella piezotolerans	Shewanella piezotolerans WP3		#92B4AF
+225937	periphery	Marinobacter adhaerens	Marinobacter adhaerens HP15		#92B4AF
+226185	core	Enterococcus faecalis	Enterococcus faecalis V583		#92B4AF
+226186	periphery	Bacteroides thetaiotaomicron	Bacteroides thetaiotaomicron VPI-5482		#92B4AF
+226900	periphery	Bacillus cereus ATCC14579	Bacillus cereus ATCC 14579		#92B4AF
+227377	core	Coxiella burnetii	Coxiella burnetii RSA 493		#92B4AF
+227882	periphery	Streptomyces avermitilis	Streptomyces avermitilis MA-4680		#92B4AF
+227941	core	Chlamydophila caviae	Chlamydophila caviae GPIC		#92B4AF
+228399	core	Actinobacillus pleuropneumoniae 1	Actinobacillus pleuropneumoniae serovar 1 str. 4074		#92B4AF
+228405	core	Hyphomonas neptunium	Hyphomonas neptunium ATCC 15444		#92B4AF
+228410	periphery	Nitrosomonas europaea	Nitrosomonas europaea ATCC 19718		#92B4AF
+228908	core	Nanoarchaeum equitans	Nanoarchaeum equitans Kin4-M		#92B4AF
+229533	periphery	Gibberella zeae PH1	Gibberella zeae PH 1		#92B4AF
+232348	periphery	Synechococcus sp. CB0101	Synechococcus sp. CB0101		#92B4AF
+232363	periphery	Synechococcus sp. CB0205	Synechococcus sp. CB0205		#92B4AF
+232721	core	Acidovorax sp. JS42	Acidovorax sp. JS42		#92B4AF
+233412	periphery	Haemophilus ducreyi	Haemophilus ducreyi 35000HP		#92B4AF
+234267	core	Solibacter usitatus	Candidatus Solibacter usitatus Ellin6076		#92B4AF
+234621	periphery	Rhodococcus erythropolis	Rhodococcus erythropolis PR4		#92B4AF
+234826	core	Anaplasma marginale StMaries	Anaplasma marginale str. St. Maries		#92B4AF
+234831	core	Pseudoalteromonas sp. SM9913	Pseudoalteromonas sp. SM9913		#92B4AF
+235279	periphery	Helicobacter hepaticus	Helicobacter hepaticus ATCC 51449		#92B4AF
+235909	core	Geobacillus kaustophilus	Geobacillus kaustophilus HTA426		#92B4AF
+236097	core	Alcanivorax sp. DG881	Alcanivorax sp. DG881		#92B4AF
+237727	periphery	Erythrobacter sp. NAP1	Erythrobacter sp. NAP1		#92B4AF
+240015	core	Acidobacterium capsulatum	Acidobacterium capsulatum ATCC 51196		#92B4AF
+240016	core	Verrucomicrobium spinosum	Verrucomicrobium spinosum DSM 4136		#92B4AF
+240176	core	Coprinopsis cinerea	Coprinopsis cinerea okayama7_130		#92B4AF
+240292	core	Anabaena variabilis	Anabaena variabilis ATCC 29413		#92B4AF
+242619	core	Porphyromonas gingivalis W83	Porphyromonas gingivalis W83		#92B4AF
+243090	core	Rhodopirellula baltica	Rhodopirellula baltica SH 1		#92B4AF
+243159	periphery	Acidithiobacillus ferrooxidans ATCC23270	Acidithiobacillus ferrooxidans ATCC 23270		#92B4AF
+243160	periphery	Burkholderia mallei	Burkholderia mallei ATCC 23344		#92B4AF
+243161	core	Chlamydia muridarum	Chlamydia muridarum Nigg		#92B4AF
+243164	core	Dehalococcoides ethenogenes	Dehalococcoides ethenogenes 195		#92B4AF
+243230	periphery	Deinococcus radiodurans	Deinococcus radiodurans R1		#92B4AF
+243231	periphery	Geobacter sulfurreducens	Geobacter sulfurreducens PCA		#92B4AF
+243232	periphery	Methanocaldococcus jannaschii	Methanocaldococcus jannaschii DSM 2661		#92B4AF
+243233	core	Methylococcus capsulatus	Methylococcus capsulatus str. Bath		#92B4AF
+243265	core	Photorhabdus luminescens	Photorhabdus luminescens subsp. laumondii TTO1		#92B4AF
+243272	periphery	Mycoplasma arthritidis	Mycoplasma arthritidis 158L3-1		#92B4AF
+243273	periphery	Mycoplasma genitalium	Mycoplasma genitalium G37		#92B4AF
+243274	periphery	Thermotoga maritima	Thermotoga maritima MSB8		#92B4AF
+243275	periphery	Treponema denticola	Treponema denticola ATCC 35405		#92B4AF
+243276	periphery	Treponema pallidum	Treponema pallidum subsp. pallidum str. Nichols		#92B4AF
+243277	core	Vibrio cholerae O1	Vibrio cholerae O1 biovar El Tor str. N16961		#92B4AF
+243365	core	Chromobacterium violaceum	Chromobacterium violaceum ATCC 12472		#92B4AF
+244592	periphery	Labrenzia alexandrii	Labrenzia alexandrii DFL-11		#92B4AF
+245014	periphery	butyrate-producing bacterium SS34	butyrate-producing bacterium SS3/4		#92B4AF
+245018	periphery	butyrate-producing bacterium SSC2	butyrate-producing bacterium SSC/2		#92B4AF
+246194	core	Carboxydothermus hydrogenoformans	Carboxydothermus hydrogenoformans Z-2901		#92B4AF
+246195	core	Dichelobacter nodosus	Dichelobacter nodosus VCS1703A		#92B4AF
+246196	periphery	Mycobacterium smegmatis	Mycobacterium smegmatis str. MC2 155		#92B4AF
+246197	periphery	Myxococcus xanthus	Myxococcus xanthus DK 1622		#92B4AF
+246199	periphery	Ruminococcus albus 8	Ruminococcus albus 8		#92B4AF
+246200	periphery	Ruegeria pomeroyi	Ruegeria pomeroyi DSS-3		#92B4AF
+246201	periphery	Streptococcus mitis NCTC12261	Streptococcus mitis NCTC 12261		#92B4AF
+246410	periphery	Coccidioides immitis	Coccidioides immitis RS		#92B4AF
+246969	periphery	Thermococcus sp. AM4	Thermococcus sp. AM4		#92B4AF
+247156	periphery	Nocardia farcinica	Nocardia farcinica IFM 10152		#92B4AF
+247633	periphery	gamma proteobacterium HTCC2143	marine gamma proteobacterium HTCC2143		#92B4AF
+247634	periphery	gamma proteobacterium HTCC2148	marine gamma proteobacterium HTCC2148		#92B4AF
+247639	periphery	gamma proteobacterium HTCC2080	marine gamma proteobacterium HTCC2080		#92B4AF
+251221	core	Gloeobacter violaceus	Gloeobacter violaceus PCC 7421		#92B4AF
+252305	core	Oceanicola batsensis	Oceanicola batsensis HTCC2597		#92B4AF
+253839	periphery	Streptomyces sp. C	Streptomyces sp. C		#92B4AF
+254945	periphery	Ehrlichia ruminantium	Ehrlichia ruminantium str. Welgevonden		#92B4AF
+255470	periphery	Dehalococcoides sp. CBDB1	Dehalococcoides sp. CBDB1		#92B4AF
+257310	core	Bordetella bronchiseptica	Bordetella bronchiseptica RB50		#92B4AF
+257313	periphery	Bordetella pertussis	Bordetella pertussis Tohama I		#92B4AF
+257314	periphery	Lactobacillus johnsonii	Lactobacillus johnsonii NCC 533		#92B4AF
+257363	periphery	Rickettsia typhi	Rickettsia typhi str. Wilmington		#92B4AF
+258594	periphery	Rhodopseudomonas palustris CGA009	Rhodopseudomonas palustris CGA009		#92B4AF
+259536	periphery	Psychrobacter arcticus	Psychrobacter arcticus 273-4		#92B4AF
+259564	core	Methanococcoides burtonii	Methanococcoides burtonii DSM 6242		#92B4AF
+260799	periphery	Bacillus anthracis Sterne	Bacillus anthracis str. Sterne		#92B4AF
+261292	periphery	Nitrosomonas sp. Is79A3	Nitrosomonas sp. Is79A3		#92B4AF
+261317	core	Buchnera aphidicola Ct	Buchnera aphidicola (Cinara tujafilina)		#92B4AF
+262316	periphery	Mycobacterium avium	Mycobacterium avium subsp. paratuberculosis K-10		#92B4AF
+262543	periphery	Exiguobacterium sibiricum	Exiguobacterium sibiricum 255-15		#92B4AF
+262719	periphery	Mycoplasma hyopneumoniae	Mycoplasma hyopneumoniae J		#92B4AF
+262723	periphery	Mycoplasma synoviae	Mycoplasma synoviae 53		#92B4AF
+262724	core	Thermus thermophilus HB27	Thermus thermophilus HB27		#92B4AF
+262768	periphery	Phytoplasma onionis	Onion yellows phytoplasma OY-M		#92B4AF
+263358	core	Verrucosispora maris	Verrucosispora maris AB-18-032		#92B4AF
+263820	core	Picrophilus torridus	Picrophilus torridus DSM 9790		#92B4AF
+264198	periphery	Ralstonia eutropha JMP134	Ralstonia eutropha JMP134		#92B4AF
+264199	periphery	Streptococcus thermophilus	Streptococcus thermophilus LMG 18311		#92B4AF
+264201	core	Protochlamydia amoebophila	Candidatus Protochlamydia amoebophila UWE25		#92B4AF
+264202	periphery	Chlamydophila felis	Chlamydophila felis Fe/C-56		#92B4AF
+264462	core	Bdellovibrio bacteriovorus	Bdellovibrio bacteriovorus HD100		#92B4AF
+264730	periphery	Pseudomonas syringae phaseolicola	Pseudomonas syringae pv. phaseolicola 1448A		#92B4AF
+264731	periphery	Prevotella ruminicola	Prevotella ruminicola 23		#92B4AF
+264732	core	Moorella thermoacetica	Moorella thermoacetica ATCC 39073		#92B4AF
+265072	core	Methylobacillus flagellatus	Methylobacillus flagellatus KT		#92B4AF
+265311	core	Mesoplasma florum	Mesoplasma florum L1		#92B4AF
+266117	core	Rubrobacter xylanophilus	Rubrobacter xylanophilus DSM 9941		#92B4AF
+266264	periphery	Cupriavidus metallidurans	Cupriavidus metallidurans CH34		#92B4AF
+266265	periphery	Burkholderia xenovorans	Burkholderia xenovorans LB400		#92B4AF
+266779	core	Chelativorans sp. BNC1	Chelativorans sp. BNC1		#92B4AF
+266834	periphery	Sinorhizobium meliloti	Sinorhizobium meliloti 1021		#92B4AF
+266835	core	Mesorhizobium loti	Mesorhizobium loti MAFF303099		#92B4AF
+266940	core	Kineococcus radiotolerans	Kineococcus radiotolerans SRS30216		#92B4AF
+267377	periphery	Methanococcus maripaludis S2	Methanococcus maripaludis S2		#92B4AF
+267608	periphery	Ralstonia solanacearum GMI1000	Ralstonia solanacearum GMI1000		#92B4AF
+267671	periphery	Leptospira interrogans Copenhageni	Leptospira interrogans serovar Copenhageni str. Fiocruz L1-130		#92B4AF
+267747	core	Propionibacterium acnes KPA171202	Propionibacterium acnes KPA171202		#92B4AF
+267748	periphery	Mycoplasma mobile	Mycoplasma mobile 163K		#92B4AF
+269084	periphery	Synechococcus elongatus PCC6301	Synechococcus elongatus PCC 6301		#92B4AF
+269482	periphery	Burkholderia vietnamiensis	Burkholderia vietnamiensis G4		#92B4AF
+269484	core	Ehrlichia canis	Ehrlichia canis str. Jake		#92B4AF
+269796	core	Rhodospirillum rubrum	Rhodospirillum rubrum ATCC 11170		#92B4AF
+269797	core	Methanosarcina barkeri	Methanosarcina barkeri str. Fusaro		#92B4AF
+269798	core	Cytophaga hutchinsonii	Cytophaga hutchinsonii ATCC 33406		#92B4AF
+269799	core	Geobacter metallireducens	Geobacter metallireducens GS-15		#92B4AF
+269800	core	Thermobifida fusca	Thermobifida fusca YX		#92B4AF
+270374	periphery	Marinobacter sp. ELB17	Marinobacter sp. ELB17		#92B4AF
+272557	core	Aeropyrum pernix	Aeropyrum pernix K1		#92B4AF
+272558	periphery	Bacillus halodurans	Bacillus halodurans C-125		#92B4AF
+272559	periphery	Bacteroides fragilis NCTC9343	Bacteroides fragilis NCTC 9343		#92B4AF
+272560	periphery	Burkholderia pseudomallei	Burkholderia pseudomallei K96243		#92B4AF
+272561	periphery	Chlamydia trachomatis	Chlamydia trachomatis D/UW-3/CX		#92B4AF
+272562	periphery	Clostridium acetobutylicum	Clostridium acetobutylicum ATCC 824		#92B4AF
+272563	periphery	Clostridium difficile	Clostridium difficile 630		#92B4AF
+272568	periphery	Gluconacetobacter diazotrophicus	Gluconacetobacter diazotrophicus PAl 5		#92B4AF
+272569	periphery	Haloarcula marismortui	Haloarcula marismortui ATCC 43049		#92B4AF
+272620	periphery	Klebsiella pneumoniae	Klebsiella pneumoniae subsp. pneumoniae MGH 78578		#92B4AF
+272621	periphery	Lactobacillus acidophilus NCFM	Lactobacillus acidophilus NCFM		#92B4AF
+272623	periphery	Lactococcus lactis lactis	Lactococcus lactis subsp. lactis Il1403		#92B4AF
+272624	periphery	Legionella pneumophila Philadelphia	Legionella pneumophila subsp. pneumophila str. Philadelphia 1		#92B4AF
+272626	periphery	Listeria innocua	Listeria innocua Clip11262		#92B4AF
+272630	periphery	Methylobacterium extorquens AM1	Methylobacterium extorquens AM1		#92B4AF
+272631	periphery	Mycobacterium leprae	Mycobacterium leprae TN		#92B4AF
+272632	periphery	Mycoplasma mycoides	Mycoplasma mycoides subsp. mycoides SC str. PG1		#92B4AF
+272633	periphery	Mycoplasma penetrans	Mycoplasma penetrans HF-2		#92B4AF
+272635	periphery	Mycoplasma pulmonis	Mycoplasma pulmonis UAB CTIP		#92B4AF
+272843	periphery	Pasteurella multocida	Pasteurella multocida subsp. multocida str. Pm70		#92B4AF
+272844	periphery	Pyrococcus abyssi	Pyrococcus abyssi GE5		#92B4AF
+272942	periphery	Rhodobacter capsulatus	Rhodobacter capsulatus SB 1003		#92B4AF
+272943	periphery	Rhodobacter sphaeroides 241	Rhodobacter sphaeroides 2.4.1		#92B4AF
+272947	periphery	Rickettsia prowazekii	Rickettsia prowazekii str. Madrid E		#92B4AF
+272951	core	Rickettsia sibirica	Rickettsia sibirica 246		#92B4AF
+272952	core	Hyaloperonospora arabidopsidis	Hyaloperonospora arabidopsidis		#92B4AF
+273057	periphery	Sulfolobus solfataricus	Sulfolobus solfataricus P2		#92B4AF
+273063	periphery	Sulfolobus tokodaii	Sulfolobus tokodaii str. 7		#92B4AF
+273068	core	Thermoanaerobacter tengcongensis	Thermoanaerobacter tengcongensis MB4		#92B4AF
+273075	periphery	Thermoplasma acidophilum	Thermoplasma acidophilum DSM 1728		#92B4AF
+273116	core	Thermoplasma volcanium	Thermoplasma volcanium GSS1		#92B4AF
+273119	core	Ureaplasma parvum	Ureaplasma parvum serovar 3 str. ATCC 700970		#92B4AF
+273121	core	Wolinella succinogenes	Wolinella succinogenes DSM 1740		#92B4AF
+274854	periphery	uncultured euryarchaeote mgII	uncultured marine group II euryarchaeote		#92B4AF
+278197	core	Pediococcus pentosaceus	Pediococcus pentosaceus ATCC 25745		#92B4AF
+279010	periphery	Bacillus licheniformis	Bacillus licheniformis DSM 13 = ATCC 14580		#92B4AF
+279238	periphery	Novosphingobium aromaticivorans	Novosphingobium aromaticivorans DSM 12444		#92B4AF
+279714	core	Pseudogulbenkiania ferrooxidans	Pseudogulbenkiania ferrooxidans 2002		#92B4AF
+279808	periphery	Staphylococcus haemolyticus	Staphylococcus haemolyticus JCSC1435		#92B4AF
+281090	core	Leifsonia xyli	Leifsonia xyli subsp. xyli str. CTCB07		#92B4AF
+281687	periphery	Caenorhabditis japonica	Caenorhabditis japonica		#92B4AF
+281689	core	Desulfuromonas acetoxidans	Desulfuromonas acetoxidans DSM 684		#92B4AF
+283165	periphery	Bartonella quintana	Bartonella quintana str. Toulouse		#92B4AF
+283166	periphery	Bartonella henselae	Bartonella henselae str. Houston-1		#92B4AF
+283643	periphery	Cryptococcus neoformans B	Cryptococcus neoformans var. neoformans B 3501A		#92B4AF
+283942	core	Idiomarina loihiensis	Idiomarina loihiensis L2TR		#92B4AF
+284590	core	Kluyveromyces lactis	Kluyveromyces lactis NRRL Y 1140		#92B4AF
+284593	core	Candida glabrata	Candida glabrata CBS 138		#92B4AF
+284813	periphery	Encephalitozoon cuniculi	Encephalitozoon cuniculi GB M1		#92B4AF
+287752	core	Aurantimonas manganoxydans	Aurantimonas manganoxydans SI85-9A1		#92B4AF
+288000	periphery	Bradyrhizobium sp. BTAi1	Bradyrhizobium sp. BTAi1		#92B4AF
+288705	core	Renibacterium salmoninarum	Renibacterium salmoninarum ATCC 33209		#92B4AF
+289376	core	Thermodesulfovibrio yellowstonii	Thermodesulfovibrio yellowstonii DSM 11347		#92B4AF
+289397	periphery	Mycoplasma bovis	Mycoplasma bovis PG45		#92B4AF
+290315	periphery	Chlorobium limicola	Chlorobium limicola DSM 245		#92B4AF
+290317	periphery	Chlorobium phaeobacteroides DSM266	Chlorobium phaeobacteroides DSM 266		#92B4AF
+290318	periphery	Chlorobium phaeovibrioides	Chlorobium phaeovibrioides DSM 265		#92B4AF
+290338	periphery	Citrobacter koseri	Citrobacter koseri ATCC BAA-895		#92B4AF
+290339	core	Cronobacter sakazakii	Cronobacter sakazakii ATCC BAA-894		#92B4AF
+290340	periphery	Arthrobacter aurescens	Arthrobacter aurescens TC1		#92B4AF
+290397	core	Anaeromyxobacter dehalogenans	Anaeromyxobacter dehalogenans 2CP-C		#92B4AF
+290398	core	Chromohalobacter salexigens	Chromohalobacter salexigens DSM 3043		#92B4AF
+290399	periphery	Arthrobacter sp. FB24	Arthrobacter sp. FB24		#92B4AF
+290400	core	Jannaschia sp. CCS1	Jannaschia sp. CCS1		#92B4AF
+290402	periphery	Clostridium beijerinckii	Clostridium beijerinckii NCIMB 8052		#92B4AF
+290434	periphery	Borrelia garinii	Borrelia garinii PBi		#92B4AF
+290512	core	Prosthecochloris aestuarii	Prosthecochloris aestuarii DSM 271		#92B4AF
+290633	core	Gluconobacter oxydans	Gluconobacter oxydans 621H		#92B4AF
+291272	periphery	Blochmannia pennsylvanicus	Candidatus Blochmannia pennsylvanicus str. BPEN		#92B4AF
+292414	core	Ruegeria sp. TM1040	Ruegeria sp. TM1040		#92B4AF
+292415	core	Thiobacillus denitrificans	Thiobacillus denitrificans ATCC 25259		#92B4AF
+292459	core	Symbiobacterium thermophilum	Symbiobacterium thermophilum IAM 14863		#92B4AF
+292805	periphery	Wolbachia sp. Bm	Wolbachia endosymbiont strain TRS of Brugia malayi		#92B4AF
+293613	periphery	Rickettsia canadensis	Rickettsia canadensis str. McKiel		#92B4AF
+293614	periphery	Rickettsia akari	Rickettsia akari str. Hartford		#92B4AF
+293826	core	Alkaliphilus metalliredigens	Alkaliphilus metalliredigens QYMF		#92B4AF
+294746	periphery	Meyerozyma guilliermondii	Meyerozyma guilliermondii ATCC 6260		#92B4AF
+294747	periphery	Candida tropicalis	Candida tropicalis MYA 3404		#92B4AF
+296591	core	Polaromonas sp. JS666	Polaromonas sp. JS666		#92B4AF
+297246	core	Legionella pneumophila Paris	Legionella pneumophila str. Paris		#92B4AF
+298386	periphery	Photobacterium profundum	Photobacterium profundum SS9		#92B4AF
+298653	periphery	Frankia sp. EAN1pec	Frankia sp. EAN1pec		#92B4AF
+298654	periphery	Frankia sp. EuI1c	Frankia sp. EuI1c		#92B4AF
+300852	periphery	Thermus thermophilus HB8	Thermus thermophilus HB8		#92B4AF
+304371	periphery	Methanocella paludicola	Methanocella paludicola SANAE		#92B4AF
+306254	periphery	Campylobacter coli	Campylobacter coli RM2228		#92B4AF
+306263	periphery	Campylobacter lari	Campylobacter lari RM2100		#92B4AF
+306264	periphery	Campylobacter upsaliensis	Campylobacter upsaliensis RM3195		#92B4AF
+306537	periphery	Corynebacterium jeikeium	Corynebacterium jeikeium K411		#92B4AF
+306901	core	Chaetomium globosum	Chaetomium globosum CBS 148.51		#92B4AF
+306902	periphery	Clavispora lusitaniae	Clavispora lusitaniae ATCC 42720		#92B4AF
+309798	core	Coprothermobacter proteolyticus	Coprothermobacter proteolyticus DSM 5265		#92B4AF
+309799	periphery	Dictyoglomus thermophilum	Dictyoglomus thermophilum H-6-12		#92B4AF
+309800	core	Haloferax volcanii	Haloferax volcanii DS2		#92B4AF
+309801	core	Thermomicrobium roseum	Thermomicrobium roseum DSM 5159		#92B4AF
+309803	periphery	Thermotoga neapolitana	Thermotoga neapolitana DSM 4359		#92B4AF
+309807	core	Salinibacter ruber	Salinibacter ruber DSM 13855		#92B4AF
+311402	periphery	Agrobacterium vitis	Agrobacterium vitis S4		#92B4AF
+311403	periphery	Agrobacterium radiobacter	Agrobacterium radiobacter K84		#92B4AF
+311424	periphery	Dehalococcoides sp. VS	Dehalococcoides sp. VS		#92B4AF
+312153	core	Polynucleobacter necessarius asymbioticus	Polynucleobacter necessarius subsp. asymbioticus QLW-P1DMWA-1		#92B4AF
+312284	periphery	marine actinobacterium	marine actinobacterium PHSC20C1		#92B4AF
+312309	periphery	Vibrio fischeri	Vibrio fischeri ES114		#92B4AF
+313589	core	Janibacter sp. HTCC2649	Janibacter sp. HTCC2649		#92B4AF
+313590	core	Dokdonia donghaensis	Dokdonia donghaensis MED134		#92B4AF
+313594	periphery	Polaribacter irgensii	Polaribacter irgensii 23-P		#92B4AF
+313595	core	Psychroflexus torquis	Psychroflexus torquis ATCC 700755		#92B4AF
+313596	core	Robiginitalea biformata	Robiginitalea biformata HTCC2501		#92B4AF
+313598	core	Polaribacter sp. MED152	Polaribacter sp. MED152		#92B4AF
+313603	core	Maribacter sp. HTCC2170	Maribacter sp. HTCC2170		#92B4AF
+313606	core	Microscilla marina	Microscilla marina ATCC 23134		#92B4AF
+313612	core	Lyngbya sp. PCC	Lyngbya sp. PCC 8106		#92B4AF
+313624	core	Nodularia spumigena	Nodularia spumigena CCY9414		#92B4AF
+313625	periphery	Synechococcus sp. BL107	Synechococcus sp. BL107		#92B4AF
+313627	periphery	Bacillus sp. NRRLB14911	Bacillus sp. NRRL B-14911		#92B4AF
+313628	core	Lentisphaera araneosa	Lentisphaera araneosa HTCC2155		#92B4AF
+314225	periphery	Erythrobacter litoralis	Erythrobacter litoralis HTCC2594		#92B4AF
+314230	core	Blastopirellula marina	Blastopirellula marina DSM 3645		#92B4AF
+314231	core	Fulvimarina pelagi	Fulvimarina pelagi HTCC2506		#92B4AF
+314232	core	Loktanella vestfoldensis	Loktanella vestfoldensis SKA53		#92B4AF
+314253	periphery	Nitrobacter sp. Nb311A	Nitrobacter sp. Nb-311A		#92B4AF
+314254	core	Oceanicaulis sp. HTCC2633	Oceanicaulis sp. HTCC2633		#92B4AF
+314256	periphery	Oceanicola granulosus	Oceanicola granulosus HTCC2516		#92B4AF
+314260	core	Parvularcula bermudensis	Parvularcula bermudensis HTCC2503		#92B4AF
+314262	periphery	Roseobacter sp. MED193	Roseobacter sp. MED193		#92B4AF
+314264	periphery	Roseovarius sp. 217	Roseovarius sp. 217		#92B4AF
+314265	core	Pelagibaca bermudensis	Pelagibaca bermudensis HTCC2601		#92B4AF
+314266	periphery	Sphingomonas sp. SKA58	Sphingomonas sp. SKA58		#92B4AF
+314270	periphery	Rhodobacteraceae bacterium HTCC2083	Rhodobacteraceae bacterium HTCC2083		#92B4AF
+314271	core	Maritimibacter alkaliphilus	Maritimibacter alkaliphilus HTCC2654		#92B4AF
+314275	core	Alteromonas macleodii	Alteromonas macleodii str. Deep ecotype		#92B4AF
+314276	periphery	Idiomarina baltica	Idiomarina baltica OS145		#92B4AF
+314277	periphery	Marinomonas sp. MED121	Marinomonas sp. MED121		#92B4AF
+314278	core	Nitrococcus mobilis	Nitrococcus mobilis Nb-231		#92B4AF
+314282	periphery	Psychromonas sp. CNPT3	Psychromonas sp. CNPT3		#92B4AF
+314283	core	Reinekea blandensis	Reinekea blandensis MED297		#92B4AF
+314285	core	Congregibacter litoralis	Congregibacter litoralis KT71		#92B4AF
+314287	periphery	gamma proteobacterium HTCC2207	gamma proteobacterium HTCC2207		#92B4AF
+314292	periphery	Photobacterium angustum	Photobacterium angustum S14		#92B4AF
+314315	periphery	Lactobacillus sakei	Lactobacillus sakei subsp. sakei 23K		#92B4AF
+314345	core	Mariprofundus ferrooxydans	Mariprofundus ferrooxydans PV-1		#92B4AF
+314565	periphery	Xanthomonas campestris 8004	Xanthomonas campestris pv. campestris str. 8004		#92B4AF
+314607	periphery	beta proteobacterium KB13	beta proteobacterium KB13		#92B4AF
+314608	periphery	Shewanella benthica	Shewanella benthica KT99		#92B4AF
+314723	periphery	Borrelia hermsii	Borrelia hermsii DAH		#92B4AF
+314724	periphery	Borrelia turicatae	Borrelia turicatae 91E135		#92B4AF
+315456	periphery	Rickettsia felis	Rickettsia felis URRWXCal2		#92B4AF
+315730	periphery	Bacillus weihenstephanensis	Bacillus weihenstephanensis KBAB4		#92B4AF
+315749	periphery	Bacillus cytotoxicus	Bacillus cytotoxicus NVH 391-98		#92B4AF
+315750	periphery	Bacillus pumilus	Bacillus pumilus SAFR-032		#92B4AF
+316055	periphery	Rhodopseudomonas palustris BisA53	Rhodopseudomonas palustris BisA53		#92B4AF
+316056	periphery	Rhodopseudomonas palustris BisB18	Rhodopseudomonas palustris BisB18		#92B4AF
+316057	periphery	Rhodopseudomonas palustris BisB5	Rhodopseudomonas palustris BisB5		#92B4AF
+316058	periphery	Rhodopseudomonas palustris HaA2	Rhodopseudomonas palustris HaA2		#92B4AF
+316067	periphery	Geobacter sp. FRC32	Geobacter sp. FRC-32		#92B4AF
+316273	periphery	Xanthomonas campestris vesicatoria	Xanthomonas campestris pv. vesicatoria str. 85-10		#92B4AF
+316274	core	Herpetosiphon aurantiacus	Herpetosiphon aurantiacus DSM 785		#92B4AF
+316275	core	Aliivibrio salmonicida	Aliivibrio salmonicida LFI1238		#92B4AF
+316278	periphery	Synechococcus sp. RCC307	Synechococcus sp. RCC307		#92B4AF
+316279	periphery	Synechococcus sp. CC9902	Synechococcus sp. CC9902		#92B4AF
+316385	periphery	Escherichia coli K12 DH10B	Escherichia coli str. K-12 substr. DH10B		#92B4AF
+316407	periphery	Escherichia coli K12 W3110	Escherichia coli str. K-12 substr. W3110		#92B4AF
+317025	core	Thiomicrospira crunogena	Thiomicrospira crunogena XCL-2		#92B4AF
+317655	core	Sphingopyxis alaskensis	Sphingopyxis alaskensis RB2256		#92B4AF
+318161	periphery	Shewanella denitrificans	Shewanella denitrificans OS217		#92B4AF
+318167	periphery	Shewanella frigidimarina	Shewanella frigidimarina NCIMB 400		#92B4AF
+318586	core	Paracoccus denitrificans PD1222	Paracoccus denitrificans PD1222		#92B4AF
+318829	core	Magnaporthe oryzae	Magnaporthe oryzae		#92B4AF
+319224	core	Shewanella putrefaciens	Shewanella putrefaciens CN-32		#92B4AF
+319225	periphery	Chlorobium luteolum	Chlorobium luteolum DSM 273		#92B4AF
+319795	periphery	Deinococcus geothermalis	Deinococcus geothermalis DSM 11300		#92B4AF
+320483	periphery	Anaplasma marginale Florida	Anaplasma marginale str. Florida		#92B4AF
+320771	core	Pedosphaera parvula	Pedosphaera parvula Ellin514		#92B4AF
+321327	periphery	Synechococcus sp. JA33Ab	Synechococcus sp. JA-3-3Ab		#92B4AF
+321332	periphery	Synechococcus sp. JA23Ba213	Synechococcus sp. JA-2-3Ba(2-13)		#92B4AF
+321955	periphery	Brevibacterium linens	Brevibacterium linens BL2		#92B4AF
+322098	periphery	Phytoplasma asteris	Aster yellows witches-broom phytoplasma AYWB		#92B4AF
+322104	core	Scheffersomyces stipitis	Scheffersomyces stipitis CBS 6054		#92B4AF
+322710	core	Azotobacter vinelandii	Azotobacter vinelandii DJ		#92B4AF
+323097	periphery	Nitrobacter hamburgensis	Nitrobacter hamburgensis X14		#92B4AF
+323098	core	Nitrobacter winogradskyi	Nitrobacter winogradskyi Nb-255		#92B4AF
+323259	core	Methanospirillum hungatei	Methanospirillum hungatei JF-1		#92B4AF
+323261	periphery	Nitrosococcus oceani	Nitrosococcus oceani ATCC 19707		#92B4AF
+323848	core	Nitrosospira multiformis	Nitrosospira multiformis ATCC 25196		#92B4AF
+323850	periphery	Shewanella loihica	Shewanella loihica PV-4		#92B4AF
+324057	periphery	Paenibacillus sp. JDR2	Paenibacillus sp. JDR-2		#92B4AF
+324602	periphery	Chloroflexus aurantiacus	Chloroflexus aurantiacus J-10-fl		#92B4AF
+324831	periphery	Lactobacillus gasseri	Lactobacillus gasseri ATCC 33323		#92B4AF
+324925	core	Pelodictyon phaeoclathratiforme	Pelodictyon phaeoclathratiforme BU-1		#92B4AF
+325240	periphery	Shewanella baltica	Shewanella baltica OS155		#92B4AF
+326297	periphery	Shewanella amazonensis	Shewanella amazonensis SB2B		#92B4AF
+326298	core	Sulfurimonas denitrificans	Sulfurimonas denitrificans DSM 1251		#92B4AF
+326423	periphery	Bacillus amyloliquefaciens	Bacillus amyloliquefaciens FZB42		#92B4AF
+326424	periphery	Frankia alni	Frankia alni ACN14a		#92B4AF
+326426	periphery	Bifidobacterium breve	Bifidobacterium breve UCC2003		#92B4AF
+326427	core	Chloroflexus aggregans	Chloroflexus aggregans DSM 9485		#92B4AF
+326442	periphery	Pseudoalteromonas haloplanktis TAC125	Pseudoalteromonas haloplanktis TAC125		#92B4AF
+327275	periphery	Shewanella sp. HN41	Shewanella sp. HN-41		#92B4AF
+329726	core	Acaryochloris marina	Acaryochloris marina MBIC11017		#92B4AF
+330214	core	Nitrospira defluvii	Candidatus Nitrospira defluvii		#92B4AF
+330779	periphery	Sulfolobus acidocaldarius	Sulfolobus acidocaldarius DSM 639		#92B4AF
+331104	core	Blattabacterium sp. Bge	Blattabacterium sp. (Blattella germanica) str. Bge		#92B4AF
+331113	core	Simkania negevensis	Simkania negevensis Z		#92B4AF
+331635	periphery	Chlamydophila pecorum	Chlamydophila pecorum E58		#92B4AF
+331636	periphery	Chlamydophila psittaci	Chlamydophila psittaci 6BC		#92B4AF
+331678	periphery	Chlorobium phaeobacteroides BS1	Chlorobium phaeobacteroides BS1		#92B4AF
+331869	periphery	alpha proteobacterium BAL199	alpha proteobacterium BAL199		#92B4AF
+333146	core	Ferroplasma acidarmanus	Ferroplasma acidarmanus fer1		#92B4AF
+333668	periphery	Theileria parva	Theileria parva strain Muguga		#92B4AF
+333990	core	Carnobacterium sp. AT7	Carnobacterium sp. AT7		#92B4AF
+334413	core	Finegoldia magna ATCC29328	Finegoldia magna ATCC 29328		#92B4AF
+335283	core	Nitrosomonas eutropha	Nitrosomonas eutropha C91		#92B4AF
+335284	core	Psychrobacter cryohalolentis	Psychrobacter cryohalolentis K5		#92B4AF
+335541	core	Syntrophomonas wolfei	Syntrophomonas wolfei subsp. wolfei str. Goettingen		#92B4AF
+335543	core	Syntrophobacter fumaroxidans	Syntrophobacter fumaroxidans MPOB		#92B4AF
+335992	periphery	Pelagibacter ubique	Candidatus Pelagibacter ubique HTCC1062		#92B4AF
+336963	periphery	Uncinocarpus reesii	Uncinocarpus reesii 1704		#92B4AF
+338187	periphery	Vibrio harveyi	Vibrio harveyi ATCC BAA-1116		#92B4AF
+338963	periphery	Pelobacter carbinolicus	Pelobacter carbinolicus DSM 2380		#92B4AF
+338966	core	Pelobacter propionicus	Pelobacter propionicus DSM 2379		#92B4AF
+338969	core	Rhodoferax ferrireducens	Rhodoferax ferrireducens T118		#92B4AF
+339670	periphery	Burkholderia ambifaria	Burkholderia ambifaria AMMD		#92B4AF
+339671	periphery	Actinobacillus succinogenes	Actinobacillus succinogenes 130Z		#92B4AF
+339724	periphery	Ajellomyces capsulatus	Ajellomyces capsulatus NAm1		#92B4AF
+339860	core	Methanosphaera stadtmanae	Methanosphaera stadtmanae DSM 3091		#92B4AF
+340099	periphery	Thermoanaerobacter pseudethanolicus	Thermoanaerobacter pseudethanolicus ATCC 33223		#92B4AF
+340100	core	Bordetella petrii	Bordetella petrii DSM 12804		#92B4AF
+340101	core	Victivallis vadensis	Victivallis vadensis ATCC BAA-548		#92B4AF
+340177	core	Chlorobium chlorochromatii	Chlorobium chlorochromatii CaD3		#92B4AF
+342108	core	Magnetospirillum magneticum	Magnetospirillum magneticum AMB-1		#92B4AF
+342451	core	Staphylococcus saprophyticus	Staphylococcus saprophyticus subsp. saprophyticus ATCC 15305		#92B4AF
+342610	periphery	Pseudoalteromonas atlantica	Pseudoalteromonas atlantica T6c		#92B4AF
+342949	core	Pyrococcus sp. NA2	Pyrococcus sp. NA2		#92B4AF
+343509	core	Sodalis glossinidius	Sodalis glossinidius str. morsitans		#92B4AF
+344747	periphery	Planctomyces maris	Planctomyces maris DSM 8797		#92B4AF
+345073	periphery	Vibrio cholerae O395	Vibrio cholerae O395		#92B4AF
+345219	periphery	Bacillus coagulans	Bacillus coagulans 36D1		#92B4AF
+347256	periphery	Mycoplasma hominis	Mycoplasma hominis ATCC 23114		#92B4AF
+347834	periphery	Rhizobium etli CFN42	Rhizobium etli CFN 42		#92B4AF
+348780	core	Natronomonas pharaonis	Natronomonas pharaonis DSM 2160		#92B4AF
+349102	core	Rhodobacter sphaeroides ATCC17025	Rhodobacter sphaeroides ATCC 17025		#92B4AF
+349106	periphery	Psychrobacter sp. PRwf1	Psychrobacter sp. PRwf-1		#92B4AF
+349123	periphery	Lactobacillus reuteri	Lactobacillus reuteri 100-23		#92B4AF
+349124	core	Halorhodospira halophila	Halorhodospira halophila SL1		#92B4AF
+349161	periphery	Desulfotomaculum reducens	Desulfotomaculum reducens MI-1		#92B4AF
+349163	core	Acidiphilium cryptum	Acidiphilium cryptum JF-5		#92B4AF
+349307	periphery	Methanosaeta thermophila	Methanosaeta thermophila PT		#92B4AF
+349519	periphery	Leuconostoc citreum	Leuconostoc citreum KM20		#92B4AF
+349520	periphery	Paenibacillus polymyxa E681	Paenibacillus polymyxa E681		#92B4AF
+349521	core	Hahella chejuensis	Hahella chejuensis KCTC 2396		#92B4AF
+349741	core	Akkermansia muciniphila	Akkermansia muciniphila ATCC BAA-835		#92B4AF
+350054	periphery	Mycobacterium gilvum	Mycobacterium gilvum PYR-GCK		#92B4AF
+350058	periphery	Mycobacterium vanbaalenii	Mycobacterium vanbaalenii PYR-1		#92B4AF
+350688	periphery	Alkaliphilus oremlandii	Alkaliphilus oremlandii OhILAs		#92B4AF
+350701	periphery	Burkholderia dolosa	Burkholderia dolosa AUO158		#92B4AF
+351016	core	Roseobacter sp. AzwK3b	Roseobacter sp. AzwK-3b		#92B4AF
+351160	core	Methanocella arvoryzae	Methanocella arvoryzae MRE50		#92B4AF
+351348	core	Marinobacter aquaeolei	Marinobacter aquaeolei VT8		#92B4AF
+351605	periphery	Geobacter uraniireducens	Geobacter uraniireducens Rf4		#92B4AF
+351607	core	Acidothermus cellulolyticus	Acidothermus cellulolyticus 11B		#92B4AF
+351627	periphery	Caldicellulosiruptor saccharolyticus	Caldicellulosiruptor saccharolyticus DSM 8903		#92B4AF
+351746	periphery	Pseudomonas putida F1	Pseudomonas putida F1		#92B4AF
+352165	core	Pyramidobacter piscolens	Pyramidobacter piscolens W5455		#92B4AF
+352914	periphery	Plasmodium yoelii	Plasmodium yoelii yoelii 17XNL		#92B4AF
+353151	periphery	Cryptosporidium hominis	Cryptosporidium hominis TU502		#92B4AF
+353152	core	Cryptosporidium parvum	Cryptosporidium parvum Iowa II		#92B4AF
+353153	periphery	Trypanosoma cruzi	Trypanosoma cruzi strain CL Brener		#92B4AF
+353154	periphery	Theileria annulata	Theileria annulata strain Ankara		#92B4AF
+354242	periphery	Campylobacter jejuni 81176	Campylobacter jejuni subsp. jejuni 81-176		#92B4AF
+355276	periphery	Leptospira borgpetersenii	Leptospira borgpetersenii serovar Hardjo-bovis L550		#92B4AF
+357244	core	Orientia tsutsugamushi	Orientia tsutsugamushi str. Boryong		#92B4AF
+357804	core	Psychromonas ingrahamii	Psychromonas ingrahamii 37		#92B4AF
+357808	periphery	Roseiflexus sp. RS1	Roseiflexus sp. RS-1		#92B4AF
+357809	periphery	Clostridium phytofermentans	Clostridium phytofermentans ISDg		#92B4AF
+358681	core	Brevibacillus brevis	Brevibacillus brevis NBRC 100599		#92B4AF
+360095	core	Bartonella bacilliformis	Bartonella bacilliformis KC583		#92B4AF
+360104	periphery	Campylobacter concisus	Campylobacter concisus 13826		#92B4AF
+360105	periphery	Campylobacter curvus	Campylobacter curvus 525.92		#92B4AF
+360107	core	Campylobacter hominis	Campylobacter hominis ATCC BAA-381		#92B4AF
+360910	periphery	Bordetella avium	Bordetella avium 197N		#92B4AF
+360911	core	Exiguobacterium sp. AT1b	Exiguobacterium sp. AT1b		#92B4AF
+362663	periphery	Escherichia coli 536	Escherichia coli 536		#92B4AF
+362948	periphery	Lactobacillus salivarius	Lactobacillus salivarius UCC118		#92B4AF
+362976	core	Haloquadratum walsbyi	Haloquadratum walsbyi DSM 16790		#92B4AF
+363253	core	Lawsonia intracellularis	Lawsonia intracellularis PHE/MN1-00		#92B4AF
+365044	periphery	Polaromonas naphthalenivorans	Polaromonas naphthalenivorans CJ2		#92B4AF
+365046	core	Ramlibacter tataouinensis	Ramlibacter tataouinensis TTB310		#92B4AF
+365659	periphery	Streptococcus mitis B6	Streptococcus mitis B6		#92B4AF
+366394	core	Sinorhizobium medicae	Sinorhizobium medicae WSM419		#92B4AF
+366602	core	Caulobacter sp. K31	Caulobacter sp. K31		#92B4AF
+367336	periphery	Rhodobacterales bacterium HTCC2255	Rhodobacterales bacterium HTCC2255		#92B4AF
+367737	core	Arcobacter butzleri	Arcobacter butzleri RM4018		#92B4AF
+367775	core	Cryptococcus gattii	Cryptococcus gattii WM276		#92B4AF
+367928	core	Bifidobacterium adolescentis	Bifidobacterium adolescentis ATCC 15703		#92B4AF
+368407	core	Methanoculleus marisnigri	Methanoculleus marisnigri JR1		#92B4AF
+368408	core	Thermofilum pendens	Thermofilum pendens Hrk 5		#92B4AF
+369723	periphery	Salinispora tropica	Salinispora tropica CNB-440		#92B4AF
+370354	periphery	Entamoeba dispar	Entamoeba dispar SAW760		#92B4AF
+370438	core	Pelotomaculum thermopropionicum	Pelotomaculum thermopropionicum SI		#92B4AF
+371731	periphery	Rhodobacter sp. SW2	Rhodobacter sp. SW2		#92B4AF
+372461	periphery	Buchnera aphidicola BCc	Buchnera aphidicola BCc		#92B4AF
+373153	periphery	Streptococcus pneumoniae D39	Streptococcus pneumoniae D39		#92B4AF
+373903	core	Halothermothrix orenii	Halothermothrix orenii H 168		#92B4AF
+374463	periphery	Baumannia cicadellinicola	Baumannia cicadellinicola str. Hc (Homalodisca coagulata)		#92B4AF
+374847	core	Korarchaeum cryptofilum	Candidatus Korarchaeum cryptofilum OPF8		#92B4AF
+375286	core	Janthinobacterium sp. Marseille	Janthinobacterium sp. Marseille		#92B4AF
+375451	periphery	Roseobacter denitrificans	Roseobacter denitrificans OCh 114		#92B4AF
+376619	core	Francisella tularensis holarctica	Francisella tularensis subsp. holarctica LVS		#92B4AF
+376686	core	Flavobacterium johnsoniae	Flavobacterium johnsoniae UW101		#92B4AF
+377431	periphery	Chlorobium ferrooxidans	Chlorobium ferrooxidans DSM 13031		#92B4AF
+377629	core	Teredinibacter turnerae	Teredinibacter turnerae T7901		#92B4AF
+378753	core	Kocuria rhizophila	Kocuria rhizophila DC2201		#92B4AF
+378806	core	Stigmatella aurantiaca	Stigmatella aurantiaca DW4/3-1		#92B4AF
+379066	core	Gemmatimonas aurantiaca	Gemmatimonas aurantiaca T-27		#92B4AF
+379508	core	Lodderomyces elongisporus	Lodderomyces elongisporus NRRL YB 4239		#92B4AF
+379731	periphery	Pseudomonas stutzeri	Pseudomonas stutzeri A1501		#92B4AF
+380394	core	Acidithiobacillus ferrooxidans ATCC53993	Acidithiobacillus ferrooxidans ATCC 53993		#92B4AF
+380703	periphery	Aeromonas hydrophila	Aeromonas hydrophila subsp. hydrophila ATCC 7966		#92B4AF
+380749	core	Hydrogenobaculum sp. Y04AAS1	Hydrogenobaculum sp. Y04AAS1		#92B4AF
+381046	periphery	Lachancea thermotolerans	Lachancea thermotolerans		#92B4AF
+381666	core	Ralstonia eutropha H16	Ralstonia eutropha H16		#92B4AF
+381764	core	Fervidobacterium nodosum	Fervidobacterium nodosum Rt17-B1		#92B4AF
+382245	periphery	Aeromonas salmonicida	Aeromonas salmonicida subsp. salmonicida A449		#92B4AF
+382464	periphery	Verrucomicrobiae bacterium DG1235	Verrucomicrobiae bacterium DG1235		#92B4AF
+382638	periphery	Helicobacter acinonychis	Helicobacter acinonychis str. Sheeba		#92B4AF
+382640	periphery	Bartonella tribocorum	Bartonella tribocorum CIP 105476		#92B4AF
+383372	core	Roseiflexus castenholzii	Roseiflexus castenholzii DSM 13941		#92B4AF
+383407	core	Xanthomonas oryzae	Xanthomonas oryzae pv. oryzicola BLS256		#92B4AF
+383631	periphery	Methylophilales bacterium HTCC2181	Methylophilales bacterium HTCC2181		#92B4AF
+384616	core	Pyrobaculum islandicum	Pyrobaculum islandicum DSM 4184		#92B4AF
+384676	core	Pseudomonas entomophila	Pseudomonas entomophila L48		#92B4AF
+384765	core	Labrenzia aggregata	Labrenzia aggregata IAM 12614		#92B4AF
+386043	periphery	Listeria welshimeri	Listeria welshimeri serovar 6b str. SLCC5334		#92B4AF
+386415	periphery	Clostridium novyi	Clostridium novyi NT		#92B4AF
+387092	core	Nitratiruptor sp. SB1552	Nitratiruptor sp. SB155-2		#92B4AF
+387093	core	Sulfurovum sp. NBC371	Sulfurovum sp. NBC37-1		#92B4AF
+387344	periphery	Lactobacillus brevis	Lactobacillus brevis ATCC 367		#92B4AF
+387662	core	Carsonella ruddii	Candidatus Carsonella ruddii PV		#92B4AF
+388399	core	Sagittula stellata	Sagittula stellata E-37		#92B4AF
+388400	periphery	Bacillus sp. B14905	Bacillus sp. B14905		#92B4AF
+388401	periphery	Rhodobacteraceae bacterium HTCC2150	Rhodobacteraceae bacterium HTCC2150		#92B4AF
+388413	core	Algoriphagus sp. PR1	Algoriphagus sp. PR1		#92B4AF
+388739	periphery	Roseobacter sp. SK20926	Roseobacter sp. SK209-2-6		#92B4AF
+388919	periphery	Streptococcus sanguinis SK36	Streptococcus sanguinis SK36		#92B4AF
+390235	periphery	Pseudomonas putida W619	Pseudomonas putida W619		#92B4AF
+390236	periphery	Borrelia afzelii	Borrelia afzelii PKo		#92B4AF
+390333	periphery	Lactobacillus delbrueckii	Lactobacillus delbrueckii subsp. bulgaricus ATCC 11842		#92B4AF
+390874	periphery	Thermotoga petrophila	Thermotoga petrophila RKU-1		#92B4AF
+391008	periphery	Stenotrophomonas maltophilia R5513	Stenotrophomonas maltophilia R551-3		#92B4AF
+391009	core	Thermosipho melanesiensis	Thermosipho melanesiensis BI429		#92B4AF
+391037	core	Salinispora arenicola	Salinispora arenicola CNS-205		#92B4AF
+391038	periphery	Burkholderia phymatum	Burkholderia phymatum STM815		#92B4AF
+391165	core	Granulibacter bethesdensis	Granulibacter bethesdensis CGDNIH1		#92B4AF
+391295	periphery	Streptococcus suis	Streptococcus suis 05ZYH33		#92B4AF
+391574	periphery	Vibrionales bacterium SWAT3	Vibrionales bacterium SWAT-3		#92B4AF
+391587	core	Kordia algicida	Kordia algicida OT-1		#92B4AF
+391589	periphery	Roseobacter sp. GAI101	Roseobacter sp. GAI101		#92B4AF
+391591	periphery	Vibrio shilonii	Vibrio shilonii AK1		#92B4AF
+391592	core	Caminibacter mediatlanticus	Caminibacter mediatlanticus TB-2		#92B4AF
+391593	periphery	Roseobacter sp. CCS2	Roseobacter sp. CCS2		#92B4AF
+391595	periphery	Roseobacter litoralis	Roseobacter litoralis Och 149		#92B4AF
+391596	core	Pedobacter sp. BAL39	Pedobacter sp. BAL39		#92B4AF
+391597	core	Limnobacter sp. MED105	Limnobacter sp. MED105		#92B4AF
+391598	periphery	Flavobacteria bacterium BAL38	Flavobacteria bacterium BAL38		#92B4AF
+391600	core	Brevundimonas sp. BAL3	Brevundimonas sp. BAL3		#92B4AF
+391603	periphery	Flavobacteriales bacterium ALC1	Flavobacteriales bacterium ALC-1		#92B4AF
+391612	periphery	Cyanothece sp. CCY0110	Cyanothece sp. CCY0110		#92B4AF
+391613	core	Roseovarius sp. TM1035	Roseovarius sp. TM1035		#92B4AF
+391615	periphery	gamma proteobacterium HTCC5015	gamma proteobacterium HTCC5015		#92B4AF
+391616	periphery	Octadecabacter antarcticus 238	Octadecabacter antarcticus 238		#92B4AF
+391619	core	Phaeobacter gallaeciensis	Phaeobacter gallaeciensis DSM 17395		#92B4AF
+391623	periphery	Thermococcus barophilus	Thermococcus barophilus MP		#92B4AF
+391624	core	Oceanibulbus indolifex	Oceanibulbus indolifex HEL-45		#92B4AF
+391625	core	Plesiocystis pacifica	Plesiocystis pacifica SIR-1		#92B4AF
+391626	core	Octadecabacter antarcticus 307	Octadecabacter antarcticus 307		#92B4AF
+391735	core	Verminephrobacter eiseniae	Verminephrobacter eiseniae EF01-2		#92B4AF
+391896	periphery	Rickettsia bellii	Rickettsia bellii OSU 85-389		#92B4AF
+392499	periphery	Sphingomonas wittichii	Sphingomonas wittichii RW1		#92B4AF
+392500	periphery	Shewanella woodyi	Shewanella woodyi ATCC 51908		#92B4AF
+393305	periphery	Yersinia enterocolitica	Yersinia enterocolitica subsp. enterocolitica 8081		#92B4AF
+393480	periphery	Fusobacterium nucleatum polymorphum	Fusobacterium nucleatum subsp. polymorphum ATCC 10953		#92B4AF
+393595	periphery	Alcanivorax borkumensis	Alcanivorax borkumensis SK2		#92B4AF
+394221	core	Maricaulis maris	Maricaulis maris MCS10		#92B4AF
+394503	periphery	Clostridium cellulolyticum	Clostridium cellulolyticum H10		#92B4AF
+395019	periphery	Burkholderia multivorans	Burkholderia multivorans ATCC 17616		#92B4AF
+395492	periphery	Rhizobium leguminosarum trifolii	Rhizobium leguminosarum bv. trifolii WSM2304		#92B4AF
+395494	core	Gallionella capsiferriformans	Gallionella capsiferriformans ES-2		#92B4AF
+395495	core	Leptothrix cholodnii	Leptothrix cholodnii SP-6		#92B4AF
+395961	periphery	Cyanothece sp. PCC7425	Cyanothece sp. PCC 7425		#92B4AF
+395963	core	Beijerinckia indica	Beijerinckia indica subsp. indica ATCC 9039		#92B4AF
+395965	core	Methylocella silvestris	Methylocella silvestris BL2		#92B4AF
+396513	periphery	Staphylococcus carnosus	Staphylococcus carnosus subsp. carnosus TM300		#92B4AF
+396588	periphery	Thioalkalivibrio sulfidophilus	Thioalkalivibrio sulfidophilus HL-EbGr7		#92B4AF
+396595	core	Thioalkalivibrio sp. K90mix	Thioalkalivibrio sp. K90mix		#92B4AF
+397945	core	Acidovorax citrulli	Acidovorax citrulli AAC00-1		#92B4AF
+397948	core	Caldivirga maquilingensis	Caldivirga maquilingensis IC-167		#92B4AF
+398511	periphery	Bacillus pseudofirmus	Bacillus pseudofirmus OF4		#92B4AF
+398513	periphery	Bifidobacterium bifidum	Bifidobacterium bifidum NCIMB 41171		#92B4AF
+398527	periphery	Burkholderia phytofirmans	Burkholderia phytofirmans PsJN		#92B4AF
+398578	core	Delftia acidovorans	Delftia acidovorans SPH-1		#92B4AF
+398579	periphery	Shewanella pealeana	Shewanella pealeana ATCC 700345		#92B4AF
+398580	core	Dinoroseobacter shibae	Dinoroseobacter shibae DFL 12		#92B4AF
+398720	core	Leeuwenhoekiella blandensis	Leeuwenhoekiella blandensis MED217		#92B4AF
+398767	periphery	Geobacter lovleyi	Geobacter lovleyi SZ		#92B4AF
+399549	periphery	Metallosphaera sedula	Metallosphaera sedula DSM 5348		#92B4AF
+399550	core	Staphylothermus marinus	Staphylothermus marinus F1		#92B4AF
+399739	periphery	Pseudomonas mendocina ymp	Pseudomonas mendocina ymp		#92B4AF
+399741	core	Serratia proteamaculans	Serratia proteamaculans 568		#92B4AF
+399742	core	Enterobacter sp. 638	Enterobacter sp. 638		#92B4AF
+399795	core	Comamonas testosteroni KF1	Comamonas testosteroni KF-1		#92B4AF
+400668	core	Marinomonas sp. MWYL1	Marinomonas sp. MWYL1		#92B4AF
+400682	core	Amphimedon queenslandica	Amphimedon queenslandica		#92B4AF
+401053	core	Terriglobus saanensis	Terriglobus saanensis SP1PR4		#92B4AF
+401473	periphery	Bifidobacterium dentium	Bifidobacterium dentium Bd1		#92B4AF
+401526	core	Thermosinus carboxydivorans	Thermosinus carboxydivorans Nor1		#92B4AF
+402612	periphery	Flavobacterium psychrophilum	Flavobacterium psychrophilum JIP02/86		#92B4AF
+402626	periphery	Ralstonia pickettii	Ralstonia pickettii 12J		#92B4AF
+402676	periphery	Schizosaccharomyces japonicus	Schizosaccharomyces japonicus yFS275		#92B4AF
+402880	periphery	Methanococcus maripaludis C5	Methanococcus maripaludis C5		#92B4AF
+402881	core	Parvibaculum lavamentivorans	Parvibaculum lavamentivorans DS-1		#92B4AF
+403833	core	Petrotoga mobilis	Petrotoga mobilis SJ95		#92B4AF
+404380	periphery	Geobacter bemidjiensis	Geobacter bemidjiensis Bem		#92B4AF
+404589	periphery	Anaeromyxobacter sp. Fw1095	Anaeromyxobacter sp. Fw109-5		#92B4AF
+405566	periphery	Lactobacillus helveticus	Lactobacillus helveticus DPC 4571		#92B4AF
+405948	core	Saccharopolyspora erythraea	Saccharopolyspora erythraea NRRL 2338		#92B4AF
+406124	periphery	Bacillus sp. m313	Bacillus sp. m3-13		#92B4AF
+406327	periphery	Methanococcus vannielii	Methanococcus vannielii SB		#92B4AF
+406817	periphery	Xenorhabdus nematophila	Xenorhabdus nematophila ATCC 19061		#92B4AF
+406818	core	Xenorhabdus bovienii	Xenorhabdus bovienii SS-2004		#92B4AF
+408672	periphery	Nocardioidaceae bacterium Broad1	Nocardioidaceae bacterium Broad-1		#92B4AF
+410358	core	Methanocorpusculum labreanum	Methanocorpusculum labreanum Z		#92B4AF
+410359	periphery	Pyrobaculum calidifontis	Pyrobaculum calidifontis JCM 11548		#92B4AF
+411154	core	Gramella forsetii	Gramella forsetii KT0803		#92B4AF
+411459	periphery	Ruminococcus obeum ATCC29174	Ruminococcus obeum ATCC 29174		#92B4AF
+411460	periphery	Ruminococcus torques ATCC27756	Ruminococcus torques ATCC 27756		#92B4AF
+411461	periphery	Dorea formicigenerans	Dorea formicigenerans ATCC 27755		#92B4AF
+411462	core	Dorea longicatena	Dorea longicatena DSM 13814		#92B4AF
+411463	periphery	Eubacterium ventriosum	Eubacterium ventriosum ATCC 27560		#92B4AF
+411464	periphery	Desulfovibrio piger	Desulfovibrio piger ATCC 29098		#92B4AF
+411465	periphery	Parvimonas micra	Parvimonas micra ATCC 33270		#92B4AF
+411466	periphery	Actinomyces odontolyticus	Actinomyces odontolyticus ATCC 17982		#92B4AF
+411467	core	Pseudoflavonifractor capillosus	Pseudoflavonifractor capillosus ATCC 29799		#92B4AF
+411468	periphery	Clostridium scindens	Clostridium scindens ATCC 35704		#92B4AF
+411469	periphery	Eubacterium hallii	Eubacterium hallii DSM 3353		#92B4AF
+411470	periphery	Ruminococcus gnavus	Ruminococcus gnavus ATCC 29149		#92B4AF
+411471	core	Subdoligranulum variabile	Subdoligranulum variabile DSM 15176		#92B4AF
+411474	periphery	Coprococcus eutactus	Coprococcus eutactus ATCC 27759		#92B4AF
+411476	periphery	Bacteroides ovatus	Bacteroides ovatus ATCC 8483		#92B4AF
+411477	core	Parabacteroides merdae	Parabacteroides merdae ATCC 43184		#92B4AF
+411483	periphery	Faecalibacterium prausnitzii A2165	Faecalibacterium prausnitzii A2-165		#92B4AF
+411489	periphery	Clostridium sp. L250	Clostridium sp. L2-50		#92B4AF
+411490	core	Anaerostipes caccae	Anaerostipes caccae DSM 14662		#92B4AF
+411684	core	Hoeflea phototrophica	Hoeflea phototrophica DFL-43		#92B4AF
+411901	periphery	Bacteroides caccae	Bacteroides caccae ATCC 43185		#92B4AF
+411902	periphery	Clostridium bolteae	Clostridium bolteae ATCC BAA-613		#92B4AF
+411903	periphery	Collinsella aerofaciens	Collinsella aerofaciens ATCC 25986		#92B4AF
+412030	periphery	Paramecium tetraurelia	Paramecium tetraurelia strain d4 2		#92B4AF
+412133	periphery	Trichomonas vaginalis G3	Trichomonas vaginalis G3		#92B4AF
+412419	periphery	Borrelia duttonii	Borrelia duttonii Ly		#92B4AF
+412597	periphery	Paracoccus sp. TRP	Paracoccus sp. TRP		#92B4AF
+412965	periphery	Vesicomyosocius okutanii	Candidatus Vesicomyosocius okutanii HA		#92B4AF
+413404	periphery	Ruthia magnifica	Candidatus Ruthia magnifica str. Cm (Calyptogena magnifica)		#92B4AF
+414684	periphery	Rhodospirillum centenum	Rhodospirillum centenum SW		#92B4AF
+415426	core	Hyperthermus butylicus	Hyperthermus butylicus DSM 5456		#92B4AF
+416269	core	Actinobacillus pleuropneumoniae 5b	Actinobacillus pleuropneumoniae serovar 5b str. L20		#92B4AF
+416348	core	Halorubrum lacusprofundi	Halorubrum lacusprofundi ATCC 49239		#92B4AF
+416591	core	Thermotoga lettingae	Thermotoga lettingae TMO		#92B4AF
+416870	core	Lactococcus lactis cremoris	Lactococcus lactis subsp. cremoris MG1363		#92B4AF
+419610	core	Methylobacterium extorquens PA1	Methylobacterium extorquens PA1		#92B4AF
+419665	periphery	Methanococcus aeolicus	Methanococcus aeolicus Nankai-3		#92B4AF
+419947	periphery	Mycobacterium tuberculosis H37Ra	Mycobacterium tuberculosis H37Ra		#92B4AF
+420245	periphery	Leishmania braziliensis	Leishmania braziliensis MHOM BR 75 M2904		#92B4AF
+420246	periphery	Geobacillus thermodenitrificans	Geobacillus thermodenitrificans NG80-2		#92B4AF
+420247	periphery	Methanobrevibacter smithii	Methanobrevibacter smithii ATCC 35061		#92B4AF
+420336	core	Epulopiscium sp. NtB	Epulopiscium sp. N.t. morphotype B		#92B4AF
+420662	core	Methylibium petroleiphilum	Methylibium petroleiphilum PM1		#92B4AF
+420890	periphery	Lactococcus garvieae	Lactococcus garvieae Lg2		#92B4AF
+423536	periphery	Perkinsus marinus	Perkinsus marinus ATCC 50983		#92B4AF
+425104	periphery	Shewanella sediminis	Shewanella sediminis HAW-EB3		#92B4AF
+425265	periphery	Malassezia globosa	Malassezia globosa CBS 7966		#92B4AF
+426114	core	Thiomonas sp. 3As	Thiomonas sp. 3As		#92B4AF
+426117	periphery	Methylobacterium sp. 446	Methylobacterium sp. 4-46		#92B4AF
+426355	periphery	Methylobacterium radiotolerans	Methylobacterium radiotolerans JCM 2831		#92B4AF
+426368	periphery	Methanococcus maripaludis C7	Methanococcus maripaludis C7		#92B4AF
+426418	core	Pyrenophora tritici	Pyrenophora tritici repentis Pt 1C BFP		#92B4AF
+428125	periphery	Clostridium leptum	Clostridium leptum DSM 753		#92B4AF
+428126	periphery	Clostridium spiroforme	Clostridium spiroforme DSM 1552		#92B4AF
+428127	periphery	Eubacterium dolichum	Eubacterium dolichum DSM 3991		#92B4AF
+429009	core	Ammonifex degensii	Ammonifex degensii KC4		#92B4AF
+430066	periphery	Brucella abortus	Brucella abortus S19		#92B4AF
+431895	core	Monosiga brevicollis	Monosiga brevicollis MX1		#92B4AF
+431943	periphery	Clostridium kluyveri	Clostridium kluyveri DSM 555		#92B4AF
+431947	periphery	Porphyromonas gingivalis ATCC33277	Porphyromonas gingivalis ATCC 33277		#92B4AF
+434131	core	Neorickettsia risticii	Neorickettsia risticii str. Illinois		#92B4AF
+435258	core	Leishmania infantum	Leishmania infantum JPCM5		#92B4AF
+435590	periphery	Bacteroides vulgatus	Bacteroides vulgatus ATCC 8482		#92B4AF
+435591	periphery	Parabacteroides distasonis	Parabacteroides distasonis ATCC 8503		#92B4AF
+435832	periphery	Neisseria mucosa C102	Neisseria mucosa C102		#92B4AF
+435837	periphery	Staphylococcus hominis	Staphylococcus hominis subsp. hominis C80		#92B4AF
+435838	periphery	Staphylococcus caprae	Staphylococcus caprae C87		#92B4AF
+435842	periphery	Streptococcus sp. C150	Streptococcus sp. C150		#92B4AF
+436017	periphery	Ostreococcus lucimarinus	Ostreococcus lucimarinus CCE9901		#92B4AF
+436114	periphery	Sulfurihydrogenibium sp. YO3AOP1	Sulfurihydrogenibium sp. YO3AOP1		#92B4AF
+436308	core	Nitrosopumilus maritimus	Nitrosopumilus maritimus SCM1		#92B4AF
+436717	periphery	Acinetobacter oleivorans	Acinetobacter oleivorans DR1		#92B4AF
+436907	core	Vanderwaltozyma polyspora	Vanderwaltozyma polyspora DSM 70294		#92B4AF
+438753	core	Azorhizobium caulinodans	Azorhizobium caulinodans ORS 571		#92B4AF
+439235	core	Desulfatibacillum alkenivorans	Desulfatibacillum alkenivorans AK-01		#92B4AF
+439292	periphery	Bacillus selenitireducens	Bacillus selenitireducens MLS10		#92B4AF
+439375	core	Ochrobactrum anthropi	Ochrobactrum anthropi ATCC 49188		#92B4AF
+439481	core	Aciduliprofundum boonei	Aciduliprofundum boonei T469		#92B4AF
+439483	periphery	Campylobacterales bacterium	Campylobacterales bacterium GD 1		#92B4AF
+439493	core	Pelagibacter sp. HTCC7211	Candidatus Pelagibacter sp. HTCC7211		#92B4AF
+439496	periphery	Rhodobacterales bacterium Y4I	Rhodobacterales bacterium Y4I		#92B4AF
+439497	periphery	Ruegeria sp. R11	Ruegeria sp. R11		#92B4AF
+440497	periphery	Lactobacillus jensenii 1153	Lactobacillus jensenii 1153		#92B4AF
+441375	periphery	Cryptosporidium muris	Cryptosporidium muris RN66		#92B4AF
+441620	core	Methylobacterium populi	Methylobacterium populi BJ001		#92B4AF
+441768	core	Acholeplasma laidlawii	Acholeplasma laidlawii PG-8A		#92B4AF
+441769	core	Bacillus coahuilensis	Bacillus coahuilensis m4-4		#92B4AF
+441959	core	Talaromyces stipitatus	Talaromyces stipitatus ATCC 10500		#92B4AF
+441960	periphery	Penicillium marneffei	Penicillium marneffei ATCC 18224		#92B4AF
+443143	periphery	Geobacter sp. M18	Geobacter sp. M18		#92B4AF
+443144	periphery	Geobacter sp. M21	Geobacter sp. M21		#92B4AF
+443152	periphery	Marinobacter algicola	Marinobacter algicola DG893		#92B4AF
+443218	core	Amycolicicoccus subflavus	Amycolicicoccus subflavus DQS3-9A1		#92B4AF
+443254	core	Marinitoga piezophila	Marinitoga piezophila KA3		#92B4AF
+443255	periphery	Streptomyces clavuligerus	Streptomyces clavuligerus ATCC 27064		#92B4AF
+443906	core	Clavibacter michiganensis michiganensis	Clavibacter michiganensis subsp. michiganensis NCPPB 382		#92B4AF
+444157	periphery	Thermoproteus neutrophilus	Thermoproteus neutrophilus V24Sta		#92B4AF
+444158	periphery	Methanococcus maripaludis C6	Methanococcus maripaludis C6		#92B4AF
+444177	periphery	Lysinibacillus sphaericus	Lysinibacillus sphaericus C3-41		#92B4AF
+444612	periphery	Rickettsia endosymbiont	Rickettsia endosymbiont of Ixodes scapularis		#92B4AF
+445335	periphery	Clostridium botulinum NCTC2916	Clostridium botulinum NCTC 2916		#92B4AF
+445337	periphery	Clostridium botulinum C Eklund	Clostridium botulinum C str. Eklund		#92B4AF
+445932	core	Elusimicrobium minutum	Elusimicrobium minutum Pei191		#92B4AF
+445970	periphery	Alistipes putredinis	Alistipes putredinis DSM 17216		#92B4AF
+445971	core	Anaerofustis stercorihominis	Anaerofustis stercorihominis DSM 17244		#92B4AF
+445972	core	Anaerotruncus colihominis	Anaerotruncus colihominis DSM 17241		#92B4AF
+445973	periphery	Clostridium bartlettii	Clostridium bartlettii DSM 16795		#92B4AF
+445974	periphery	Clostridium ramosum	Clostridium ramosum DSM 1402		#92B4AF
+445975	periphery	Collinsella stercoris	Collinsella stercoris DSM 13279		#92B4AF
+445987	periphery	Borrelia valaisiana	Borrelia valaisiana VS116		#92B4AF
+446462	core	Actinosynnema mirum	Actinosynnema mirum DSM 43827		#92B4AF
+446465	core	Brachybacterium faecium	Brachybacterium faecium DSM 4810		#92B4AF
+446466	periphery	Cellulomonas flavigena	Cellulomonas flavigena DSM 20109		#92B4AF
+446468	core	Nocardiopsis dassonvillei	Nocardiopsis dassonvillei subsp. dassonvillei DSM 43111		#92B4AF
+446469	core	Sanguibacter keddieii	Sanguibacter keddieii DSM 10542		#92B4AF
+446470	core	Stackebrandtia nassauensis	Stackebrandtia nassauensis DSM 44728		#92B4AF
+446471	core	Xylanimonas cellulosilytica	Xylanimonas cellulosilytica DSM 15894		#92B4AF
+448385	core	Sorangium cellulosum	Sorangium cellulosum So ce 56		#92B4AF
+449447	core	Microcystis aeruginosa	Microcystis aeruginosa NIES-843		#92B4AF
+449673	periphery	Bacteroides stercoris	Bacteroides stercoris ATCC 43183		#92B4AF
+450851	core	Phenylobacterium zucineum	Phenylobacterium zucineum HLK1		#92B4AF
+451757	periphery	Clostridium perfringens NCTC8239	Clostridium perfringens NCTC 8239		#92B4AF
+452471	core	Amoebophilus asiaticus	Candidatus Amoebophilus asiaticus 5a2		#92B4AF
+452637	core	Opitutus terrae	Opitutus terrae PB90-1		#92B4AF
+452638	periphery	Polynucleobacter necessarius necessarius	Polynucleobacter necessarius subsp. necessarius STIR1		#92B4AF
+452652	core	Kitasatospora setae	Kitasatospora setae KM-6054		#92B4AF
+452662	periphery	Sphingobium japonicum	Sphingobium japonicum UT26S		#92B4AF
+452863	core	Arthrobacter chlorophenolicus	Arthrobacter chlorophenolicus A6		#92B4AF
+453591	core	Ignicoccus hospitalis	Ignicoccus hospitalis KIN4/I		#92B4AF
+455436	core	Glaciecola sp. HTCC2999	Glaciecola sp. HTCC2999		#92B4AF
+455632	periphery	Streptomyces griseus	Streptomyces griseus subsp. griseus NBRC 13350		#92B4AF
+456320	core	Methanococcus voltae	Methanococcus voltae A3		#92B4AF
+456442	core	Methanoregula boonei	Methanoregula boonei 6A8		#92B4AF
+456481	core	Leptospira biflexa	Leptospira biflexa serovar Patoc strain Patoc 1 (Paris)		#92B4AF
+457396	periphery	Clostridium sp. 7243FAA	Clostridium sp. 7_2_43FAA		#92B4AF
+457398	periphery	Desulfovibrio sp. 31syn3	Desulfovibrio sp. 3_1_syn3		#92B4AF
+457405	periphery	Fusobacterium sp. 71	Fusobacterium sp. 7_1		#92B4AF
+457412	core	Ruminococcus sp. 5139BFAA	Ruminococcus sp. 5_1_39BFAA		#92B4AF
+457421	periphery	Clostridiales bacterium	Clostridiales bacterium 1_7_47FAA		#92B4AF
+457424	periphery	Bacteroides fragilis 3112	Bacteroides fragilis 3_1_12		#92B4AF
+457425	periphery	Streptomyces albus	Streptomyces albus J1074		#92B4AF
+457427	periphery	Streptomyces himastatinicus	Streptomyces himastatinicus ATCC 53653		#92B4AF
+457429	periphery	Streptomyces pristinaespiralis	Streptomyces pristinaespiralis ATCC 25486		#92B4AF
+457570	core	Natranaerobius thermophilus	Natranaerobius thermophilus JW/NM-WN-LF		#92B4AF
+458233	core	Macrococcus caseolyticus	Macrococcus caseolyticus JCSC5402		#92B4AF
+458817	periphery	Shewanella halifaxensis	Shewanella halifaxensis HAW-EB4		#92B4AF
+460265	periphery	Methylobacterium nodulans	Methylobacterium nodulans ORS 2060		#92B4AF
+463191	periphery	Streptomyces sviceus	Streptomyces sviceus ATCC 29083		#92B4AF
+465515	core	Micrococcus luteus	Micrococcus luteus NCTC 2665		#92B4AF
+465541	periphery	Streptomyces sp. Mg1	Streptomyces sp. Mg1		#92B4AF
+465817	periphery	Erwinia tasmaniensis	Erwinia tasmaniensis Et1/99		#92B4AF
+467200	periphery	Streptomyces griseoflavus	Streptomyces griseoflavus Tu4000		#92B4AF
+467661	periphery	Rhodobacteraceae bacterium KLH11	Rhodobacteraceae bacterium KLH11		#92B4AF
+467705	periphery	Streptococcus gordonii	Streptococcus gordonii str. Challis substr. CH1		#92B4AF
+469008	periphery	Escherichia coli BL21DE3	Escherichia coli BL21(DE3)		#92B4AF
+469371	core	Thermobispora bispora	Thermobispora bispora DSM 43833		#92B4AF
+469378	core	Cryptobacterium curtum	Cryptobacterium curtum DSM 15641		#92B4AF
+469381	core	Dethiosulfovibrio peptidovorans	Dethiosulfovibrio peptidovorans DSM 11002		#92B4AF
+469382	core	Halogeometricum borinquense	Halogeometricum borinquense DSM 11551		#92B4AF
+469383	core	Conexibacter woesei	Conexibacter woesei DSM 14684		#92B4AF
+469595	periphery	Citrobacter sp. 302	Citrobacter sp. 30_2		#92B4AF
+469596	core	Coprobacillus sp. 291	Coprobacillus sp. 29_1		#92B4AF
+469606	periphery	Fusobacterium sp. 4113	Fusobacterium sp. 4_1_13		#92B4AF
+469610	periphery	Burkholderiales bacterium 1147	Burkholderiales bacterium 1_1_47		#92B4AF
+469613	periphery	Enterobacteriaceae bacterium	Enterobacteriaceae bacterium 9_2_54FAA		#92B4AF
+469615	periphery	Fusobacterium gonidiaformans	Fusobacterium gonidiaformans ATCC 25563		#92B4AF
+469616	periphery	Fusobacterium mortiferum	Fusobacterium mortiferum ATCC 9817		#92B4AF
+469617	periphery	Fusobacterium ulcerans	Fusobacterium ulcerans ATCC 49185		#92B4AF
+469618	periphery	Fusobacterium varium	Fusobacterium varium ATCC 27725		#92B4AF
+470145	periphery	Bacteroides coprocola	Bacteroides coprocola DSM 17136		#92B4AF
+470146	periphery	Coprococcus comes	Coprococcus comes ATCC 27758		#92B4AF
+471223	periphery	Geobacillus sp. WCH70	Geobacillus sp. WCH70		#92B4AF
+471821	periphery	uncultured Tg1 bacterium RsD17	uncultured Termite group 1 bacterium phylotype Rs-D17		#92B4AF
+471852	core	Thermomonospora curvata	Thermomonospora curvata DSM 43183		#92B4AF
+471853	core	Beutenbergia cavernae	Beutenbergia cavernae DSM 12333		#92B4AF
+471854	core	Dyadobacter fermentans	Dyadobacter fermentans DSM 18053		#92B4AF
+471855	core	Slackia heliotrinireducens	Slackia heliotrinireducens DSM 20476		#92B4AF
+471856	core	Jonesia denitrificans	Jonesia denitrificans DSM 20603		#92B4AF
+471857	core	Saccharomonospora viridis	Saccharomonospora viridis DSM 43017		#92B4AF
+471870	periphery	Bacteroides intestinalis	Bacteroides intestinalis DSM 17393		#92B4AF
+471874	core	Providencia stuartii	Providencia stuartii ATCC 25827		#92B4AF
+471875	periphery	Ruminococcus lactaris	Ruminococcus lactaris ATCC 29176		#92B4AF
+471881	periphery	Proteus penneri	Proteus penneri ATCC 35198		#92B4AF
+472759	core	Nitrosococcus halophilus	Nitrosococcus halophilus Nc4		#92B4AF
+476272	periphery	Blautia hydrogenotrophica	Blautia hydrogenotrophica DSM 10507		#92B4AF
+477974	core	Desulforudis audaxviator	Candidatus Desulforudis audaxviator MP104C		#92B4AF
+478749	periphery	Marvinbryantia formatexigens	Marvinbryantia formatexigens DSM 14469		#92B4AF
+478801	core	Kytococcus sedentarius	Kytococcus sedentarius DSM 20547		#92B4AF
+479431	core	Nakamurella multipartita	Nakamurella multipartita DSM 44233		#92B4AF
+479432	core	Streptosporangium roseum	Streptosporangium roseum DSM 43021		#92B4AF
+479433	core	Catenulispora acidiphila	Catenulispora acidiphila DSM 44928		#92B4AF
+479434	core	Sphaerobacter thermophilus	Sphaerobacter thermophilus DSM 20745		#92B4AF
+479435	core	Kribbella flavida	Kribbella flavida DSM 17836		#92B4AF
+479436	periphery	Veillonella parvula	Veillonella parvula DSM 2008		#92B4AF
+479437	core	Eggerthella lenta	Eggerthella lenta DSM 2243		#92B4AF
+481448	core	Methylacidiphilum infernorum	Methylacidiphilum infernorum V4		#92B4AF
+481743	periphery	Paenibacillus sp. Y412MC10	Paenibacillus sp. Y412MC10		#92B4AF
+481805	periphery	Escherichia coli ATCC8739	Escherichia coli ATCC 8739		#92B4AF
+483215	periphery	Bacteroides finegoldii	Bacteroides finegoldii DSM 17565		#92B4AF
+483216	core	Bacteroides eggerthii	Bacteroides eggerthii DSM 20697		#92B4AF
+483218	core	Bacteroides pectinophilus	Bacteroides pectinophilus ATCC 43243		#92B4AF
+483219	core	Myxococcus fulvus	Myxococcus fulvus HW-1		#92B4AF
+484018	periphery	Bacteroides plebeius	Bacteroides plebeius DSM 17135		#92B4AF
+484019	periphery	Thermosipho africanus	Thermosipho africanus TCF52B		#92B4AF
+484022	periphery	Francisella philomiragia	Francisella philomiragia subsp. philomiragia ATCC 25017		#92B4AF
+485913	core	Ktedonobacter racemifer	Ktedonobacter racemifer DSM 44963		#92B4AF
+485914	core	Halomicrobium mukohataei	Halomicrobium mukohataei DSM 12286		#92B4AF
+485915	core	Desulfohalobium retbaense	Desulfohalobium retbaense DSM 5692		#92B4AF
+485916	periphery	Desulfotomaculum acetoxidans	Desulfotomaculum acetoxidans DSM 771		#92B4AF
+485917	periphery	Pedobacter heparinus	Pedobacter heparinus DSM 2366		#92B4AF
+485918	core	Chitinophaga pinensis	Chitinophaga pinensis DSM 2588		#92B4AF
+486041	core	Laccaria bicolor	Laccaria bicolor S238N H82		#92B4AF
+487796	periphery	Flavobacteria bacterium MS0242A	Flavobacteria bacterium MS024-2A		#92B4AF
+487797	periphery	Flavobacteria bacterium MS0243C	Flavobacteria bacterium MS024-3C		#92B4AF
+488538	core	Puniceispirillum marinum	Candidatus Puniceispirillum marinum IMCC1322		#92B4AF
+489653	periphery	Neisseria lactamica	Neisseria lactamica 020-06		#92B4AF
+489825	core	Moorea producta	Moorea producta 3L		#92B4AF
+490899	core	Desulfurococcus kamchatkensis	Desulfurococcus kamchatkensis 1221n		#92B4AF
+491915	core	Anoxybacillus flavithermus	Anoxybacillus flavithermus WK1		#92B4AF
+491916	periphery	Rhizobium etli CIAT652	Rhizobium etli CIAT 652		#92B4AF
+491952	periphery	Marinomonas posidonica	Marinomonas posidonica IVIA-Po-181		#92B4AF
+496833	periphery	Mycoplasma fermentans	Mycoplasma fermentans PG18		#92B4AF
+497964	core	Chthoniobacter flavus	Chthoniobacter flavus Ellin428		#92B4AF
+497965	periphery	Cyanothece sp. PCC7822	Cyanothece sp. PCC 7822		#92B4AF
+498211	core	Cellvibrio japonicus	Cellvibrio japonicus Ueda107		#92B4AF
+498217	core	Edwardsiella tarda	Edwardsiella tarda EIB202		#92B4AF
+498742	core	Borrelia spielmanii	Borrelia spielmanii A14S		#92B4AF
+498761	core	Heliobacterium modesticaldum	Heliobacterium modesticaldum Ice1		#92B4AF
+498848	core	Thermus aquaticus	Thermus aquaticus Y51MC23		#92B4AF
+499177	periphery	Clostridium sticklandii	Clostridium sticklandii DSM 519		#92B4AF
+499229	core	Tepidanaerobacter sp. Re1	Tepidanaerobacter sp. Re1		#92B4AF
+500485	core	Penicillium chrysogenum	Penicillium chrysogenum Wisconsin 54 1255		#92B4AF
+500633	periphery	Clostridium hiranonis	Clostridium hiranonis DSM 13275		#92B4AF
+500635	core	Mitsuokella multacida	Mitsuokella multacida DSM 20544		#92B4AF
+500637	periphery	Providencia rustigianii	Providencia rustigianii DSM 4541		#92B4AF
+500639	periphery	Enterobacter cancerogenus	Enterobacter cancerogenus ATCC 35316		#92B4AF
+500640	periphery	Citrobacter youngae	Citrobacter youngae ATCC 29220		#92B4AF
+501479	core	Citreicella sp. SE45	Citreicella sp. SE45		#92B4AF
+502025	core	Haliangium ochraceum	Haliangium ochraceum DSM 14365		#92B4AF
+502347	core	Escherichia albertii	Escherichia albertii TW07627		#92B4AF
+502558	periphery	Eggerthella sp. YY7918	Eggerthella sp. YY7918		#92B4AF
+502779	core	Paracoccidioides sp. lutzii	Paracoccidioides sp. lutzii Pb01		#92B4AF
+504472	core	Spirosoma linguale	Spirosoma linguale DSM 74		#92B4AF
+504474	periphery	Corynebacterium urealyticum	Corynebacterium urealyticum DSM 7109		#92B4AF
+504728	core	Meiothermus ruber	Meiothermus ruber DSM 1279		#92B4AF
+504832	core	Oligotropha carboxidovorans	Oligotropha carboxidovorans OM5		#92B4AF
+506534	core	Rheinheimera sp. A13L	Rheinheimera sp. A13L		#92B4AF
+509190	periphery	Caulobacter segnis	Caulobacter segnis ATCC 21756		#92B4AF
+509191	core	Acetivibrio cellulolyticus	Acetivibrio cellulolyticus CD2		#92B4AF
+511062	core	Oceanimonas sp. GK1	Oceanimonas sp. GK1		#92B4AF
+511145	core	Escherichia coli K12 MG1655	Escherichia coli str. K-12 substr. MG1655		#92B4AF
+511437	periphery	Lactobacillus buchneri NRRLB30929	Lactobacillus buchneri NRRL B-30929		#92B4AF
+511680	periphery	Butyrivibrio crossotus	Butyrivibrio crossotus DSM 2876		#92B4AF
+511995	core	Azobacteroides pseudotrichonymphae	Candidatus Azobacteroides pseudotrichonymphae genomovar. CFP2		#92B4AF
+512564	periphery	Mycoplasma crocodyli	Mycoplasma crocodyli MP145		#92B4AF
+513049	core	Arthrospira maxima	Arthrospira maxima CS-328		#92B4AF
+515618	core	Riesia pediculicola	Candidatus Riesia pediculicola USDA		#92B4AF
+515620	core	Eubacterium eligens	Eubacterium eligens ATCC 27750		#92B4AF
+515622	core	Butyrivibrio proteoclasticus	Butyrivibrio proteoclasticus B316		#92B4AF
+515635	core	Dictyoglomus turgidum	Dictyoglomus turgidum DSM 6724		#92B4AF
+515849	core	Podospora anserina	Podospora anserina S mat		#92B4AF
+517417	periphery	Chlorobaculum parvum	Chlorobaculum parvum NCIB 8327		#92B4AF
+517418	core	Chloroherpeton thalassium	Chloroherpeton thalassium ATCC 35110		#92B4AF
+517433	periphery	Pantoea sp. aB	Pantoea sp. aB		#92B4AF
+517722	periphery	Citromicrobium sp. JLT1363	Citromicrobium sp. JLT1363		#92B4AF
+518635	periphery	Bifidobacterium angulatum	Bifidobacterium angulatum DSM 20098 = JCM 7096		#92B4AF
+518637	periphery	Eubacterium biforme	Eubacterium biforme DSM 3989		#92B4AF
+518766	core	Rhodothermus marinus	Rhodothermus marinus DSM 4252		#92B4AF
+519441	core	Streptobacillus moniliformis	Streptobacillus moniliformis DSM 12112		#92B4AF
+519442	core	Halorhabdus utahensis	Halorhabdus utahensis DSM 12940		#92B4AF
+520999	periphery	Providencia alcalifaciens	Providencia alcalifaciens DSM 30120		#92B4AF
+521000	periphery	Providencia rettgeri	Providencia rettgeri DSM 1131		#92B4AF
+521003	core	Collinsella intestinalis	Collinsella intestinalis DSM 13280		#92B4AF
+521010	periphery	Borrelia bissettii	Borrelia bissettii DN127		#92B4AF
+521011	core	Methanosphaerula palustris	Methanosphaerula palustris E1-9c		#92B4AF
+521045	core	Kosmotoga olearia	Kosmotoga olearia TBF 19.5.1		#92B4AF
+521095	periphery	Atopobium parvulum	Atopobium parvulum DSM 20469		#92B4AF
+521096	core	Tsukamurella paurometabola	Tsukamurella paurometabola DSM 20162		#92B4AF
+521097	periphery	Capnocytophaga ochracea DSM7271	Capnocytophaga ochracea DSM 7271		#92B4AF
+521098	core	Alicyclobacillus acidocaldarius DSM446	Alicyclobacillus acidocaldarius subsp. acidocaldarius DSM 446		#92B4AF
+521460	core	Caldicellulosiruptor bescii	Caldicellulosiruptor bescii DSM 6725		#92B4AF
+521674	core	Planctomyces limnophilus	Planctomyces limnophilus DSM 3776		#92B4AF
+522306	core	Accumulibacter phosphatis	Candidatus Accumulibacter phosphatis clade IIA str. UW-1		#92B4AF
+522373	core	Stenotrophomonas maltophilia K279a	Stenotrophomonas maltophilia K279a		#92B4AF
+522772	core	Denitrovibrio acetiphilus	Denitrovibrio acetiphilus DSM 12809		#92B4AF
+523791	core	Kangiella koreensis	Kangiella koreensis DSM 16069		#92B4AF
+523794	core	Leptotrichia buccalis	Leptotrichia buccalis C-1013-b		#92B4AF
+523846	core	Methanothermus fervidus	Methanothermus fervidus DSM 2088		#92B4AF
+523850	core	Thermococcus onnurineus	Thermococcus onnurineus NA1		#92B4AF
+525146	periphery	Desulfovibrio desulfuricans ATCC27774	Desulfovibrio desulfuricans subsp. desulfuricans str. ATCC 27774		#92B4AF
+525244	periphery	Acinetobacter sp. ATCC27244	Acinetobacter sp. ATCC 27244		#92B4AF
+525245	periphery	Actinomyces coleocanis	Actinomyces coleocanis DSM 15436		#92B4AF
+525246	periphery	Actinomyces urogenitalis	Actinomyces urogenitalis DSM 15434		#92B4AF
+525254	periphery	Anaerococcus lactolyticus	Anaerococcus lactolyticus ATCC 51172		#92B4AF
+525255	periphery	Anaerococcus tetradius	Anaerococcus tetradius ATCC 35098		#92B4AF
+525256	periphery	Atopobium vaginae DSM15829	Atopobium vaginae DSM 15829		#92B4AF
+525257	core	Chryseobacterium gleum	Chryseobacterium gleum ATCC 35910		#92B4AF
+525260	periphery	Corynebacterium accolens	Corynebacterium accolens ATCC 49725		#92B4AF
+525263	periphery	Corynebacterium lipophiloflavum	Corynebacterium lipophiloflavum DSM 44291		#92B4AF
+525264	periphery	Corynebacterium pseudogenitalium	Corynebacterium pseudogenitalium ATCC 33035		#92B4AF
+525268	periphery	Corynebacterium striatum	Corynebacterium striatum ATCC 6940		#92B4AF
+525282	periphery	Finegoldia magna ATCC53516	Finegoldia magna ATCC 53516		#92B4AF
+525309	periphery	Lactobacillus antri	Lactobacillus antri DSM 16041		#92B4AF
+525318	periphery	Lactobacillus buchneri ATCC11577	Lactobacillus buchneri ATCC 11577		#92B4AF
+525365	periphery	Lactobacillus ultunensis	Lactobacillus ultunensis DSM 16047		#92B4AF
+525366	periphery	Lactobacillus vaginalis	Lactobacillus vaginalis ATCC 49540		#92B4AF
+525367	periphery	Listeria grayi	Listeria grayi DSM 20601		#92B4AF
+525373	periphery	Sphingobacterium spiritivorum	Sphingobacterium spiritivorum ATCC 33861		#92B4AF
+525378	periphery	Staphylococcus epidermidis M23864W1	Staphylococcus epidermidis M23864:W1		#92B4AF
+525379	periphery	Streptococcus equinus	Streptococcus equinus ATCC 9812		#92B4AF
+525897	core	Desulfomicrobium baculatum	Desulfomicrobium baculatum DSM 4028		#92B4AF
+525898	core	Sulfurospirillum deleyianum	Sulfurospirillum deleyianum DSM 6946		#92B4AF
+525903	core	Thermanaerovibrio acidaminovorans	Thermanaerovibrio acidaminovorans DSM 6589		#92B4AF
+525904	core	Thermobaculum terrenum	Thermobaculum terrenum ATCC BAA-798		#92B4AF
+525909	core	Acidimicrobium ferrooxidans	Acidimicrobium ferrooxidans DSM 10331		#92B4AF
+525919	periphery	Anaerococcus prevotii DSM20548	Anaerococcus prevotii DSM 20548		#92B4AF
+526218	core	Sebaldella termitidis	Sebaldella termitidis ATCC 33386		#92B4AF
+526221	periphery	Verticillium albo	Verticillium albo atrum VaMs.102		#92B4AF
+526222	periphery	Desulfovibrio salexigens	Desulfovibrio salexigens DSM 2638		#92B4AF
+526224	periphery	Brachyspira murdochii	Brachyspira murdochii DSM 12563		#92B4AF
+526225	core	Geodermatophilus obscurus	Geodermatophilus obscurus DSM 43160		#92B4AF
+526226	periphery	Gordonia bronchialis	Gordonia bronchialis DSM 43247		#92B4AF
+526227	periphery	Meiothermus silvanus	Meiothermus silvanus DSM 9946		#92B4AF
+526988	periphery	Bacillus cereus Rock418	Bacillus cereus Rock4-18		#92B4AF
+528354	periphery	Neisseria gonorrhoeae MS11	Neisseria gonorrhoeae MS11		#92B4AF
+528357	periphery	Neisseria gonorrhoeae PID241	Neisseria gonorrhoeae PID24-1		#92B4AF
+529507	core	Proteus mirabilis	Proteus mirabilis HI4320		#92B4AF
+529709	periphery	Pyrococcus yayanosii	Pyrococcus yayanosii CH1		#92B4AF
+530564	core	Pirellula staleyi	Pirellula staleyi DSM 6068		#92B4AF
+531844	periphery	Flavobacteriaceae bacterium 351910	Flavobacteriaceae bacterium 3519-10		#92B4AF
+533240	core	Cylindrospermopsis raciborskii	Cylindrospermopsis raciborskii CS-505		#92B4AF
+533247	core	Raphidiopsis brookii	Raphidiopsis brookii D9		#92B4AF
+535289	periphery	Acidovorax ebreus	Acidovorax ebreus TPSY		#92B4AF
+535722	core	Arthroderma gypseum	Arthroderma gypseum CBS 118893		#92B4AF
+536019	periphery	Mesorhizobium opportunistum	Mesorhizobium opportunistum WSM2075		#92B4AF
+536227	periphery	Clostridium carboxidivorans	Clostridium carboxidivorans P7		#92B4AF
+536233	periphery	Clostridium botulinum E1 Beluga	Clostridium botulinum E1 str. BoNT E Beluga		#92B4AF
+537007	core	Blautia hansenii	Blautia hansenii DSM 20583		#92B4AF
+537011	periphery	Prevotella copri	Prevotella copri DSM 18205		#92B4AF
+537013	periphery	Clostridium methylpentosum	Clostridium methylpentosum DSM 5476		#92B4AF
+537021	core	Liberibacter asiaticus	Candidatus Liberibacter asiaticus str. psy62		#92B4AF
+537970	periphery	Helicobacter canadensis	Helicobacter canadensis MIT 98-5491		#92B4AF
+537971	periphery	Helicobacter cinaedi	Helicobacter cinaedi CCUG 18818		#92B4AF
+537972	periphery	Helicobacter pullorum	Helicobacter pullorum MIT 98-5489		#92B4AF
+543526	core	Haloterrigena turkmenica	Haloterrigena turkmenica DSM 5511		#92B4AF
+543728	periphery	Variovorax paradoxus S110	Variovorax paradoxus S110		#92B4AF
+543734	periphery	Lactobacillus casei	Lactobacillus casei BL23		#92B4AF
+545693	periphery	Bacillus megaterium	Bacillus megaterium QM B1551		#92B4AF
+545694	periphery	Treponema primitia	Treponema primitia ZAS-2		#92B4AF
+545695	periphery	Treponema azotonutricium	Treponema azotonutricium ZAS-9		#92B4AF
+545696	core	Holdemania filiformis	Holdemania filiformis DSM 12042		#92B4AF
+546262	periphery	Neisseria cinerea	Neisseria cinerea ATCC 14685		#92B4AF
+546263	periphery	Neisseria elongata	Neisseria elongata subsp. glycolytica ATCC 29315		#92B4AF
+546264	periphery	Neisseria flavescens NRL30031	Neisseria flavescens NRL30031/H210		#92B4AF
+546266	periphery	Neisseria mucosa ATCC25996	Neisseria mucosa ATCC 25996		#92B4AF
+546267	periphery	Neisseria polysaccharea	Neisseria polysaccharea ATCC 43768		#92B4AF
+546268	periphery	Neisseria subflava	Neisseria subflava NJ9703		#92B4AF
+546269	core	Filifactor alocis	Filifactor alocis ATCC 35896		#92B4AF
+546270	periphery	Gemella haemolysans ATCC10379	Gemella haemolysans ATCC 10379		#92B4AF
+546271	periphery	Selenomonas sputigena	Selenomonas sputigena ATCC 35185		#92B4AF
+546273	periphery	Veillonella dispar	Veillonella dispar ATCC 17748		#92B4AF
+546274	core	Eikenella corrodens	Eikenella corrodens ATCC 23834		#92B4AF
+546275	periphery	Fusobacterium periodonticum	Fusobacterium periodonticum ATCC 33693		#92B4AF
+546414	periphery	Deinococcus deserti	Deinococcus deserti VCD115		#92B4AF
+547042	periphery	Bacteroides coprophilus	Bacteroides coprophilus DSM 18228		#92B4AF
+547043	periphery	Bifidobacterium pseudocatenulatum	Bifidobacterium pseudocatenulatum DSM 20438 = JCM 1200		#92B4AF
+547045	periphery	Neisseria sicca	Neisseria sicca ATCC 29256		#92B4AF
+547558	core	Methanohalophilus mahii	Methanohalophilus mahii DSM 5219		#92B4AF
+547559	core	Natrialba magadii	Natrialba magadii ATCC 43099		#92B4AF
+548476	periphery	Corynebacterium aurimucosum	Corynebacterium aurimucosum ATCC 700975		#92B4AF
+548477	core	Corynebacterium glucuronolyticum	Corynebacterium glucuronolyticum ATCC 51867		#92B4AF
+550540	core	Ferrimonas balearica	Ferrimonas balearica DSM 9799		#92B4AF
+551115	core	Nostoc azollae	Nostoc azollae 0708		#92B4AF
+552396	periphery	Erysipelotrichaceae bacterium 5254FAA	Erysipelotrichaceae bacterium 5_2_54FAA		#92B4AF
+552398	periphery	Ruminococcaceae bacterium D16	Ruminococcaceae bacterium D16		#92B4AF
+552531	periphery	Bifidobacterium animalis	Bifidobacterium animalis subsp. lactis BB-12		#92B4AF
+552811	core	Dehalogenimonas lykanthroporepellens	Dehalogenimonas lykanthroporepellens BL-DC-9		#92B4AF
+553171	periphery	Prevotella bivia	Prevotella bivia JCVIHMP010		#92B4AF
+553174	periphery	Prevotella melaninogenica	Prevotella melaninogenica ATCC 25845		#92B4AF
+553175	periphery	Porphyromonas endodontalis	Porphyromonas endodontalis ATCC 35406		#92B4AF
+553177	periphery	Capnocytophaga sputigena	Capnocytophaga sputigena ATCC 33612		#92B4AF
+553178	periphery	Capnocytophaga gingivalis	Capnocytophaga gingivalis ATCC 33624		#92B4AF
+553184	periphery	Atopobium rimae	Atopobium rimae ATCC 49626		#92B4AF
+553190	core	Gardnerella vaginalis 40905	Gardnerella vaginalis 409-05		#92B4AF
+553204	periphery	Corynebacterium amycolatum	Corynebacterium amycolatum SK46		#92B4AF
+553207	periphery	Corynebacterium matruchotii	Corynebacterium matruchotii ATCC 14266		#92B4AF
+553217	core	Enhydrobacter aerosaccus	Enhydrobacter aerosaccus SK60		#92B4AF
+553218	periphery	Campylobacter rectus	Campylobacter rectus RM3267		#92B4AF
+553219	periphery	Campylobacter showae	Campylobacter showae RM3277		#92B4AF
+553220	periphery	Campylobacter gracilis	Campylobacter gracilis RM3268		#92B4AF
+553480	periphery	Photorhabdus asymbiotica	Photorhabdus asymbiotica subsp. asymbiotica ATCC 43949		#92B4AF
+553973	periphery	Clostridium hylemonae	Clostridium hylemonae DSM 15053		#92B4AF
+554155	periphery	Arthroderma otae	Arthroderma otae CBS 113480		#92B4AF
+555079	core	Thermosediminibacter oceani	Thermosediminibacter oceani DSM 16646		#92B4AF
+555088	core	Dethiobacter alkaliphilus	Dethiobacter alkaliphilus AHT 1		#92B4AF
+555217	core	Zymomonas mobilis mobilis	Zymomonas mobilis subsp. mobilis ATCC 10988		#92B4AF
+555778	core	Halothiobacillus neapolitanus	Halothiobacillus neapolitanus c2		#92B4AF
+555779	core	Desulfonatronospira thiodismutans	Desulfonatronospira thiodismutans ASO3-1		#92B4AF
+556261	periphery	Clostridium sp. D5	Clostridium sp. D5		#92B4AF
+556263	core	Fusobacterium sp. D12	Fusobacterium sp. D12		#92B4AF
+556267	periphery	Helicobacter winghamensis	Helicobacter winghamensis ATCC BAA-430		#92B4AF
+556268	periphery	Oxalobacter formigenes HOxBLS	Oxalobacter formigenes HOxBLS		#92B4AF
+556269	core	Oxalobacter formigenes OXCC13	Oxalobacter formigenes OXCC13		#92B4AF
+557598	core	Laribacter hongkongensis	Laribacter hongkongensis HLHK9		#92B4AF
+557599	periphery	Mycobacterium kansasii	Mycobacterium kansasii ATCC 12478		#92B4AF
+557723	periphery	Haemophilus parasuis	Haemophilus parasuis SH0165		#92B4AF
+559298	core	Ajellomyces dermatitidis	Ajellomyces dermatitidis SLH14081		#92B4AF
+559305	core	Trichophyton rubrum	Trichophyton rubrum CBS 118892		#92B4AF
+561007	periphery	Mycobacterium abscessus	Mycobacterium abscessus ATCC 19977		#92B4AF
+561177	periphery	Anaerococcus hydrogenalis	Anaerococcus hydrogenalis DSM 7454		#92B4AF
+561180	periphery	Bifidobacterium gallicum	Bifidobacterium gallicum DSM 20093		#92B4AF
+561229	periphery	Dickeya zeae	Dickeya zeae Ech1591		#92B4AF
+561230	periphery	Pectobacterium carotovorum	Pectobacterium carotovorum subsp. carotovorum PC1		#92B4AF
+561231	periphery	Pectobacterium wasabiae	Pectobacterium wasabiae WPP163		#92B4AF
+562970	core	Kyrpidia tusciae	Kyrpidia tusciae DSM 2912		#92B4AF
+562981	periphery	Gemella haemolysans M341	Gemella haemolysans M341		#92B4AF
+562982	periphery	Gemella morbillorum	Gemella morbillorum M424		#92B4AF
+562983	core	Gemella sanguinis	Gemella sanguinis M325		#92B4AF
+563008	periphery	Prevotella oris	Prevotella oris C735		#92B4AF
+563037	periphery	Streptococcus sp. M143	Streptococcus sp. M143		#92B4AF
+563038	periphery	Streptococcus sp. M334	Streptococcus sp. M334		#92B4AF
+563040	periphery	Sulfurimonas autotrophica	Sulfurimonas autotrophica DSM 16294		#92B4AF
+563192	core	Bilophila wadsworthia	Bilophila wadsworthia 3_1_6		#92B4AF
+565034	core	Brachyspira hyodysenteriae	Brachyspira hyodysenteriae WA1		#92B4AF
+565045	periphery	gamma proteobacterium NOR51B	gamma proteobacterium NOR51-B		#92B4AF
+565575	periphery	Ureaplasma urealyticum	Ureaplasma urealyticum serovar 10 str. ATCC 33699		#92B4AF
+565653	periphery	Enterococcus gallinarum	Enterococcus gallinarum EG2		#92B4AF
+565655	periphery	Enterococcus casseliflavus	Enterococcus casseliflavus EC20		#92B4AF
+565664	periphery	Enterococcus faecium	Enterococcus faecium C68		#92B4AF
+566461	periphery	Streptomyces ghanaensis	Streptomyces ghanaensis ATCC 14672		#92B4AF
+566466	periphery	gamma proteobacterium NOR53	gamma proteobacterium NOR5-3		#92B4AF
+568703	periphery	Lactobacillus rhamnosus	Lactobacillus rhamnosus GG		#92B4AF
+568816	core	Acidaminococcus intestini	Acidaminococcus intestini RyC-MR95		#92B4AF
+568817	periphery	Serratia symbiotica	Serratia symbiotica str. Cinara cedri		#92B4AF
+570417	periphery	Wolbachia sp. Cq	Wolbachia endosymbiont of Culex quinquefasciatus Pel		#92B4AF
+572263	periphery	Mycoplasma conjunctivae	Mycoplasma conjunctivae HRC/581		#92B4AF
+572265	core	Hamiltonella defensa	Candidatus Hamiltonella defensa 5AT (Acyrthosiphon pisum)		#92B4AF
+572307	periphery	Neospora caninum	Neospora caninum Liverpool		#92B4AF
+572477	core	Allochromatium vinosum	Allochromatium vinosum DSM 180		#92B4AF
+572478	core	Vulcanisaeta distributa	Vulcanisaeta distributa DSM 14429		#92B4AF
+572479	core	Halanaerobium praevalens	Halanaerobium praevalens DSM 2228		#92B4AF
+572480	periphery	Arcobacter nitrofigilis	Arcobacter nitrofigilis DSM 7299		#92B4AF
+572544	core	Ilyobacter polytropus	Ilyobacter polytropus DSM 2926		#92B4AF
+572546	core	Archaeoglobus profundus	Archaeoglobus profundus DSM 5631		#92B4AF
+572547	core	Aminobacterium colombiense	Aminobacterium colombiense DSM 12261		#92B4AF
+573061	periphery	Clostridium cellulovorans	Clostridium cellulovorans 743B		#92B4AF
+573063	periphery	Methanocaldococcus infernus	Methanocaldococcus infernus ME		#92B4AF
+573064	core	Methanocaldococcus fervens	Methanocaldococcus fervens AG86		#92B4AF
+573065	core	Asticcacaulis excentricus	Asticcacaulis excentricus CB 48		#92B4AF
+573234	core	Hodgkinia cicadicola	Candidatus Hodgkinia cicadicola Dsem		#92B4AF
+573370	core	Desulfovibrio magneticus	Desulfovibrio magneticus RS-1		#92B4AF
+573413	core	Spirochaeta smaragdinae	Spirochaeta smaragdinae DSM 11293		#92B4AF
+573569	periphery	Francisella sp. TX077308	Francisella sp. TX077308		#92B4AF
+573729	periphery	Myceliophthora thermophila	Myceliophthora thermophila ATCC 42464		#92B4AF
+573826	periphery	Candida dubliniensis	Candida dubliniensis CD36		#92B4AF
+574087	core	Acetohalobium arabaticum	Acetohalobium arabaticum DSM 5501		#92B4AF
+574556	periphery	Anaplasma centrale	Anaplasma centrale str. Israel		#92B4AF
+575540	core	Isosphaera pallida	Isosphaera pallida ATCC 43644		#92B4AF
+575564	periphery	Acinetobacter sp. RUH2624	Acinetobacter sp. RUH2624		#92B4AF
+575584	periphery	Acinetobacter baumannii	Acinetobacter baumannii ATCC 19606		#92B4AF
+575586	periphery	Acinetobacter johnsonii	Acinetobacter johnsonii SH046		#92B4AF
+575587	periphery	Acinetobacter junii	Acinetobacter junii SH205		#92B4AF
+575588	periphery	Acinetobacter lwoffii	Acinetobacter lwoffii SH145		#92B4AF
+575589	periphery	Acinetobacter radioresistens	Acinetobacter radioresistens SH164		#92B4AF
+575590	periphery	Bacteroidetes sp. 274	Bacteroidetes oral taxon 274 str. F0058		#92B4AF
+575593	periphery	Lachnospiraceae oral	Lachnospiraceae oral taxon 107 str. F0167		#92B4AF
+575594	periphery	Lactobacillus coleohominis	Lactobacillus coleohominis 101-4-CHN		#92B4AF
+575606	periphery	Lactobacillus jensenii 272CHN	Lactobacillus jensenii 27-2-CHN		#92B4AF
+575609	periphery	Peptoniphilus sp. F0131	Peptoniphilus sp. oral taxon 386 str. F0131		#92B4AF
+575611	periphery	Prevotella buccae	Prevotella buccae D17		#92B4AF
+575614	periphery	Prevotella sp. F0039	Prevotella sp. oral taxon 299 str. F0039		#92B4AF
+575615	periphery	Prevotella sp. F0108	Prevotella sp. oral taxon 317 str. F0108		#92B4AF
+575788	periphery	Vibrio splendidus	Vibrio splendidus LGP32		#92B4AF
+577650	core	Desulfobulbus propionicus	Desulfobulbus propionicus DSM 2032		#92B4AF
+578455	core	Thielavia terrestris	Thielavia terrestris NRRL 8126		#92B4AF
+578458	core	Schizophyllum commune	Schizophyllum commune H4 8		#92B4AF
+579137	periphery	Methanocaldococcus vulcanius	Methanocaldococcus vulcanius M7		#92B4AF
+579138	periphery	Zymomonas mobilis pomaceae	Zymomonas mobilis subsp. pomaceae ATCC 29192		#92B4AF
+579405	core	Dickeya dadantii Ech703	Dickeya dadantii Ech703		#92B4AF
+580327	core	Thermoanaerobact. thermosaccharolyticum	Thermoanaerobacterium thermosaccharolyticum DSM 571		#92B4AF
+580331	core	Thermoanaerobacter italicus	Thermoanaerobacter italicus Ab9		#92B4AF
+580332	core	Sideroxydans lithotrophicus	Sideroxydans lithotrophicus ES-1		#92B4AF
+580340	core	Thermovirga lienii	Thermovirga lienii DSM 17291		#92B4AF
+582402	core	Hirschia baltica	Hirschia baltica ATCC 49814		#92B4AF
+582744	core	Methylovorus glucosetrophus	Methylovorus glucosetrophus SIP3-4		#92B4AF
+582899	periphery	Hyphomicrobium denitrificans	Hyphomicrobium denitrificans ATCC 51888		#92B4AF
+583345	periphery	Methylotenera mobilis	Methylotenera mobilis JLW8		#92B4AF
+583355	core	Coraliomargarita akajimensis	Coraliomargarita akajimensis DSM 45221		#92B4AF
+583356	core	Ignisphaera aggregans	Ignisphaera aggregans DSM 17230		#92B4AF
+584708	core	Aminomonas paucivorans	Aminomonas paucivorans DSM 12260		#92B4AF
+585198	periphery	Mobiluncus curtisii	Mobiluncus curtisii subsp. curtisii ATCC 35241		#92B4AF
+585202	periphery	Streptococcus mitis SK321	Streptococcus mitis SK321		#92B4AF
+585204	periphery	Streptococcus mitis SK597	Streptococcus mitis SK597		#92B4AF
+585394	periphery	Roseburia hominis	Roseburia hominis A2-183		#92B4AF
+585501	periphery	Oribacterium sinus	Oribacterium sinus F0268		#92B4AF
+585502	periphery	Prevotella bergensis	Prevotella bergensis DSM 17361		#92B4AF
+585503	periphery	Selenomonas noxia	Selenomonas noxia ATCC 43541		#92B4AF
+585506	periphery	Weissella paramesenteroides	Weissella paramesenteroides ATCC 33313		#92B4AF
+585524	periphery	Lactobacillus amylolyticus	Lactobacillus amylolyticus DSM 11664		#92B4AF
+585528	periphery	Gardnerella vaginalis ATCC14018	Gardnerella vaginalis ATCC 14018 = JCM 11026		#92B4AF
+585529	periphery	Corynebacterium genitalium	Corynebacterium genitalium ATCC 33030		#92B4AF
+585530	core	Brevibacterium mcbrellneri	Brevibacterium mcbrellneri ATCC 49030		#92B4AF
+585531	core	Aeromicrobium marinum	Aeromicrobium marinum DSM 15272		#92B4AF
+585543	periphery	Bacteroides sp. D20	Bacteroides sp. D20		#92B4AF
+588581	periphery	Clostridium papyrosolvens	Clostridium papyrosolvens DSM 2782		#92B4AF
+589865	core	Desulfurivibrio alkaliphilus	Desulfurivibrio alkaliphilus AHT2		#92B4AF
+589924	core	Ferroglobus placidus	Ferroglobus placidus DSM 10642		#92B4AF
+590409	periphery	Dickeya dadantii Ech586	Dickeya dadantii Ech586		#92B4AF
+590998	core	Cellulomonas fimi	Cellulomonas fimi ATCC 484		#92B4AF
+591001	periphery	Acidaminococcus fermentans	Acidaminococcus fermentans DSM 20731		#92B4AF
+591019	periphery	Staphylothermus hellenicus	Staphylothermus hellenicus DSM 12710		#92B4AF
+591023	periphery	Actinobacillus minor 202	Actinobacillus minor 202		#92B4AF
+591157	periphery	Streptomyces sp. SPB78	Streptomyces sp. SPB78		#92B4AF
+591158	periphery	Streptomyces sp. AA4	Streptomyces sp. AA4		#92B4AF
+591159	periphery	Streptomyces viridochromogenes	Streptomyces viridochromogenes DSM 40736		#92B4AF
+591167	periphery	Streptomyces flavogriseus	Streptomyces flavogriseus ATCC 33331		#92B4AF
+592010	core	Abiotrophia defectiva	Abiotrophia defectiva ATCC 49176		#92B4AF
+592015	core	Anaerobaculum hydrogeniformans	Anaerobaculum hydrogeniformans ATCC BAA-1850		#92B4AF
+592026	core	Catonella morbi	Catonella morbi ATCC 51271		#92B4AF
+592027	periphery	Clostridium botulinum D 1873	Clostridium botulinum D str. 1873		#92B4AF
+592028	core	Dialister invisus	Dialister invisus DSM 15470		#92B4AF
+592031	periphery	Eubacterium saphenum	Eubacterium saphenum ATCC 49989		#92B4AF
+592316	core	Pantoea sp. At9b	Pantoea sp. At-9b		#92B4AF
+593117	periphery	Thermococcus gammatolerans	Thermococcus gammatolerans EJ3		#92B4AF
+593907	periphery	Cellvibrio gilvus	Cellvibrio gilvus ATCC 13127		#92B4AF
+595494	core	Tolumonas auensis	Tolumonas auensis DSM 9187		#92B4AF
+595499	core	Sulcia muelleri SMDSEM	Candidatus Sulcia muelleri SMDSEM		#92B4AF
+595536	core	Methylosinus trichosporium	Methylosinus trichosporium OB3b		#92B4AF
+595537	core	Variovorax paradoxus EPS	Variovorax paradoxus EPS		#92B4AF
+596151	periphery	Desulfovibrio fructosovorans	Desulfovibrio fructosovorans JJ		#92B4AF
+596154	core	Alicycliphilus denitrificans	Alicycliphilus denitrificans K601		#92B4AF
+596315	periphery	Peptostreptococcus stomatis	Peptostreptococcus stomatis DSM 17678		#92B4AF
+596319	periphery	Staphylococcus warneri	Staphylococcus warneri L37603		#92B4AF
+596320	periphery	Neisseria flavescens SK114	Neisseria flavescens SK114		#92B4AF
+596323	periphery	Leptotrichia goodfellowii	Leptotrichia goodfellowii F0264		#92B4AF
+596324	core	Treponema vincentii	Treponema vincentii ATCC 35580		#92B4AF
+596327	core	Porphyromonas uenonis	Porphyromonas uenonis 60-3		#92B4AF
+596328	core	Mobiluncus mulieris	Mobiluncus mulieris 28-1		#92B4AF
+596329	core	Peptostreptococcus anaerobius	Peptostreptococcus anaerobius 653-L		#92B4AF
+596330	periphery	Peptoniphilus lacrimalis	Peptoniphilus lacrimalis 315-B		#92B4AF
+598659	core	Nautilia profundicola	Nautilia profundicola AmH		#92B4AF
+600809	periphery	Blattabacterium sp. BPLAN	Blattabacterium sp. (Periplaneta americana) str. BPLAN		#92B4AF
+604354	periphery	Thermococcus sibiricus	Thermococcus sibiricus MM 739		#92B4AF
+608506	periphery	Caldicellulosiruptor obsidiansis	Caldicellulosiruptor obsidiansis OB47		#92B4AF
+608534	core	Oribacterium sp. F0262	Oribacterium sp. oral taxon 078 str. F0262		#92B4AF
+608538	core	Hydrogenobacter thermophilus	Hydrogenobacter thermophilus TK-6		#92B4AF
+610130	periphery	Clostridium saccharolyticum WM1	Clostridium saccharolyticum WM1		#92B4AF
+613026	periphery	Helicobacter bilis	Helicobacter bilis ATCC 43879		#92B4AF
+619693	periphery	Prevotella sp. F0295	Prevotella sp. oral taxon 472 str. F0295		#92B4AF
+621372	core	Paenibacillus sp. D14	Paenibacillus sp. oral taxon 786 str. D14		#92B4AF
+622312	core	Roseburia inulinivorans	Roseburia inulinivorans DSM 16841		#92B4AF
+622637	core	Methylocystis sp. ATCC49242	Methylocystis sp. ATCC 49242		#92B4AF
+626369	periphery	Granulicatella elegans	Granulicatella elegans ATCC 700633		#92B4AF
+626418	periphery	Burkholderia glumae	Burkholderia glumae BGR1		#92B4AF
+626522	core	Prevotella tannerae	Prevotella tannerae ATCC 51259		#92B4AF
+626523	core	Shuttleworthia satelles	Shuttleworthia satelles DSM 14600		#92B4AF
+626939	core	Phascolarctobacterium succinatutens	Phascolarctobacterium succinatutens YIT 12067		#92B4AF
+627192	core	Sphingobium sp. SYK6	Sphingobium sp. SYK-6		#92B4AF
+629265	periphery	Pseudomonas syringae maculicola	Pseudomonas syringae pv. maculicola str. ES4326		#92B4AF
+629741	periphery	Kingella oralis	Kingella oralis ATCC 51147		#92B4AF
+632245	periphery	Clostridium butyricum	Clostridium butyricum E4 str. BoNT E BL5262		#92B4AF
+632292	periphery	Caldicellulosiruptor hydrothermalis	Caldicellulosiruptor hydrothermalis 108		#92B4AF
+632335	periphery	Caldicellulosiruptor kristjanssonii	Caldicellulosiruptor kristjanssonii 177R1B		#92B4AF
+632518	periphery	Caldicellulosiruptor owensensis	Caldicellulosiruptor owensensis OL		#92B4AF
+632772	periphery	Rhodococcus opacus	Rhodococcus opacus B4		#92B4AF
+633131	core	Thalassiobium sp. R2A62	Thalassiobium sp. R2A62		#92B4AF
+633147	core	Olsenella uli	Olsenella uli DSM 7084		#92B4AF
+633148	core	Thermosphaera aggregans	Thermosphaera aggregans DSM 11486		#92B4AF
+633149	periphery	Brevundimonas subvibrioides	Brevundimonas subvibrioides ATCC 15264		#92B4AF
+633697	periphery	Eubacterium cellulosolvens	Eubacterium cellulosolvens 6		#92B4AF
+634176	periphery	Aggregatibacter aphrophilus	Aggregatibacter aphrophilus NJ8700		#92B4AF
+634177	periphery	Gluconacetobacter xylinus	Gluconacetobacter xylinus NBRC 3288		#92B4AF
+634452	core	Acetobacter pasteurianus	Acetobacter pasteurianus IFO 3283-01		#92B4AF
+634497	core	Haloarcula hispanica	Haloarcula hispanica ATCC 33960		#92B4AF
+634498	core	Methanobrevibacter ruminantium	Methanobrevibacter ruminantium M1		#92B4AF
+634499	periphery	Erwinia pyrifoliae	Erwinia pyrifoliae Ep1/96		#92B4AF
+634500	core	Erwinia billingiae	Erwinia billingiae Eb661		#92B4AF
+634503	core	Edwardsiella ictaluri	Edwardsiella ictaluri 93-146		#92B4AF
+634504	periphery	Bartonella grahamii	Bartonella grahamii as4aup		#92B4AF
+634956	periphery	Geobacillus thermoglucosidasius	Geobacillus thermoglucosidasius C56-YS93		#92B4AF
+634994	periphery	Leptotrichia hofstadii	Leptotrichia hofstadii F0254		#92B4AF
+635013	core	Thermincola potens	Thermincola potens JR		#92B4AF
+637389	core	Acidithiobacillus caldus	Acidithiobacillus caldus ATCC 51756		#92B4AF
+637616	core	Methylophaga thiooxydans	Methylophaga thiooxydans DMS010		#92B4AF
+637905	periphery	Shewanella violacea	Shewanella violacea DSS12		#92B4AF
+637910	core	Citrobacter rodentium	Citrobacter rodentium ICC168		#92B4AF
+637911	periphery	Actinobacillus minor NM305	Actinobacillus minor NM305		#92B4AF
+638300	core	Cardiobacterium hominis	Cardiobacterium hominis ATCC 15826		#92B4AF
+638301	core	Granulicatella adiacens	Granulicatella adiacens ATCC 49175		#92B4AF
+638302	core	Selenomonas flueggei	Selenomonas flueggei ATCC 43531		#92B4AF
+638303	core	Thermocrinis albus	Thermocrinis albus DSM 14484		#92B4AF
+639282	core	Deferribacter desulfuricans	Deferribacter desulfuricans SSM1		#92B4AF
+639283	core	Starkeya novella	Starkeya novella DSM 506		#92B4AF
+640081	core	Dechlorosoma suillum	Dechlorosoma suillum PS		#92B4AF
+640132	periphery	Segniliparus rotundus	Segniliparus rotundus DSM 44985		#92B4AF
+640510	periphery	Burkholderia sp. CCGE1001	Burkholderia sp. CCGE1001		#92B4AF
+640511	periphery	Burkholderia sp. CCGE1002	Burkholderia sp. CCGE1002		#92B4AF
+640512	periphery	Burkholderia sp. CCGE1003	Burkholderia sp. CCGE1003		#92B4AF
+640513	periphery	Enterobacter asburiae	Enterobacter asburiae LF7a		#92B4AF
+641112	periphery	Ruminococcus flavefaciens	Ruminococcus flavefaciens FD-1		#92B4AF
+641118	periphery	Ochrobactrum intermedium	Ochrobactrum intermedium LMG 3301		#92B4AF
+641146	core	Scardovia inopinata	Scardovia inopinata F0304		#92B4AF
+641147	core	Simonsiella muelleri	Simonsiella muelleri ATCC 29453		#92B4AF
+641149	periphery	Neisseria sp. F0314	Neisseria sp. oral taxon 014 str. F0314		#92B4AF
+641491	periphery	Desulfovibrio desulfuricans ND132	Desulfovibrio desulfuricans ND132		#92B4AF
+641892	periphery	Sulcia muelleri DMIN	Candidatus Sulcia muelleri DMIN		#92B4AF
+642492	core	Clostridium lentocellum	Clostridium lentocellum DSM 5427		#92B4AF
+643562	periphery	Desulfovibrio aespoeensis	Desulfovibrio aespoeensis Aspo-2		#92B4AF
+643648	core	Syntrophothermus lipocalidus	Syntrophothermus lipocalidus DSM 12680		#92B4AF
+643867	core	Marivirga tractuosa	Marivirga tractuosa DSM 4126		#92B4AF
+644076	periphery	Silicibacter sp. TrichCH4B	Silicibacter sp. TrichCH4B		#92B4AF
+644107	periphery	Silicibacter lacuscaerulensis	Silicibacter lacuscaerulensis ITI-1157		#92B4AF
+644223	core	Komagataella pastoris	Komagataella pastoris GS115		#92B4AF
+644281	periphery	Methanocaldococcus sp. FS40622	Methanocaldococcus sp. FS406-22		#92B4AF
+644282	core	Desulfarculus baarsii	Desulfarculus baarsii DSM 2075		#92B4AF
+644283	periphery	Micromonospora aurantiaca	Micromonospora aurantiaca ATCC 27029		#92B4AF
+644284	core	Arcanobacterium haemolyticum	Arcanobacterium haemolyticum DSM 20595		#92B4AF
+644295	core	Methanohalobium evestigatum	Methanohalobium evestigatum Z-7303		#92B4AF
+644548	periphery	Gordonia neofelifaecis	Gordonia neofelifaecis NRRL B-59395		#92B4AF
+644966	periphery	Thermaerobacter marianensis	Thermaerobacter marianensis DSM 12885		#92B4AF
+644968	periphery	Desulfovibrio sp. FW1012B	Desulfovibrio sp. FW1012B		#92B4AF
+645127	periphery	Corynebacterium kroppenstedtii	Corynebacterium kroppenstedtii DSM 44385		#92B4AF
+645465	periphery	Streptomyces sp. e14	Streptomyces sp. e14		#92B4AF
+645512	core	Jonquetella anthropi	Jonquetella anthropi E3_33 E1		#92B4AF
+645991	core	Syntrophobotulus glycolicus	Syntrophobotulus glycolicus DSM 8271		#92B4AF
+647113	core	Methanothermococcus okinawensis	Methanothermococcus okinawensis IH1		#92B4AF
+648757	core	Rhodomicrobium vannielii	Rhodomicrobium vannielii ATCC 17100		#92B4AF
+648996	core	Thermovibrio ammonificans	Thermovibrio ammonificans HB-1		#92B4AF
+649349	core	Leadbetterella byssophila	Leadbetterella byssophila DSM 17132		#92B4AF
+649638	core	Truepera radiovictrix	Truepera radiovictrix DSM 17093		#92B4AF
+649639	periphery	Bacillus cellulosilyticus	Bacillus cellulosilyticus DSM 2522		#92B4AF
+649743	periphery	Actinomyces sp. 848	Actinomyces sp. oral taxon 848 str. F0332		#92B4AF
+649754	periphery	Corynebacterium ammoniagenes	Corynebacterium ammoniagenes DSM 20306		#92B4AF
+649761	periphery	Prevotella veroralis	Prevotella veroralis F0319		#92B4AF
+649764	periphery	Slackia exigua	Slackia exigua ATCC 700122		#92B4AF
+650150	core	Erysipelothrix rhusiopathiae	Erysipelothrix rhusiopathiae str. Fujisawa		#92B4AF
+652103	core	Rhodopseudomonas palustris DX1	Rhodopseudomonas palustris DX-1		#92B4AF
+653045	periphery	Streptomyces violaceusniger	Streptomyces violaceusniger Tu 4113		#92B4AF
+653733	core	Desulfurispirillum indicum	Desulfurispirillum indicum S5		#92B4AF
+653948	core	Albugo laibachii	Albugo laibachii		#92B4AF
+655811	periphery	Anaerococcus vaginalis	Anaerococcus vaginalis ATCC 51170		#92B4AF
+655812	periphery	Aerococcus viridans	Aerococcus viridans ATCC 11563		#92B4AF
+655813	periphery	Streptococcus oralis ATCC35037	Streptococcus oralis ATCC 35037		#92B4AF
+655815	core	Zunongwangia profunda	Zunongwangia profunda SM-A87		#92B4AF
+656024	periphery	Frankia sp. Daglo	Frankia symbiont of Datisca glomerata		#92B4AF
+656519	periphery	Halanaerobium hydrogeniformans	Halanaerobium hydrogeniformans		#92B4AF
+657309	periphery	Bacteroides xylanisolvens	Bacteroides xylanisolvens XB1A		#92B4AF
+657313	periphery	Ruminococcus torques L214	Ruminococcus torques L2-14		#92B4AF
+657314	periphery	Ruminococcus obeum A2162	Ruminococcus obeum A2-162		#92B4AF
+657318	periphery	Eubacterium rectale	Eubacterium rectale DSM 17629		#92B4AF
+657319	periphery	Eubacterium siraeum	Eubacterium siraeum 70/3		#92B4AF
+657321	periphery	Ruminococcus bromii	Ruminococcus bromii L2-63		#92B4AF
+657322	periphery	Faecalibacterium prausnitzii SL33	Faecalibacterium prausnitzii SL3/3		#92B4AF
+657323	periphery	Ruminococcus sp. SR15	Ruminococcus sp. SR1/5		#92B4AF
+657324	periphery	Butyrivibrio fibrisolvens	Butyrivibrio fibrisolvens 16/4		#92B4AF
+658086	periphery	Lachnospiraceae bacterium 3157FAACT1	Lachnospiraceae bacterium 3_1_57FAA_CT1		#92B4AF
+658088	periphery	Lachnospiraceae bacterium 9143BFAA	Lachnospiraceae bacterium 9_1_43BFAA		#92B4AF
+658172	periphery	Liberibacter solanacearum	Candidatus Liberibacter solanacearum CLso-ZC1		#92B4AF
+658187	core	Legionella drancourtii	Legionella drancourtii LLAP12		#92B4AF
+658655	periphery	Lachnospiraceae bacterium 1456FAA	Lachnospiraceae bacterium 1_4_56FAA		#92B4AF
+658659	periphery	Erysipelotrichaceae bacterium 3153	Erysipelotrichaceae bacterium 3_1_53		#92B4AF
+660470	core	Mesotoga prima	Mesotoga prima MesG1.Ag.4.2		#92B4AF
+661367	periphery	Legionella longbeachae	Legionella longbeachae NSW150		#92B4AF
+662755	periphery	Corynebacterium resistens	Corynebacterium resistens DSM 45100		#92B4AF
+663202	periphery	Trichophyton verrucosum	Trichophyton verrucosum HKI 0517		#92B4AF
+663278	core	Ethanoligenens harbinense	Ethanoligenens harbinense YUAN-3		#92B4AF
+663321	core	Regiella insecticola	Candidatus Regiella insecticola LSR1		#92B4AF
+663331	periphery	Arthroderma benhamiae	Arthroderma benhamiae CBS 112371		#92B4AF
+663952	periphery	Streptococcus dysgalactiae	Streptococcus dysgalactiae subsp. dysgalactiae ATCC 27957		#92B4AF
+665029	periphery	Erwinia amylovora	Erwinia amylovora CFBP1430		#92B4AF
+665571	periphery	Spirochaeta thermophila	Spirochaeta thermophila DSM 6192		#92B4AF
+665959	periphery	Bacillus sp. 2A57CT2	Bacillus sp. 2_A_57_CT2		#92B4AF
+666510	core	Acidilobus saccharovorans	Acidilobus saccharovorans 345-15		#92B4AF
+666681	core	Methylotenera versatilis	Methylotenera versatilis 301		#92B4AF
+666684	core	Afipia sp. 1NLS2	Afipia sp. 1NLS2		#92B4AF
+667014	core	Thermodesulfatator indicus	Thermodesulfatator indicus DSM 15286		#92B4AF
+667015	periphery	Bacteroides salanitronis	Bacteroides salanitronis DSM 18170		#92B4AF
+667128	core	Pasteurella dagmatis	Pasteurella dagmatis ATCC 43325		#92B4AF
+667129	periphery	Serratia odorifera DSM4582	Serratia odorifera DSM 4582		#92B4AF
+669262	core	Mannheimia haemolytica	Mannheimia haemolytica serotype A2 str. BOVINE		#92B4AF
+670487	core	Oceanithermus profundus	Oceanithermus profundus DSM 14977		#92B4AF
+674977	periphery	Vibrio alginolyticus	Vibrio alginolyticus 40B		#92B4AF
+675635	core	Pseudonocardia dioxanivorans	Pseudonocardia dioxanivorans CB1190		#92B4AF
+675806	periphery	Vibrio mimicus	Vibrio mimicus MB451		#92B4AF
+675812	periphery	Grimontia hollisae	Grimontia hollisae CIP 101886		#92B4AF
+675813	periphery	Vibrio metschnikovii	Vibrio metschnikovii CIP 69.14		#92B4AF
+675814	periphery	Vibrio coralliilyticus	Vibrio coralliilyticus ATCC BAA-450		#92B4AF
+675815	periphery	Vibrio sp. RC586	Vibrio sp. RC586		#92B4AF
+675816	periphery	Vibrio orientalis	Vibrio orientalis CIP 102891 = ATCC 33934		#92B4AF
+675817	core	Photobacterium damselae	Photobacterium damselae subsp. damselae CIP 102761		#92B4AF
+676032	periphery	Francisella novicida	Francisella cf. novicida 3523		#92B4AF
+679189	periphery	Prevotella timonensis	Prevotella timonensis CRIS 5C-B1		#92B4AF
+679190	periphery	Prevotella buccalis	Prevotella buccalis ATCC 35310		#92B4AF
+679191	core	Prevotella amnii	Prevotella amnii CRIS 21A-A		#92B4AF
+679192	core	Bulleidia extructa	Bulleidia extructa W1219		#92B4AF
+679197	core	Segniliparus rugosus	Segniliparus rugosus ATCC BAA-974		#92B4AF
+679897	core	Helicobacter mustelae	Helicobacter mustelae 12198		#92B4AF
+679901	core	Methanosalsum zhilinae	Methanosalsum zhilinae DSM 4017		#92B4AF
+679926	core	Methanoplanus petrolearius	Methanoplanus petrolearius DSM 11571		#92B4AF
+679937	periphery	Bacteroides coprosuis	Bacteroides coprosuis DSM 18011		#92B4AF
+680198	periphery	Streptomyces scabiei	Streptomyces scabiei 87.22		#92B4AF
+680646	periphery	Rothia mucilaginosa	Rothia mucilaginosa DY-18		#92B4AF
+682634	periphery	Serratia odorifera 4Rx13	Serratia odorifera 4Rx13		#92B4AF
+682795	periphery	Granulicella mallensis	Granulicella mallensis MP5ACTX8		#92B4AF
+683083	periphery	Campylobacter jejuni 414	Campylobacter jejuni subsp. jejuni 414		#92B4AF
+684719	periphery	alpha proteobacterium HIMB114	alpha proteobacterium HIMB114		#92B4AF
+685035	core	Citromicrobium bathyomarinum	Citromicrobium bathyomarinum JL354		#92B4AF
+685727	core	Rhodococcus equi	Rhodococcus equi 103S		#92B4AF
+688245	core	Comamonas testosteroni CNB2	Comamonas testosteroni CNB-2		#92B4AF
+688246	periphery	Prevotella multisaccharivorax	Prevotella multisaccharivorax DSM 17128		#92B4AF
+688269	periphery	Thermotoga thermarum	Thermotoga thermarum DSM 5069		#92B4AF
+688270	periphery	Cellulophaga algicola	Cellulophaga algicola DSM 14237		#92B4AF
+690566	periphery	Sphingobium chlorophenolicum	Sphingobium chlorophenolicum L-1		#92B4AF
+690850	periphery	Desulfovibrio africanus	Desulfovibrio africanus str. Walvis Bay		#92B4AF
+693661	periphery	Archaeoglobus veneficus	Archaeoglobus veneficus SNP6		#92B4AF
+693746	core	Oscillibacter valericigenes	Oscillibacter valericigenes Sjm18-20		#92B4AF
+693977	core	Deinococcus proteolyticus	Deinococcus proteolyticus MRP		#92B4AF
+693979	periphery	Bacteroides helcogenes	Bacteroides helcogenes P 36-108		#92B4AF
+694427	core	Paludibacter propionicigenes	Paludibacter propionicigenes WB4		#92B4AF
+694429	core	Pyrolobus fumarii	Pyrolobus fumarii 1A		#92B4AF
+694569	core	Aggregatibacter actinomycetemcomitans	Aggregatibacter actinomycetemcomitans D7S-1		#92B4AF
+696125	periphery	Bartonella clarridgeiae	Bartonella clarridgeiae 73		#92B4AF
+696127	core	Midichloria mitochondrii	Candidatus Midichloria mitochondrii IricVA		#92B4AF
+696369	periphery	Desulfotomaculum nigrificans	Desulfotomaculum nigrificans DSM 574		#92B4AF
+696747	periphery	Arthrospira platensis	Arthrospira platensis NIES-39		#92B4AF
+697281	core	Mahella australiensis	Mahella australiensis 50-1 BON		#92B4AF
+697282	core	Methylobacter tundripaludum	Methylobacter tundripaludum SV96		#92B4AF
+697303	periphery	Thermoanaerobacter wiegelii	Thermoanaerobacter wiegelii Rt8.B1		#92B4AF
+697329	periphery	Ruminococcus albus 7	Ruminococcus albus 7		#92B4AF
+698737	periphery	Staphylococcus lugdunensis	Staphylococcus lugdunensis HKU09-01		#92B4AF
+698757	periphery	Pyrobaculum oguniense	Pyrobaculum oguniense TE7		#92B4AF
+698964	periphery	Corynebacterium diphtheriae	Corynebacterium diphtheriae PW8		#92B4AF
+699184	periphery	Bacillus cereus SJ1	Bacillus cereus SJ1		#92B4AF
+699218	periphery	Megasphaera sp. 28L	Megasphaera genomosp. type_1 str. 28L		#92B4AF
+699246	periphery	Clostridiales sp. BVAB3	Clostridiales genomosp. BVAB3 str. UPII9-5		#92B4AF
+700015	core	Coriobacterium glomerans	Coriobacterium glomerans PW2		#92B4AF
+700598	core	Niastella koreensis	Niastella koreensis GR20-10		#92B4AF
+701176	periphery	Vibrio sp. N418	Vibrio sp. N418		#92B4AF
+701347	periphery	Enterobacter cloacae SCF1	Enterobacter cloacae SCF1		#92B4AF
+701521	periphery	Pediococcus claussenii	Pediococcus claussenii ATCC BAA-344		#92B4AF
+702113	core	Novosphingobium sp. PP1Y	Novosphingobium sp. PP1Y		#92B4AF
+702438	periphery	Prevotella oulorum	Prevotella oulorum F0390		#92B4AF
+702450	core	Turicibacter sanguinis	Turicibacter sanguinis PC909		#92B4AF
+702453	core	Listeria seeligeri	Listeria seeligeri FSL N1-067		#92B4AF
+706191	periphery	Pantoea ananatis	Pantoea ananatis LMG 20103		#92B4AF
+706194	periphery	Sulcia muelleri CARI	Candidatus Sulcia muelleri CARI		#92B4AF
+706433	core	Solobacterium moorei	Solobacterium moorei F0204		#92B4AF
+706434	periphery	Megasphaera micronuciformis	Megasphaera micronuciformis F0359		#92B4AF
+706436	periphery	Capnocytophaga sp. 329	Capnocytophaga sp. oral taxon 329 str. F0087		#92B4AF
+706437	periphery	Streptococcus anginosus F0211	Streptococcus anginosus F0211		#92B4AF
+708248	periphery	Mycoplasma suis	Mycoplasma suis KI3806		#92B4AF
+708616	periphery	Mycoplasma gallisepticum	Mycoplasma gallisepticum str. F		#92B4AF
+709032	core	Sulfuricurvum kujiense	Sulfuricurvum kujiense DSM 16994		#92B4AF
+709797	periphery	Bradyrhizobiaceae bacterium	Bradyrhizobiaceae bacterium SG-6C		#92B4AF
+709986	periphery	Deinococcus maricopensis	Deinococcus maricopensis DSM 21211		#92B4AF
+709991	core	Odoribacter splanchnicus	Odoribacter splanchnicus DSM 20712		#92B4AF
+710393	periphery	Helicobacter suis	Helicobacter suis HS1		#92B4AF
+710685	periphery	Mycobacterium rhodesiae	Mycobacterium rhodesiae NBB3		#92B4AF
+710696	core	Intrasporangium calvum	Intrasporangium calvum DSM 43043		#92B4AF
+712898	periphery	Pantoea vagans	Pantoea vagans C9-1		#92B4AF
+712938	periphery	Lactobacillus fermentum	Lactobacillus fermentum CECT 5716		#92B4AF
+713605	periphery	Lactobacillus iners	Lactobacillus iners AB-1		#92B4AF
+713887	periphery	cyanobacterium UCYNA	cyanobacterium UCYN-A		#92B4AF
+714313	periphery	Lactobacillus sanfranciscensis	Lactobacillus sanfranciscensis TMW 1.1304		#92B4AF
+714943	core	Mucilaginibacter paludis	Mucilaginibacter paludis DSM 18603		#92B4AF
+714961	core	Lysinibacillus fusiformis	Lysinibacillus fusiformis ZC1		#92B4AF
+714995	periphery	Gluconacetobacter hansenii	Gluconacetobacter hansenii ATCC 23769		#92B4AF
+715225	periphery	Paenibacillus vortex	Paenibacillus vortex V453		#92B4AF
+715226	periphery	Asticcacaulis biprosthecum	Asticcacaulis biprosthecum C19		#92B4AF
+715451	periphery	Alteromonas sp. SN2	Alteromonas sp. SN2		#92B4AF
+716541	periphery	Enterobacter cloacae ATCC13047	Enterobacter cloacae subsp. cloacae ATCC 13047		#92B4AF
+716544	core	Waddlia chondrophila	Waddlia chondrophila WSU 86-1044		#92B4AF
+717231	core	Flexistipes sinusarabici	Flexistipes sinusarabici DSM 4947		#92B4AF
+717606	periphery	Paenibacillus curdlanolyticus	Paenibacillus curdlanolyticus YK9		#92B4AF
+717608	periphery	Clostridium saccharolyticum K10	Clostridium cf. saccharolyticum K10		#92B4AF
+717773	core	Thioalkalimicrobium cyclicum	Thioalkalimicrobium cyclicum ALM1		#92B4AF
+717774	periphery	Marinomonas mediterranea	Marinomonas mediterranea MMB-1		#92B4AF
+717785	core	Hyphomicrobium sp. MC1	Hyphomicrobium sp. MC1		#92B4AF
+717959	periphery	Alistipes shahii	Alistipes shahii WAL 8301		#92B4AF
+717960	periphery	Eubacterium cylindroides	Eubacterium cylindroides T2-87		#92B4AF
+717962	core	Coprococcus catus	Coprococcus catus GD/7		#92B4AF
+718252	core	Faecalibacterium prausnitzii L26	Faecalibacterium prausnitzii L2-6		#92B4AF
+718254	periphery	Enterobacter cloacae NCTC9394	Enterobacter cloacae subsp. cloacae NCTC 9394		#92B4AF
+718255	periphery	Roseburia intestinalis	Roseburia intestinalis XB6B4		#92B4AF
+720554	periphery	Clostridium clariflavum	Clostridium clariflavum DSM 19732		#92B4AF
+720555	periphery	Bacillus atrophaeus	Bacillus atrophaeus 1942		#92B4AF
+722419	periphery	Pseudoalteromonas haloplanktis ANT505	Pseudoalteromonas haloplanktis ANT/505		#92B4AF
+722438	periphery	Mycoplasma pneumoniae	Mycoplasma pneumoniae FH		#92B4AF
+741091	periphery	Rahnella sp. Y9602	Rahnella sp. Y9602		#92B4AF
+742159	periphery	Achromobacter piechaudii	Achromobacter piechaudii ATCC 43553		#92B4AF
+742723	periphery	Lachnospiraceae bacterium 2146FAA	Lachnospiraceae bacterium 2_1_46FAA		#92B4AF
+742740	periphery	Clostridium symbiosum	Clostridium symbiosum WAL-14163		#92B4AF
+742766	periphery	Dysgonomonas gadei	Dysgonomonas gadei ATCC BAA-286		#92B4AF
+742767	core	Dysgonomonas mossii	Dysgonomonas mossii DSM 22836		#92B4AF
+742821	core	Sutterella wadsworthensis	Sutterella wadsworthensis 3_1_45B		#92B4AF
+743299	periphery	Acidithiobacillus ferrivorans	Acidithiobacillus ferrivorans SS3		#92B4AF
+743525	periphery	Thermus scotoductus	Thermus scotoductus SA-01		#92B4AF
+743718	core	Isoptericola variabilis	Isoptericola variabilis 225		#92B4AF
+743720	periphery	Pseudomonas fulva	Pseudomonas fulva 12-X		#92B4AF
+743721	core	Pseudoxanthomonas suwonensis	Pseudoxanthomonas suwonensis 11-1		#92B4AF
+743722	core	Sphingobacterium sp. 21	Sphingobacterium sp. 21		#92B4AF
+743965	periphery	Mycoplasma putrefaciens	Mycoplasma putrefaciens KS1		#92B4AF
+744872	periphery	Spirochaeta caldaria	Spirochaeta caldaria DSM 7334		#92B4AF
+744979	core	Ahrensia sp. R2A130	Ahrensia sp. R2A130		#92B4AF
+744980	core	Roseibium sp. TrichSKD4	Roseibium sp. TrichSKD4		#92B4AF
+745277	core	Rahnella aquatilis	Rahnella aquatilis CIP 78.65 = ATCC 33071		#92B4AF
+746360	periphery	Pseudomonas fluorescens WH6	Pseudomonas fluorescens WH6		#92B4AF
+747365	core	Thermodesulfobium narugense	Thermodesulfobium narugense DSM 14796		#92B4AF
+747682	periphery	Mycoplasma alligatoris	Mycoplasma alligatoris A21JP2		#92B4AF
+748224	periphery	Faecalibacterium prausnitzii KLE1255	Faecalibacterium cf. prausnitzii KLE1255		#92B4AF
+748671	periphery	Lactobacillus crispatus	Lactobacillus crispatus ST1		#92B4AF
+748727	periphery	Clostridium ljungdahlii	Clostridium ljungdahlii DSM 13528		#92B4AF
+749222	core	Nitratifractor salsuginis	Nitratifractor salsuginis DSM 16511		#92B4AF
+749414	periphery	Streptomyces bingchenggensis	Streptomyces bingchenggensis BCW-1		#92B4AF
+749927	core	Amycolatopsis mediterranei	Amycolatopsis mediterranei U32		#92B4AF
+751586	periphery	Brevundimonas diminuta	Brevundimonas diminuta ATCC 11568		#92B4AF
+752555	periphery	Prevotella bryantii	Prevotella bryantii B14		#92B4AF
+754027	periphery	Treponema phagedenis	Treponema phagedenis F0421		#92B4AF
+754252	periphery	Propionibacterium freudenreichii	Propionibacterium freudenreichii subsp. shermanii CIRM-BIA1		#92B4AF
+755731	periphery	Clostridium sp. BNL1100	Clostridium sp. BNL1100		#92B4AF
+755732	core	Fluviicola taffensis	Fluviicola taffensis DSM 16823		#92B4AF
+756067	core	Microcoleus vaginatus	Microcoleus vaginatus FGP-2		#92B4AF
+756272	periphery	Planctomyces brasiliensis	Planctomyces brasiliensis DSM 5305		#92B4AF
+756883	periphery	halophilic archaeon DL31	halophilic archaeon DL31		#92B4AF
+757424	core	Herbaspirillum seropedicae	Herbaspirillum seropedicae SmR1		#92B4AF
+759362	core	Ketogulonigenium vulgarum	Ketogulonigenium vulgarum WSH-001		#92B4AF
+759914	periphery	Brachyspira pilosicoli	Brachyspira pilosicoli 95/1000		#92B4AF
+760011	periphery	Spirochaeta coccoides	Spirochaeta coccoides DSM 17374		#92B4AF
+760142	core	Hippea maritima	Hippea maritima DSM 10411		#92B4AF
+760192	core	Haliscomenobacter hydrossis	Haliscomenobacter hydrossis DSM 1100		#92B4AF
+760568	core	Desulfotomaculum kuznetsovii	Desulfotomaculum kuznetsovii DSM 6115		#92B4AF
+761193	core	Runella slithyformis	Runella slithyformis DSM 19594		#92B4AF
+762051	periphery	Leuconostoc kimchii	Leuconostoc kimchii IMSNU 11154		#92B4AF
+762376	periphery	Achromobacter xylosoxidans A8	Achromobacter xylosoxidans A8		#92B4AF
+762550	periphery	Leuconostoc gasicomitatum	Leuconostoc gasicomitatum LMG 18811		#92B4AF
+762903	periphery	Pedobacter saltans	Pedobacter saltans DSM 12145		#92B4AF
+762948	core	Rothia dentocariosa	Rothia dentocariosa ATCC 17931		#92B4AF
+762963	periphery	Actinomyces sp. 170	Actinomyces sp. oral taxon 170 str. F0386		#92B4AF
+762982	core	Paraprevotella xylaniphila	Paraprevotella xylaniphila YIT 11841		#92B4AF
+762983	core	Succinatimonas hippei	Succinatimonas hippei YIT 12066		#92B4AF
+762984	periphery	Bacteroides clarus	Bacteroides clarus YIT 12056		#92B4AF
+763034	periphery	Bacteroides fluxus	Bacteroides fluxus YIT 12057		#92B4AF
+764291	periphery	Streptococcus urinalis	Streptococcus urinalis 2285-97		#92B4AF
+764298	periphery	Streptococcus macacae	Streptococcus macacae NCTC 11558		#92B4AF
+764299	periphery	Streptococcus ictaluri	Streptococcus ictaluri 707-05		#92B4AF
+765123	periphery	Propionibacterium acnes HL037PA2	Propionibacterium acnes HL037PA2		#92B4AF
+765177	periphery	Desulfurococcus mucosus	Desulfurococcus mucosus DSM 2162		#92B4AF
+765420	core	Oscillochloris trichoides	Oscillochloris trichoides DG-6		#92B4AF
+765698	periphery	Mesorhizobium ciceri	Mesorhizobium ciceri biovar biserrulae WSM1271		#92B4AF
+765910	core	Marichromatium purpuratum	Marichromatium purpuratum 984		#92B4AF
+765952	core	Parachlamydia acanthamoebae	Parachlamydia acanthamoebae UV-7		#92B4AF
+767031	periphery	Prevotella denticola	Prevotella denticola F0289		#92B4AF
+767100	periphery	Parvimonas sp. F0139	Parvimonas sp. oral taxon 110 str. F0139		#92B4AF
+768066	periphery	Halomonas elongata	Halomonas elongata DSM 2581		#92B4AF
+768670	core	Calditerrivibrio nitroreducens	Calditerrivibrio nitroreducens DSM 19672		#92B4AF
+768679	core	Thermoproteus tenax	Thermoproteus tenax Kra 1		#92B4AF
+768706	core	Desulfosporosinus orientis	Desulfosporosinus orientis DSM 765		#92B4AF
+768726	periphery	Streptococcus mitis F0392	Streptococcus mitis bv. 2 str. F0392		#92B4AF
+771870	core	Sordaria macrospora	Sordaria macrospora k hell		#92B4AF
+795359	core	Thermodesulfobacterium sp. OPB45	Thermodesulfobacterium sp. OPB45		#92B4AF
+795797	core	Halalkalicoccus jeotgali	Halalkalicoccus jeotgali B3		#92B4AF
+796620	periphery	Vibrio caribbenthicus	Vibrio caribbenthicus ATCC BAA-2122		#92B4AF
+797209	core	Haladaptatus paucihalophilus	Haladaptatus paucihalophilus DX253		#92B4AF
+797210	core	Halopiger xanaduensis	Halopiger xanaduensis SH-6		#92B4AF
+856793	core	Micavibrio aeruginosavorus	Micavibrio aeruginosavorus ARL-13		#92B4AF
+857087	core	Methylomonas methanica	Methylomonas methanica MC09		#92B4AF
+857571	periphery	Moraxella catarrhalis	Moraxella catarrhalis O35E		#92B4AF
+858215	periphery	Thermoanaerobact. xylanolyticum	Thermoanaerobacterium xylanolyticum LX-11		#92B4AF
+858619	periphery	Corynebacterium variabile	Corynebacterium variabile DSM 44702		#92B4AF
+859194	periphery	Mycoplasma haemofelis	Mycoplasma haemofelis Ohio2		#92B4AF
+859654	core	Blochmannia vafer	Candidatus Blochmannia vafer str. BVAF		#92B4AF
+860228	periphery	Capnocytophaga canimorsus	Capnocytophaga canimorsus Cc5		#92B4AF
+861208	periphery	Agrobacterium sp. H133	Agrobacterium sp. H13-3		#92B4AF
+861360	periphery	Arthrobacter arilaitensis	Arthrobacter arilaitensis Re117		#92B4AF
+861557	periphery	Pyrenophora teres	Pyrenophora teres f. teres 0 1		#92B4AF
+862514	periphery	Pediococcus acidilactici	Pediococcus acidilactici DSM 20284		#92B4AF
+862515	periphery	Prevotella marshii	Prevotella marshii DSM 16973		#92B4AF
+862517	periphery	Peptoniphilus duerdenii	Peptoniphilus duerdenii ATCC BAA-1640		#92B4AF
+862719	periphery	Azospirillum lipoferum	Azospirillum lipoferum 4B		#92B4AF
+862751	periphery	Streptomyces sp. SirexAAE	Streptomyces sp. SirexAA-E		#92B4AF
+862908	core	Bacteriovorax marinus	Bacteriovorax marinus SJ		#92B4AF
+862965	periphery	Haemophilus parainfluenzae	Haemophilus parainfluenzae T3T1		#92B4AF
+864563	periphery	Selenomonas sp. 67H29BP	Selenomonas sp. oral taxon 149 str. 67H29BP		#92B4AF
+864564	core	Parascardovia denticolens	Parascardovia denticolens DSM 10105 = JCM 12538		#92B4AF
+864565	periphery	Eubacterium yurii	Eubacterium yurii subsp. margaretiae ATCC 43715		#92B4AF
+864567	periphery	Streptococcus mitis ATCC6249	Streptococcus mitis ATCC 6249		#92B4AF
+864570	periphery	Streptococcus sp. 73H25AP	Streptococcus sp. oral taxon 071 str. 73H25AP		#92B4AF
+865938	core	Weeksella virosa	Weeksella virosa DSM 16922		#92B4AF
+866771	periphery	Prevotella disiens	Prevotella disiens FB035-09AN		#92B4AF
+866774	core	Atopobium vaginae PB189T14	Atopobium vaginae PB189-T1-4		#92B4AF
+866775	core	Aerococcus urinae	Aerococcus urinae ACS-120-V-Col10a		#92B4AF
+866776	core	Veillonella atypica	Veillonella atypica ACS-049-V-Sch6		#92B4AF
+867900	core	Cellulophaga lytica	Cellulophaga lytica DSM 7489		#92B4AF
+867903	core	Thermaerobacter subterraneus	Thermaerobacter subterraneus DSM 13965		#92B4AF
+868131	periphery	Methanobacterium sp. SWAN1	Methanobacterium sp. SWAN-1		#92B4AF
+868132	core	Methanobacterium sp. AL21	Methanobacterium sp. AL-21		#92B4AF
+868864	core	Desulfurobacterium thermolithotrophum	Desulfurobacterium thermolithotrophum DSM 11699		#92B4AF
+869209	periphery	Treponema succinifaciens	Treponema succinifaciens DSM 2489		#92B4AF
+869210	core	Marinithermus hydrothermalis	Marinithermus hydrothermalis DSM 14884		#92B4AF
+871237	periphery	Streptococcus infantis SK1302	Streptococcus infantis SK1302		#92B4AF
+871271	core	Zinderia insecticola	Candidatus Zinderia insecticola CARI		#92B4AF
+871585	periphery	Acinetobacter calcoaceticus	Acinetobacter calcoaceticus PHEA-2		#92B4AF
+873447	periphery	Streptococcus parauberis	Streptococcus parauberis NCFD 2020		#92B4AF
+873448	periphery	Streptococcus porcinus	Streptococcus porcinus str. Jelinkova 176		#92B4AF
+873449	periphery	Streptococcus criceti	Streptococcus criceti HS-6		#92B4AF
+873517	core	Capnocytophaga ochracea F0287	Capnocytophaga ochracea F0287		#92B4AF
+873533	periphery	Prevotella oralis	Prevotella oralis ATCC 33269		#92B4AF
+875328	core	Mycobacterium sp. JDM601	Mycobacterium sp. JDM601		#92B4AF
+876044	periphery	gamma proteobacterium IMCC3088	gamma proteobacterium IMCC3088		#92B4AF
+876142	periphery	Encephalitozoon intestinalis	Encephalitozoon intestinalis ATCC 50506		#92B4AF
+878320	periphery	Aeromonas caviae	Aeromonas caviae Ae398		#92B4AF
+879243	periphery	Porphyromonas asaccharolytica	Porphyromonas asaccharolytica DSM 20707		#92B4AF
+879305	core	Anaerococcus prevotii ACS065VCol13	Anaerococcus prevotii ACS-065-V-Col13		#92B4AF
+879308	periphery	Peptoniphilus sp. F0436	Peptoniphilus sp. oral taxon 375 str. F0436		#92B4AF
+879309	periphery	Veillonella sp. F0412	Veillonella sp. oral taxon 158 str. F0412		#92B4AF
+879310	periphery	Selenomonas sp F0430	Selenomonas sp. oral taxon 137 str. F0430		#92B4AF
+880070	core	Cyclobacterium marinum	Cyclobacterium marinum DSM 745		#92B4AF
+880072	core	Desulfobacca acetoxidans	Desulfobacca acetoxidans DSM 11109		#92B4AF
+880447	periphery	Mycoplasma leachii	Mycoplasma leachii PG50		#92B4AF
+880724	core	Methanotorris igneus	Methanotorris igneus Kol 5		#92B4AF
+881621	periphery	Listeria ivanovii	Listeria ivanovii subsp. ivanovii PAM 55		#92B4AF
+882102	periphery	Vibrio anguillarum	Vibrio anguillarum 775		#92B4AF
+882378	periphery	Burkholderia rhizoxinica	Burkholderia rhizoxinica HKI 454		#92B4AF
+882884	core	Salmonella enterica RSK2980	Salmonella enterica subsp. arizonae serovar str. RSK2980		#92B4AF
+886377	core	Muricauda ruestringensis	Muricauda ruestringensis DSM 13258		#92B4AF
+886738	periphery	Nitrosoarchaeum limnia	Candidatus Nitrosoarchaeum limnia SFB1		#92B4AF
+886872	periphery	Leuconostoc argentinum	Leuconostoc argentinum KCTC 3773		#92B4AF
+886882	periphery	Paenibacillus polymyxa SC2	Paenibacillus polymyxa SC2		#92B4AF
+887062	core	Hylemonella gracilis	Hylemonella gracilis ATCC 19624		#92B4AF
+887324	periphery	Actinobacillus ureae	Actinobacillus ureae ATCC 25976		#92B4AF
+887325	core	Eubacterium saburreum	Eubacterium saburreum DSM 3986		#92B4AF
+887327	core	Kingella kingae	Kingella kingae ATCC 23330		#92B4AF
+887898	core	Lautropia mirabilis	Lautropia mirabilis ATCC 51599		#92B4AF
+887929	core	Pseudoramibacter alactolyticus	Pseudoramibacter alactolyticus ATCC 23263		#92B4AF
+888048	periphery	Streptococcus parasanguinis	Streptococcus parasanguinis ATCC 903		#92B4AF
+888049	periphery	Streptococcus sanguinis ATCC49296	Streptococcus sanguinis ATCC 49296		#92B4AF
+888052	periphery	Actinomyces sp. 180	Actinomyces sp. oral taxon 180 str. F0310		#92B4AF
+888056	core	Actinomyces sp. 448	Actinomyces sp. oral taxon 448 str. F0400		#92B4AF
+888057	periphery	Aggregatibacter segnis	Aggregatibacter segnis ATCC 33393		#92B4AF
+888059	periphery	Capnocytophaga sp. 338	Capnocytophaga sp. oral taxon 338 str. F0234		#92B4AF
+888060	core	Centipeda periodontii	Centipeda periodontii DSM 2778		#92B4AF
+888064	periphery	Enterococcus italicus	Enterococcus italicus DSM 15952		#92B4AF
+888741	periphery	Kingella denitrificans	Kingella denitrificans ATCC 33394		#92B4AF
+888742	periphery	Neisseria bacilliformis	Neisseria bacilliformis ATCC BAA-1200		#92B4AF
+888743	periphery	Prevotella multiformis	Prevotella multiformis DSM 16608		#92B4AF
+888746	core	Streptococcus peroris	Streptococcus peroris ATCC 700780		#92B4AF
+888832	periphery	Prevotella salivae	Prevotella salivae DSM 15606		#92B4AF
+888833	periphery	Streptococcus australis	Streptococcus australis ATCC 700641		#92B4AF
+889201	periphery	Streptococcus cristatus	Streptococcus cristatus ATCC 51100		#92B4AF
+889513	periphery	Corynebacterium pseudotuberculosis	Corynebacterium pseudotuberculosis I19		#92B4AF
+891391	periphery	Lactobacillus acidophilus 30SC	Lactobacillus acidophilus 30SC		#92B4AF
+891974	periphery	Plautia stali	Plautia stali symbiont		#92B4AF
+903503	core	Moranella endobia	Candidatus Moranella endobia PCIT		#92B4AF
+903510	periphery	Vibrio furnissii	Vibrio furnissii NCTC 11218		#92B4AF
+903814	periphery	Eubacterium limosum	Eubacterium limosum KIST612		#92B4AF
+904293	periphery	Streptococcus downei	Streptococcus downei F0415		#92B4AF
+904294	periphery	Streptococcus sp. F0418	Streptococcus sp. oral taxon 056 str. F0418		#92B4AF
+904296	periphery	Oribacterium sp. F0425	Oribacterium sp. oral taxon 108 str. F0425		#92B4AF
+904306	periphery	Streptococcus vestibularis	Streptococcus vestibularis F0396		#92B4AF
+906968	periphery	Treponema brennaborense	Treponema brennaborense DSM 12168		#92B4AF
+907239	periphery	Helicobacter pylori SouthAfrica7	Helicobacter pylori SouthAfrica7		#92B4AF
+907931	core	Leuconostoc fallax	Leuconostoc fallax KCTC 3537		#92B4AF
+907965	periphery	Encephalitozoon hellem	Encephalitozoon hellem ATCC 50504		#92B4AF
+908337	core	Eremococcus coleocola	Eremococcus coleocola ACS-139-V-Col8		#92B4AF
+908338	core	Peptoniphilus harei	Peptoniphilus harei ACS-146-V-Sch2b		#92B4AF
+908340	periphery	Clostridium sp. HGF2	Clostridium sp. HGF2		#92B4AF
+908612	core	Alistipes sp. HGB5	Alistipes sp. HGB5		#92B4AF
+908937	periphery	Prevotella dentalis	Prevotella dentalis DSM 3688		#92B4AF
+910313	periphery	Streptococcus pseudoporcinus	Streptococcus pseudoporcinus SPIN 20026		#92B4AF
+910314	periphery	Dialister microaerophilus	Dialister microaerophilus UPII 345-E		#92B4AF
+911045	core	Pseudovibrio sp. FOBEG1	Pseudovibrio sp. FO-BEG1		#92B4AF
+911104	periphery	Weissella cibaria	Weissella cibaria KACC 11862		#92B4AF
+913848	periphery	Lactobacillus coryniformis	Lactobacillus coryniformis subsp. coryniformis KCTC 3167		#92B4AF
+926562	periphery	Owenweeksia hongkongensis	Owenweeksia hongkongensis DSM 17368		#92B4AF
+926569	core	Anaerolinea thermophila	Anaerolinea thermophila UNI-1		#92B4AF
+927666	periphery	Streptococcus oralis Uo5	Streptococcus oralis Uo5		#92B4AF
+927691	periphery	Leuconostoc gelidum	Leuconostoc gelidum KCTC 3527		#92B4AF
+929439	periphery	Leishmania mexicana	Leishmania mexicana MHOM GT 2001 U1103		#92B4AF
+929506	periphery	Clostridium botulinum BKT015925	Clostridium botulinum BKT015925		#92B4AF
+930171	periphery	Arthrobacter phenanthrenivorans	Arthrobacter phenanthrenivorans Sphe3		#92B4AF
+930942	periphery	Lactobacillus animalis	Lactobacillus animalis KCTC 3501		#92B4AF
+930945	core	Sulfolobus islandicus	Sulfolobus islandicus REY15A		#92B4AF
+930946	core	Fructobacillus fructosus	Fructobacillus fructosus KCTC 3544		#92B4AF
+931626	core	Acetobacterium woodii	Acetobacterium woodii DSM 1030		#92B4AF
+931890	periphery	Eremothecium cymbalariae	Eremothecium cymbalariae DBVPG_7215		#92B4AF
+933115	core	Planococcus donghaensis	Planococcus donghaensis MPA1U2		#92B4AF
+933801	core	Acidianus hospitalis	Acidianus hospitalis W1		#92B4AF
+936140	periphery	Lactobacillus farciminis	Lactobacillus farciminis KCTC 3681		#92B4AF
+936155	periphery	Helicobacter felis	Helicobacter felis ATCC 49179		#92B4AF
+937774	core	Taylorella equigenitalis	Taylorella equigenitalis MCE9		#92B4AF
+940190	core	Melissococcus plutonius	Melissococcus plutonius ATCC 35311		#92B4AF
+940615	core	Granulicella tundricola	Granulicella tundricola		#92B4AF
+941770	core	Lactobacillus fructivorans	Lactobacillus fructivorans KCTC 3543		#92B4AF
+944547	periphery	Arcobacter sp. L	Arcobacter sp. L		#92B4AF
+944559	periphery	Paenibacillus sp. HGF7	Paenibacillus sp. HGF7		#92B4AF
+944560	periphery	Actinomyces sp. 175	Actinomyces sp. oral taxon 175 str. F0384		#92B4AF
+944562	periphery	Lactobacillus oris	Lactobacillus oris F0423		#92B4AF
+944564	periphery	Veillonella sp. F0422	Veillonella sp. oral taxon 780 str. F0422		#92B4AF
+944565	periphery	Parvimonas sp. F0440	Parvimonas sp. oral taxon 393 str. F0440		#92B4AF
+945021	core	Tetragenococcus halophilus	Tetragenococcus halophilus NBRC 12172		#92B4AF
+945543	periphery	Vibrio brasiliensis	Vibrio brasiliensis LMG 20546		#92B4AF
+945550	periphery	Vibrio sinaloensis	Vibrio sinaloensis DSM 21326		#92B4AF
+945681	periphery	Acetobacter pomorum	Acetobacter pomorum DM001		#92B4AF
+945712	periphery	Corynebacterium ulcerans	Corynebacterium ulcerans BR-AD22		#92B4AF
+977880	periphery	Cupriavidus taiwanensis	Cupriavidus taiwanensis LMG 19424		#92B4AF
+979556	core	Microbacterium testaceum	Microbacterium testaceum StLB037		#92B4AF
+981222	core	Chloracidobacterium thermophilum	Candidatus Chloracidobacterium thermophilum B		#92B4AF
+981383	core	Ornithinibacillus scapharcae	Ornithinibacillus scapharcae TW25		#92B4AF
+983328	periphery	Campylobacter fetus	Campylobacter fetus subsp. venerealis NCTC 10354		#92B4AF
+983544	core	Lacinutrix sp. 5H374	Lacinutrix sp. 5H-3-7-4		#92B4AF
+983545	periphery	Glaciecola sp. 4H37YE5	Glaciecola sp. 4H-3-7+YE-5		#92B4AF
+983548	core	Krokinobacter sp. 4H375	Krokinobacter sp. 4H-3-7-5		#92B4AF
+983920	periphery	Novosphingobium nitrogenifigens	Novosphingobium nitrogenifigens DSM 19370		#92B4AF
+984892	periphery	Staphylococcus pseudintermedius	Staphylococcus pseudintermedius ED99		#92B4AF
+985002	periphery	Staphylococcus aureus MSHR1132	Staphylococcus aureus subsp. aureus MSHR1132		#92B4AF
+985053	periphery	Vulcanisaeta moutnovskia	Vulcanisaeta moutnovskia 768-28		#92B4AF
+985665	periphery	Paenibacillus terrae	Paenibacillus terrae HPL-003		#92B4AF
+985867	core	Odyssella thessalonicensis	Candidatus Odyssella thessalonicensis L13		#92B4AF
+986075	core	Caldalkalibacillus thermarum	Caldalkalibacillus thermarum TA2.A1		#92B4AF
+987059	core	Rubrivivax benzoatilyticus	Rubrivivax benzoatilyticus JA2		#92B4AF
+990316	core	Methanosaeta concilii	Methanosaeta concilii GP6		#92B4AF
+991905	periphery	Polymorphum gilvum	Polymorphum gilvum SL003B-26A1		#92B4AF
+992406	core	Riemerella anatipestifer	Riemerella anatipestifer RA-GD		#92B4AF
+996637	core	Streptomyces griseoaurantiacus	Streptomyces griseoaurantiacus M045		#92B4AF
+997346	core	Desmospora sp. 8437	Desmospora sp. 8437		#92B4AF
+997352	periphery	Prevotella nigrescens	Prevotella nigrescens ATCC 33563		#92B4AF
+997353	periphery	Prevotella pallens	Prevotella pallens ATCC 700821		#92B4AF
+997830	periphery	Streptococcus infantis X	Streptococcus infantis X		#92B4AF
+998088	core	Aeromonas veronii	Aeromonas veronii B565		#92B4AF
+999141	core	Halomonas sp. TD01	Halomonas sp. TD01		#92B4AF
+999541	periphery	Burkholderia gladioli	Burkholderia gladioli BSR3		#92B4AF
+999630	periphery	Thermoproteus uzoniensis	Thermoproteus uzoniensis 768-20		#92B4AF
+1000565	core	Methyloversatilis universalis	Methyloversatilis universalis FAM5		#92B4AF
+1000569	periphery	Megasphaera sp. UPII135E	Megasphaera sp. UPII 135-E		#92B4AF
+1000570	periphery	Streptococcus anginosus SK52	Streptococcus anginosus SK52 = DSM 20563		#92B4AF
+1000588	periphery	Streptococcus mitis SK95	Streptococcus mitis bv. 2 str. SK95		#92B4AF
+1001530	periphery	Photobacterium leiognathi	Photobacterium leiognathi subsp. mandapamensis svers.1.1.		#92B4AF
+1001585	periphery	Pseudomonas mendocina NK01	Pseudomonas mendocina NK-01		#92B4AF
+1001994	core	Nitrosoarchaeum koreensis	Candidatus Nitrosoarchaeum koreensis MY1		#92B4AF
+1002339	periphery	Psychrobacter sp. 1501	Psychrobacter sp. 1501(2011)		#92B4AF
+1002672	periphery	Pelagibacter sp. IMCC9063	Candidatus Pelagibacter sp. IMCC9063		#92B4AF
+1002804	periphery	Helicobacter bizzozeronii	Helicobacter bizzozeronii CIII-1		#92B4AF
+1003195	periphery	Streptomyces cattleya	Streptomyces cattleya NRRL 8057 = DSM 46488		#92B4AF
+1003200	core	Achromobacter xylosoxidans AXXA	Achromobacter xylosoxidans AXX-A		#92B4AF
+1004836	core	Gluconacetobacter sp. SXCC1	Gluconacetobacter sp. SXCC-1		#92B4AF
+1005048	core	Collimonas fungivorans	Collimonas fungivorans Ter331		#92B4AF
+1005057	periphery	Buchnera aphidicola Ua	Buchnera aphidicola str. Ua (Uroleucon ambrosiae)		#92B4AF
+1005058	core	Gallibacterium anatis	Gallibacterium anatis UMN179		#92B4AF
+1005090	periphery	Buchnera aphidicola Ak	Buchnera aphidicola str. Ak (Acyrthosiphon kondoi)		#92B4AF
+1005705	periphery	Streptococcus infantis SK1076	Streptococcus infantis SK1076		#92B4AF
+1006006	core	Metallosphaera cuprina	Metallosphaera cuprina Ar-4		#92B4AF
+1006551	core	Klebsiella oxytoca	Klebsiella oxytoca KCTC 1686		#92B4AF
+1007104	core	Sphingomonas sp. S17	Sphingomonas sp. S17		#92B4AF
+1007105	core	Pusillimonas sp. T77	Pusillimonas sp. T7-7		#92B4AF
+1008459	periphery	Taylorella asinigenitalis	Taylorella asinigenitalis MCE3		#92B4AF
+1009370	core	Acetonema longum	Acetonema longum DSM 6540		#92B4AF
+1026882	periphery	Methylophaga aminisulfidivorans	Methylophaga aminisulfidivorans MP		#92B4AF
+1027292	core	Sporosarcina newyorkensis	Sporosarcina newyorkensis 2681		#92B4AF
+1027371	periphery	Gordonia alkanivorans	Gordonia alkanivorans NBRC 16433		#92B4AF
+1027396	periphery	Listeria monocytogenes Scott	Listeria monocytogenes str. Scott A		#92B4AF
+1028307	periphery	Enterobacter aerogenes	Enterobacter aerogenes KCTC 2190		#92B4AF
+1028803	periphery	Haemophilus haemolyticus M19501	Haemophilus haemolyticus M19501		#92B4AF
+1028805	periphery	Haemophilus haemolyticus M21621	Haemophilus haemolyticus M21621		#92B4AF
+1029718	core	Arthromitus sp. SFBmoJap	Candidatus Arthromitus sp. SFB-mouse-Japan		#92B4AF
+1031711	core	Ralstonia solanacearum Po82	Ralstonia solanacearum Po82		#92B4AF
+1032480	core	Microlunatus phosphovorus	Microlunatus phosphovorus NM-1		#92B4AF
+1033802	core	Salinisphaera shabanensis	Salinisphaera shabanensis E1L3A		#92B4AF
+1033806	periphery	Halorhabdus tiamatea	Halorhabdus tiamatea SARL4B		#92B4AF
+1033810	core	Haloplasma contractile	Haloplasma contractile SSD-17B		#92B4AF
+1033837	periphery	Lactobacillus kefiranofaciens	Lactobacillus kefiranofaciens ZW3		#92B4AF
+1034807	periphery	Flavobacterium branchiophilum	Flavobacterium branchiophilum FL-15		#92B4AF
+1034808	periphery	Mycoplasma anatis	Mycoplasma anatis 1340		#92B4AF
+1035184	periphery	Streptococcus constellatus	Streptococcus constellatus subsp. pharyngis SK1060 = CCUG 46377		#92B4AF
+1035188	periphery	Haemophilus pittmaniae	Haemophilus pittmaniae HK 85		#92B4AF
+1035189	periphery	Streptococcus infantis SK970	Streptococcus infantis SK970		#92B4AF
+1036673	periphery	Paenibacillus mucilaginosus	Paenibacillus mucilaginosus KNP414		#92B4AF
+1036674	periphery	Idiomarina sp. A28L	Idiomarina sp. A28L		#92B4AF
+1037409	periphery	Bradyrhizobium japonicum USDA6	Bradyrhizobium japonicum USDA 6		#92B4AF
+1037410	periphery	Mycoplasma columbinum	Mycoplasma columbinum SF7		#92B4AF
+1040964	periphery	Lactobacillus ruminis	Lactobacillus ruminis SPM0211		#92B4AF
+1041504	periphery	Arthromitus sp. SFBraYit	Candidatus Arthromitus sp. SFB-rat-Yit		#92B4AF
+1041522	periphery	Mycobacterium colombiense	Mycobacterium colombiense CECT 3035		#92B4AF
+1041826	periphery	Flavobacterium columnare	Flavobacterium columnare ATCC 49512		#92B4AF
+1042156	periphery	Clostridium sp. SY8519	Clostridium sp. SY8519		#92B4AF
+1042163	periphery	Brevibacillus laterosporus	Brevibacillus laterosporus LMG 15441		#92B4AF
+1042876	periphery	Pseudomonas putida S16	Pseudomonas putida S16		#92B4AF
+1042877	periphery	Thermococcus sp. 4557	Thermococcus sp. 4557		#92B4AF
+1045854	core	Weissella koreensis	Weissella koreensis KACC 15510		#92B4AF
+1045855	periphery	Pseudoxanthomonas spadix	Pseudoxanthomonas spadix BD-a59		#92B4AF
+1045856	periphery	Enterobacter cloacae EcWSU1	Enterobacter cloacae EcWSU1		#92B4AF
+1045858	periphery	Brachyspira intermedia	Brachyspira intermedia PWS/A		#92B4AF
+1046627	core	Bizionia argentinensis	Bizionia argentinensis JUB59		#92B4AF
+1046629	periphery	Streptococcus salivarius	Streptococcus salivarius 57.I		#92B4AF
+1047171	core	Zymoseptoria tritici	Zymoseptoria tritici		#92B4AF
+1048834	periphery	Alicyclobacillus acidocaldarius Tc41	Alicyclobacillus acidocaldarius subsp. acidocaldarius Tc-4-1		#92B4AF
+1050720	core	Agrobacterium tumefaciens F2	Agrobacterium tumefaciens F2		#92B4AF
+1051006	periphery	Propionibacterium acnes SK182BJCVI	Propionibacterium acnes SK182B-JCVI		#92B4AF
+1051075	periphery	Paracoccus denitrificans SD1	Paracoccus denitrificans SD1		#92B4AF
+1051632	core	Sulfobacillus acidophilus	Sulfobacillus acidophilus TPY		#92B4AF
+1051646	periphery	Vibrio tubiashii	Vibrio tubiashii ATCC 19109		#92B4AF
+1052684	periphery	Paenibacillus polymyxa M1	Paenibacillus polymyxa M1		#92B4AF
+1053648	core	Tremblaya princeps	Candidatus Tremblaya princeps PCVAL		#92B4AF
+1054460	periphery	Streptococcus pseudopneumoniae	Streptococcus pseudopneumoniae IS7493		#92B4AF
+1064535	core	Megasphaera elsdenii	Megasphaera elsdenii DSM 20460		#92B4AF
+1064539	core	Azospirillum brasilense	Azospirillum brasilense Sp245		#92B4AF
+1064592	core	Naumovozyma castellii	Naumovozyma castellii CBS 4309		#92B4AF
+1069533	periphery	Streptococcus infantarius	Streptococcus infantarius subsp. infantarius CJ18		#92B4AF
+1071378	periphery	Naumovozyma dairenensis	Naumovozyma dairenensis CBS 421		#92B4AF
+1071381	core	Tetrapisispora phaffii	Tetrapisispora phaffii CBS 4417		#92B4AF
+1074889	periphery	Blattabacterium sp. MADAR	Blattabacterium sp. (Mastotermes darwiniensis) str. MADAR		#92B4AF
+1075399	periphery	Blattabacterium sp. Cpu	Blattabacterium sp. (Cryptocercus punctulatus) str. Cpu		#92B4AF
+1082931	core	Pelagibacterium halotolerans	Pelagibacterium halotolerans B2		#92B4AF
+1085623	periphery	Glaciecola nitratireducens	Glaciecola nitratireducens FR1064		#92B4AF
+1097668	core	Burkholderia sp. YI23	Burkholderia sp. YI23		#92B4AF
+1104324	periphery	Pyrobaculum sp. 1860	Pyrobaculum sp. 1860		#92B4AF
+1110509	periphery	Methanosaeta harundinacea	Methanosaeta harundinacea 6Ac		#92B4AF
+1111069	periphery	Thermus sp. CCBUS3UF1	Thermus sp. CCB_US3_UF1		#92B4AF
+1111676	periphery	Mycoplasma haemocanis	Mycoplasma haemocanis str. Illinois		#92B4AF
+1112204	core	Gordonia polyisoprenivorans	Gordonia polyisoprenivorans VH2		#92B4AF
+1114970	periphery	Pseudomonas fluorescens F113	Pseudomonas fluorescens F113		#92B4AF
+1116231	periphery	Streptococcus macedonicus	Streptococcus macedonicus ACA-DC 198		#92B4AF
+1116375	periphery	Vibrio sp. EJY3	Vibrio sp. EJY3		#92B4AF
+1117943	periphery	Sinorhizobium fredii HH103	Sinorhizobium fredii HH103		#92B4AF
+1127134	core	Nocardia cyriacigeorgica	Nocardia cyriacigeorgica GUH-2		#92B4AF
+1129369	core	Mycoplasma hyorhinis	Mycoplasma hyorhinis GDL-1		#92B4AF
+1133850	periphery	Streptomyces hygroscopicus	Streptomyces hygroscopicus subsp. jinggangensis 5008		#92B4AF
+1142511	periphery	Wigglesworthia glossinidia Gm	Wigglesworthia glossinidia endosymbiont of Glossina morsitans morsitans (Yale colony)		#92B4AF
+12288	Core	Nodamura virus (strain Mag115)	Nodamura virus	7088,9823,7158	#BC655F
+10245	Core	Vaccinia virus (strain Western Reserve)	Vaccinia	9913	#BC655F
+12295	Core	Tobacco rattle virus (isolate PpK20)	TRV	4081,42337,59895,4072	#BC655F
+12302	Core	Brome mosaic virus	BMV	15371	#BC655F
+10255	Core	Variola virus (isolate Human/India/Ind3/1967)	Smallpox	9606	#BC655F
+12305	Core	Cucumber mosaic virus (strain FNY)	CMV	4097,3663	#BC655F
+10258	Core	Orf virus (strain Goat/Texas/SA00/2000)	Orf virus	9940,9925,9606	#BC655F
+40979	Core	Cocksfoot mottle virus (isolate Dactylis glomerata/Norway/CfMV-NO/1995)	CfMV	4509,4565	#BC655F
+10261	Core	Fowlpox virus (strain NVSL)	FPV	7742	#BC655F
+12317	Core	Tobacco streak virus (strain WC)	TSV	4686,3885,57577,4097,47082,34274,3847,41562,137000	#BC655F
+10271	Core	Rabbit fibroma virus (strain Kasza)	Rabbit fibroma	9986	#BC655F
+12321	Core	Alfalfa mosaic virus (strain 425 / isolate Leiden)	Alfalfa mosaic	3827,4081,3869,145753,3879,3864,41386,4045,157662,60916,23113,35936,3917,3916,4097,83862,4113,4236,3885,3888,4072,85293,3847	#BC655F
+10276	Core	Swinepox virus (strain Swine/Nebraska/17077-99/1999)	SWPV	9823	#BC655F
+12327	Core	Barley stripe mosaic virus	BSMV	4513,4565	#BC655F
+213034	Core	Sclerotinia sclerotiorum debilitation-associated virus (isolate Sclerotinia/China/Xie/-)	SsDRV		#BC655F
+12331	Core	Rice stripe virus (isolate T)	RSV	4513,38413,4530,66017,4565,4577,4556,4555,4498	#BC655F
+405554	Core	White bream virus (isolate Blicca bjoerkna L./Germany/DF24/00)	WBV	58317	#BC655F
+374840	Core	Enterobacteria phage phiX174 (Isolate Sanger)	phi-X174	498388	#BC655F
+10298	Core	Human herpesvirus 1 (strain 17)	HSV-1	9606	#BC655F
+174142	Core	Botrytis virus X (isolate Botrytis cinerea/New Zealand/Howitt/2006)	BOTV-X	40559	#BC655F
+12355	Core	Enterobacteria phage T1	T1		#BC655F
+10310	Core	Human herpesvirus 2 (strain HG52)	HSV-2	9606	#BC655F
+427703	Core	Enterobacteria phage MX1	MX1	562	#BC655F
+11277	Core	Vesicular stomatitis Indiana virus (strain San Juan)	VSIV	9913,9823,7158,7370,9793,58271,9796,9606,7190,252607	#BC655F
+333919	Core	Equus caballus papillomavirus 1 (strain Olson)	EcPV-1	9796	#BC655F
+333926	Core	Human papillomavirus type 4	HPV 4	9606	#BC655F
+59504	Core	Petunia vein clearing virus (isolate Shepherd)	PVCV	4101	#BC655F
+49267	Core	Tomato pseudo-curly top virus	TPCTV	4081,4112	#BC655F
+311413	Core	Lettuce big-vein associated virus (isolate Japan/Kagawa)	LBVaV	4236,50207,50193	#BC655F
+215158	Core	Salmonella phage epsilon15	Salmonella phage epsilon15		#BC655F
+10359	Core	Human cytomegalovirus (strain Merlin)	HCMV	9606	#BC655F
+329852	Core	Enterobacteria phage MS2	Bacteriophage MS2	562	#BC655F
+442493	Core	Enterococcus phage phiEF24C	phi-EF24C	1351	#BC655F
+10366	Core	Murid herpesvirus 1 (strain Smith)	Mouse cytomegalovirus	10090	#BC655F
+10376	Core	Epstein-Barr virus (strain B95-8)	EBV	9606	#BC655F
+57482	Core	European bat lyssavirus 1 (strain Bat/Germany/RV9/1968)	EBLV1	40674	#BC655F
+194699	Core	Bordetella phage BPP-1	BPP-1	518	#BC655F
+10381	Core	Saimiriine herpesvirus 2 (strain 11)	Saimiri	9521	#BC655F
+370833	Core	Tomato torrado virus (isolate Solanum lycopersicum/Spain/PRIToTV0301/-)	ToTV	4081,4072,4097,4113,4111	#BC655F
+10390	Core	Gallid herpesvirus 2 (strain Chicken/Md5/ATCC VR-987)	Gallid herpes	9031	#BC655F
+31770	Core	Shallot virus X	ShVX	28911	#BC655F
+10401	Core	Ictalurid herpesvirus 1 (strain Auburn)	Channel catfish herpesvirus	7996	#BC655F
+647331	Core	Atkinsonella hypoxylon virus (isolate 2H)	AhV	47741	#BC655F
+10407	Core	Hepatitis B virus genotype C subtype ayr (isolate Human/Japan/Okamoto/-)	HBV-C	9598,9606	#BC655F
+186538	Core	Zaire ebolavirus (strain Mayinga-76)	Ebola	77231,77243,9606	#BC655F
+145579	Core	Bdellovibrio phage phiMH2K	phiMH2K	959	#BC655F
+12461	Core	Hepatitis E virus genotype 1 (isolate Human/China/HeBei/1987)	HEV	9606	#BC655F
+12465	Core	Barley yellow mosaic virus (isolate China/Yancheng/1998)	BaYMV	4513	#BC655F
+45237	Core	Helminthosporium victoriae virus-190S	Hv190SV		#BC655F
+12475	Core	Hepatitis delta virus genotype I (isolate D380)	HDV	9606	#BC655F
+362693	Core	Oryza sativa endornavirus (isolate Japan/1995)	OsEV		#BC655F
+10273	Core	Myxoma virus (strain Lausanne)	MYXV	9986	#BC655F
+157898	Core	Sulfolobus islandicus rod-shaped virus 1	SIRV-1	43080	#BC655F
+28875	Core	Rotavirus A (isolate Monkey/South Africa/SA11-H96/1958 G3-P5B[2]-I2-R2-C5-M5-A5-N5-T5-E2-H5) (RV-A)	Rotavirus	60710	#BC655F
+55510	Core	Staphylococcus phage Twort (strain DSM 17442)	Twort	55510	#BC655F
+104664	Core	Indian citrus ringspot virus (isolate Kinnow mandarin/India/K1/1996)	ICRSV	2706	#BC655F
+118140	Core	Porcine teschovirus 1 (isolate Pig/United Kingdom/F65/1967)	Tescho	9823	#BC655F
+10279	Core	Molluscum contagiosum virus subtype 1	MCVI	9606	#BC655F
+10479	Core	Thermoproteus tenax virus 1 (strain KRA1)	TTV1	2271	#BC655F
+10484	Core	Campoletis sonorensis ichnovirus (strain Texas A&M)	CsIV	7416	#BC655F
+12538	Core	Mokola virus (MOKV)	MOKV	9615,9685,269271,9989	#BC655F
+10493	Core	Frog virus 3 (isolate Goorha)	FV-3	8295,30343,8404,8316,45438	#BC655F
+147711	Core	Human rhinovirus A serotype 89 (strain 41467-Gallo)	HRV-89	9606	#BC655F
+307456	Core	Rachiplusia ou multiple nucleopolyhedrovirus (strain R1)	RoMNPV	7113,7088,29057	#BC655F
+10497	Core	African swine fever virus (strain Badajoz 1971 Vero-adapted)	ASFV	6937,9823	#BC655F
+37124	Core	Chikungunya virus (strain S27-African prototype)	CHIKV	9539,7159,9606,7160,9533,9573,299627,188700,9554,9598	#BC655F
+37128	Core	Potato mop-top virus (isolate Potato/Sweden/Sw)	PMTV	4112,4113	#BC655F
+10506	Core	Paramecium bursaria Chlorella virus 1	PBCV-1	114049	#BC655F
+1032474	Core	Aeropyrum pernix ovoid virus 1	APOV1	56636	#BC655F
+1241371	Core	Abalone herpesvirus (isolate Abalone/Australia/Victoria/2009)	AbHV	6451	#BC655F
+92444	Core	Acute bee paralysis virus (strain Rothamsted)	ABPV	7460	#BC655F
+12585	Core	Banana bunchy top virus (isolate Autralia)	BBTV	4640	#BC655F
+694581	Core	Marseillevirus marseillevirus	GBM	5754	#BC655F
+342409	Core	White spot syndrome virus (isolate Shrimp/China/Tongan/1996)	WSSV	6657	#BC655F
+47416	Core	Satsuma dwarf virus (isolate Satsuma mandarin/Japan/S-58/1977)	SDV	55188,2711,237951	#BC655F
+10561	Core	Bovine papillomavirus type 3	Bovine papillomavirus 3	9913	#BC655F
+10565	Core	European elk papillomavirus	EEPV	9860	#BC655F
+10567	Core	Mastomys natalensis papillomavirus (isolate African multimammate rat)	MnPV	10112	#BC655F
+1511862	Core	Aleutian mink disease parvovirus (strain G)	ADV	9665	#BC655F
+12618	Core	Chicken anemia virus (isolate Germany Cuxhaven-1)	CAV	9031	#BC655F
+137556	Core	Maize necrotic streak virus	MNeSV	4577	#BC655F
+37206	Core	Helicoverpa armigera stunt virus	HaSV	29058	#BC655F
+12639	Core	Duck hepatitis B virus (isolate Shanghai/DHBVQCA34)	DHBV	8835	#BC655F
+162145	Core	Human metapneumovirus (strain CAN97-83)	HMPV	9606	#BC655F
+1511779	Core	Mischivirus A (isolate Miniopterus schreibersii/China/MsPV-1/2010)	MscPV1	9433	#BC655F
+59749	Core	Maize rayado fino virus (isolate Costa Rica/Guapiles)	MRFV	4577	#BC655F
+10641	Core	Cauliflower mosaic virus (strain Strasbourg)	CaMV	3702,3725,3705	#BC655F
+12657	Core	Equine herpesvirus 2 (strain 86/87)	EHV-2	9796	#BC655F
+129395	Core	Botrytis virus F (isolate Botrytis cinerea/New Zealand/Howitt/2001)	BotV-F	40559	#BC655F
+334203	Core	Human papillomavirus type 1a	HPV 1a	9606	#BC655F
+334205	Core	Human papillomavirus type 41	HPV 41	9606	#BC655F
+10623	Core	Cottontail rabbit papillomavirus (strain Kansas)	CRPV	9988	#BC655F
+10633	Core	Simian virus 40	SV40	9539	#BC655F
+1239437	Core	Turkey astrovirus 1	TAstV-1	9103	#BC655F
+186769	Core	Cryphonectria parasitica mitovirus 1 (strain American chestnut tree/New Jersey/NB631)	CMV1		#BC655F
+186772	Core	Saccharomyces 20S RNA narnavirus	ScNV-20S		#BC655F
+194966	Core	Enterobacteria phage SP6	Bacteriophage SP6	90371	#BC655F
+10651	Core	Soybean chlorotic mottle virus	Soybean chlorotic mottle virus	3885,3917,3847,35936	#BC655F
+10653	Core	Commelina yellow mottle virus	CoYMV	4743	#BC655F
+10654	Core	Rice tungro bacilliform virus (isolate Philippines)	RTBV	4530	#BC655F
+186786	Core	Ourmia melon virus (isolate Melon/Iran/VE9)	OuMV	3656	#BC655F
+10661	Core	Pseudoalteromonas phage PM2	PM2	28107	#BC655F
+37296	Core	Human herpesvirus 8 type P (isolate GK18)	HHV-8	9606	#BC655F
+35252	Core	Alcelaphine herpesvirus 1 (strain C500)	AlHV-1	9927	#BC655F
+10677	Core	Enterobacteria phage Mu	Mu	543	#BC655F
+10678	Core	Enterobacteria phage P1	P1	543	#BC655F
+10679	Core	Enterobacteria phage P2	P2	543	#BC655F
+1511865	Core	Galliform aveparvovirus 1 (isolate Chicken/Hungary/ABU-P1/-/-)	ChPV	9031	#BC655F
+35258	Core	Canine oral papillomavirus (strain Y62)	COPV	9615	#BC655F
+348604	Core	Enterobacteria phage T4	T4	562	#BC655F
+10685	Core	Bacillus phage SP01	SP01	1423	#BC655F
+145856	Core	Human picobirnavirus (strain Human/Thailand/Hy005102/-)	PBV	9606	#BC655F
+1511873	Core	Bovine parvovirus (isolate pAT153/1986)	BPV	9913	#BC655F
+10690	Core	Haemophilus phage HP1 (strain HP1c1)	HP1	724	#BC655F
+12742	Core	Infectious flacherie virus (isolate Silkworm)	IFV		#BC655F
+10658	Core	Enterobacteria phage PRD1	PRD1	584,90371,666,562,303,471,294,287	#BC655F
+1511891	Core	Adeno-associated virus 2 (isolate Srivastava/1982)	AAV-2	40674	#BC655F
+72149	Core	Aichi virus (strain Human/A846/88/1989)	AiV		#BC655F
+10710	Core	Enterobacteria phage lambda	Lambda	562	#BC655F
+35287	Core	Rice tungro spherical virus (strain A)	RTSV	4530	#BC655F
+35288	Core	Grapevine virus A (isolate Is 151)	GVA	29760	#BC655F
+1511900	Core	Human parvovirus B19 (strain HV)	HPV B19	9606	#BC655F
+10719	Core	Streptomyces phage phiC31	phi-C31	1902	#BC655F
+35297	Core	Striped jack nervous necrosis virus	SjNNV	13489,8187,8267,215347,163134	#BC655F
+1511908	Core	Murine minute virus (strain MVM prototype)	MMV	10090	#BC655F
+10726	Core	Escherichia phage T5	T5	562	#BC655F
+35304	Core	Bunyamwera virus	BUNV	7159,9606	#BC655F
+35305	Core	Bunyavirus La Crosse (isolate Human/United States/L78/1978)		9850,7162,13712,9606	#BC655F
+195054	Core	Human parechovirus 2 (strain Williamson)	HPeV-2	9606	#BC655F
+41459	Core	Sweet potato mild mottle virus (isolate Salazar)	SPMMV	4120	#BC655F
+694014	Core	Avian infectious bronchitis virus (strain Beaudette)	IBV	9031	#BC655F
+10752	Core	Enterobacteria phage N4	N4	562	#BC655F
+10754	Core	Enterobacteria phage P22	P22	90371	#BC655F
+10756	Core	Bacillus phage phi29	phi-29	1423	#BC655F
+10760	Core	Enterobacteria phage T7	T7	562	#BC655F
+305674	Core	Deerpox virus (strain Mule deer/United States/W-848-83/1983)	DPV	9872	#BC655F
+176652	Core	Invertebrate iridescent virus 6 (IIV-6)	Chilo iridescent virus	7108,168631,6997,6999,58607	#BC655F
+1239565	Core	Human astrovirus-1	HAstV-1	9606	#BC655F
+35350	Core	Apple stem pitting virus (isolate PA66)	ASPV	23159,106566,3752,23211	#BC655F
+696856	Core	Bovine enteric calicivirus Newbury agent-1 (isolate Bovine/UK/Newbury1/1976)	BEC	9913	#BC655F
+264729	Core	Burkholderia phage BcepMu (isolate -/United States/Summer/2002)	BcepMu	216591	#BC655F
+315953	Core	Acidianus two-tailed virus	ATV	269667	#BC655F
+10335	Core	Varicella-zoster virus (strain Dumas)	VZV	9606	#BC655F
+29250	Core	Helicoverpa zea nudivirus 2	HzNV-2	7113	#BC655F
+10821	Core	Maize streak virus genotype A (isolate South Africa)	MSV	270102,173849,4577,59788,158143,29674,4538,29709,4513,4511,4530,90396,192628,147272,300125,217170,240436,66017,4505,4565,4543,4547,281129,4498	#BC655F
+29255	Core	Giardia lamblia virus (isolate Wang)	GLV	5741	#BC655F
+133704	Core	Porcine circovirus 1 (isolate China)	PCV1	9823	#BC655F
+10840	Core	Beet curly top virus (strain California/Logan)	BCTV	3885,4081,161934,4071,4005,4113,3562,3650	#BC655F
+365150	Core	Lolium latent virus (isolate Lolium/USA/US1/-)	LoLV	480553	#BC655F
+193121	Core	Pea enation mosaic virus-1 (strain WSG)	PEMV-1	3827,3906,60916,3908,3888,3864,70936,3859	#BC655F
+10854	Core	Spiroplasma virus SpV1-R8A2 B (SpV1)	SpV1	2133	#BC655F
+10855	Core	Spiroplasma virus 4	SpV4	2134	#BC655F
+10857	Core	Chlamydia phage 1	Chp1	83554	#BC655F
+10870	Core	Enterobacteria phage M13	M13	562	#BC655F
+490103	Core	Enterobacteria phage Phieco32	phi32		#BC655F
+305785	Core	Poinsettia latent virus (isolate Euphorbia pulcherrima/Germany/Siepen/2005)	PnLV	37495	#BC655F
+320122	Core	Clostridium phage phiCD119 (strain Clostridium difficile/United States/Govind/2006)	phiCD119	1496	#BC655F
+47740	Core	Groundnut rosette virus (strain MC1)	GRV	3885,3879,43365,3917,35936	#BC655F
+10879	Core	Pseudomonas phage phi6	phi-6	319	#BC655F
+279896	Core	Maize mosaic virus (isolate Maize/United States/Reed/2005)	MMV	4554,300124,4558,4577	#BC655F
+55951	Core	Grapevine leafroll-associated virus 3 (isolate United States/NY1)	GLRaV-3	29760	#BC655F
+158372	Core	Penicillium chrysogenum virus (isolate Caston/2003)	PcV	5076	#BC655F
+55987	Core	Infectious salmon anemia virus (isolate Atlantic salmon/Norway/810/9/99)	ISAV	8030,8032,8049,8060,8019,8022	#BC655F
+129141	Core	Citrus leaf blotch virus (isolate Nagami kumquat/France/SRA-153/1984)	CLBV	2706	#BC655F
+11041	Core	Rubella virus (strain Therien)	RUBV	9606	#BC655F
+113370	Core	Spodoptera frugiperda ascovirus 1a (SfAV-1a)	SfAV-1a	7108	#BC655F
+53988	Core	Microplitis demolitor bracovirus (isolate Webb)	MdBV	69319	#BC655F
+1094373	Core	Drosophila melanogaster sigma virus (isolate Drosophila/USA/AP30/2005)	DMelSV		#BC655F
+10986	Core	Rice gall dwarf virus	RGDV	94400,4530	#BC655F
+10991	Core	Rice dwarf virus (isolate Fujian)	RDV	94400,4530,114194,147271,90397	#BC655F
+10995	Core	Avian infectious bursal disease virus (isolate Chicken/UK/UK661/1989)	IBDV	9031,9103	#BC655F
+82676	Core	Phocoena spinipinnis papillomavirus (isolate Burmeister's porpoise/Peru/PsPV1)	PsPV	27614	#BC655F
+58103	Core	Leishmania RNA virus 1 - 1 (isolate Leishmania guyanensis)	LRV-1-1	5664	#BC655F
+11002	Core	Infectious pancreatic necrosis virus (strain Jasper)	IPNV	8022,8028	#BC655F
+11008	Core	Saccharomyces cerevisiae virus L-A	ScVL1	4932	#BC655F
+74501	Core	Breda virus 1	BRV-1	9913	#BC655F
+11033	Core	Semliki forest virus	SFV	170865,9368,7158,158617,9606,34630,7178	#BC655F
+11034	Core	Sindbis virus	SINV	7158,9606,177155,53527,48156,45807	#BC655F
+35612	Core	Vesicular exanthema of swine virus serotype A48 (isolate Swine/United States/A48/1948)	VESV	9823	#BC655F
+1348384	Core	Rotavirus B (isolate Human/China/ADRV-N J19/1997)	RotavirusB	9606	#BC655F
+37665	Core	Ectocarpus siliculosus virus 1 (isolate New Zealand/Kaikoura/1988)	EsV-1		#BC655F
+11047	Core	Equine arteritis virus (strain Bucyrus)	EAV	9788	#BC655F
+39720	Core	Walleye dermal sarcoma virus	WDSV	283036	#BC655F
+11053	Core	Dengue virus type 1 (strain Nauru/West Pac/1974)	DENV-1	7160,7159,9606	#BC655F
+31537	Core	Lactococcus phage c2	Lactococcus phage c2	1357	#BC655F
+11060	Core	Dengue virus type 2 (strain Jamaica/1409/1983)	DENV-2	53540,53541,9538,53539,9606	#BC655F
+11069	Core	Dengue virus type 3 (strain Philippines/H87/1956)	DENV-3	53540,53541,9538,53539,9606	#BC655F
+11070	Core	Dengue virus type 4 (strain Dominica/814669/1981)	DENV-4	7160,188700,7159,9606	#BC655F
+11072	Core	Japanese encephalitis virus (strain SA(v))	JEV	9913,8899,9606,308713,9796,9823,7178	#BC655F
+197772	Core	Psittacus erithacus timneh papillomavirus (isolate African grey parrot)	PePV	382670	#BC655F
+11082	Core	West Nile virus	WNV	9606,308735,308737,7158,53527,34610,34630,8782,34627	#BC655F
+90961	Core	Australian bat lyssavirus (isolate Bat/AUS/1996)	ABLV	446909,9606,328804,94117,9403,9402	#BC655F
+181082	Core	Emiliania huxleyi virus 86 (isolate United Kingdom/English Channel/1999)	EhV-86		#BC655F
+11099	Core	Bovine viral diarrhea virus (isolate NADL)	BVDV	9913	#BC655F
+338781	Core	Micromonas pusilla reovirus (isolate Netherlands/2005)	MpRV	38833	#BC655F
+11103	Core	Hepatitis C virus genotype 1a (isolate H)	HCV	9606	#BC655F
+351073	Core	Reovirus type 1 (strain Lang)	Reovirus type 1	40674	#BC655F
+519014	Core	Aquareovirus G (isolate American grass carp/USA/PB01-155/-)	AQRV-G	75356,143606,7959,51549	#BC655F
+645993	Core	Culex nigripalpus nucleopolyhedrovirus (isolate Florida/1997)	CuniNPV	42429	#BC655F
+244589	Core	Sulfolobus spindle-shape virus 1	SSV1	2287	#BC655F
+99182	Core	Xenotropic MuLV-related virus (isolate VP62)	XMRV	9606	#BC655F
+12777	Core	Parsnip yellow fleck virus (isolate P-121)	PYFV	48027,4045,4047,4041,40922,40919,40888,4039,40954,49576,305795,105274	#BC655F
+312185	Core	Equine rhinitis B virus 1 (strain Equine/Switzerland/P1436/71/1971)	ERBV-1	9796	#BC655F
+11137	Core	Human coronavirus 229E	HCoV-229E	9606	#BC655F
+686984	Core	Porcine sapelovirus (strain V13)	PSV		#BC655F
+1330070	Core	Megrivirus A (isolate Turkey/USA/124/2008)	Megrivirus		#BC655F
+11161	Core	Mumps virus (strain Miyahara vaccine)	MuV	9606	#BC655F
+129951	Core	Human adenovirus C serotype 2	HAdV-C	9606	#BC655F
+11176	Core	Newcastle disease virus (strain Chicken/United States/B1/48)	NDV	9031	#BC655F
+11191	Core	Sendai virus (strain Ohita)	SeV	10116,10090,10144,36483	#BC655F
+46014	Core	Acholeplasma phage L2	L2	2093	#BC655F
+12451	Core	Raspberry bushy dwarf virus (isolate Malling Jewel raspberry/R15)	RBDV	75079,75100,32247	#BC655F
+31713	Core	Lettuce infectious yellows virus (isolate United States/92)	LIYV	3661,3663,3662,3654,4039,4236,3656,161934	#BC655F
+11234	Core	Measles virus (strain Ichinose-B95a)	MeV	9606	#BC655F
+11089	Core	Yellow fever virus (strain 17D vaccine)	YFV	314293,7161,299629,7159,9606	#BC655F
+31721	Core	Beet necrotic yellow vein virus (isolate Japan/S)	BNYVV	3562,343494,161934	#BC655F
+12455	Core	Borna disease virus (strain V)	BDV	9352,9913,109474,9455,56798,9850,9788,9940,8801,30538,9844,9986,9685,9925	#BC655F
+33773	Core	Olive latent virus 2 (isolate Italy)	OLV-2	4145	#BC655F
+11250	Core	Human respiratory syncytial virus B (strain B1)	RSV	9606	#BC655F
+11269	Core	Marburg virus (strain Kenya/Musoke/1980)	MARV	9534,9407,9606	#BC655F
+390157	Core	Seneca Valley virus (isolate -/United States/SSV-001/2002)	SVV		#BC655F
+11290	Core	Infectious hematopoietic necrosis virus (strain WRAC)	IHNV	8028	#BC655F
+11292	Core	Rabies virus (strain Pasteur vaccins / PV)	RABV	40674,9606	#BC655F
+11303	Core	Bovine ephemeral fever virus (strain BB7721)	BEFV	9913,58271,89462,9970	#BC655F
+205877	Core	Mycobacterium phage Bxz1	Bxz1	1810,1772	#BC655F
+11320	Core	Influenza A virus (strain A/Puerto Rico/8/1934 H1N1)	Influenza A	8782,9823,9606	#BC655F
+212035	Core	Acanthamoeba polyphaga mimivirus	APMV	5757	#BC655F
+205895	Core	Lymantria dispar cypovirus 1 (isolate Rao)	LdCPV-1	13123	#BC655F
+347219	Core	Citrus leprosis virus C (isolate Citrus sinesis/Brazil/Cordeiropolis/2003)	CiLV-C	2711	#BC655F
+318558	Core	Tupaia virus (isolate Tupaia/Thailand/-/1986)	TUPV	9394	#BC655F
+95342	Core	Sapporo virus (isolate GI/Human/Germany/pJG-Sap01)	Sapporo	9606	#BC655F
+345201	Core	Invertebrate iridescent virus 3	IIV-3	329105,332058,7163,42431,310513,7183	#BC655F
+40051	Core	Bluetongue virus 10 (isolate USA)	BTV 10	46212,9913,9925,9940,9891	#BC655F
+50294	Core	Psittacid herpesvirus 1 (isolate Amazon parrot/-/97-0001/1997)	PsHV-1	152276	#BC655F
+674953	Core	Trichomonas vaginalis virus 1	TVV1	5722	#BC655F
+197771	Core	Fringilla coelebs papillomavirus (isolate Chaffinch/Netherlands/Dutch)	FcPV	37598	#BC655F
+70796	Core	Avian encephalomyelitis virus (strain Calnek vaccine)	AEV	8835,9005,9031	#BC655F
+267407	Core	European mountain ash ringspot-associated virus (isolate Sorbus aucuparia)	EMARAV	483436,36599	#BC655F
+337041	Core	Human papillomavirus type 16	HPV 16	9606	#BC655F
+337042	Core	Human papillomavirus type 18	HPV 18	9606	#BC655F
+300186	Core	Acidianus filamentous virus 2 (isolate Italy/Pozzuoli)	AFV-2	315458	#BC655F
+337051	Core	Human papillomavirus type 5	HPV 5	9606	#BC655F
+12145	Core	Tomato bushy stunt virus (strain Cherry)	TBSV	4081,3766,3749,13305,4072,4111,29777	#BC655F
+38062	Core	Cassava vein mosaic virus	CsVMV	3983	#BC655F
+220340	Core	Bean golden yellow mosaic virus (isolate Puerto Rico-Japan)	BGYMV	3885,3884,260885,108453	#BC655F
+543939	Core	Sputnik virophage	Sputnik virophage	5757	#BC655F
+437444	Core	Acidianus bottle-shaped virus (isolate Italy/Pozzuoli)	ABV	269667	#BC655F
+292052	Core	White clover cryptic virus 1 (isolate Boccardo/2004)	WCCV-1	3899	#BC655F
+687340	Core	Torque teno virus 1 (isolate TA278)		9606	#BC655F
+66797	Core	Bacillus phage SPbeta	SP-beta	1423,1408	#BC655F
+675060	Core	Cryptosporidium parvum virus 1 (strain KSU-1)	Cryptosporidium parvum virus		#BC655F
+1297662	Core	Thrush coronavirus HKU12 (isolate Grey-backed thrush/Hong Kong/HKU12-600/2007)	ThCoV-HKU12	9187,411519	#BC655F
+11520	Core	Influenza B virus (strain B/Lee/1940)	Influenza B	9606	#BC655F
+687369	Core	Torque teno mini virus 1 (isolate TLMV-CBD279)	TTV mini 1	9606	#BC655F
+687379	Core	Torque teno midi virus 1 (isolate MD1-073)	TTV midi 1	9606	#BC655F
+687381	Core	Torque teno tupaia virus (isolate Tbc-TTV14)	TTV tupaia 1	9394	#BC655F
+687382	Core	Torque teno tamarin virus (isolate So-TTV2)	TTV tamarin 1	9491	#BC655F
+687383	Core	Torque teno douroucouli virus (isolate At-TTV3)	TTV douroucouli 1	9505	#BC655F
+687384	Core	Torque teno felis virus (isolate Fc-TTV4)	TTV felis 1	9685	#BC655F
+687385	Core	Torque teno canis virus (isolate Cf-TTV10)	TTV canis 1	9615	#BC655F
+687386	Core	Torque teno sus virus 1 (isolate Sd-TTV31)	TTV sus 1	9823	#BC655F
+11552	Core	Influenza C virus (strain C/Ann Arbor/1/1950)	Influenza C	9823,9606	#BC655F
+324900	Core	Heterosigma akashiwo RNA virus (strain SOG263)	HaRNAV		#BC655F
+60714	Core	Galinsoga mosaic virus	GaMV	176602	#BC655F
+11569	Core	Thogoto virus (isolate SiAr 126)	Tho	6941,34610,34631,10144,210652	#BC655F
+204086	Core	Staphylococcus phage 44AHJD	44AHJD	1280	#BC655F
+591166	Core	Southern tomato virus	STV	4081	#BC655F
+249151	Core	Neodiprion lecontei nucleopolyhedrovirus (strain Canada)	NeleNPV	441921	#BC655F
+11588	Core	Rift valley fever virus (strain ZH-548 M12)	RVFV	9913,7158,9606,9837,9940,297284,29031,9925	#BC655F
+11591	Core	Uukuniemi virus (strain S23)	Uuk	34613,9606	#BC655F
+11593	Core	Crimean-Congo hemorrhagic fever virus (strain Nigeria/IbAr10200/1970)	CCHFV	9913,9606,9940,34625,6941,9925	#BC655F
+146762	Core	Oat chlorotic stunt virus (isolate United Kingdom)	OCSV	4498	#BC655F
+11595	Core	Dugbe virus (isolate ArD44313)	DUGV	9606,136141,34611,34610,72862,34630,72855,60189	#BC655F
+11599	Core	Hantaan virus (strain 76-118)	Hantaan	39030,9606	#BC655F
+40279	Core	Panicum mosaic virus (strain United States/Kansas 109S)	PMV	38727,58090	#BC655F
+116056	Core	Pelargonium zonate spot virus (isolate Tomato/Italy/1982)	PZSV	118509,4081,4032,59895,3732	#BC655F
+40281	Core	Cryphonectria hypovirus 1 (strain EP713) (CHV-1/EP713)	CHV-1	5116	#BC655F
+298331	Core	Frog adenovirus 1 (strain ATCC VR-896)	FrAdV-1	8404	#BC655F
+1330524	Core	Salivirus A (isolate Human/Nigeria/NG-J1/2007)	SV-A	9598,9606	#BC655F
+11613	Core	Tomato spotted wilt virus (strain Brazilian Br-01)	TSWV	163899,4081,133901,161014	#BC655F
+11620	Core	Lassa virus (strain Mouse/Sierra Leone/Josiah/1976)	LASV	10112,9606	#BC655F
+11623	Core	Lymphocytic choriomeningitis virus (strain Armstrong)	LCMV	10090,10036,9606	#BC655F
+31757	Core	Mycobacterium phage L5	L5	1763	#BC655F
+11631	Core	Tacaribe virus (strain Franze-Fernandez)	TCRV	9416	#BC655F
+867696	Core	Salmonella phage ViI	ViI	90370	#BC655F
+11642	Core	Simian foamy virus (isolate chimpanzee)	SFVcpz	9598	#BC655F
+318844	Core	Tibrogargan virus (strain CS132)	TIBV	469753	#BC655F
+96491	Core	Gill-associated virus (isolate Giant tiger prawn/Australia)	GAV	71412,27405,161923,6687	#BC655F
+11676	Core	Human immunodeficiency virus type 1 group M subtype B (isolate HXB2)	HIV-1	9606	#BC655F
+185782	Core	Aquareovirus C (isolate Golden shiner/USA/GSRV/1977)	AQRV-C		#BC655F
+11709	Core	Human immunodeficiency virus type 2 subtype A (isolate BEN)	HIV-2	9606	#BC655F
+1335626	Core	Human coronavirus EMC (isolate United Kingdom/H123990006/2012)	HCoV-EMC		#BC655F
+11723	Core	Simian immunodeficiency virus (isolate Mm142-83)	SIV	9527	#BC655F
+1285589	Core	Bombyx mori densovirus 3 (isolate Silkworm/China/Zhenjiang/-)	BmDNV-3	7091	#BC655F
+1431460	Core	Hunnivirus A (isolate Sheep/Hungary/OHUV1/2009) (HuV-A2)	HuV-A2		#BC655F
+1285594	Core	Glossina hytrovirus (isolate Glossina pallidipes/Ethiopia/Seibersdorf/-)	GHV	7393	#BC655F
+1285595	Core	Musca hytrovirus(isolate Musca domestica/United States/Boucias/-)	MHV	7370	#BC655F
+1285598	Core	Rosellinia necatrix megabirnavirus 1 (isolate -/Japan/W779/2001)	RnMBV1	77044	#BC655F
+1285600	Core	Nile crocodilepox virus (isolate Crocodylus niloticus/Zimbabwe/Ume/2001)	CRV	8501,8502,184234	#BC655F
+42475	Core	Rice ragged stunt virus (isolate Thailand)	RRSV	4534,4536,4529	#BC655F
+11757	Core	Mouse mammary tumor virus (strain C3H)	MMTV	10090	#BC655F
+204270	Core	Enterobacteria phage phiKMV	phiKMV		#BC655F
+11786	Core	Moloney murine leukemia virus (isolate Shinnick)	MoMLV	10090	#BC655F
+36363	Core	Lymphocystis disease virus 1 (isolate Darai)	LCDV-1		#BC655F
+44562	Core	Pothos latent virus (isolate Pigeonpea/India)	PoLV	174212,3821	#BC655F
+484895	Core	Pseudomonas phage LUZ24	LUZ24		#BC655F
+499235	Core	Halomonas phage phiHAP-1 (isolate -/Gulf of Mexico/-/2001)	phiHAP-1	77097	#BC655F
+323118	Core	Blackberry virus Y (isolate Blackberry plant/USA:Arkansas/C3ARK/2005)	BVY	211815	#BC655F
+12040	Core	Barley yellow dwarf virus (isolate PAV)	BYDV	146531,4513,4530,4522,4521,4565,4577,4550,4498	#BC655F
+75320	Core	Vibrio phage KVP40 (isolate Vibrio parahaemolyticus/Japan/Matsuzaki/1991)	KVP40	670	#BC655F
+200255	Core	Mirafiori lettuce virus (isolate Lettuce/Netherlands/LS301-O)	MiLV	4236	#BC655F
+36427	Core	Rotavirus C (isolate Human/United Kingdom/Bristol/1989)	RV-C	9606	#BC655F
+12216	Core	Potato virus Y (strain N)	PVY	4081,4071,4085,4113	#BC655F
+40537	Core	Bovine papillomavirus type 5	Bovine papillomavirus type 5	9913	#BC655F
+185959	Core	Spiroplasma virus SpV1-C74	SpV1	2134	#BC655F
+190061	Core	Fowl adenovirus A serotype 1 (strain CELO / Phelps)	FAdV-1	8976	#BC655F
+11886	Core	Avian leukosis virus RSA	RSV-SRA	9031	#BC655F
+38525	Core	Avian metapneumovirus (isolate Canada goose/Minnesota/15a/2001)	AMPV	9103,8847	#BC655F
+28289	Core	Cydia pomonella granulosis virus (isolate Mexico/1963)	CpGV	82600	#BC655F
+42631	Core	Brome streak virus (strain 11-Cal)	BStV	4501,97361	#BC655F
+130327	Core	Ovine adenovirus D serotype 7 (isolate OAV287)	OAdV-7	9940	#BC655F
+85652	Core	Nudaurelia capensis beta virus (isolate Pine emperor moth/South Africa)	NbetaV		#BC655F
+28321	Core	Amsacta moorei entomopoxvirus	AmEPV	340055	#BC655F
+40631	Core	Enterobacteria phage N15	Bacteriophage N15	562	#BC655F
+28347	Core	Apple stem grooving virus (strain P-209)	ASGV	3752	#BC655F
+28355	Core	Peanut clump virus (isolate 87/TGTA2)	PCV	91525,3818,4555,4558	#BC655F
+128708	Core	His1 virus (isolate Australia/Victoria)	His1V	51589	#BC655F
+138950	Core	Poliovirus type 1 (strain Mahoney)	Polio	9606	#BC655F
+11976	Core	Rabbit hemorrhagic disease virus (strain Rabbit/Germany/FRG/1989)	RHDV-FRG	9986	#BC655F
+11978	Core	Feline calicivirus (strain Cat/United States/Urbana/1960)	FCV	9685	#BC655F
+11983	Core	Norwalk virus (strain GI/Human/United States/Norwalk/1968)	Norwalk	9606	#BC655F
+11986	Core	Carnation mottle virus (isolate China/Shanghai)	CarMV	278075,118431,3570,288950,3572	#BC655F
+169683	Core	Pseudomonas phage phiKZ	phiKZ	287	#BC655F
+28375	Core	Soil-borne wheat mosaic virus (strain United States/Nebraska/1981)	SBWMV	4513,4564	#BC655F
+341721	Core	Aedes pseudoscutellaris reovirus (isolate France)	ApRV	316597	#BC655F
+40666	Core	Ryegrass mosaic virus (isolate Denmark/Danish)	RGMV	4509,4520	#BC655F
+1513184	Core	Periplaneta fuliginosa densovirus (isolate Guo/2000)	PfDNV	36977	#BC655F
+1513188	Core	Junonia coenia densovirus (isolate pBRJ/1990)	JcDNV	7088	#BC655F
+1513193	Core	Aedes albopictus densovirus (isolate Boublik/1994)	AalDNV	7160	#BC655F
+693997	Core	Feline coronavirus (strain FIPV WSU-79/1146)	FCoV	9681	#BC655F
+691956	Core	Duck hepatitis A virus (strain Duck/Taiwan/03D/2003)	DHAV		#BC655F
+694005	Core	Murine coronavirus (strain A59)	MHV	10090	#BC655F
+46839	Core	Colorado tick fever virus (strain USA/Florio N-7180)	CTFV	76772,105147,9606,34844,34620,10042	#BC655F
+694009	Core	Human SARS coronavirus	SARS-CoV	9675,9606	#BC655F
+1513210	Core	Bombyx mori densovirus 5 (isolate Shinshu)	BmDNV-5	7091	#BC655F
+103722	Core	Grapevine fleck virus (isolate Italy/MT48)	GFkV	29760	#BC655F
+462590	Core	Pseudomonas phage YuA	YuA	287	#BC655F
+235266	Core	Acidianus filamentous virus 1 (isolate United States/Yellowstone)	AFV-1	563177,12915	#BC655F
+50817	Core	Broad bean wilt virus 1 (strain Spinach/United States/ATCC PV-132/1963)	BBWV-1	4101,13163,3906,3562,4072	#BC655F
+1513224	Core	Infectious hypodermal and hematopoietic necrosis virus	IHHNV	6685	#BC655F
+12045	Core	Potato leafroll virus (strain Potato/Scotland/strain 1/1984)	PLrV	4113	#BC655F
+1513235	Core	Cafeteria roenbergensis virus (strain BV-PW1)	CroV	33653	#BC655F
+12055	Core	Tobacco necrosis virus (strain A)	TNV-A	3885,66262,4097,13306,3659,63459,81866	#BC655F
+261939	Core	Ostreid herpesvirus 1 (isolate France)	OsHV-1	6579,29159	#BC655F
+12092	Core	Human hepatitis A virus genotype IB (isolate HM175)	HAV	9536,9598,9539,9606	#BC655F
+202566	Core	Cherry rasp leaf virus (isolate Potato/United States	CRLV	3760,230209,3750,42229,29818,50225	#BC655F
+12104	Core	Encephalomyocarditis virus (strain Rueckert)	EMCV	42415,10090,9823,9606	#BC655F
+12110	Core	Foot-and-mouth disease virus (isolate Swine/Taiwan/OTai/1997 serotype O)	FMDV	9913,9363,9850,9940,9785,9823,10116,9925	#BC655F
+270161	Core	Pyrobaculum spherical virus (isolate United States/Yellowstone)	PSV		#BC655F
+48981	Core	Drosophila x virus (isolate Chung/1996)	DXV	7227	#BC655F
+73561	Core	Citrus psorosis virus (isolate Spain/P-121)	CPsV	37656,159033,2708	#BC655F
+32603	Core	Human herpesvirus 6A (strain Uganda-1102)	HHV-6A	9606	#BC655F
+32604	Core	Human herpesvirus 6B (strain Z29)	HHV-6B	9606	#BC655F
+63330	Core	Hendra virus (isolate Horse/Autralia/Hendra/1994)	Hendra	9403,9402,9606,94117,9796	#BC655F
+32612	Core	Lettuce necrotic yellows virus (isolate 318)	LNYV	4236,43208,43191,50207,255580	#BC655F
+12136	Core	Cricket paralysis virus (isolate Teleogryllus commodus/Australia/CrPVVIC/1968)	CrPV	128161	#BC655F
+12138	Core	Maize chlorotic mottle virus (isolate United States/Kansas/1987)	MCMV	4577	#BC655F
+12139	Core	Southern bean mosaic virus (isolate Bean/United States/Arkansas)	SBMV	3885,3917,3915,3847	#BC655F
+32625	Core	Mushroom bacilliform virus (isolate Australia/AUS LF-1)	MBV	5341	#BC655F
+12154	Core	Turnip yellow mosaic virus	Turnip yellow mosaic virus	82359,3705	#BC655F
+12161	Core	Beet yellows virus (isolate Ukraine)	BYV	161934	#BC655F
+77698	Core	Fiji disease virus (isolate Sugarcane)	FDV	4547	#BC655F
+12167	Core	Potato virus M (strain Russian)	PVM	4113	#BC655F
+194440	Core	Human T-cell leukemia virus 1 (isolate Caribbea HS-35 subtype A)	HTLV-1	9606	#BC655F
+194441	Core	Human T-cell leukemia virus 2	HTLV-2	9606	#BC655F
+194443	Core	Human T-cell leukemia virus 3 (strain 2026ND)	HTLV-3	9606	#BC655F
+12175	Core	Apple chlorotic leaf spot virus (isolate plum P863)	ACLSV	36596,3760,114937,23211,3758,3752,23159,36610	#BC655F
+38804	Core	Yaba monkey tumor virus (strain VR587)	YMTV	9538,9539,9557,9606	#BC655F
+12183	Core	Potato virus X (strain X3)	PVX	3711,4113	#BC655F
+36772	Core	Subterranean clover stunt virus (strain F)	SCSV	3885,57577,3900,70957,3888,97021,70936,47085,3899,74514,74509,20997,3906	#BC655F
+1218488	Core	Torque teno sus virus k2 (isolate Pig/New Zealand/38E05/2007)	TTSuVk2	9823	#BC655F
+1218490	Core	Torque teno zalophus virus 1	ZcTTV	9704	#BC655F
+311228	Core	Cryphonectria parasitica mycoreovirus 1 (strain 9B21)	CpMYRV-1	5116	#BC655F
+311229	Core	Rosellinia necatrix mycoreovirus 3	RnMYRV-3	77044	#BC655F
+77763	Core	Banna virus (strain Indonesia/JKT-6423/1980)	BAV	9913,182211,7178,9823,9606	#BC655F
+180170	Core	Infectious spleen and kidney necrosis virus (isolate Mandarin fish/China/Nanhai/1998)	ISKNV	270530,119488	#BC655F
+77775	Core	Salmonella phage Felix O1	Phage Felix O1	590	#BC655F
+12242	Core	Tobacco mosaic virus (strain vulgare)	TMV	4097	#BC655F
+12264	Core	Cowpea mosaic virus (strain SB)	CPMV	3917,3821,3829	#BC655F
+176106	Core	Sulfolobus islandicus filamentous virus (isolate Iceland/Hveragerdi)	SIFV	43080	#BC655F
+12267	Core	Red clover necrotic mosaic virus	RCNMV	3879,57577,3899,47083	#BC655F
+311176	Core	Blotched snakehead virus	BSNV	64146	#BC655F
+12280	Core	Tomato ringspot virus (isolate raspberry)	ToRSV	4030,4097,3754,23216	#BC655F

@@ -2,11 +2,15 @@ package edu.ucsf.rbvi.stringApp.internal.tasks;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
@@ -41,11 +45,10 @@ public class ExpandNetworkTask extends AbstractTask {
 	public int additionalNodes = 10;
 
 	@Tunable (description="Type of nodes to expand network by", gravity=2.0)
-	public ListSingleSelection<String> nodeTypes = new ListSingleSelection<String>(
-			"protein", "compound");
+	public ListSingleSelection<String> nodeTypes = new ListSingleSelection<String>();
 	
 	@Tunable (description="Relayout network?", gravity=3.0)
-	public boolean relayout = false;
+	public boolean relayout = true;
 
 	//@Tunable (description="Expand from database", gravity=3.0, groups = "Advanced options", params = "displayState=collapsed")
 	//public ListSingleSelection<String> databases = new ListSingleSelection<String>("string", "stitch");
@@ -55,7 +58,14 @@ public class ExpandNetworkTask extends AbstractTask {
 		this.network = network;
 		this.netView = netView;
 		this.nodeView = null;
-		nodeTypes.setSelectedValue("protein");
+		nodeTypes = new ListSingleSelection<String>(
+				ModelUtils.getAvailableInteractionPartners(network));
+		String netSpecies = ModelUtils.getNetSpecies(network);
+		if (netSpecies != null) {
+			nodeTypes.setSelectedValue(netSpecies);
+		} else {
+			nodeTypes.setSelectedValue(ModelUtils.COMPOUND);
+		}
 	}
 
 	public ExpandNetworkTask(final StringManager manager, final CyNetwork network, CyNetworkView netView, View<CyNode> nodeView) {
@@ -63,7 +73,13 @@ public class ExpandNetworkTask extends AbstractTask {
 		this.network = network;
 		this.netView = netView;
 		this.nodeView = nodeView;
-		nodeTypes.setSelectedValue("protein");
+		nodeTypes = new ListSingleSelection<String>(ModelUtils.getAvailableInteractionPartners(network));
+		String netSpecies = ModelUtils.getNetSpecies(network);
+		if (netSpecies != null) {
+			nodeTypes.setSelectedValue(netSpecies);
+		} else {
+			nodeTypes.setSelectedValue(ModelUtils.COMPOUND);
+		}
 	}
 
 	public void run(TaskMonitor monitor) {
@@ -88,7 +104,13 @@ public class ExpandNetworkTask extends AbstractTask {
 			species = ModelUtils.getMostCommonNetSpecies(network);
 			ModelUtils.setNetSpecies(network, species);
 		}
-		int taxonId = Species.getSpeciesTaxId(species);
+		String selectedType = nodeTypes.getSelectedValue();
+		if (selectedType == null || selectedType.equals(ModelUtils.EMPTYLINE)) {
+			monitor.showMessage(TaskMonitor.Level.WARN, "No node type to extend by");
+			return;
+		}
+		// int taxonId = Species.getSpeciesTaxId(species);
+		int taxonId = Species.getSpeciesTaxId(selectedType);
 		Map<String, String> args = new HashMap<>();
 		args.put("existing",existing.trim());
 		if (selected != null && selected.length() > 0)
@@ -100,15 +122,15 @@ public class ExpandNetworkTask extends AbstractTask {
 			args.put("score", conf.toString());
 		if (additionalNodes > 0)
 			args.put("additional", Integer.toString(additionalNodes));
-		String nodeType = nodeTypes.getSelectedValue().toLowerCase();
+		// String nodeType = nodeTypes.getSelectedValue().toLowerCase();
 		String useDatabase = "";
-		if (nodeType.equals("protein")) {
+		if (selectedType.equals(ModelUtils.COMPOUND)) {
+			useDatabase = Databases.STITCH.getAPIName();
+			args.put("filter", "CIDm%%");			
+		} else {
 			useDatabase = Databases.STRING.getAPIName();
 			if (taxonId != -1) 
 				args.put("filter", taxonId + ".%%");
-		} else {
-			useDatabase = Databases.STITCH.getAPIName();
-			args.put("filter", "CIDm%%");			
 		}
 		// TODO: Is it OK to always use stitch?
 		args.put("database", Databases.STITCH.getAPIName());
@@ -127,14 +149,26 @@ public class ExpandNetworkTask extends AbstractTask {
 		List<CyEdge> newEdges = new ArrayList<>();
 		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, useDatabase);
 
+		if (newNodes.size() == 0 && newEdges.size() == 0) {
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					JOptionPane.showMessageDialog(null, 
+											"This query will not add any new nodes or edges to the existing network.",
+								       "Warning", JOptionPane.WARNING_MESSAGE); 
+				}
+			});
+			return;
+		}
 		monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
-		// System.out.println("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
 
 		// If we have a view, re-apply the style and layout
 		if (netView != null) {
 			monitor.setStatusMessage("Updating style");
 			// System.out.println("Updating style");
 			ViewUtils.updateEdgeStyle(manager, netView, newEdges);
+			if (!selectedType.equals(species) && !selectedType.equals(ModelUtils.COMPOUND)) {
+				ViewUtils.updateNodeColorsHost(manager, netView);				
+			}
 			// System.out.println("Done");
 			if (relayout) {
 				monitor.setStatusMessage("Updating layout");
@@ -150,6 +184,7 @@ public class ExpandNetworkTask extends AbstractTask {
 		}
 	}
 
+		
 	@ProvidesTitle
 	public String getTitle() {
 		return "Expand Network";

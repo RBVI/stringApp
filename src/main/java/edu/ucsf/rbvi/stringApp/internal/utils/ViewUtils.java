@@ -1,7 +1,9 @@
 package edu.ucsf.rbvi.stringApp.internal.utils;
 
 import java.awt.Color;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyEdge;
@@ -26,20 +28,26 @@ import org.cytoscape.view.vizmap.mappings.ContinuousMapping;
 import org.cytoscape.view.vizmap.mappings.DiscreteMapping;
 import org.cytoscape.view.vizmap.mappings.PassthroughMapping;
 
+import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
 public class ViewUtils {
 	public static String STYLE_NAME = "STRING style";
+	public static String STYLE_NAME_ORG = "Organism STRING style";
+	public static String STYLE_ORG = "Organism ";
 
-	public static CyNetworkView styleNetwork(StringManager manager, CyNetwork network) {
+	public static CyNetworkView styleNetwork(StringManager manager, CyNetwork network, boolean useHost) {
 		// First, let's get a network view
 		CyNetworkView netView = manager.createNetworkView(network);
 		boolean useStitch = false;
 		if (network.getDefaultNodeTable().getColumn(ModelUtils.TYPE) != null)
 			useStitch = true;
-		VisualStyle stringStyle = createStyle(manager, network, useStitch);
+		VisualStyle stringStyle = createStyle(manager, network, useStitch, useHost);
 
-		updateColorMap(manager, stringStyle, netView);
+		if (useHost)
+			updateColorMapHost(manager, stringStyle, netView);
+		else
+			updateColorMap(manager, stringStyle, netView);
 		updateEnhancedLabels(manager, stringStyle, netView, manager.showEnhancedLabels());
 		
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
@@ -78,17 +86,19 @@ public class ViewUtils {
 		// style.apply(view);
 	}
 
-	public static VisualStyle createStyle(StringManager manager, CyNetwork network, boolean useStitch) {
+	public static VisualStyle createStyle(StringManager manager, CyNetwork network, boolean useStitch, boolean useHost) {
 		String networkName = manager.getNetworkName(network);
 		String styleName = STYLE_NAME;
+		if (useHost)
+			styleName = STYLE_NAME_ORG;
 		if (networkName.startsWith("String Network")) {
 			String[] parts = networkName.split("_");
 			if (parts.length == 1) {
 				String[] parts2 = networkName.split(" - ");
 				if (parts2.length == 2)
-					styleName = STYLE_NAME+" - "+parts2[1];
+					styleName = styleName +" - "+parts2[1];
 			} else if (parts.length == 2)
-				styleName = STYLE_NAME+"_"+parts[1];
+				styleName = styleName + "_"+parts[1];
 		}
 
 
@@ -390,6 +400,75 @@ public class ViewUtils {
 			}
 			style.addVisualMappingFunction(dMapping);
 		}
+	}
+
+	private static void updateColorMapHost(StringManager manager, VisualStyle style, CyNetworkView view) {
+		VisualMappingFunctionFactory discreteFactory = manager
+				.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
+
+		// get previous mapping
+		DiscreteMapping<String, Color> dMapping = (DiscreteMapping) style
+				.getVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
+		List<String> species = ModelUtils.getAllNetSpecies(view.getModel());
+		// get network species
+		Map<String, Color> mapValues = new HashMap<String, Color>();
+
+		// save previous color mapping
+		if (dMapping != null) {
+			Map<String, Color> mappedValues = dMapping.getAll();
+			for (String spKey : mappedValues.keySet()) {
+				if (species.contains(spKey)) {
+					mapValues.put(spKey, mappedValues.get(spKey));
+				}
+			}
+		}
+		// make the new mapping after removing the old one
+		style.removeVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
+		dMapping = (DiscreteMapping) discreteFactory.createVisualMappingFunction(
+				ModelUtils.SPECIES, String.class, BasicVisualLexicon.NODE_FILL_COLOR);
+		// Set the species colors
+		for (String sp : species) {
+			if (!mapValues.containsKey(sp)) {
+				dMapping.putMapValue(sp, Color.decode(Species.getSpeciesColor(sp)));
+			} else {
+				dMapping.putMapValue(sp, mapValues.get(sp));
+			}
+		}
+
+		// DiscreteMapping<String,Color> dMapping =
+		// (DiscreteMapping) discreteFactory.createVisualMappingFunction("Name", String.class,
+		// BasicVisualLexicon.NODE_FILL_COLOR);
+		//
+		// // Set the node colors around the color wheel
+		// for (View<CyNode> nv: view.getNodeViews()) {
+		// Color c =
+		// Color.decode(view.getModel().getRow(nv.getModel()).get(ModelUtils.SPECIES_COLOR,
+		// String.class));
+		// String name = view.getModel().getRow(nv.getModel()).get(CyNetwork.NAME,
+		// String.class);
+		// dMapping.putMapValue(name, c);
+		// }
+		style.addVisualMappingFunction(dMapping);
+	}
+	
+	public static void updateNodeColorsHost(StringManager manager, CyNetworkView view) {
+		manager.flushEvents();
+		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
+		VisualMappingFunctionFactory discreteFactory = manager
+				.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
+
+		VisualStyle style = vmm.getVisualStyle(view);
+		if (!style.getTitle().startsWith(STYLE_NAME_ORG)) {
+			VisualStyleFactory vsf = manager.getService(VisualStyleFactory.class);
+
+			VisualStyle stringStyle = vsf.createVisualStyle(vmm.getCurrentVisualStyle());
+			stringStyle.setTitle(STYLE_ORG + style.getTitle());
+			vmm.addVisualStyle(stringStyle);
+			style = stringStyle;
+		}
+		updateColorMapHost(manager, style, view);
+		vmm.setVisualStyle(style, view);
+		vmm.setCurrentVisualStyle(style);
 	}
 
 }
