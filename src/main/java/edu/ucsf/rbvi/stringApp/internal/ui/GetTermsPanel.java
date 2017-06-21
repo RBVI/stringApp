@@ -84,7 +84,7 @@ public class GetTermsPanel extends JPanel {
 	JTextField confidenceValue;
 	JSlider additionalNodesSlider;
 	JTextField additionalNodesValue;
-	JCheckBox orgBox;
+	JCheckBox wholeOrgBox;
 	JButton importButton;
 	JButton backButton;
 	NumberFormat formatter = new DecimalFormat("#0.00");
@@ -248,19 +248,25 @@ public class GetTermsPanel extends JPanel {
 	JPanel createOrgBox() {
 		JPanel boxPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		// orgBox = new JCheckBox("All proteins of this species");
-		orgBox = new JCheckBox(new AbstractAction("All proteins of this species") {
+		wholeOrgBox = new JCheckBox(new AbstractAction("All proteins of this species") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (orgBox.isSelected()) {
+				if (wholeOrgBox.isSelected()) {
 					searchTerms.setText("");
 					searchTerms.setEditable(false);
+					additionalNodesSlider.setValue(0);
+					additionalNodesSlider.setEnabled(false);
+					additionalNodesValue.setText("0");
+					additionalNodesValue.setEnabled(false);
 				} else {
 					searchTerms.setEditable(true);
+					additionalNodesSlider.setEnabled(true);
+					additionalNodesValue.setEnabled(true);
 				}
 			}
 		});
-		orgBox.setSelected(false);
-		boxPanel.add(orgBox);
+		wholeOrgBox.setSelected(false);
+		boxPanel.add(wholeOrgBox);
 		return boxPanel;
 	}
 	
@@ -683,8 +689,8 @@ public class GetTermsPanel extends JPanel {
 				stringNetwork = new StringNetwork(manager);
 
 			String terms = searchTerms.getText();
-			if (orgBox != null && orgBox.isSelected()) {
-				importNetwork(taxon, confidenceSlider.getValue(), 0, orgBox.isSelected());
+			if (wholeOrgBox != null && wholeOrgBox.isSelected()) {
+				importNetwork(taxon, confidenceSlider.getValue(), 0, wholeOrgBox.isSelected());
 				return;
 			}
 			if (terms == null || terms.length() == 0) {
@@ -741,7 +747,7 @@ public class GetTermsPanel extends JPanel {
 
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						importNetwork(taxon, confidenceSlider.getValue(), addNodes, orgBox.isSelected());
+						importNetwork(taxon, confidenceSlider.getValue(), addNodes, wholeOrgBox.isSelected());
 					}
 				});
 			} else {
@@ -774,7 +780,7 @@ public class GetTermsPanel extends JPanel {
 			// if (stringNetwork.getResolvedTerms() == 1)
 			// 	additionalNodes = 10;
 
-			if (orgBox.isSelected()) {
+			if (wholeOrgBox.isSelected()) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						JOptionPane.showMessageDialog(null, 
@@ -785,7 +791,7 @@ public class GetTermsPanel extends JPanel {
 			}
 
 			int taxon = species.getTaxId();
-			importNetwork(taxon, confidenceSlider.getValue(), additionalNodes, orgBox.isSelected());
+			importNetwork(taxon, confidenceSlider.getValue(), additionalNodes, wholeOrgBox.isSelected());
 		}
 	}
 
