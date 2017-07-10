@@ -48,7 +48,7 @@ public class ExpandNetworkTask extends AbstractTask {
 	public ListSingleSelection<String> nodeTypes = new ListSingleSelection<String>();
 	
 	@Tunable (description="Relayout network?", gravity=3.0)
-	public boolean relayout = true;
+	public boolean relayout = false;
 
 	//@Tunable (description="Expand from database", gravity=3.0, groups = "Advanced options", params = "displayState=collapsed")
 	//public ListSingleSelection<String> databases = new ListSingleSelection<String>("string", "stitch");

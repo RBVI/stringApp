@@ -22,6 +22,7 @@ import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.model.CyTableManager;
+import org.cytoscape.model.subnetwork.CyRootNetwork;
 import org.cytoscape.property.AbstractConfigDirPropsReader;
 import org.cytoscape.property.CyProperty;
 import org.cytoscape.property.CyProperty.SavePolicy;
@@ -559,6 +560,7 @@ public class ModelUtils {
 		CyRow row = network.getRow(newNode);
 
 		row.set(CyNetwork.NAME, name);
+		row.set(CyRootNetwork.SHARED_NAME, stringId);
 		row.set(STRINGID, stringId);
 		row.set(ID, id);
 		row.set(NAMESPACE, namespace);
