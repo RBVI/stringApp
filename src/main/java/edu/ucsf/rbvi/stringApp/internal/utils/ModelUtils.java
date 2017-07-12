@@ -89,6 +89,12 @@ public class ModelUtils {
 	// Session information
 	public static String showStructureImagesFlag = "showStructureImages";
 	public static String showEnhancedLabelsFlag = "showEnhancedLabels";
+
+	// Create network view size threshold
+	// See https://github.com/cytoscape/cytoscape-impl/blob/develop/core-task-impl/
+	// src/main/java/org/cytoscape/task/internal/loadnetwork/AbstractLoadNetworkTask.java
+	public static int DEF_VIEW_THRESHOLD = 3000;
+	public static String VIEW_THRESHOLD = "viewThreshold";
 	
 	// Other stuff
 	public static String COMPOUND = "STITCH compounds";
@@ -990,5 +996,19 @@ public class ModelUtils {
 		}
 	}
 
+	public static int getViewThreshold(StringManager manager) {
+		final Properties props = (Properties) manager
+				.getService(CyProperty.class, "(cyPropertyName=cytoscape3.props)").getProperties();
+		final String vts = props.getProperty(VIEW_THRESHOLD);
+		int threshold;
+
+		try {
+			threshold = Integer.parseInt(vts);
+		} catch (Exception e) {
+			threshold = DEF_VIEW_THRESHOLD;
+		}
+
+		return threshold;
+	}
 	
 }

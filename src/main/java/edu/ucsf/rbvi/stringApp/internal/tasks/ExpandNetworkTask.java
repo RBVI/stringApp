@@ -20,6 +20,8 @@ import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.model.View;
+import org.cytoscape.view.model.VisualProperty;
+import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
@@ -172,13 +174,35 @@ public class ExpandNetworkTask extends AbstractTask {
 			// System.out.println("Done");
 			if (relayout) {
 				monitor.setStatusMessage("Updating layout");
-				CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");
+				final VisualProperty<Double> xLoc = BasicVisualLexicon.NODE_X_LOCATION;
+				final VisualProperty<Double> yLoc = BasicVisualLexicon.NODE_Y_LOCATION;
+				Set<Double> xPos = new HashSet<Double>();
+				Set<Double> yPos = new HashSet<Double>();
+				Set<View<CyNode>> nodeViews = new HashSet<>();
+				for (View<CyNode> nodeView : netView.getNodeViews()) {
+					if (newNodes.contains(nodeView.getModel())) {
+						nodeViews.add(nodeView);
+					} else {
+						xPos.add(nodeView.getVisualProperty(xLoc));
+						yPos.add(nodeView.getVisualProperty(yLoc));
+					}
+				}
+				double xSpan = Math.abs(Collections.max(xPos)) + Math.abs(Collections.min(xPos));
+				System.out.println(xSpan);
+				double ySpan = Math.abs(Collections.max(yPos)) + Math.abs(Collections.min(yPos));
+				System.out.println(ySpan);
+				int spacing = (int)Math.max(xSpan, ySpan)/4;
+				System.out.println(spacing);
+				// get layout and set attributes
+				CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("attribute-circle");
 				Object context = alg.createLayoutContext();
 				TunableSetter setter = manager.getService(TunableSetter.class);
 				Map<String, Object> layoutArgs = new HashMap<>();
 				layoutArgs.put("defaultNodeMass", 10.0);
+				layoutArgs.put("selectedOnly", true);
+				layoutArgs.put("spacing", spacing);
 				setter.applyTunables(context, layoutArgs);
-				Set<View<CyNode>> nodeViews = new HashSet<>(netView.getNodeViews());
+				// Set<View<CyNode>> nodeViews = new HashSet<>(netView.getNodeViews());
 				insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, "score"));
 			}
 		}

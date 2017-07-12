@@ -89,8 +89,9 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		stringNet.setNetwork(network);
 
 		// System.out.println("Results: "+results.toString());
-
-		if (network.getNodeList().size() <= 10000 && network.getEdgeList().size() < 10000) {
+		int viewThreshold = ModelUtils.getViewThreshold(manager);
+		int networkSize = network.getNodeList().size() + network.getEdgeList().size();
+		if (networkSize < viewThreshold) {
 			// Now style the network
 			CyNetworkView networkView = ViewUtils.styleNetwork(manager, network, true);
 
