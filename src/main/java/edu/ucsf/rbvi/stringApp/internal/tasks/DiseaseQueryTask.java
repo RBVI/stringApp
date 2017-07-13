@@ -30,28 +30,42 @@ import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.StringResults;
 
 public class DiseaseQueryTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 
-	@Tunable (description="Disease query", required=true)
+	@Tunable(description = "Disease query", required = true, 
+	         longDescription="Enter the name (or partial name) of a disease",
+					 exampleStringValue="alzheimers")
 	public String disease = null;
 
-	@Tunable (description="Species", context="nogui")
+	@Tunable(description = "Species", 
+	         longDescription="Species name.  This should be the actual "+
+					                "taxonomic name (e.g. homo sapiens, not human)",
+					 exampleStringValue="homo sapiens")
 	public String species = null;
 
-	@Tunable (description="Taxon ID", context="nogui")
+	@Tunable (description="Taxon ID",
+	          longDescription="The species taxonomy ID.  See the NCBI taxonomy home page for IDs",
+						exampleStringValue="9606")
 	public int taxonID = -1;
 
-	@Tunable (description="Number of proteins")
+	@Tunable(description = "Number of additional interactions",
+	         longDescription="The maximum number of proteins to return in addition to the query set",
+					 exampleStringValue="100")
 	public BoundedInteger limit = new BoundedInteger(1, 100, 10000, false, false);
 
-	@Tunable (description="Confidence cutoff")
+	@Tunable(description = "Confidence cutoff",
+	         longDescription="The confidence score reflects the cumulated evidence that this "+
+					                 "interaction exists.  Only interactions with scores greater than "+
+													 "this cutoff will be returned",
+	         exampleStringValue="0.4")
 	public BoundedDouble cutoff = new BoundedDouble(0.0, 0.4, 1.0, false, false);
 
 	private List<Species> speciesList;
 
-	private CyNetwork stringNetwork;
+	private CyNetwork loadedNetwork;
 
 	public DiseaseQueryTask(final StringManager manager) {
 		this.manager = manager;
@@ -95,24 +109,22 @@ public class DiseaseQueryTask extends AbstractTask implements ObservableTask {
 		}
 		EntityIdentifier entity = matches.get(0);
 		monitor.showMessage(TaskMonitor.Level.INFO, "Loading proteins for "+entity.getPrimaryName());
-		manager.execute(new TaskIterator(new GetStringIDsFromDiseasesTask(stringNetwork, sp, limit.getValue(),
-	                                                                    confidence, entity.getIdentifier(),
-																																			entity.getPrimaryName())));
+		AbstractTask getIds = 
+		        new GetStringIDsFromDiseasesTask(stringNetwork, sp, limit.getValue(),
+	                                           confidence, entity.getIdentifier(),
+		                                         entity.getPrimaryName());
+		manager.execute(new TaskIterator(getIds), true);
+		loadedNetwork = stringNetwork.getNetwork();
 	}
 
 	@Override
 	public <R> R getResults(Class<? extends R> clzz) {
-		// Return the network we created
-		if (stringNetwork == null) return null;
+		return StringResults.getResults(clzz,loadedNetwork);
+	}
 
-		if (clzz.equals(CyNetwork.class)) {
-			return (R)stringNetwork;
-		} else if (clzz.equals(Long.class)) {
-			return (R)stringNetwork.getSUID();
-		} else if (clzz.equals(String.class)) {
-			return (R)stringNetwork.getRow(stringNetwork).get(CyNetwork.NAME, String.class);
-		}
-		return null;
+	@Override
+	public List<Class<?>> getResultClasses() {
+		return StringResults.getResultClasses();
 	}
 
 }
