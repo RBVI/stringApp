@@ -11,6 +11,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.CyNetworkJSONResult;
 public class StringResults {
 	@SuppressWarnings("unchecked")
 	public static <R> R getResults(Class<? extends R> clzz, CyNetwork loadedNetwork) {
+		System.out.println("Getresults called with "+clzz+" and "+loadedNetwork);
 		// Return the network we created
 		if (clzz.equals(CyNetwork.class)) {
 			return (R) loadedNetwork;
@@ -19,6 +20,7 @@ public class StringResults {
 				return null;
 			return (R) loadedNetwork.getSUID();
 		} else if (clzz.equals(JSONResult.class)) {
+			System.out.println("returning a json result");
 			return (R) new CyNetworkJSONResult(loadedNetwork);
 		} else if (clzz.equals(String.class)) {
 			if (loadedNetwork == null)
@@ -33,7 +35,7 @@ public class StringResults {
 	}
 
 	public static List<Class<?>> getResultClasses() {
-		return Arrays.asList(String.class, Long.class, CyNetwork.class, JSONResult.class);
+		return Arrays.asList(JSONResult.class, String.class, Long.class, CyNetwork.class);
 	}
 
 }
