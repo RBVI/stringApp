@@ -12,12 +12,15 @@ public class CyNetworkJSONResult implements JSONResult {
 	}
 
 	@Override
-	@ExampleJSONString(value="{\"Error\": Error String, \"Data\": {\"SUID\":1234\"}}")
+	@ExampleJSONString(value="{\"SUID\":1234, \"errors\":[]}")
 	public String getJSON() {
+		String returnValue = null;
 		if (network == null) {
-			return "{\"Error\": \"No network returned\", \"Data\": {}}";
+			returnValue = "{\"SUID\":-1, \"errors\": [\"No network returned\"]}";
+		} else {
+			long SUID = network.getSUID();
+			returnValue = "{\"SUID\":"+SUID+", \"errors\": []}";
 		}
-		long SUID = network.getSUID();
-		return "{\"Error\": \"\", \"Data\": {\"SUID\":"+SUID+"\"}}";
+		return returnValue;
 	}
 }
