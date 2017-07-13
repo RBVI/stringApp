@@ -1,6 +1,8 @@
 package edu.ucsf.rbvi.stringApp.internal;
 
 import static org.cytoscape.work.ServiceProperties.COMMAND;
+import static org.cytoscape.work.ServiceProperties.COMMAND_DESCRIPTION;
+import static org.cytoscape.work.ServiceProperties.COMMAND_LONG_DESCRIPTION;
 import static org.cytoscape.work.ServiceProperties.COMMAND_NAMESPACE;
 import static org.cytoscape.work.ServiceProperties.IN_MENU_BAR;
 import static org.cytoscape.work.ServiceProperties.MENU_GRAVITY;
@@ -110,6 +112,26 @@ public class CyActivator extends AbstractCyActivator {
 			Properties props = new Properties();
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "protein query");
+			props.setProperty(COMMAND_DESCRIPTION, 
+										    "Create a STRING network from multiple protein names/identifiers");
+			props.setProperty(COMMAND_LONG_DESCRIPTION,
+			                  "Enter protein names or identifiers to query the STRING "+
+												"database for protein-protein interactions.\n"+
+												"<br/>STRING is a database of known and predicted protein "+
+												"interactions.  The interactions include direct (physical) "+
+												"and indirect (functional) associations; they are derived from "+
+												"four sources: "+
+												"<ul>\n"+
+												"  <li>Genomic Context</li>\n"+
+												"  <li>High-throughput Experiments</li>\n"+
+												"  <li>(Conserved) Coexpression</li>\n"+
+												"  <li>Previous Knowledge</li>\n"+
+												"</ul>\n"+
+										 		"STRING quantitatively integrates "+
+												"interaction data from these sources for a large number "+
+												"of organisms, and transfers information between these "+
+												"organisms where applicable. The database currently covers "+
+												"9,643,763 proteins from 2,031 organisms.");
 			registerService(bc, getNetwork, TaskFactory.class, props);
 		}
 
@@ -118,6 +140,20 @@ public class CyActivator extends AbstractCyActivator {
 			Properties props = new Properties();
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "disease query");
+			props.setProperty(COMMAND_DESCRIPTION, 
+										    "Create a STRING network by finding proteins associated with a disease");
+			props.setProperty(COMMAND_LONG_DESCRIPTION,
+										    "Enter a disease term and create a STRING network by finding all "+
+												"proteins associated with the disease in the STRING database."+
+												"<br/>STRING is a database of "+
+												"known and predicted protein interactions.  The interactions include direct "+
+												"(physical) and indirect (functional) associations; they are derived from four "+
+												"sources: <ul><li>Genomic Context</li><li>High-throughput Experiments</li>"+
+												"<li>(Conserved) Coexpression</li><li>Previous Knowledge</li></ul>	 "+
+												"STRING quantitatively integrates interaction data from these sources "+
+												"for a large number of organisms, and transfers information between "+
+												"these organisms where applicable. The database currently covers 9,643,763 "+
+												"proteins from 2,031 organisms.");
 			registerService(bc, getNetwork, TaskFactory.class, props);
 		}
 		
@@ -126,6 +162,20 @@ public class CyActivator extends AbstractCyActivator {
 			Properties props = new Properties();
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "pubmed query");
+			props.setProperty(COMMAND_DESCRIPTION, 
+										    "Create a STRING network by entering a pubmed query");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+										    "Enter a Pubmed query and create a STRING network by finding all "+
+												"proteins mentioned in the resulting publications."+
+												"<br/>STRING is a database of "+
+												"known and predicted protein interactions.  The interactions include direct "+
+												"(physical) and indirect (functional) associations; they are derived from four "+
+												"sources: <ul><li>Genomic Context</li><li>High-throughput Experiments</li>"+
+												"<li>(Conserved) Coexpression</li><li>Previous Knowledge</li></ul>	 "+
+												"STRING quantitatively integrates interaction data from these sources "+
+												"for a large number of organisms, and transfers information between "+
+												"these organisms where applicable. The database currently covers 9,643,763 "+
+												"proteins from 2,031 organisms.");
 			registerService(bc, getNetwork, TaskFactory.class, props);
 		}
 		
@@ -150,6 +200,18 @@ public class CyActivator extends AbstractCyActivator {
       Properties props = new Properties();
       props.setProperty(COMMAND_NAMESPACE, "string");
       props.setProperty(COMMAND, "compound query");
+			props.setProperty(COMMAND_DESCRIPTION, 
+										    "Create a STRING network from multiple protein and compound names/identifiers");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+			                  "Enter protein or compound names or identifiers to query "+
+												"the STITCH database for interactions."+
+		 	                  "STITCH is a resource to explore known and predicted "+
+												"interactions of chemicals and proteins. Chemicals are "+
+												"linked to other chemicals and proteins by evidence derived "+
+												"from experiments, databases and the literature.  "+
+												"<br/>STITCH contains interactions for between 300,000 "+
+												"small molecules and 2.6 million proteins from 1133 "+
+												"organisms.</p>");
       registerService(bc, getNetwork, TaskFactory.class, props);
     }
 

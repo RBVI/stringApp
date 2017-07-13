@@ -31,23 +31,38 @@ import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.StringResults;
 
 public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 
-	@Tunable(description = "Compound or protein query", required = true)
+	@Tunable(description = "Compound or protein query", required = true,
+	         longDescription="Comma separated list of protein or compound names or identifiers",
+					 exampleStringValue="aspirin,EGFR,ibuprofin,BRCA2,TP53")
 	public String query = null;
 
-	@Tunable(description = "Species", context = "nogui")
+	@Tunable(description = "Species", 
+	         longDescription="Species name.  This should be the actual "+
+					                "taxonomic name (e.g. homo sapiens, not human)",
+					 exampleStringValue="homo sapiens")
 	public String species = null;
 
-	@Tunable (description="Taxon ID", context="nogui")
+	@Tunable (description="Taxon ID",
+	          longDescription="The species taxonomy ID.  See the NCBI taxonomy home page for IDs.",
+						exampleStringValue="9606")
 	public int taxonID = -1;
 
-	@Tunable(description = "Number of interaction")
+	@Tunable(description = "Number of additional interactions",
+	         longDescription="The maximum number of proteins and compounds "+
+					                 "to return in addition to the query set",
+					 exampleStringValue="100")
 	public BoundedInteger limit = new BoundedInteger(1, 10, 10000, false, false);
 
-	@Tunable(description = "Confidence cutoff")
+	@Tunable(description = "Confidence cutoff",
+	         longDescription="The confidence score reflects the cumulated evidence that this "+
+					                 "interaction exists.  Only interactions with scores greater than "+
+													 "this cutoff will be returned",
+	         exampleStringValue="0.4")
 	public BoundedDouble cutoff = new BoundedDouble(0.0, 0.4, 1.0, false, false);
 
 	private List<Species> speciesList;
@@ -118,22 +133,12 @@ public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 
 	@Override
 	public <R> R getResults(Class<? extends R> clzz) {
-		// Return the network we created
-		if (loadedNetwork == null)
-			return null;
+		return StringResults.getResults(clzz,loadedNetwork);
+	}
 
-		if (clzz.equals(CyNetwork.class)) {
-			return (R) loadedNetwork;
-		} else if (clzz.equals(Long.class)) {
-			return (R) loadedNetwork.getSUID();
-		} else if (clzz.equals(String.class)) {
-			String resp = "Loaded network '"
-					+ loadedNetwork.getRow(loadedNetwork).get(CyNetwork.NAME, String.class);
-			resp += "' with " + loadedNetwork.getNodeCount() + " nodes and "
-					+ loadedNetwork.getEdgeCount() + " edges";
-			return (R) resp;
-		}
-		return null;
+	@Override
+	public List<Class<?>> getResultClasses() {
+		return StringResults.getResultClasses();
 	}
 
 }

@@ -14,9 +14,6 @@ public class SetConfidenceTask extends AbstractTask {
 	final StringManager manager;
 	final CyNetwork net;
 
-	// @Tunable (description="Confidence value to set")
-	// public BoundedDouble confidence = new BoundedDouble(0.0, 0.4, 1.0, false, false);
-
 	public SetConfidenceTask(final StringManager manager, final CyNetwork net) {
 		this.manager = manager;
 		this.net = net;
