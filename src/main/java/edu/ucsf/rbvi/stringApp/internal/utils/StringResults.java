@@ -19,8 +19,9 @@ public class StringResults {
 			if (loadedNetwork == null)
 				return null;
 			return (R) loadedNetwork.getSUID();
-		} else if (clzz.equals(JSONResult.class)) {
-			System.out.println("returning a json result");
+		// We need to use the actual class rather than the interface so that
+		// CyREST can inspect it to find the annotations
+		} else if (clzz.isAssignableFrom(CyNetworkJSONResult.class)) {
 			return (R) new CyNetworkJSONResult(loadedNetwork);
 		} else if (clzz.equals(String.class)) {
 			if (loadedNetwork == null)
@@ -35,7 +36,7 @@ public class StringResults {
 	}
 
 	public static List<Class<?>> getResultClasses() {
-		return Arrays.asList(JSONResult.class, String.class, Long.class, CyNetwork.class);
+		return Arrays.asList(CyNetworkJSONResult.class, String.class, Long.class, CyNetwork.class);
 	}
 
 }
