@@ -15,6 +15,6 @@ public class CyNetworkJSONResult implements JSONResult {
 	@ExampleJSONString(value="{\"SUID\":1234}")
 	public String getJSON() {
 		long SUID = network.getSUID();
-		return "{\"SUID\":"+SUID+", \"errors\": []}";
+		return "{\"SUID\":"+SUID+"}";
 	}
 }
