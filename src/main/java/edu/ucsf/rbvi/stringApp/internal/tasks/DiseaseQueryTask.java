@@ -93,7 +93,7 @@ public class DiseaseQueryTask extends AbstractTask implements ObservableTask {
 		}
 		if (sp == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR, "Unknown or missing species");
-			return;
+			throw new RuntimeException("Unknown or missing species");
 		}
 
 		StringNetwork stringNetwork = new StringNetwork(manager);
@@ -105,7 +105,7 @@ public class DiseaseQueryTask extends AbstractTask implements ObservableTask {
 		List<EntityIdentifier> matches = dTask.getMatchedTerms();
 		if (matches == null || matches.size() == 0) {
 			monitor.showMessage(TaskMonitor.Level.ERROR, "Query '"+disease+"' returned no results");
-			return;
+			throw new RuntimeException("Query '"+disease+"' returned no results");
 		}
 		EntityIdentifier entity = matches.get(0);
 		monitor.showMessage(TaskMonitor.Level.INFO, "Loading proteins for "+entity.getPrimaryName());
@@ -115,6 +115,8 @@ public class DiseaseQueryTask extends AbstractTask implements ObservableTask {
 		                                         entity.getPrimaryName());
 		manager.execute(new TaskIterator(getIds), true);
 		loadedNetwork = stringNetwork.getNetwork();
+		if (loadedNetwork == null)
+			throw new RuntimeException("Query '"+disease+"' returned no results");
 	}
 
 	@Override

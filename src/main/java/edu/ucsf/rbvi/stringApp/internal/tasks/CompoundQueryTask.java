@@ -94,7 +94,7 @@ public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 		}
 		if (sp == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR, "Unknown or missing species");
-			return;
+			throw new RuntimeException("Unknown or missing species");
 		}
 
 		StringNetwork stringNetwork = new StringNetwork(manager);
@@ -111,7 +111,7 @@ public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 		if (annotations == null || annotations.size() == 0) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,
 					"Query '" + query + "' returned no results");
-			return;
+			throw new RuntimeException("Query '"+query+"' returned no results");
 		}
 
 		boolean resolved = stringNetwork.resolveAnnotations();
@@ -129,6 +129,8 @@ public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 				confidence, limit.getValue(), stringIds, queryTermMap, "", Databases.STITCH.getAPIName());
 		manager.execute(new TaskIterator(load), true);
 		loadedNetwork = stringNetwork.getNetwork();
+		if (loadedNetwork == null)
+			throw new RuntimeException("Query '"+query+"' returned no results");
 	}
 
 	@Override
