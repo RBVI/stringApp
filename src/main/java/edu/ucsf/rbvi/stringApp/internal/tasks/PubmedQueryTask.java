@@ -93,7 +93,7 @@ public class PubmedQueryTask extends AbstractTask implements ObservableTask {
 		}
 		if (sp == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR, "Unknown or missing species");
-			return;
+			throw new RuntimeException("Query '"+pubmed+"' returned no results");
 		}
 
 		StringNetwork stringNetwork = new StringNetwork(manager);
@@ -103,6 +103,8 @@ public class PubmedQueryTask extends AbstractTask implements ObservableTask {
 						new GetStringIDsFromPubmedTask(stringNetwork, sp, limit.getValue(), confidence, pubmed);
 		manager.execute(new TaskIterator(getIds), true);
 		loadedNetwork = stringNetwork.getNetwork();
+		if (loadedNetwork == null)
+			throw new RuntimeException("Query '"+pubmed+"' returned no results");
 	}
 
 	@Override
