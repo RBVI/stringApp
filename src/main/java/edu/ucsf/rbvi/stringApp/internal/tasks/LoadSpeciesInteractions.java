@@ -37,8 +37,9 @@ public class LoadSpeciesInteractions extends AbstractTask {
 	final String netName;
 	final String useDATABASE;
 
-	public LoadSpeciesInteractions(final StringNetwork stringNet, final String species, final int taxonId,
-			final int confidence, final String netName, final String useDATABASE) {
+	public LoadSpeciesInteractions(final StringNetwork stringNet, final String species,
+			final int taxonId, final int confidence, final String netName,
+			final String useDATABASE) {
 
 		this.stringNet = stringNet;
 		this.taxonId = taxonId;
@@ -65,17 +66,17 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		args.put("score", conf);
 		args.put("caller_identity", StringManager.CallerIdentity);
 
-		double time = System.currentTimeMillis();
+		// double time = System.currentTimeMillis();
 		JSONObject results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
-		System.out.println(
-				"postJSON method " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
-		time = System.currentTimeMillis();
+		// System.out.println(
+		// "postJSON method " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+		// time = System.currentTimeMillis();
 
-		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, species, results,
-				null, null, netName, useDATABASE);
-		System.out.println("createNetworkFromJSON method "
-				+ (System.currentTimeMillis() - time) / 1000 + " seconds.");
-		time = System.currentTimeMillis();
+		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, species, results, null,
+				null, netName, useDATABASE);
+		// System.out.println("createNetworkFromJSON method "
+		// + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+		// time = System.currentTimeMillis();
 
 		if (network == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR, "String returned no results");
@@ -88,12 +89,11 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		ModelUtils.setNetSpecies(network, species);
 		stringNet.setNetwork(network);
 
-		// System.out.println("Results: "+results.toString());
 		int viewThreshold = ModelUtils.getViewThreshold(manager);
 		int networkSize = network.getNodeList().size() + network.getEdgeList().size();
 		if (networkSize < viewThreshold) {
 			// Now style the network
-			CyNetworkView networkView = ViewUtils.styleNetwork(manager, network, true);
+			CyNetworkView networkView = ViewUtils.styleNetwork(manager, network);
 
 			// And lay it out
 			CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class)

@@ -109,7 +109,7 @@ public class LoadInteractions extends AbstractTask {
 		// System.out.println("Results: "+results.toString());
 		// Now style the network
 		// TODO:  change style to accomodate STITCH
-		CyNetworkView networkView = ViewUtils.styleNetwork(manager, network, false);
+		CyNetworkView networkView = ViewUtils.styleNetwork(manager, network);
 
 		// And lay it out
 		CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");

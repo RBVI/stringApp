@@ -36,18 +36,18 @@ public class ViewUtils {
 	public static String STYLE_NAME_ORG = "Organism STRING style";
 	public static String STYLE_ORG = "Organism ";
 
-	public static CyNetworkView styleNetwork(StringManager manager, CyNetwork network, boolean useHost) {
+	public static CyNetworkView styleNetwork(StringManager manager, CyNetwork network) {
 		// First, let's get a network view
 		CyNetworkView netView = manager.createNetworkView(network);
 		boolean useStitch = false;
 		if (network.getDefaultNodeTable().getColumn(ModelUtils.TYPE) != null)
 			useStitch = true;
-		VisualStyle stringStyle = createStyle(manager, network, useStitch, useHost);
+		VisualStyle stringStyle = createStyle(manager, network, useStitch);
 
-		if (useHost)
-			updateColorMapHost(manager, stringStyle, netView);
-		else
-			updateColorMap(manager, stringStyle, netView);
+		// if (useHost)
+		//	updateColorMapHost(manager, stringStyle, netView);
+		// else
+		updateColorMap(manager, stringStyle, netView);
 		updateEnhancedLabels(manager, stringStyle, netView, manager.showEnhancedLabels());
 		
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
@@ -86,11 +86,11 @@ public class ViewUtils {
 		// style.apply(view);
 	}
 
-	public static VisualStyle createStyle(StringManager manager, CyNetwork network, boolean useStitch, boolean useHost) {
+	public static VisualStyle createStyle(StringManager manager, CyNetwork network, boolean useStitch) {
 		String networkName = manager.getNetworkName(network);
 		String styleName = STYLE_NAME;
-		if (useHost)
-			styleName = STYLE_NAME_ORG;
+		// if (useHost)
+		// 	styleName = STYLE_NAME_ORG;
 		if (networkName.startsWith("String Network")) {
 			String[] parts = networkName.split("_");
 			if (parts.length == 1) {
