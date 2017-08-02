@@ -131,6 +131,14 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(COMMAND, "compound query");
 			registerService(bc, getNetwork, TaskFactory.class, props);
 		}
+		
+		{
+			ExpandNetworkTaskFactory expandFactory = new ExpandNetworkTaskFactory(manager);
+			Properties expandProps = new Properties();
+			expandProps.setProperty(COMMAND_NAMESPACE, "string");
+			expandProps.setProperty(COMMAND, "expand");
+			registerService(bc, expandFactory, TaskFactory.class, expandProps);
+		}
 
 		{
 			VersionTaskFactory versionFactory = new VersionTaskFactory(version);

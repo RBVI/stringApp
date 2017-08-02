@@ -39,10 +39,12 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
 public class ExpandNetworkTask extends AbstractTask {
 	final StringManager manager;
-	final CyNetwork network;
 	CyNetworkView netView;
 	View<CyNode> nodeView;
 	
+	@Tunable (description="Network to expand", context="nogui")
+	public CyNetwork network;
+
 	@Tunable (description="Number of nodes to expand network by", gravity=1.0)
 	public int additionalNodes = 10;
 
@@ -57,12 +59,18 @@ public class ExpandNetworkTask extends AbstractTask {
 	
 	public ExpandNetworkTask(final StringManager manager, final CyNetwork network, CyNetworkView netView) {
 		this.manager = manager;
-		this.network = network;
+		if (network != null)
+			this.network = network;
 		this.netView = netView;
 		this.nodeView = null;
+		// Make sure we have a network.  This should only happen at this point if we're coming in
+		// via a command
+		if (this.network == null)
+			this.network = manager.getCurrentNetwork();
+
 		nodeTypes = new ListSingleSelection<String>(
-				ModelUtils.getAvailableInteractionPartners(network));
-		String netSpecies = ModelUtils.getNetSpecies(network);
+				ModelUtils.getAvailableInteractionPartners(this.network));
+		String netSpecies = ModelUtils.getNetSpecies(this.network);
 		if (netSpecies != null) {
 			nodeTypes.setSelectedValue(netSpecies);
 		} else {
