@@ -65,6 +65,7 @@ public class StringNetwork {
 			annotations = Annotation.getAnnotations(results, terms);
 			// System.out.println("Get annotations returns "+annotations.size());
 		}
+		results = null;
 		
 		// then, call other APIs to get resolve them
 		// resolve compounds 
@@ -79,17 +80,32 @@ public class StringNetwork {
 			results = HttpUtils.postJSON(url, args, manager);
 
 			if (results != null) {
-				Map<String, List<Annotation>> stitchAnnotations = Annotation.getAnnotations(results,
-						terms);
-				for (String stitchAnn : stitchAnnotations.keySet()) {
-					List<Annotation> allAnn = new ArrayList<Annotation>(stitchAnnotations.get(stitchAnn));
-					if (annotations.containsKey(stitchAnn)) {
-						allAnn.addAll(annotations.get(stitchAnn));
-					}
-					annotations.put(stitchAnn, allAnn);
-				}
+				updateAnnotations(results, terms);
 			}
-		}
+			results = null;
+		} 
+		
+		// also call the viruses API
+		{
+			// http://viruses.string-db.org/cgi/webservice_handler.pl?species=11320&identifiers=NS1_I34A1
+			// &caller_identity=string_app_v1_1_1&output=json&request=resolveList
+			url = manager.getResolveURL(Databases.VIRUSES.getAPIName());
+			args = new HashMap<>();
+			args.put("species", Integer.toString(taxon));
+			args.put("identifiers", encTerms);
+			args.put("caller_identity", StringManager.CallerIdentity);
+			args.put("output", "json");
+			args.put("request", "resolveList");
+			manager.info("URL:" + url + "?species=" + Integer.toString(taxon) + "&caller_identity="
+					+ StringManager.CallerIdentity + "&identifiers=" + encTerms);
+			// Get the results
+			// results = HttpUtils.postJSON(url, args, manager);
+
+			if (results != null) {
+				updateAnnotations(results, terms);
+			}
+			results = null;
+		 }
 		
 		return annotations;
 	}
@@ -161,4 +177,17 @@ public class StringNetwork {
 		}
 		return ids;
 	}
+	
+	private void updateAnnotations(JSONObject results, String terms) {
+		Map<String, List<Annotation>> newAnnotations = Annotation.getAnnotations(results,
+				terms);
+		for (String newAnn : newAnnotations.keySet()) {
+			List<Annotation> allAnn = new ArrayList<Annotation>(newAnnotations.get(newAnn));
+			if (annotations.containsKey(newAnn)) {
+				allAnn.addAll(annotations.get(newAnn));
+			}
+			annotations.put(newAnn, allAnn);
+		}
+	}
+	
 }

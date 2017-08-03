@@ -1,7 +1,9 @@
 package edu.ucsf.rbvi.stringApp.internal.utils;
 
 import java.awt.Color;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyEdge;
@@ -26,27 +28,35 @@ import org.cytoscape.view.vizmap.mappings.ContinuousMapping;
 import org.cytoscape.view.vizmap.mappings.DiscreteMapping;
 import org.cytoscape.view.vizmap.mappings.PassthroughMapping;
 
+import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
 public class ViewUtils {
 	public static String STYLE_NAME = "STRING style";
+	public static String STYLE_NAME_ORG = "Organism STRING style";
+	public static String STYLE_ORG = "Organism ";
 
-	public static CyNetworkView styleNetwork(StringManager manager, CyNetwork network) {
-		// First, let's get a network view
-		CyNetworkView netView = manager.createNetworkView(network);
+	public static CyNetworkView styleNetwork(StringManager manager, CyNetwork network,
+	                                         CyNetworkView netView) {
 		boolean useStitch = false;
 		if (network.getDefaultNodeTable().getColumn(ModelUtils.TYPE) != null)
 			useStitch = true;
 		VisualStyle stringStyle = createStyle(manager, network, useStitch);
 
-		updateColorMap(manager, stringStyle, netView);
-		updateEnhancedLabels(manager, stringStyle, netView, manager.showEnhancedLabels());
+		// if (useHost)
+		//	updateColorMapHost(manager, stringStyle, netView);
+		// else
+		updateColorMap(manager, stringStyle, network);
+		updateEnhancedLabels(manager, stringStyle, network, manager.showEnhancedLabels());
 		
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
-		vmm.setVisualStyle(stringStyle, netView);
 		vmm.setCurrentVisualStyle(stringStyle);
-		manager.getService(CyNetworkViewManager.class).addNetworkView(netView);
-		manager.getService(CyApplicationManager.class).setCurrentNetworkView(netView);
+
+		if (netView != null) {
+			vmm.setVisualStyle(stringStyle, netView);
+			manager.getService(CyNetworkViewManager.class).addNetworkView(netView);
+			manager.getService(CyApplicationManager.class).setCurrentNetworkView(netView);
+		}
 		
 		return netView;
 	}
@@ -79,18 +89,7 @@ public class ViewUtils {
 	}
 
 	public static VisualStyle createStyle(StringManager manager, CyNetwork network, boolean useStitch) {
-		String networkName = manager.getNetworkName(network);
-		String styleName = STYLE_NAME;
-		if (networkName.startsWith("String Network")) {
-			String[] parts = networkName.split("_");
-			if (parts.length == 1) {
-				String[] parts2 = networkName.split(" - ");
-				if (parts2.length == 2)
-					styleName = STYLE_NAME+" - "+parts2[1];
-			} else if (parts.length == 2)
-				styleName = STYLE_NAME+"_"+parts[1];
-		}
-
+		String styleName = getStyleName(manager, network);
 
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
 		for (VisualStyle style: vmm.getAllVisualStyles()) {
@@ -295,10 +294,11 @@ public class ViewUtils {
 		return stringStyle;
 	}
 
-	public static void updateEnhancedLabels(StringManager manager, VisualStyle stringStyle, CyNetworkView view, boolean show) {
+	public static void updateEnhancedLabels(StringManager manager, VisualStyle stringStyle, 
+	                                        CyNetwork net, boolean show) {
 
 		boolean useStitch = false;
-		if (view.getModel().getDefaultNodeTable().getColumn(ModelUtils.TYPE) != null)
+		if (net.getDefaultNodeTable().getColumn(ModelUtils.TYPE) != null)
 			useStitch = true;
 
 		VisualMappingFunctionFactory discreteFactory = 
@@ -365,7 +365,7 @@ public class ViewUtils {
 		}
 	}
 
-	private static void updateColorMap(StringManager manager, VisualStyle style, CyNetworkView view) {
+	private static void updateColorMap(StringManager manager, VisualStyle style, CyNetwork network) {
 		// Build the color list
 		VisualMappingFunctionFactory discreteFactory = 
 		                 manager.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
@@ -377,19 +377,119 @@ public class ViewUtils {
 			// Set the node colors around the color wheel
 			float h = 0.0f;
 			float s = 1.0f;
-			float stepSize = 1.0f/(float)view.getModel().getNodeCount();
-			for (View<CyNode> nv: view.getNodeViews()) {
+			float stepSize = 1.0f/(float)network.getNodeCount();
+			for (CyNode node: network.getNodeList()) {
 				Color c = Color.getHSBColor(h, s, 1.0f);
 				h += stepSize;
 				if (s == 1.0f)
 					s = 0.5f;
 				else
 					s = 1.0f;
-				String name = view.getModel().getRow(nv.getModel()).get(CyNetwork.NAME, String.class);
+				String name = network.getRow(node).get(CyNetwork.NAME, String.class);
 				dMapping.putMapValue(name, c);
 			}
 			style.addVisualMappingFunction(dMapping);
 		}
 	}
 
+	private static void updateColorMapHost(StringManager manager, VisualStyle style, CyNetwork net) {
+		VisualMappingFunctionFactory discreteFactory = manager
+				.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
+
+		// get previous mapping
+		DiscreteMapping<String, Color> dMapping = (DiscreteMapping) style
+				.getVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
+		List<String> species = ModelUtils.getAllNetSpecies(net);
+		// get network species
+		Map<String, Color> mapValues = new HashMap<String, Color>();
+
+		// save previous color mapping
+		if (dMapping != null) {
+			Map<String, Color> mappedValues = dMapping.getAll();
+			for (String spKey : mappedValues.keySet()) {
+				if (species.contains(spKey)) {
+					mapValues.put(spKey, mappedValues.get(spKey));
+				}
+			}
+		}
+		// make the new mapping after removing the old one
+		style.removeVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
+		dMapping = (DiscreteMapping) discreteFactory.createVisualMappingFunction(
+				ModelUtils.SPECIES, String.class, BasicVisualLexicon.NODE_FILL_COLOR);
+		// Set the species colors
+		for (String sp : species) {
+			if (!mapValues.containsKey(sp)) {
+				dMapping.putMapValue(sp, Color.decode(Species.getSpeciesColor(sp)));
+			} else {
+				dMapping.putMapValue(sp, mapValues.get(sp));
+			}
+		}
+
+		// DiscreteMapping<String,Color> dMapping =
+		// (DiscreteMapping) discreteFactory.createVisualMappingFunction("Name", String.class,
+		// BasicVisualLexicon.NODE_FILL_COLOR);
+		//
+		// // Set the node colors around the color wheel
+		// for (View<CyNode> nv: view.getNodeViews()) {
+		// Color c =
+		// Color.decode(view.getModel().getRow(nv.getModel()).get(ModelUtils.SPECIES_COLOR,
+		// String.class));
+		// String name = view.getModel().getRow(nv.getModel()).get(CyNetwork.NAME,
+		// String.class);
+		// dMapping.putMapValue(name, c);
+		// }
+		style.addVisualMappingFunction(dMapping);
+	}
+	
+	public static void updateNodeColorsHost(StringManager manager, 
+	                                        CyNetwork net, CyNetworkView view) {
+		manager.flushEvents();
+		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
+		VisualMappingFunctionFactory discreteFactory = manager
+				.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
+
+		VisualStyle style = null;
+	 	if (view != null)
+			style	= vmm.getVisualStyle(view);
+		else {
+			String styleName = getStyleName(manager, net);
+			for (VisualStyle s: vmm.getAllVisualStyles()) {
+				if (s.getTitle().equals(styleName)) {
+					style = s;
+					break;
+				}
+			}
+		}
+
+		// Worst case -- can't find a style, so er just bail
+		if (style == null) return;
+
+		if (!style.getTitle().startsWith(STYLE_NAME_ORG)) {
+			VisualStyleFactory vsf = manager.getService(VisualStyleFactory.class);
+
+			VisualStyle stringStyle = vsf.createVisualStyle(vmm.getCurrentVisualStyle());
+			stringStyle.setTitle(STYLE_ORG + style.getTitle());
+			vmm.addVisualStyle(stringStyle);
+			style = stringStyle;
+		}
+		updateColorMapHost(manager, style, net);
+		if (view != null)
+			vmm.setVisualStyle(style, view);
+		vmm.setCurrentVisualStyle(style);
+	}
+
+	private static String getStyleName(StringManager manager, CyNetwork network) {
+		String networkName = manager.getNetworkName(network);
+		String styleName = STYLE_NAME;
+		if (networkName.startsWith("String Network")) {
+			String[] parts = networkName.split("_");
+			if (parts.length == 1) {
+				String[] parts2 = networkName.split(" - ");
+				if (parts2.length == 2)
+					styleName = styleName +" - "+parts2[1];
+			} else if (parts.length == 2)
+				styleName = styleName + "_"+parts[1];
+		}
+		return styleName;
+	}
 }

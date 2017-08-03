@@ -54,6 +54,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	public static String STRINGResolveURI = "http://string-db.org/api/";
 	public static String STITCHResolveURI = "http://stitch.embl.de/api/";
+	public static String VIRUSESResolveURI = "http://viruses.string-db.org/cgi/webservice_handler.pl";
 	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
 	public static String URI = "http://api.jensenlab.org/";
 	public static String alternativeAPIProperty = "alternativeAPI";
@@ -211,6 +212,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public String getResolveURL(String useDATABASE) {
 		if (useDATABASE.equals(Databases.STITCH.getAPIName()))
 			return STITCHResolveURI;
+		else if (useDATABASE.equals(Databases.VIRUSES.getAPIName()))
+			return VIRUSESResolveURI;
 
 		return STRINGResolveURI;
 	}

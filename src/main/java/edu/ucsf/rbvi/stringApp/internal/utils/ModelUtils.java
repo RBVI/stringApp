@@ -1,5 +1,8 @@
 package edu.ucsf.rbvi.stringApp.internal.utils;
 
+import java.awt.Color;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -8,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -18,6 +22,7 @@ import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.model.CyTableManager;
+import org.cytoscape.model.subnetwork.CyRootNetwork;
 import org.cytoscape.property.AbstractConfigDirPropsReader;
 import org.cytoscape.property.CyProperty;
 import org.cytoscape.property.CyProperty.SavePolicy;
@@ -25,6 +30,7 @@ import org.cytoscape.property.SimpleCyProperty;
 import org.cytoscape.session.CySession;
 import org.cytoscape.session.CySessionManager;
 import org.cytoscape.view.model.View;
+import org.cytoscape.work.util.ListSingleSelection;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.w3c.dom.Document;
@@ -73,6 +79,7 @@ public class ModelUtils {
 
 	// Edge information
 	public static String SCORE = "score";
+	public static String INTERSPECIES = "interspecies";
 
 	// Network information
 	public static String CONFIDENCE = "confidence score";
@@ -82,6 +89,17 @@ public class ModelUtils {
 	// Session information
 	public static String showStructureImagesFlag = "showStructureImages";
 	public static String showEnhancedLabelsFlag = "showEnhancedLabels";
+
+	// Create network view size threshold
+	// See https://github.com/cytoscape/cytoscape-impl/blob/develop/core-task-impl/
+	// src/main/java/org/cytoscape/task/internal/loadnetwork/AbstractLoadNetworkTask.java
+	public static int DEF_VIEW_THRESHOLD = 3000;
+	public static String VIEW_THRESHOLD = "viewThreshold";
+	
+	// Other stuff
+	public static String COMPOUND = "STITCH compounds";
+	public static String EMPTYLINE = "--------";
+	
 	
 	public static List<EntityIdentifier> getEntityIdsFromJSON(StringManager manager,
 			JSONObject object) {
@@ -255,7 +273,7 @@ public class ModelUtils {
 			defaultName = "String Network";
 		if (netName != null && netName != "") {
 			netName = defaultName + " - " + netName;
-		} else if (queryTermMap.size() == 1 && queryTermMap.containsKey(ids)) {
+		} else if (queryTermMap != null && queryTermMap.size() == 1 && queryTermMap.containsKey(ids)) {
 			netName = defaultName + " - " + queryTermMap.get(ids);
 		} else {
 			netName = defaultName;
@@ -313,6 +331,12 @@ public class ModelUtils {
 		return network.getRow(network).get(NET_SPECIES, String.class);
 	}
 
+	public static String getNodeSpecies(CyNetwork network, CyNode node) {
+		if (network.getDefaultNodeTable().getColumn(SPECIES) == null)
+			return null;
+		return network.getRow(node).get(SPECIES, String.class);
+	}
+
 	public static String getMostCommonNetSpecies(CyNetwork net) {
 		Map<String, Integer> species = new HashMap<String, Integer>();
 		for (CyNode node : net.getNodeList()) {
@@ -335,6 +359,16 @@ public class ModelUtils {
 			}
 		}
 		return netSpecies;
+	}
+
+	public static List<String> getAllNetSpecies(CyNetwork net) {
+		List<String> species = new ArrayList<String>();
+		for (CyNode node : net.getNodeList()) {
+			String nSpecies = net.getRow(node).get(SPECIES, String.class);
+			if (nSpecies != null && !nSpecies.equals("") && !species.contains(nSpecies))
+				species.add(nSpecies);
+		}
+		return species;
 	}
 
 	private static List<CyNode> getJSON(StringManager manager, Species species, CyNetwork network,
@@ -397,6 +431,7 @@ public class ModelUtils {
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, ELABEL_STYLE);
 
 		createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, SCORE);
+		createColumnIfNeeded(network.getDefaultEdgeTable(), Boolean.class, INTERSPECIES);
 
 		Set<String> columnMap = new HashSet<>();
 
@@ -531,6 +566,7 @@ public class ModelUtils {
 		CyRow row = network.getRow(newNode);
 
 		row.set(CyNetwork.NAME, name);
+		row.set(CyRootNetwork.SHARED_NAME, stringId);
 		row.set(STRINGID, stringId);
 		row.set(ID, id);
 		row.set(NAMESPACE, namespace);
@@ -547,9 +583,8 @@ public class ModelUtils {
 				species = nodeSpecies;
 			}			
 		}
-		// TODO: Should compounds have a species?
-		// && !type.equals("compound")
-		if (species != null) {
+		// TODO: Should compounds have a species? 
+		if (species != null && !type.equals("compound")) {
 			row.set(SPECIES, species);
 		}
 		
@@ -602,8 +637,17 @@ public class ModelUtils {
 				row.set(ELABEL_STYLE, enhancedLabel);
 			}
 		}
-		if (queryTermMap != null && queryTermMap.containsKey(stringId)) {
-			network.getRow(newNode).set(QUERYTERM, queryTermMap.get(stringId));
+		// TODO: Fix hack for saving query term for compounds
+		if (queryTermMap != null) {
+			if (queryTermMap.containsKey(stringId)) {
+				network.getRow(newNode).set(QUERYTERM, queryTermMap.get(stringId));
+			} else if (queryTermMap.containsKey("-1.CID1" + stringId.substring(4))) {
+				network.getRow(newNode).set(QUERYTERM,
+						queryTermMap.get("-1.CID1" + stringId.substring(4)));
+			} else if (queryTermMap.containsKey("-1.CID0" + stringId.substring(4))) {
+				network.getRow(newNode).set(QUERYTERM,
+						queryTermMap.get("-1.CID0" + stringId.substring(4)));
+			}
 		}
 		nodeMap.put(stringId, newNode);
 		nodeNameMap.put(stringId, name);
@@ -656,6 +700,12 @@ public class ModelUtils {
 			network.getRow(edge).set(CyNetwork.NAME,
 					nodeNameMap.get(source) + " (" + interaction + ") " + nodeNameMap.get(target));
 			network.getRow(edge).set(CyEdge.INTERACTION, interaction);
+
+			String sourceSpecies = getNodeSpecies(network, sourceNode);
+			String targetSpecies = getNodeSpecies(network, targetNode);
+			if (sourceSpecies != null && targetSpecies != null && !sourceSpecies.equals(targetSpecies)) 
+				network.getRow(edge).set(INTERSPECIES, Boolean.TRUE);
+			
 			if (newEdges != null)
 				newEdges.add(edge);
 		} else {
@@ -723,6 +773,27 @@ public class ModelUtils {
 		return netSpeciesTaxons;
 	}
 
+	public static List<String> getAvailableInteractionPartners(CyNetwork network) {
+		List<String> availableTypes = new ArrayList<String>();
+		List<String> species = ModelUtils.getAllNetSpecies(network);
+		Collections.sort(species);
+		availableTypes.addAll(species);
+		availableTypes.add(COMPOUND);
+		availableTypes.add(EMPTYLINE);
+		List<String> spPartners = new ArrayList<String>();
+		for (String sp : species) {
+			List<String> partners = Species.getSpeciesPartners(sp);
+			for (String spPartner : partners) {
+				if (!species.contains(spPartner)) 
+					spPartners.add(spPartner);
+			}
+		}
+		Collections.sort(spPartners);
+		availableTypes.addAll(spPartners);
+		return availableTypes;
+	}	
+
+	
 	public static <T> T getResultsFromJSON(JSONObject json, Class<? extends T> clazz) {
 		if (json == null || !json.containsKey(StringManager.RESULT))
 			return null;
@@ -925,5 +996,19 @@ public class ModelUtils {
 		}
 	}
 
+	public static int getViewThreshold(StringManager manager) {
+		final Properties props = (Properties) manager
+				.getService(CyProperty.class, "(cyPropertyName=cytoscape3.props)").getProperties();
+		final String vts = props.getProperty(VIEW_THRESHOLD);
+		int threshold;
+
+		try {
+			threshold = Integer.parseInt(vts);
+		} catch (Exception e) {
+			threshold = DEF_VIEW_THRESHOLD;
+		}
+
+		return threshold;
+	}
 	
 }

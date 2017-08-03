@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 
 public enum Databases {
 	STRING("String", "string"),
+	VIRUSES("Viruses", "viruses"),
 	STITCH("Stitch", "stitch");
 
 	String dbName;

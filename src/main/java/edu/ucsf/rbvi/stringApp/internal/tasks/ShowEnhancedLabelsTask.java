@@ -34,9 +34,10 @@ public class ShowEnhancedLabelsTask extends AbstractTask {
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
 		CyNetworkViewManager netManager = manager.getService(CyNetworkViewManager.class);
 		for (CyNetworkView currNetView : netManager.getNetworkViewSet()) {
-			if (vmm.getVisualStyle(currNetView).getTitle().startsWith(ViewUtils.STYLE_NAME)) {
-				ViewUtils.updateEnhancedLabels(manager, vmm.getVisualStyle(currNetView), currNetView,
-						manager.showEnhancedLabels());
+			if (vmm.getVisualStyle(currNetView).getTitle().startsWith(ViewUtils.STYLE_NAME) || 
+			    vmm.getVisualStyle(currNetView).getTitle().startsWith(ViewUtils.STYLE_NAME_ORG)) {
+				ViewUtils.updateEnhancedLabels(manager, vmm.getVisualStyle(currNetView),
+						currNetView.getModel(), manager.showEnhancedLabels());
 			}
 		}
 		netView.updateView();

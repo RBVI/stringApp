@@ -6,6 +6,7 @@ import java.util.Map;
 import org.cytoscape.work.AbstractTaskFactory;
 import org.cytoscape.work.TaskIterator;
 
+import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 
 public class ImportNetworkTaskFactory extends AbstractTaskFactory {
@@ -35,11 +36,15 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 	}
 
 	public TaskIterator createTaskIterator() {
-		if (stringNet.getNetwork() == null) {
+		if (stringIds == null) {
+			return new TaskIterator(
+					new LoadSpeciesInteractions(stringNet, species, taxon, confidence,
+							Species.getSpeciesOfficialName(String.valueOf(taxon)), useDATABASE));
+		} else if (stringNet.getNetwork() == null) {
 			return new TaskIterator(new LoadInteractions(stringNet, species, taxon, 
 			                                             confidence, additionalNodes, stringIds, 
 																									 queryTermMap, "", useDATABASE));
-		}
+		} 
 		return new TaskIterator(new LoadTermsTask(stringNet, species, taxon, confidence, 
 		                                          additionalNodes, stringIds, queryTermMap, useDATABASE));
 	}

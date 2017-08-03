@@ -2,11 +2,15 @@ package edu.ucsf.rbvi.stringApp.internal.tasks;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
@@ -16,6 +20,8 @@ import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.model.View;
+import org.cytoscape.view.model.VisualProperty;
+import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
@@ -33,16 +39,17 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
 public class ExpandNetworkTask extends AbstractTask {
 	final StringManager manager;
-	final CyNetwork network;
 	CyNetworkView netView;
 	View<CyNode> nodeView;
 	
+	@Tunable (description="Network to expand", context="nogui")
+	public CyNetwork network;
+
 	@Tunable (description="Number of nodes to expand network by", gravity=1.0)
 	public int additionalNodes = 10;
 
 	@Tunable (description="Type of nodes to expand network by", gravity=2.0)
-	public ListSingleSelection<String> nodeTypes = new ListSingleSelection<String>(
-			"protein", "compound");
+	public ListSingleSelection<String> nodeTypes = new ListSingleSelection<String>();
 	
 	@Tunable (description="Relayout network?", gravity=3.0)
 	public boolean relayout = false;
@@ -52,10 +59,23 @@ public class ExpandNetworkTask extends AbstractTask {
 	
 	public ExpandNetworkTask(final StringManager manager, final CyNetwork network, CyNetworkView netView) {
 		this.manager = manager;
-		this.network = network;
+		if (network != null)
+			this.network = network;
 		this.netView = netView;
 		this.nodeView = null;
-		nodeTypes.setSelectedValue("protein");
+		// Make sure we have a network.  This should only happen at this point if we're coming in
+		// via a command
+		if (this.network == null)
+			this.network = manager.getCurrentNetwork();
+
+		nodeTypes = new ListSingleSelection<String>(
+				ModelUtils.getAvailableInteractionPartners(this.network));
+		String netSpecies = ModelUtils.getNetSpecies(this.network);
+		if (netSpecies != null) {
+			nodeTypes.setSelectedValue(netSpecies);
+		} else {
+			nodeTypes.setSelectedValue(ModelUtils.COMPOUND);
+		}
 	}
 
 	public ExpandNetworkTask(final StringManager manager, final CyNetwork network, CyNetworkView netView, View<CyNode> nodeView) {
@@ -63,7 +83,13 @@ public class ExpandNetworkTask extends AbstractTask {
 		this.network = network;
 		this.netView = netView;
 		this.nodeView = nodeView;
-		nodeTypes.setSelectedValue("protein");
+		nodeTypes = new ListSingleSelection<String>(ModelUtils.getAvailableInteractionPartners(network));
+		String netSpecies = ModelUtils.getNetSpecies(network);
+		if (netSpecies != null) {
+			nodeTypes.setSelectedValue(netSpecies);
+		} else {
+			nodeTypes.setSelectedValue(ModelUtils.COMPOUND);
+		}
 	}
 
 	public void run(TaskMonitor monitor) {
@@ -88,7 +114,13 @@ public class ExpandNetworkTask extends AbstractTask {
 			species = ModelUtils.getMostCommonNetSpecies(network);
 			ModelUtils.setNetSpecies(network, species);
 		}
-		int taxonId = Species.getSpeciesTaxId(species);
+		String selectedType = nodeTypes.getSelectedValue();
+		if (selectedType == null || selectedType.equals(ModelUtils.EMPTYLINE)) {
+			monitor.showMessage(TaskMonitor.Level.WARN, "No node type to extend by");
+			return;
+		}
+		// int taxonId = Species.getSpeciesTaxId(species);
+		int taxonId = Species.getSpeciesTaxId(selectedType);
 		Map<String, String> args = new HashMap<>();
 		args.put("existing",existing.trim());
 		if (selected != null && selected.length() > 0)
@@ -100,15 +132,15 @@ public class ExpandNetworkTask extends AbstractTask {
 			args.put("score", conf.toString());
 		if (additionalNodes > 0)
 			args.put("additional", Integer.toString(additionalNodes));
-		String nodeType = nodeTypes.getSelectedValue().toLowerCase();
+		// String nodeType = nodeTypes.getSelectedValue().toLowerCase();
 		String useDatabase = "";
-		if (nodeType.equals("protein")) {
+		if (selectedType.equals(ModelUtils.COMPOUND)) {
+			useDatabase = Databases.STITCH.getAPIName();
+			args.put("filter", "CIDm%%");			
+		} else {
 			useDatabase = Databases.STRING.getAPIName();
 			if (taxonId != -1) 
 				args.put("filter", taxonId + ".%%");
-		} else {
-			useDatabase = Databases.STITCH.getAPIName();
-			args.put("filter", "CIDm%%");			
 		}
 		// TODO: Is it OK to always use stitch?
 		args.put("database", Databases.STITCH.getAPIName());
@@ -127,29 +159,81 @@ public class ExpandNetworkTask extends AbstractTask {
 		List<CyEdge> newEdges = new ArrayList<>();
 		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, useDatabase);
 
+		if (newNodes.size() == 0 && newEdges.size() == 0) {
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					JOptionPane.showMessageDialog(null, 
+											"This query will not add any new nodes or edges to the existing network.",
+								       "Warning", JOptionPane.WARNING_MESSAGE); 
+				}
+			});
+			return;
+		}
 		monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
-		// System.out.println("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
 
 		// If we have a view, re-apply the style and layout
-		if (netView != null) {
-			monitor.setStatusMessage("Updating style");
-			// System.out.println("Updating style");
+		monitor.setStatusMessage("Updating style");
+		// System.out.println("Updating style");
+		if (netView != null)
 			ViewUtils.updateEdgeStyle(manager, netView, newEdges);
-			// System.out.println("Done");
-			if (relayout) {
-				monitor.setStatusMessage("Updating layout");
-				CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");
-				Object context = alg.createLayoutContext();
-				TunableSetter setter = manager.getService(TunableSetter.class);
-				Map<String, Object> layoutArgs = new HashMap<>();
-				layoutArgs.put("defaultNodeMass", 10.0);
-				setter.applyTunables(context, layoutArgs);
-				Set<View<CyNode>> nodeViews = new HashSet<>(netView.getNodeViews());
-				insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, "score"));
-			}
+		if (!selectedType.equals(species) && !selectedType.equals(ModelUtils.COMPOUND)) {
+			ViewUtils.updateNodeColorsHost(manager, network, netView);
+		}
+		// System.out.println("Done");
+		if (netView != null && relayout) {
+			monitor.setStatusMessage("Updating layout");
+			layoutAll();
+			// experimental, layout only the new nodes
+			// layoutSelectedOnly(newNodes);
 		}
 	}
 
+	
+	private void layoutAll() {
+		CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");
+		Object context = alg.createLayoutContext();
+		TunableSetter setter = manager.getService(TunableSetter.class);
+		Map<String, Object> layoutArgs = new HashMap<>();
+		layoutArgs.put("defaultNodeMass", 10.0);
+		setter.applyTunables(context, layoutArgs);
+		Set<View<CyNode>> nodeViews = new HashSet<>(netView.getNodeViews());
+		insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, "score"));
+	}
+	
+
+	private void layoutSelectedOnly(List<CyNode> nodesToLayout) {
+		final VisualProperty<Double> xLoc = BasicVisualLexicon.NODE_X_LOCATION;
+		final VisualProperty<Double> yLoc = BasicVisualLexicon.NODE_Y_LOCATION;
+		Set<Double> xPos = new HashSet<Double>();
+		Set<Double> yPos = new HashSet<Double>();
+		Set<View<CyNode>> nodeViews = new HashSet<>();
+		for (View<CyNode> nodeView : netView.getNodeViews()) {
+			if (nodesToLayout.contains(nodeView.getModel())) {
+				nodeViews.add(nodeView);
+			} else {
+				xPos.add(nodeView.getVisualProperty(xLoc));
+				yPos.add(nodeView.getVisualProperty(yLoc));
+			}
+		}
+		double xSpan = Math.abs(Collections.max(xPos)) + Math.abs(Collections.min(xPos));
+		// System.out.println(xSpan);
+		double ySpan = Math.abs(Collections.max(yPos)) + Math.abs(Collections.min(yPos));
+		// System.out.println(ySpan);
+		int spacing = (int)Math.max(xSpan, ySpan)/4;
+		// System.out.println(spacing);
+		// get layout and set attributes
+		CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("attribute-circle");
+		Object context = alg.createLayoutContext();
+		TunableSetter setter = manager.getService(TunableSetter.class);
+		Map<String, Object> layoutArgs = new HashMap<>();
+		layoutArgs.put("defaultNodeMass", 10.0);
+		layoutArgs.put("selectedOnly", true);
+		layoutArgs.put("spacing", spacing);
+		setter.applyTunables(context, layoutArgs);
+		// Set<View<CyNode>> nodeViews = new HashSet<>(netView.getNodeViews());
+		insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, "score"));
+	}
+		
 	@ProvidesTitle
 	public String getTitle() {
 		return "Expand Network";

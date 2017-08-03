@@ -8,12 +8,13 @@ import org.cytoscape.task.AbstractNetworkTaskFactory;
 import org.cytoscape.task.NetworkTaskFactory;
 import org.cytoscape.task.NetworkViewTaskFactory;
 import org.cytoscape.task.NodeViewTaskFactory;
+import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
-public class ExpandNetworkTaskFactory extends AbstractNetworkTaskFactory implements NetworkViewTaskFactory, NodeViewTaskFactory {
+public class ExpandNetworkTaskFactory extends AbstractNetworkTaskFactory implements NetworkViewTaskFactory, NodeViewTaskFactory, TaskFactory {
 	final StringManager manager;
 
 	public ExpandNetworkTaskFactory(final StringManager manager) {
@@ -42,6 +43,14 @@ public class ExpandNetworkTaskFactory extends AbstractNetworkTaskFactory impleme
 
 	public TaskIterator createTaskIterator(View<CyNode> nodeView, CyNetworkView netView) {
 		return new TaskIterator(new ExpandNetworkTask(manager, netView.getModel(), netView, nodeView));
+	}
+
+	public boolean isReady() {
+		return true;
+	}
+
+	public TaskIterator createTaskIterator() {
+		return new TaskIterator(new ExpandNetworkTask(manager, null, null));
 	}
 }
 

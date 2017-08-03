@@ -45,7 +45,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -67,6 +66,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetAnnotationsTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ImportNetworkTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 // TODO: [Optional] Improve non-gui mode
 public class GetTermsPanel extends JPanel { 
@@ -79,10 +79,12 @@ public class GetTermsPanel extends JPanel {
 	JTextArea searchTerms;
 	JPanel mainSearchPanel;
 	JComboBox<Species> speciesCombo;
+	JComboBox<String> speciesPartnerCombo;
 	JSlider confidenceSlider;
 	JTextField confidenceValue;
 	JSlider additionalNodesSlider;
 	JTextField additionalNodesValue;
+	JCheckBox wholeOrgBox;
 	JButton importButton;
 	JButton backButton;
 	NumberFormat formatter = new DecimalFormat("#0.00");
@@ -126,7 +128,7 @@ public class GetTermsPanel extends JPanel {
 
 	private void init() {
 		// Create the surrounding panel
-		setPreferredSize(new Dimension(800,600));
+		setPreferredSize(new Dimension(800,650));
 		EasyGBC c = new EasyGBC();
 
 		// Create the species panel
@@ -140,10 +142,20 @@ public class GetTermsPanel extends JPanel {
 				return;
 			}
 		}
-		JPanel speciesBox = createSpeciesComboBox(speciesList);
-		if (!queryAddNodes)
+		JPanel organismBox = createOrgBox();
+		if (!queryAddNodes) {
+			JPanel speciesBox = createSpeciesComboBox(speciesList);
 			add(speciesBox, c.expandHoriz().insets(0,5,0,5));
 
+			// Create whole organism checkbox
+			if (!useDATABASE.equals(Databases.STITCH.getAPIName())) {
+				add(organismBox, c.down().expandBoth().insets(0, 5, 0, 5));
+			}
+		} else {
+			JPanel speciesBox = createSpeciesPartnerComboBox(ModelUtils.getAvailableInteractionPartners(manager.getCurrentNetwork()));
+			add(speciesBox, c.expandHoriz().insets(0,5,0,5));
+		}
+		
 		// Create the search list panel
 		mainSearchPanel = createSearchPanel();
 		add(mainSearchPanel, c.down().expandBoth().insets(5,5,0,5));
@@ -210,6 +222,7 @@ public class GetTermsPanel extends JPanel {
 		c.noExpand().insets(0,5,0,5);
 		speciesPanel.add(speciesLabel, c);
 		speciesCombo = new JComboBox<Species>(speciesList.toArray(new Species[1]));
+		JComboBoxDecorator.decorate(speciesCombo, true, true); 
 
 		// Set Human as the default
 		for (Species s: speciesList) {
@@ -223,6 +236,52 @@ public class GetTermsPanel extends JPanel {
 		return speciesPanel;
 	}
 
+	JPanel createSpeciesPartnerComboBox(List<String> speciesList) {
+		JPanel speciesPanel = new JPanel(new GridBagLayout());
+		EasyGBC c = new EasyGBC();
+		JLabel speciesLabel = new JLabel("Species:");
+		c.noExpand().insets(0,5,0,5);
+		speciesPanel.add(speciesLabel, c);
+		speciesPartnerCombo = new JComboBox<String>(speciesList.toArray(new String[1]));
+
+		// Set Human as the default
+		for (String s: speciesList) {
+			if (s.equals(netSpecies)) {
+				speciesPartnerCombo.setSelectedItem(s);
+				break;
+			}
+		}
+		c.right().expandHoriz().insets(0,5,0,5);
+		speciesPanel.add(speciesPartnerCombo, c);
+		return speciesPanel;
+	}
+ 
+	JPanel createOrgBox() {
+		JPanel boxPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		// orgBox = new JCheckBox("All proteins of this species");
+		wholeOrgBox = new JCheckBox(new AbstractAction("All proteins of this species") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (wholeOrgBox.isSelected()) {
+					searchTerms.setText("");
+					searchTerms.setEditable(false);
+					additionalNodesSlider.setValue(0);
+					additionalNodesSlider.setEnabled(false);
+					additionalNodesValue.setText("0");
+					additionalNodesValue.setEnabled(false);
+				} else {
+					searchTerms.setEditable(true);
+					additionalNodesSlider.setEnabled(true);
+					additionalNodesValue.setEnabled(true);
+				}
+			}
+		});
+		wholeOrgBox.setSelected(false);
+		boxPanel.add(wholeOrgBox);
+		return boxPanel;
+	}
+	
+	
 	JPanel createControlButtons() {
 		JPanel buttonPanel = new JPanel();
 		BoxLayout layout = new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS);
@@ -466,13 +525,27 @@ public class GetTermsPanel extends JPanel {
 		return val;
 	}
 
-	void importNetwork(int taxon, int confidence, int additionalNodes) {
+	void importNetwork(int taxon, int confidence, int additionalNodes, boolean wholeOrg) {
 		Map<String, String> queryTermMap = new HashMap<>();
-		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
+		List<String> stringIds = null;
+		if (wholeOrg) {
+			// stringIds = ModelUtils.readOrganimsIDs(queryTermMap);
+			stringIds = null;
+			// stringIds = stringNetwork.combineIds(queryTermMap);
+		} else {
+			stringIds = stringNetwork.combineIds(queryTermMap);
+		}
 		// System.out.println("Importing "+stringIds);
-		TaskFactory factory = new ImportNetworkTaskFactory(stringNetwork, speciesCombo.getSelectedItem().toString(), 
+		TaskFactory factory = null;
+		if (!queryAddNodes) {
+			factory = new ImportNetworkTaskFactory(stringNetwork, speciesCombo.getSelectedItem().toString(), 
 		                                                   taxon, confidence, additionalNodes, stringIds,
-																											 queryTermMap, useDATABASE);
+																						 queryTermMap, useDATABASE);
+		} else {
+			factory = new ImportNetworkTaskFactory(stringNetwork, (String)speciesPartnerCombo.getSelectedItem(), 
+                    taxon, confidence, additionalNodes, stringIds,
+													 queryTermMap, useDATABASE);
+		}
 		cancel();
 		manager.execute(factory.createTaskIterator());
 	}
@@ -613,12 +686,24 @@ public class GetTermsPanel extends JPanel {
     @Override
     public void actionPerformed(ActionEvent e) {
 			// Start our task cascade
-			Species species = (Species)speciesCombo.getSelectedItem();
+    		int taxon = 0;
+    		String speciesName = "";
+    		if (!queryAddNodes) {
+				Species species = (Species)speciesCombo.getSelectedItem();
+				speciesName = species.getName();
+				taxon = species.getTaxId();
+    		} else {
+    			speciesName = (String)speciesPartnerCombo.getSelectedItem();
+    			taxon = Species.getSpeciesTaxId(speciesName);
+    		}
 			if (stringNetwork == null)
 				stringNetwork = new StringNetwork(manager);
 
-			int taxon = species.getTaxId();
 			String terms = searchTerms.getText();
+			if (wholeOrgBox != null && wholeOrgBox.isSelected()) {
+				importNetwork(taxon, confidenceSlider.getValue(), 0, wholeOrgBox.isSelected());
+				return;
+			}
 			if (terms == null || terms.length() == 0) {
 				JOptionPane.showMessageDialog(null, "No terms were entered -- nothing to search for",
 							                        "Nothing entered", JOptionPane.ERROR_MESSAGE); 
@@ -627,7 +712,7 @@ public class GetTermsPanel extends JPanel {
 			
 			// Strip off any blank lines
 			terms = terms.replaceAll("(?m)^\\s*", "");
-			manager.info("Getting annotations for "+species.getName()+"terms: "+terms);
+			manager.info("Getting annotations for "+speciesName+"terms: "+terms);
 
 			// Launch a task to get the annotations. 
 			manager.execute(new TaskIterator(new GetAnnotationsTask(stringNetwork, taxon, terms, useDATABASE)),this);
@@ -673,7 +758,7 @@ public class GetTermsPanel extends JPanel {
 
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						importNetwork(taxon, confidenceSlider.getValue(), addNodes);
+						importNetwork(taxon, confidenceSlider.getValue(), addNodes, wholeOrgBox.isSelected());
 					}
 				});
 			} else {
@@ -706,8 +791,18 @@ public class GetTermsPanel extends JPanel {
 			// if (stringNetwork.getResolvedTerms() == 1)
 			// 	additionalNodes = 10;
 
+			if (wholeOrgBox.isSelected()) {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						JOptionPane.showMessageDialog(null, 
+												"This will return a network for the whole organims and might take a while!",
+									       "Hint", JOptionPane.WARNING_MESSAGE); 
+					}
+				});
+			}
+
 			int taxon = species.getTaxId();
-			importNetwork(taxon, confidenceSlider.getValue(), additionalNodes);
+			importNetwork(taxon, confidenceSlider.getValue(), additionalNodes, wholeOrgBox.isSelected());
 		}
 	}
 
