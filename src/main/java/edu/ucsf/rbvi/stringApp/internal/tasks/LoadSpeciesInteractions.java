@@ -93,7 +93,8 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		int networkSize = network.getNodeList().size() + network.getEdgeList().size();
 		if (networkSize < viewThreshold) {
 			// Now style the network
-			CyNetworkView networkView = ViewUtils.styleNetwork(manager, network);
+			CyNetworkView networkView = manager.createNetworkView(network);
+			ViewUtils.styleNetwork(manager, network, networkView);
 
 			// And lay it out
 			CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class)
@@ -107,6 +108,8 @@ public class LoadSpeciesInteractions extends AbstractTask {
 			insertTasksAfterCurrentTask(
 					alg.createTaskIterator(networkView, context, nodeViews, "score"));
 
+		} else {
+			ViewUtils.styleNetwork(manager, network, null);
 		}
 	}
 

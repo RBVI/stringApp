@@ -172,20 +172,19 @@ public class ExpandNetworkTask extends AbstractTask {
 		monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
 
 		// If we have a view, re-apply the style and layout
-		if (netView != null) {
-			monitor.setStatusMessage("Updating style");
-			// System.out.println("Updating style");
+		monitor.setStatusMessage("Updating style");
+		// System.out.println("Updating style");
+		if (netView != null)
 			ViewUtils.updateEdgeStyle(manager, netView, newEdges);
-			if (!selectedType.equals(species) && !selectedType.equals(ModelUtils.COMPOUND)) {
-				ViewUtils.updateNodeColorsHost(manager, netView);				
-			}
-			// System.out.println("Done");
-			if (relayout) {
-				monitor.setStatusMessage("Updating layout");
-				layoutAll();
-				// experimental, layout only the new nodes
-				// layoutSelectedOnly(newNodes);
-			}
+		if (!selectedType.equals(species) && !selectedType.equals(ModelUtils.COMPOUND)) {
+			ViewUtils.updateNodeColorsHost(manager, network, netView);
+		}
+		// System.out.println("Done");
+		if (netView != null && relayout) {
+			monitor.setStatusMessage("Updating layout");
+			layoutAll();
+			// experimental, layout only the new nodes
+			// layoutSelectedOnly(newNodes);
 		}
 	}
 
