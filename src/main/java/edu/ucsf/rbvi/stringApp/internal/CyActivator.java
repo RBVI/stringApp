@@ -120,13 +120,11 @@ public class CyActivator extends AbstractCyActivator {
 												"<br/>STRING is a database of known and predicted protein "+
 												"interactions.  The interactions include direct (physical) "+
 												"and indirect (functional) associations; they are derived from "+
-												"four sources: "+
-												"<ul>\n"+
-												"  <li>Genomic Context</li>\n"+
-												"  <li>High-throughput Experiments</li>\n"+
-												"  <li>(Conserved) Coexpression</li>\n"+
-												"  <li>Previous Knowledge</li>\n"+
-												"</ul>\n"+
+												"four sources: \n"+
+												"* Genomic Context\n"+
+												"* High-throughput Experiments\n"+
+												"* (Conserved) Coexpression\n"+
+												"* Previous Knowledge\n\n"+
 										 		"STRING quantitatively integrates "+
 												"interaction data from these sources for a large number "+
 												"of organisms, and transfers information between these "+
@@ -144,12 +142,15 @@ public class CyActivator extends AbstractCyActivator {
 										    "Create a STRING network by finding proteins associated with a disease");
 			props.setProperty(COMMAND_LONG_DESCRIPTION,
 										    "Enter a disease term and create a STRING network by finding all "+
-												"proteins associated with the disease in the STRING database."+
-												"<br/>STRING is a database of "+
+												"proteins associated with the disease in the STRING database.\n"+
+												" STRING is a database of "+
 												"known and predicted protein interactions.  The interactions include direct "+
 												"(physical) and indirect (functional) associations; they are derived from four "+
-												"sources: <ul><li>Genomic Context</li><li>High-throughput Experiments</li>"+
-												"<li>(Conserved) Coexpression</li><li>Previous Knowledge</li></ul>	 "+
+												"sources: \n"+
+												"* Genomic Context\n"+
+												"* High-throughput Experiments\n"+
+												"* (Conserved) Coexpression\n"+
+												"* Previous Knowledge\n\n"+
 												"STRING quantitatively integrates interaction data from these sources "+
 												"for a large number of organisms, and transfers information between "+
 												"these organisms where applicable. The database currently covers 9,643,763 "+
@@ -166,12 +167,15 @@ public class CyActivator extends AbstractCyActivator {
 										    "Create a STRING network by entering a pubmed query");
 			props.setProperty(COMMAND_LONG_DESCRIPTION, 
 										    "Enter a Pubmed query and create a STRING network by finding all "+
-												"proteins mentioned in the resulting publications."+
-												"<br/>STRING is a database of "+
+												"proteins mentioned in the resulting publications.\n"+
+												"STRING is a database of "+
 												"known and predicted protein interactions.  The interactions include direct "+
 												"(physical) and indirect (functional) associations; they are derived from four "+
-												"sources: <ul><li>Genomic Context</li><li>High-throughput Experiments</li>"+
-												"<li>(Conserved) Coexpression</li><li>Previous Knowledge</li></ul>	 "+
+												"sources: \n"+
+												"* Genomic Context\n"+
+												"* High-throughput Experiments\n"+
+												"* (Conserved) Coexpression\n"+
+												"* Previous Knowledge\n\n"+
 												"STRING quantitatively integrates interaction data from these sources "+
 												"for a large number of organisms, and transfers information between "+
 												"these organisms where applicable. The database currently covers 9,643,763 "+
@@ -208,10 +212,10 @@ public class CyActivator extends AbstractCyActivator {
 		 	                  "STITCH is a resource to explore known and predicted "+
 												"interactions of chemicals and proteins. Chemicals are "+
 												"linked to other chemicals and proteins by evidence derived "+
-												"from experiments, databases and the literature.  "+
-												"<br/>STITCH contains interactions for between 300,000 "+
+												"from experiments, databases and the literature.  \n"+
+												"STITCH contains interactions for between 300,000 "+
 												"small molecules and 2.6 million proteins from 1133 "+
-												"organisms.</p>");
+												"organisms.");
       registerService(bc, getNetwork, TaskFactory.class, props);
     }
 
@@ -269,7 +273,6 @@ public class CyActivator extends AbstractCyActivator {
 			registerService(bc, addTerms, NetworkTaskFactory.class, props);
 		}
 
-		
 		{
 			SetLabelAttributeTaskFactory setLabel = new SetLabelAttributeTaskFactory(manager);
 			Properties props = new Properties();
