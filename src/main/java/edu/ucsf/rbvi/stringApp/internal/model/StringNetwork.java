@@ -43,12 +43,12 @@ public class StringNetwork {
 	public Map<String, List<Annotation>> getAnnotations() { return annotations; }
 
 	public Map<String, List<Annotation>> getAnnotations(int taxon, final String terms, final String useDATABASE) {
-		String encTerms;
-		try {
-			encTerms = URLEncoder.encode(terms.trim(), "UTF-8");
-		} catch (Exception e) {
-			return new HashMap<String, List<Annotation>>();
-		}
+		String encTerms = terms.trim();
+		// try {
+		// encTerms = URLEncoder.encode(terms.trim(), "UTF-8");
+		// } catch (Exception e) {
+		// return new HashMap<String, List<Annotation>>();
+		// }
 
 		// always call the string API first to resolve all potential protein IDs
 		String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/resolveList";
