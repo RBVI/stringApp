@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -314,9 +315,9 @@ public class HttpUtils {
 		try {
 			for (String key : args.keySet()) {
 				if (s != null)
-					s += "&" + key + "=" + URLEncoder.encode(args.get(key));
+					s += "&" + key + "=" + URLEncoder.encode(args.get(key), StandardCharsets.UTF_8.displayName());
 				else
-					s = key + "=" + URLEncoder.encode(args.get(key));
+					s = key + "=" + URLEncoder.encode(args.get(key), StandardCharsets.UTF_8.displayName());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
