@@ -1105,5 +1105,25 @@ public class ModelUtils {
 
 		return threshold;
 	}
-	
+
+	// Method to convert terms entered in search text to
+	// appropriate newline-separated string to send to server
+	public static String convertTerms(String terms, boolean splitComma, boolean splitSpaces) {
+		String regexSp = "\\s+(?=((\\\\[\\\\\"]|[^\\\\\"])*\"(\\\\[\\\\\"]|[^\\\\\"])*\")*(\\\\[\\\\\"]|[^\\\\\"])*$)";
+		String regexComma = "[,]+(?=((\\\\[\\\\\"]|[^\\\\\"])*\"(\\\\[\\\\\"]|[^\\\\\"])*\")*(\\\\[\\\\\"]|[^\\\\\"])*$)";
+		if (splitSpaces) {
+			// Substitute newlines for space
+			terms = terms.replaceAll(regexSp, "\n");
+		}
+
+		if (splitComma) {
+			// Substitute newlines for commas
+			terms = terms.replaceAll(regexComma, "\n");
+		}
+
+		// Strip off any blank lines
+		terms = terms.replaceAll("(?m)^\\s*", "");
+		return terms;
+	}
+
 }
