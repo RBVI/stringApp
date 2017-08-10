@@ -31,6 +31,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.GetAnnotationsTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ImportNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.ui.GetTermsPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.SearchOptionsPanel;
+import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory implements TaskObserver {
 	StringManager manager;
@@ -71,10 +72,7 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 		stringNetwork = new StringNetwork(manager);
 		int taxon = getTaxId();
 
-		// Substitute newlines for commas
-		terms = terms.replaceAll(",", "\n");
-		// Strip off any blank lines
-		terms = terms.replaceAll("(?m)^\\s*", "");
+		terms = ModelUtils.convertTerms(terms, true, false);
 
 		return new TaskIterator(new GetAnnotationsTask(stringNetwork, taxon, terms, Databases.STITCH.getAPIName()));
 	}
