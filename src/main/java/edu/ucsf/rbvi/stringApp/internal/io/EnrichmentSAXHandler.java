@@ -25,12 +25,14 @@ public class EnrichmentSAXHandler extends DefaultHandler {
 	private List<Long> currNodeList;
 	private StringBuilder content;
 	private String warning;
+	private String message;
 	private String status;
 	private String status_code;
 
 	private boolean in_status = false;
 	private boolean in_code = false;
 	private boolean in_warning = false;
+	private boolean in_message = false;
 
 	private boolean in_term = false;
 	private boolean in_name = false;
@@ -45,6 +47,7 @@ public class EnrichmentSAXHandler extends DefaultHandler {
 
 	private final String tag_status = "status";
 	private final String tag_code = "code";
+	private final String tag_message = "message";
 	private final String tag_warning = "warning";
 
 	private final String tag_term = "term";
@@ -106,6 +109,8 @@ public class EnrichmentSAXHandler extends DefaultHandler {
 			in_code = true;
 		} else if (key.equals(tag_warning)) {
 			in_warning = true;
+		} else if (key.equals(tag_message)) {
+			in_message = true;
 		} else if (key.equals(tag_term)) {
 			in_term = true;
 			currTerm = new EnrichmentTerm();
@@ -142,6 +147,9 @@ public class EnrichmentSAXHandler extends DefaultHandler {
 		} else if (key.equals(tag_warning)) {
 			warning = content.toString();
 			in_warning = false;
+		} else if (key.equals(tag_message)) {
+			message = content.toString();
+			in_message = false;
 		} else if (key.equals(tag_term)) {
 			in_term = false;
 			if (currTerm.getFDRPValue() <= enrichmentCutoff)
@@ -202,6 +210,10 @@ public class EnrichmentSAXHandler extends DefaultHandler {
 	
 	public String getStatusCode() {
 		return status_code;
+	}
+
+	public String getMessage() {
+		return message;
 	}
 
 	public String getWarning() {

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanel;
@@ -97,9 +98,16 @@ public class GetEnrichmentTask extends AbstractTask {
 			species = netSpecies.get(0);
 		} else {
 			monitor.showMessage(Level.ERROR,
-					"None or more than one species in the network. Enrichment will not be retrieved.");
+					"Task cannot be performed. Enrichment can be retrieved only for networks that contain nodes from one species.");
 			System.out.println(
-					"None or more than one species in the network. Enrichment will not be retrieved.");
+					"Task cannot be performed. Enrichment can be retrieved only for networks that contain nodes from one species.");
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					JOptionPane.showMessageDialog(null,
+							"Task cannot be performed. Enrichment can be retrieved only for networks that contain nodes from one species.",
+							"Error", JOptionPane.ERROR_MESSAGE);
+				}
+			});
 			return;
 		}
 		// map of STRING ID to CyNodes
@@ -201,12 +209,16 @@ public class GetEnrichmentTask extends AbstractTask {
 			// monitor.showMessage(Level.ERROR, "Error returned by enrichment webservice: " +
 			// myHandler.getStatusCode());
 			// return false;
-			if (myHandler.getStatusCode() != null)
+			if (myHandler.getMessage().equals("No genes found in the XML")) {
 				throw new Exception(
-					"Error returned by enrichment webservice: " + myHandler.getStatusCode());
+						"Task cannot be performed. Current node identifiers were not recognized by the enrichment service.");
+			}
+			else if (myHandler.getStatusCode() != null)
+				throw new Exception(
+						"Task cannot be performed. Error returned by enrichment webservice: " + myHandler.getMessage());
 			else
 				throw new Exception(
-						"Uknown error while receiving or parsing output from the enrichment service.");
+						"Task cannot be performed. Uknown error while receiving or parsing output from the enrichment service.");
 		} else if (myHandler.getWarning() != null) {
 			monitor.showMessage(Level.WARN,
 					"Warning returned by enrichment webservice: " + myHandler.getWarning());
