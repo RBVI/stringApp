@@ -103,8 +103,9 @@ public class EnrichmentCytoPanel extends JPanel
 		clearNetworkSelection(network);
 		// TODO: clear table selection when switching
 		JTable table = enrichmentTables.get(showTable);
-		if (table.getSelectedColumn() != 0 && table.getSelectedColumnCount() == 1
-				&& table.getSelectedRow() > -1) {
+		// No idea why this was needed...
+		// table.getSelectedColumn() != 0 &&
+		if (table.getSelectedColumnCount() == 1 && table.getSelectedRow() > -1) {
 			// System.out.println("get value at " + table.getSelectedRow() + " and " +
 			// EnrichmentTerm.nodeSUIDColumn);
 			Object cellContent = table.getModel().getValueAt(table.getSelectedRow(),
