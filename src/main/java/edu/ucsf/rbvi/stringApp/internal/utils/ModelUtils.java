@@ -777,9 +777,12 @@ public class ModelUtils {
 		List<String> availableTypes = new ArrayList<String>();
 		List<String> species = ModelUtils.getAllNetSpecies(network);
 		Collections.sort(species);
+		String netSp = getNetSpecies(network);
+		if (!species.contains(netSp)) {
+			availableTypes.add(netSp);
+		}
 		availableTypes.addAll(species);
 		availableTypes.add(COMPOUND);
-		availableTypes.add(EMPTYLINE);
 		List<String> spPartners = new ArrayList<String>();
 		for (String sp : species) {
 			List<String> partners = Species.getSpeciesPartners(sp);
@@ -789,7 +792,10 @@ public class ModelUtils {
 			}
 		}
 		Collections.sort(spPartners);
-		availableTypes.addAll(spPartners);
+		if (spPartners.size() > 0) {
+			availableTypes.add(EMPTYLINE);
+			availableTypes.addAll(spPartners);
+		}
 		return availableTypes;
 	}	
 
