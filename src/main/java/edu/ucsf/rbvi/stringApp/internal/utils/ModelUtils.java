@@ -226,7 +226,7 @@ public class ModelUtils {
 
 		Map<String, CyNode> nodeMap = new HashMap<>();
 		Map<String, String> nodeNameMap = new HashMap<>();
-		String species = null;
+		String species = ModelUtils.getNetSpecies(net);
 		// TODO: Check if we really don't have to infer the database!
 		// String useDATABASE = StringManager.STRINGDB;
 		for (CyNode node : net.getNodeList()) {
