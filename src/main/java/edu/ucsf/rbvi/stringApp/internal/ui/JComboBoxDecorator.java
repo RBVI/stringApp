@@ -13,9 +13,11 @@ import javax.swing.SwingUtilities;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 
 /**
- * Makes given combobox editable and filterable.
+ * Makes the species combo box searchable.
  */
 public class JComboBoxDecorator {
+
+	public static List<Species> previousEntries = new ArrayList<Species>();
 
 	public static void decorate(final JComboBox<Species> jcb, boolean editable, boolean species) {
 		List<Species> entries = new ArrayList<Species>();
@@ -24,7 +26,6 @@ public class JComboBoxDecorator {
 				entries.add(jcb.getItemAt(i));
 			}
 		}
-
 		decorate(jcb, editable, entries);
 	}
 
@@ -36,7 +37,7 @@ public class JComboBoxDecorator {
 		final JTextField textField = (JTextField) jcb.getEditor().getEditorComponent();
 
 		textField.addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent e) {
+			public void keyTyped(KeyEvent e) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						comboFilter(textField.getText(), jcb, entries);
@@ -47,32 +48,37 @@ public class JComboBoxDecorator {
 	}
 
 	/**
-	 * Build a list of entries that match the given filter.
+	 * Create a list of entries that match the user's entered text.
 	 */
 	private static void comboFilter(String enteredText, JComboBox<Species> jcb,
 			List<Species> entries) {
 		List<Species> entriesFiltered = new ArrayList<Species>();
-		boolean changed = false;
+		boolean changed = true;
 		DefaultComboBoxModel<Species> jcbModel = (DefaultComboBoxModel<Species>) jcb.getModel();
 
 		if (enteredText == null) {
 			return;
 		}
+
 		for (Species entry : entries) {
 			if (entry.getName().toLowerCase().contains(enteredText.toLowerCase())) {
 				entriesFiltered.add(entry);
 				// System.out.println(jcbModel.getIndexOf(entry));
-				// if (jcbModel.getIndexOf(entry) == -1) {
-				// changed = true;
-				// }
 			}
 		}
 
-		if (entriesFiltered.size() > 0) {
+		if (previousEntries.size() == entriesFiltered.size()
+				&& previousEntries.containsAll(entriesFiltered)) {
+			changed = false;
+		}
+
+		if (changed && entriesFiltered.size() > 0) {
+			previousEntries = entriesFiltered;
 			jcb.setModel(new DefaultComboBoxModel(entriesFiltered.toArray()));
 			jcb.setSelectedItem(enteredText);
 			jcb.showPopup();
-		} else {
+		} else if (entriesFiltered.size() == 0) {
+			previousEntries = new ArrayList<Species>();
 			jcb.hidePopup();
 		}
 	}

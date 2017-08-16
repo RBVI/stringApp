@@ -22,8 +22,8 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 			"STRING Enrichment: GO Molecular Function", "STRING Enrichment: InterPro",
 			"STRING Enrichment: KEGG", "STRING Enrichment: Pfam" };
 
-	public static final String colID = "id";
-	public static final String colName = "name";
+	public static final String colID = "term id";
+	public static final String colName = "term name";
 	public static final String colDescription = "termDescription";
 	public static final String colPvalue = "pValue";
 	public static final String colBonferroni = "bonferroni";

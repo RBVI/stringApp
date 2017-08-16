@@ -27,6 +27,7 @@ import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.TunableSetter;
+import org.cytoscape.work.util.BoundedDouble;
 import org.cytoscape.work.util.ListSingleSelection;
 import org.json.simple.JSONObject;
 
@@ -51,7 +52,10 @@ public class ExpandNetworkTask extends AbstractTask {
 	@Tunable (description="Type of nodes to expand network by", gravity=2.0)
 	public ListSingleSelection<String> nodeTypes = new ListSingleSelection<String>();
 	
-	@Tunable (description="Relayout network?", gravity=3.0)
+	@Tunable (description="Selectivity of interactors", params="slider=true", gravity=3.0)
+	public BoundedDouble selectivityAlpha = new BoundedDouble(0.0, 0.5, 1.0, false, false);
+
+	@Tunable (description="Relayout network?", gravity=4.0)
 	public boolean relayout = false;
 
 	//@Tunable (description="Expand from database", gravity=3.0, groups = "Advanced options", params = "displayState=collapsed")
@@ -68,13 +72,15 @@ public class ExpandNetworkTask extends AbstractTask {
 		if (this.network == null)
 			this.network = manager.getCurrentNetwork();
 
-		nodeTypes = new ListSingleSelection<String>(
-				ModelUtils.getAvailableInteractionPartners(this.network));
-		String netSpecies = ModelUtils.getNetSpecies(this.network);
-		if (netSpecies != null) {
-			nodeTypes.setSelectedValue(netSpecies);
-		} else {
-			nodeTypes.setSelectedValue(ModelUtils.COMPOUND);
+		if (this.network != null) {
+			nodeTypes = new ListSingleSelection<String>(
+					ModelUtils.getAvailableInteractionPartners(this.network));
+			String netSpecies = ModelUtils.getNetSpecies(this.network);
+			if (netSpecies != null) {
+				nodeTypes.setSelectedValue(netSpecies);
+			} else {
+				nodeTypes.setSelectedValue(ModelUtils.COMPOUND);
+			}
 		}
 	}
 
@@ -93,6 +99,12 @@ public class ExpandNetworkTask extends AbstractTask {
 	}
 
 	public void run(TaskMonitor monitor) {
+		// check if we have a network
+		if (network == null) {
+			monitor.showMessage(TaskMonitor.Level.WARN, "No network to expand");
+			return;
+		}
+		
 		// First see if we've got a view
 		if (netView == null) {
 			Collection<CyNetworkView> views = 
@@ -116,7 +128,7 @@ public class ExpandNetworkTask extends AbstractTask {
 		}
 		String selectedType = nodeTypes.getSelectedValue();
 		if (selectedType == null || selectedType.equals(ModelUtils.EMPTYLINE)) {
-			monitor.showMessage(TaskMonitor.Level.WARN, "No node type to extend by");
+			monitor.showMessage(TaskMonitor.Level.WARN, "No node type to expand by");
 			return;
 		}
 		// int taxonId = Species.getSpeciesTaxId(species);
@@ -133,6 +145,7 @@ public class ExpandNetworkTask extends AbstractTask {
 		if (additionalNodes > 0)
 			args.put("additional", Integer.toString(additionalNodes));
 		// String nodeType = nodeTypes.getSelectedValue().toLowerCase();
+		args.put("alpha", selectivityAlpha.getValue().toString());
 		String useDatabase = "";
 		if (selectedType.equals(ModelUtils.COMPOUND)) {
 			useDatabase = Databases.STITCH.getAPIName();
