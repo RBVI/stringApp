@@ -261,7 +261,7 @@ public class SearchOptionsPanel extends JPanel {
 		Font labelFont;
 		{
 			c.anchor("west").noExpand().insets(0,5,0,5);
-			JLabel additionalNodesLabel = new JLabel("Maximum number of interactors:");
+			JLabel additionalNodesLabel = new JLabel("Maximum additional interactors:");
 			labelFont = additionalNodesLabel.getFont();
 			additionalNodesLabel.setFont(new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()));
 			additionalNodesPanel.add(additionalNodesLabel, c);
