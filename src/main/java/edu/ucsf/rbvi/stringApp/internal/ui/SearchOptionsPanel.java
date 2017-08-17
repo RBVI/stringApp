@@ -102,8 +102,8 @@ public class SearchOptionsPanel extends JPanel {
 		add(additionalNodesSlider, c.down().expandBoth().insets(5,5,0,5));
 
 		// Add Query/Cancel buttons
-		JPanel buttonPanel =  createControlButtons(true);
-		add(buttonPanel, c.down().expandHoriz().insets(0,5,5,5));
+		// JPanel buttonPanel =  createControlButtons(true);
+		// add(buttonPanel, c.down().expandHoriz().insets(0,5,5,5));
 	}
 
 
@@ -129,6 +129,7 @@ public class SearchOptionsPanel extends JPanel {
 		c.noExpand().insets(0,5,0,5);
 		speciesPanel.add(speciesLabel, c);
 		speciesCombo = new JComboBox<Species>(speciesList.toArray(new Species[1]));
+		JComboBoxDecorator.decorate(speciesCombo, true, true); 
 
 		if (species == null) {
 			// Set Human as the default
