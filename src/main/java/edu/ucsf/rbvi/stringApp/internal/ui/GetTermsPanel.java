@@ -675,16 +675,13 @@ public class GetTermsPanel extends JPanel {
     @Override
     public void actionPerformed(ActionEvent e) {
 			// Start our task cascade
-    		int taxon = 0;
     		String speciesName = "";
     		if (!queryAddNodes) {
-				Species species = (Species)speciesCombo.getSelectedItem();
-				speciesName = species.getName();
-				taxon = species.getTaxId();
+				speciesName = (String)speciesCombo.getSelectedItem();
     		} else {
     			speciesName = (String)speciesPartnerCombo.getSelectedItem();
-    			taxon = Species.getSpeciesTaxId(speciesName);
     		}
+			int taxon = Species.getSpeciesTaxId(speciesName);
 			if (stringNetwork == null)
 				stringNetwork = new StringNetwork(manager);
 
