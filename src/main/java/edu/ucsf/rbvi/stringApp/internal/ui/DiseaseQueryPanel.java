@@ -90,7 +90,7 @@ public class DiseaseQueryPanel extends JPanel {
 
 	EntityIdentifier diseaseEntity = null;
 	List<EntityIdentifier> entityList;
-	Species species = null;
+	Species species = Species.getSpecies("Homo sapiens");
 
 	private boolean ignore = false;
 
@@ -108,32 +108,23 @@ public class DiseaseQueryPanel extends JPanel {
 		init();
 	}
 
+	public DiseaseQueryPanel(final StringManager manager, StringNetwork stringNetwork, String query) {
+		super(new GridBagLayout());
+		this.manager = manager;
+		this.stringNetwork = stringNetwork;
+		this.initialStringNetwork = stringNetwork;
+		init();
+		searchTerms.setText(query);
+	}
+
+	public void doImport() {
+		importButton.doClick();
+	}
+
 	private void init() {
 		// Create the surrounding panel
-		setPreferredSize(new Dimension(800,400));
+		setPreferredSize(new Dimension(800,600));
 		EasyGBC c = new EasyGBC();
-
-		// Create the species panel
-		List<Species> speciesList = Species.getSpecies();
-		if (speciesList == null) {
-			try {
-				speciesList = Species.readSpecies(manager);
-			} catch (Exception e) {
-				manager.error("Unable to get species: "+e.getMessage());
-				e.printStackTrace();
-				return;
-			}
-		}
-
-		// Set Human as the species
-		for (Species s: speciesList) {
-			if (s.toString().equals("Homo sapiens")) {
-				species = s;
-				break;
-			}
-		}
-		// JPanel speciesBox = createSpeciesComboBox(speciesList);
-		// add(speciesBox, c.expandHoriz().insets(0,5,0,5));
 
 		// Create the search list panel
 		mainSearchPanel = createSearchPanel();
@@ -154,7 +145,7 @@ public class DiseaseQueryPanel extends JPanel {
 
 	JPanel createSearchPanel() {
 		JPanel searchPanel = new JPanel(new GridBagLayout());
-		searchPanel.setPreferredSize(new Dimension(600,300));
+		searchPanel.setPreferredSize(new Dimension(600,400));
 		fillSearchPanel(searchPanel);
 		return searchPanel;
 	}
@@ -443,7 +434,7 @@ public class DiseaseQueryPanel extends JPanel {
 		cancel();
 	}
 
-	void createResolutionPanel() {
+	public void createResolutionPanel() {
 		mainSearchPanel.removeAll();
 		revalidate();
 		mainSearchPanel.setLayout(new GridBagLayout());
@@ -506,14 +497,14 @@ public class DiseaseQueryPanel extends JPanel {
 			if (stringNetwork == null)
 				stringNetwork = new StringNetwork(manager);
 
-			int taxon = species.getTaxId();
+			int taxon = species.getTaxId(); // Only supported for human right now;
 			String terms = searchTerms.getText();
 			if (terms == null || terms.length() == 0) {
 				JOptionPane.showMessageDialog(null, "No terms were entered -- nothing to search for",
 							                        "Nothing entered", JOptionPane.ERROR_MESSAGE); 
 				return;
 			}
-			manager.info("Getting diesease identifiers for "+species.getName()+"terms: "+terms);
+			manager.info("Getting disease identifiers for terms: "+terms);
 
 			// Launch a task to get the annotations. 
 			manager.execute(new TaskIterator(new GetDiseaseTermsTask(manager, taxon, terms)), this);

@@ -11,6 +11,7 @@ import static org.cytoscape.work.ServiceProperties.INSERT_SEPARATOR_BEFORE;
 import java.util.Properties;
 
 import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.application.swing.search.NetworkSearchTaskFactory;
 import org.cytoscape.model.events.NetworkAddedListener;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.service.util.CyServiceRegistrar;
@@ -26,17 +27,21 @@ import org.osgi.framework.ServiceReference;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.tasks.AddTermsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeConfidenceTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.DiseaseSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExpandNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetNetworkTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.FindProteinsTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.OpenEvidenceTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.PubmedSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.SetConfidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.SetLabelAttributeTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.StitchSearchTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.StringSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.VersionTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.ui.DiseaseNetworkWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.ui.StitchWebServiceClient;
@@ -139,6 +144,15 @@ public class CyActivator extends AbstractCyActivator {
 			expandProps.setProperty(COMMAND, "expand");
 			registerService(bc, expandFactory, TaskFactory.class, expandProps);
 		}
+
+    {
+      GetNetworkTaskFactory getNetwork = new GetNetworkTaskFactory(manager, "compound");
+      Properties props = new Properties();
+      props.setProperty(COMMAND_NAMESPACE, "string");
+      props.setProperty(COMMAND, "compound query");
+      registerService(bc, getNetwork, TaskFactory.class, props);
+    }
+
 
 		{
 			VersionTaskFactory versionFactory = new VersionTaskFactory(version);
@@ -297,6 +311,28 @@ public class CyActivator extends AbstractCyActivator {
 			Properties stringProps = new Properties();
 			registerService(bc, stringLookFactory, CyCustomGraphicsFactory.class, stringProps);
 		}
+
+		    // Register our Network search factories
+    {
+      StringSearchTaskFactory stringSearch = new StringSearchTaskFactory(manager);
+      Properties propsSearch = new Properties();
+      registerService(bc, stringSearch, NetworkSearchTaskFactory.class, propsSearch);
+    }
+    {
+      StitchSearchTaskFactory stringSearch = new StitchSearchTaskFactory(manager);
+      Properties propsSearch = new Properties();
+      registerService(bc, stringSearch, NetworkSearchTaskFactory.class, propsSearch);
+    }
+    {
+      PubmedSearchTaskFactory stringSearch = new PubmedSearchTaskFactory(manager);
+      Properties propsSearch = new Properties();
+      registerService(bc, stringSearch, NetworkSearchTaskFactory.class, propsSearch);
+    }
+    {
+      DiseaseSearchTaskFactory stringSearch = new DiseaseSearchTaskFactory(manager);
+      Properties propsSearch = new Properties();
+      registerService(bc, stringSearch, NetworkSearchTaskFactory.class, propsSearch);
+    }
 
 		manager.info("String APP initialized");
 	}
