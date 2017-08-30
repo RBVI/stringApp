@@ -129,7 +129,10 @@ public class SearchOptionsPanel extends JPanel {
 		c.noExpand().insets(0,5,0,5);
 		speciesPanel.add(speciesLabel, c);
 		speciesCombo = new JComboBox<Species>(speciesList.toArray(new Species[1]));
+<<<<<<< 9ed17f9ea80e5c0f192cfb245e5ce99de12c832b
 		JComboBoxDecorator.decorate(speciesCombo, true, true); 
+=======
+>>>>>>> Merge from master
 
 		if (species == null) {
 			// Set Human as the default
@@ -262,7 +265,11 @@ public class SearchOptionsPanel extends JPanel {
 		Font labelFont;
 		{
 			c.anchor("west").noExpand().insets(0,5,0,5);
+<<<<<<< 9ed17f9ea80e5c0f192cfb245e5ce99de12c832b
 			JLabel additionalNodesLabel = new JLabel("Maximum additional interactors:");
+=======
+			JLabel additionalNodesLabel = new JLabel("Maximum number of interactors:");
+>>>>>>> Merge from master
 			labelFont = additionalNodesLabel.getFont();
 			additionalNodesLabel.setFont(new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()));
 			additionalNodesPanel.add(additionalNodesLabel, c);

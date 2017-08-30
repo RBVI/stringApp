@@ -112,6 +112,14 @@ public class Species implements Comparable<Species> {
 		return allSpecies;
 	}
 
+	public static Species getSpecies(String speciesName) {
+		for (Species s: allSpecies) {
+			if (s.getName().equalsIgnoreCase(speciesName))
+				return s;
+		}
+		return null;
+	}
+
 	public static List<String> getSpeciesPartners(String speciesName) {
 		List<String> partners = new ArrayList<String>();
 		for (Species sp : allSpecies) {
