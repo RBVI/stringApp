@@ -677,7 +677,7 @@ public class GetTermsPanel extends JPanel {
 			// Start our task cascade
     		String speciesName = "";
     		if (!queryAddNodes) {
-				speciesName = (String)speciesCombo.getSelectedItem();
+				speciesName = speciesCombo.getSelectedItem().toString();
     		} else {
     			speciesName = (String)speciesPartnerCombo.getSelectedItem();
     		}

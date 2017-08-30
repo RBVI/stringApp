@@ -50,6 +50,7 @@ public class ModelUtils {
 
 	// Node information
 	public static String CANONICAL = "canonical name";
+	public static String DISPLAY = "display name";
 	public static String CV_STYLE = "chemViz Passthrough";
 	public static String ELABEL_STYLE = "enhancedLabel Passthrough";
 	public static String ID = "@id";
@@ -377,6 +378,7 @@ public class ModelUtils {
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, ID);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, SPECIES);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STRINGID);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, DISPLAY);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STYLE);
 		createColumnIfNeeded(network.getDefaultNodeTable(), Integer.class, TM_FOREGROUND);
 		createColumnIfNeeded(network.getDefaultNodeTable(), Integer.class, TM_BACKGROUND);
@@ -396,7 +398,8 @@ public class ModelUtils {
 			CyNode newNode = network.addNode();
 			CyRow row = network.getRow(newNode);
 			row.set(ID, "stringdb:" + species.getTaxId() + "." + stringid.toString());
-			row.set(CyNetwork.NAME, name);
+			row.set(CyNetwork.NAME, species.getTaxId() + "." + stringid.toString());
+			row.set(DISPLAY, name);
 			row.set(SPECIES, species.getName());
 			row.set(STRINGID, species.getTaxId() + "." + stringid.toString());
 			row.set(STYLE, "string:");
@@ -415,6 +418,7 @@ public class ModelUtils {
 		
 		List<CyNode> newNodes = new ArrayList<>();
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, CANONICAL);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, DISPLAY);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STRINGID);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, DESCRIPTION);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, ID);
@@ -565,8 +569,9 @@ public class ModelUtils {
 		CyNode newNode = network.addNode();
 		CyRow row = network.getRow(newNode);
 
-		row.set(CyNetwork.NAME, name);
-		row.set(CyRootNetwork.SHARED_NAME, stringId);
+		row.set(CyNetwork.NAME, stringId);
+		// row.set(CyRootNetwork.SHARED_NAME, stringId);
+		row.set(DISPLAY, name);
 		row.set(STRINGID, stringId);
 		row.set(ID, id);
 		row.set(NAMESPACE, namespace);
@@ -591,7 +596,9 @@ public class ModelUtils {
 		for (Object objKey : nodeObj.keySet()) {
 			String key = (String) objKey;
 			// Look for our "special" columns
-			if (key.equals("description")) {
+			if (key.equals("name")) {
+				continue;
+			} else if (key.equals("description")) {
 				row.set(DESCRIPTION, (String) nodeObj.get("description"));
 			} else if (key.equals("canonical")) {
 				row.set(CANONICAL, (String) nodeObj.get("canonical"));
@@ -627,7 +634,7 @@ public class ModelUtils {
 			}
 			{
 				// Construct instructions for enhanced graphics label
-				String enhancedLabel = "label: attribute=name labelsize=12 ";
+				String enhancedLabel = "label: attribute=\"display name\" labelsize=12 ";
 				if (type.equals("protein"))
 					enhancedLabel += "labelAlignment=left ";
 				else

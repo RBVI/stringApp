@@ -345,7 +345,7 @@ public class ViewUtils {
 
 			{
 				PassthroughMapping pMapping = (PassthroughMapping) passthroughFactory
-						.createVisualMappingFunction("Name", String.class,
+						.createVisualMappingFunction(ModelUtils.DISPLAY, String.class,
 								BasicVisualLexicon.NODE_LABEL);
 				stringStyle.addVisualMappingFunction(pMapping);
 			}
