@@ -29,6 +29,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -138,9 +139,13 @@ public class HttpUtils {
 
 			// and ensure it is fully consumed
 			EntityUtils.consume(entity1);
-		} catch (Exception e) {
+		} catch (ParseException pex) {
+			pex.printStackTrace();
+			manager.error("Unable to parse JSON from server.");
+			return null;
+	 	} catch (Exception e) {
 			e.printStackTrace();
-			manager.error("Unable to parse JSON from server: " + e.getMessage());
+			manager.error("Unexpected error when parsing JSON from server: " + e.getMessage());
 			return null;
 		} finally {
 			try {

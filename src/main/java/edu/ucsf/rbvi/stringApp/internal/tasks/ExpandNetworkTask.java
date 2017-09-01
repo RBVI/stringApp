@@ -55,8 +55,8 @@ public class ExpandNetworkTask extends AbstractTask {
 	@Tunable (description="Selectivity of interactors", params="slider=true", gravity=3.0)
 	public BoundedDouble selectivityAlpha = new BoundedDouble(0.0, 0.5, 1.0, false, false);
 
-	@Tunable (description="Relayout network?", gravity=4.0)
-	public boolean relayout = false;
+	// @Tunable (description="Layout new nodes?", gravity=4.0)
+	// public boolean relayout = true;
 
 	//@Tunable (description="Expand from database", gravity=3.0, groups = "Advanced options", params = "displayState=collapsed")
 	//public ListSingleSelection<String> databases = new ListSingleSelection<String>("string", "stitch");
@@ -193,11 +193,11 @@ public class ExpandNetworkTask extends AbstractTask {
 			ViewUtils.updateNodeColorsHost(manager, network, netView);
 		}
 		// System.out.println("Done");
-		if (netView != null && relayout) {
+		if (netView != null) {
 			monitor.setStatusMessage("Updating layout");
-			layoutAll();
+			// layoutAll();
 			// experimental, layout only the new nodes
-			// layoutSelectedOnly(newNodes);
+			layoutSelectedOnly(newNodes);
 		}
 	}
 
@@ -215,6 +215,24 @@ public class ExpandNetworkTask extends AbstractTask {
 	
 
 	private void layoutSelectedOnly(List<CyNode> nodesToLayout) {
+		Set<View<CyNode>> nodeViews = new HashSet<>();
+		for (View<CyNode> nodeView : netView.getNodeViews()) {
+			if (nodesToLayout.contains(nodeView.getModel())) {
+				nodeViews.add(nodeView);
+			}
+		}
+		// get layout and set attributes
+		CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");
+		Object context = alg.createLayoutContext();
+		TunableSetter setter = manager.getService(TunableSetter.class);
+		Map<String, Object> layoutArgs = new HashMap<>();
+		layoutArgs.put("defaultNodeMass", 5.0);
+		layoutArgs.put("selectedOnly", true);
+		setter.applyTunables(context, layoutArgs);
+		insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, "score"));
+	}
+
+	private void layoutSelectedCircular(List<CyNode> nodesToLayout) {
 		final VisualProperty<Double> xLoc = BasicVisualLexicon.NODE_X_LOCATION;
 		final VisualProperty<Double> yLoc = BasicVisualLexicon.NODE_Y_LOCATION;
 		Set<Double> xPos = new HashSet<Double>();
@@ -235,7 +253,7 @@ public class ExpandNetworkTask extends AbstractTask {
 		int spacing = (int)Math.max(xSpan, ySpan)/4;
 		// System.out.println(spacing);
 		// get layout and set attributes
-		CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("attribute-circle");
+		CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("circular");
 		Object context = alg.createLayoutContext();
 		TunableSetter setter = manager.getService(TunableSetter.class);
 		Map<String, Object> layoutArgs = new HashMap<>();
