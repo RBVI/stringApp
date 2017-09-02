@@ -2,8 +2,10 @@ package edu.ucsf.rbvi.stringApp.internal;
 
 import static org.cytoscape.work.ServiceProperties.COMMAND;
 import static org.cytoscape.work.ServiceProperties.COMMAND_DESCRIPTION;
+import static org.cytoscape.work.ServiceProperties.COMMAND_EXAMPLE_JSON;
 import static org.cytoscape.work.ServiceProperties.COMMAND_LONG_DESCRIPTION;
 import static org.cytoscape.work.ServiceProperties.COMMAND_NAMESPACE;
+import static org.cytoscape.work.ServiceProperties.COMMAND_SUPPORTS_JSON;
 import static org.cytoscape.work.ServiceProperties.IN_MENU_BAR;
 import static org.cytoscape.work.ServiceProperties.MENU_GRAVITY;
 import static org.cytoscape.work.ServiceProperties.PREFERRED_MENU;
@@ -55,6 +57,8 @@ import edu.ucsf.rbvi.stringApp.internal.view.StringLayer;
 
 // TODO: [Optional] Improve non-gui mode
 public class CyActivator extends AbstractCyActivator {
+	String JSON_EXAMPLE = "{\"SUID\":1234}";
+
 	public CyActivator() {
 		super();
 	}
@@ -131,6 +135,9 @@ public class CyActivator extends AbstractCyActivator {
 												"of organisms, and transfers information between these "+
 												"organisms where applicable. The database currently covers "+
 												"9,643,763 proteins from 2,031 organisms.");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+    	props.setProperty(COMMAND_EXAMPLE_JSON, JSON_EXAMPLE);
+
 			registerService(bc, getNetwork, TaskFactory.class, props);
 		}
 
@@ -156,6 +163,8 @@ public class CyActivator extends AbstractCyActivator {
 												"for a large number of organisms, and transfers information between "+
 												"these organisms where applicable. The database currently covers 9,643,763 "+
 												"proteins from 2,031 organisms.");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+    	props.setProperty(COMMAND_EXAMPLE_JSON, JSON_EXAMPLE);
 			registerService(bc, getNetwork, TaskFactory.class, props);
 		}
 		
@@ -181,14 +190,8 @@ public class CyActivator extends AbstractCyActivator {
 												"for a large number of organisms, and transfers information between "+
 												"these organisms where applicable. The database currently covers 9,643,763 "+
 												"proteins from 2,031 organisms.");
-			registerService(bc, getNetwork, TaskFactory.class, props);
-		}
-		
-		{
-			GetNetworkTaskFactory getNetwork = new GetNetworkTaskFactory(manager, "compound");
-			Properties props = new Properties();
-			props.setProperty(COMMAND_NAMESPACE, "string");
-			props.setProperty(COMMAND, "compound query");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+    	props.setProperty(COMMAND_EXAMPLE_JSON, JSON_EXAMPLE);
 			registerService(bc, getNetwork, TaskFactory.class, props);
 		}
 		
@@ -217,6 +220,8 @@ public class CyActivator extends AbstractCyActivator {
 												"STITCH contains interactions for between 300,000 "+
 												"small molecules and 2.6 million proteins from 1133 "+
 												"organisms.");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+    	props.setProperty(COMMAND_EXAMPLE_JSON, JSON_EXAMPLE);
       registerService(bc, getNetwork, TaskFactory.class, props);
     }
 
@@ -226,6 +231,10 @@ public class CyActivator extends AbstractCyActivator {
 			Properties versionProps = new Properties();
 			versionProps.setProperty(COMMAND_NAMESPACE, "string");
 			versionProps.setProperty(COMMAND, "version");
+			versionProps.setProperty(COMMAND_DESCRIPTION, 
+										           "Returns the version of StringApp");
+			versionProps.setProperty(COMMAND_SUPPORTS_JSON, "true");
+    	versionProps.setProperty(COMMAND_EXAMPLE_JSON, "{\"version\":\"2.1.0\"}");
 			registerService(bc, versionFactory, TaskFactory.class, versionProps);
 		}
 

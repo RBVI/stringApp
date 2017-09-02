@@ -11,7 +11,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.CyNetworkJSONResult;
 public class StringResults {
 	@SuppressWarnings("unchecked")
 	public static <R> R getResults(Class<? extends R> clzz, CyNetwork loadedNetwork) {
-		System.out.println("Getresults called with "+clzz+" and "+loadedNetwork);
+		// System.out.println("Getresults called with "+clzz+" and "+loadedNetwork);
 		// Return the network we created
 		if (clzz.equals(CyNetwork.class)) {
 			return (R) loadedNetwork;
@@ -21,7 +21,7 @@ public class StringResults {
 			return (R) loadedNetwork.getSUID();
 		// We need to use the actual class rather than the interface so that
 		// CyREST can inspect it to find the annotations
-		} else if (clzz.isAssignableFrom(CyNetworkJSONResult.class)) {
+		} else if (clzz.equals(JSONResult.class)) {
 			return (R) new CyNetworkJSONResult(loadedNetwork);
 		} else if (clzz.equals(String.class)) {
 			if (loadedNetwork == null)
@@ -36,7 +36,7 @@ public class StringResults {
 	}
 
 	public static List<Class<?>> getResultClasses() {
-		return Arrays.asList(CyNetworkJSONResult.class, String.class, Long.class, CyNetwork.class);
+		return Arrays.asList(JSONResult.class, String.class, Long.class, CyNetwork.class);
 	}
 
 }
