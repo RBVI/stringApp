@@ -46,7 +46,7 @@ public class Annotation {
 
 		// If we switch the API back to use a start of 0, this will need to change
 		int queryIndexStart = 0;
-		if (version == null || version == 1)
+		if (version != null && version == 1)
 			queryIndexStart = -1;
 
 		for (Object annObject: annotationArray) {
