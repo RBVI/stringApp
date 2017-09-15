@@ -45,7 +45,7 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 	public int taxonID = -1;
 
 	@Tunable(description = "Number of proteins")
-	public BoundedInteger limit = new BoundedInteger(1, 10, 10000, false, false);
+	public BoundedInteger limit = new BoundedInteger(0, 10, 10000, false, false);
 
 	@Tunable(description = "Confidence cutoff")
 	public BoundedDouble cutoff = new BoundedDouble(0.0, 0.4, 1.0, false, false);

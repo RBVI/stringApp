@@ -46,13 +46,17 @@ public class ExpandNetworkTask extends AbstractTask {
 	@Tunable (description="Network to expand", context="nogui")
 	public CyNetwork network;
 
-	@Tunable (description="Number of nodes to expand network by", gravity=1.0)
+	@Tunable (description="Number of interactors to expand network by", tooltip="", gravity=1.0)
 	public int additionalNodes = 10;
 
-	@Tunable (description="Type of nodes to expand network by", gravity=2.0)
+	@Tunable (description="Type of interactors to expand network by", gravity=2.0)
 	public ListSingleSelection<String> nodeTypes = new ListSingleSelection<String>();
 	
-	@Tunable (description="Selectivity of interactors", params="slider=true", gravity=3.0)
+	@Tunable (description="Selectivity of interactors", tooltip="<html>"
+			+ "High selectivity results in the expansion by new interactors <br />"
+			+ "that have high interaction score *only* with the node(s) in the <br />"
+			+ "network compared to all other nodes in the same organism, while <br />"
+			+ "low selectivity neglects interactions outside the current network.</html>", params="slider=true", gravity=3.0)
 	public BoundedDouble selectivityAlpha = new BoundedDouble(0.0, 0.5, 1.0, false, false);
 
 	// @Tunable (description="Layout new nodes?", gravity=4.0)

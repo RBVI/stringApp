@@ -1,5 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
+import java.util.List;
+
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.task.AbstractNetworkTaskFactory;
 import org.cytoscape.task.NetworkViewTaskFactory;
@@ -20,7 +22,13 @@ public class GetEnrichmentTaskFactory extends AbstractNetworkTaskFactory
 	}
 
 	public boolean isReady(CyNetwork network) {
-		return ModelUtils.isStringNetwork(network);
+		if (ModelUtils.isStringNetwork(network)) {
+			List<String> netSpecies = ModelUtils.getNetworkSpeciesTaxons(network);
+			if (netSpecies.size() == 1) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public TaskIterator createTaskIterator(CyNetwork network) {
@@ -28,11 +36,18 @@ public class GetEnrichmentTaskFactory extends AbstractNetworkTaskFactory
 	}
 
 	public boolean isReady(CyNetworkView netView) {
-		return ModelUtils.isStringNetwork(netView.getModel());
+		if (ModelUtils.isStringNetwork(netView.getModel())) {
+			List<String> netSpecies = ModelUtils.getNetworkSpeciesTaxons(netView.getModel());
+			if (netSpecies.size() == 1) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public TaskIterator createTaskIterator(CyNetworkView netView) {
-		return new TaskIterator(new GetEnrichmentTask(manager, netView.getModel(), netView, showFactory));
+		return new TaskIterator(
+				new GetEnrichmentTask(manager, netView.getModel(), netView, showFactory));
 	}
 
 	public void setShowEnrichmentPanelFactory(ShowEnrichmentPanelTaskFactory showFactory) {
