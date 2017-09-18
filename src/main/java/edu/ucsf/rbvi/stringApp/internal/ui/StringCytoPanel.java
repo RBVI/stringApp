@@ -131,7 +131,7 @@ public class StringCytoPanel extends JPanel
 				// Get the node
 				CyNode node = network.getNode(r.getRow().get(CyNetwork.SUID, Long.class));
 				if (node == null) continue;
-				String name = ModelUtils.getName(network, node);
+				String name = ModelUtils.getDisplayName(network, node);
 				if ((Boolean)r.getValue() == Boolean.FALSE) {
 					selectedNodes.remove(node);
 				} else {
