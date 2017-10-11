@@ -1,6 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.utils;
 
 import java.awt.Color;
+import java.awt.color.ICC_ColorSpace;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -51,6 +52,7 @@ public class ModelUtils {
 	// Node information
 	public static String CANONICAL = "canonical name";
 	public static String DISPLAY = "display name";
+	public static String FULLNAME = "full name";
 	public static String CV_STYLE = "chemViz Passthrough";
 	public static String ELABEL_STYLE = "enhancedLabel Passthrough";
 	public static String ID = "@id";
@@ -72,7 +74,11 @@ public class ModelUtils {
 	public static int NDOCUMENTS = 50;
 	public static int NEXPERIMENTS = 50;
 	public static int NKNOWLEDGE = 50;
-
+	
+	public static int MAX_SHORT_NAME_LENGTH = 15; // 15 characters, or 14 characters plus the dot
+	public static int SECOND_SEGMENT_LENGTH = 3;
+	public static int FIRST_SEGMENT_LENGTH = MAX_SHORT_NAME_LENGTH - SECOND_SEGMENT_LENGTH - 2;
+	
 	//public static Pattern cidmPattern = Pattern.compile("\\(CIDm\\)0*");
 	public static Pattern cidmPattern = Pattern.compile("CIDm0*");
 	// public static String DISEASEINFO =
@@ -379,6 +385,7 @@ public class ModelUtils {
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, SPECIES);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STRINGID);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, DISPLAY);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, FULLNAME);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STYLE);
 		createColumnIfNeeded(network.getDefaultNodeTable(), Integer.class, TM_FOREGROUND);
 		createColumnIfNeeded(network.getDefaultNodeTable(), Integer.class, TM_BACKGROUND);
@@ -408,6 +415,7 @@ public class ModelUtils {
 			row.set(TM_SCORE, score);
 			nodes.add(newNode);
 		}
+		shortenCompoundNames(network, nodes);
 		return nodes;
 	}
 
@@ -419,6 +427,7 @@ public class ModelUtils {
 		List<CyNode> newNodes = new ArrayList<>();
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, CANONICAL);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, DISPLAY);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, FULLNAME);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STRINGID);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, DESCRIPTION);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, ID);
@@ -453,7 +462,8 @@ public class ModelUtils {
 				}
 			}
 		}
-
+		shortenCompoundNames(network, newNodes);
+		
 		// Get the edges
 		JSONArray edges = (JSONArray) json.get("edges");
 		if (edges != null && edges.size() > 0) {
@@ -755,6 +765,10 @@ public class ModelUtils {
 		return getString(network, ident, CyNetwork.NAME);
 	}
 
+	public static String getDisplayName(CyNetwork network, CyIdentifiable ident) {
+		return getString(network, ident, DISPLAY);
+	}
+
 	public static String getString(CyNetwork network, CyIdentifiable ident, String column) {
 		if (network.getRow(ident) != null)
 			return network.getRow(ident).get(column, String.class);
@@ -807,6 +821,74 @@ public class ModelUtils {
 	}	
 
 	
+	public static void shortenCompoundNames(CyNetwork network, List<CyNode> nodes) {
+		HashMap<String, List<CyNode>> shortNames = new HashMap<String, List<CyNode>>();
+		for (CyNode node : nodes) {
+			// get a dictionary of short names to nodes
+			if (isCompound(network, node)) {
+				String name = getDisplayName(network, node);
+				if (name == null || name.length() <= MAX_SHORT_NAME_LENGTH) {
+					continue;
+				}
+				String shortName = name.substring(0, MAX_SHORT_NAME_LENGTH);
+				List<CyNode> nameNodes = new ArrayList<CyNode>();
+				if (shortNames.containsKey(shortName)) {
+					nameNodes = shortNames.get(shortName);
+				}
+				nameNodes.add(node);
+				shortNames.put(shortName, nameNodes);
+			}
+		}
+		// System.out.println(shortNames);
+		for (String nameKey : shortNames.keySet()) {
+			List<CyNode> nodesWithName = shortNames.get(nameKey);
+			// if only one node with this short name, just use it
+			if (nodesWithName.size() == 1) {
+				String shortName = nameKey.substring(0,  MAX_SHORT_NAME_LENGTH - 1) + ".";
+				CyRow row = network.getRow(nodesWithName.get(0));
+				row.set(FULLNAME, row.get(DISPLAY, String.class));
+				row.set(DISPLAY, shortName);
+			} else {
+			// else try to find another combination 
+			// TODO: work in progress
+				HashMap<String, CyNode> fullNames = new HashMap<String, CyNode>();
+				for (CyNode node : nodesWithName) {
+					fullNames.put(getDisplayName(network, node), node);
+				}
+				int i = MAX_SHORT_NAME_LENGTH - 1; // 14
+				HashMap<String, CyNode> letters = new HashMap<String, CyNode>();
+				boolean found = false;
+				for (String fullName : fullNames.keySet()) {
+					if (i + SECOND_SEGMENT_LENGTH < fullName.length()) {
+						String letter = fullName.substring(i, i + SECOND_SEGMENT_LENGTH);
+						if (letters.containsKey(letter)) {
+							letters.put(letter, null);
+						} else {
+							letters.put(letter, fullNames.get(fullName));
+						}
+					} else {
+						// # We have run out of letters for this name. Remove this name, and start
+						// collecting letters again.
+						// # Heuristic: Hopefully, there is only one name that is non-unique until
+						// its end
+						String shortName = fullName.substring(0, MAX_SHORT_NAME_LENGTH);
+						if (fullName.length() > MAX_SHORT_NAME_LENGTH) {
+							shortName = shortName.substring(0, shortName.length() - 2) + ".";
+						}
+						// store_short_name(short_names, cid, short_name)
+						CyRow row = network.getRow(fullNames.get(fullName));
+						row.set(FULLNAME, row.get(DISPLAY, String.class));
+						row.set(DISPLAY, shortName);
+						// del full_names[cid]
+						found = true;
+						break;
+					}
+				}
+				
+			}
+		}
+	}
+	
 	public static <T> T getResultsFromJSON(JSONObject json, Class<? extends T> clazz) {
 		if (json == null || !json.containsKey(StringManager.RESULT))
 			return null;
@@ -834,8 +916,8 @@ public class ModelUtils {
 					&& current.getColumn(EnrichmentTerm.colNetworkSUID) != null
 					&& current.getAllRows().size() > 0) {
 				CyRow tempRow = current.getAllRows().get(0);
-				if (tempRow.get(EnrichmentTerm.colNetworkSUID, Long.class)
-						.equals(network.getSUID())) {
+				if (tempRow.get(EnrichmentTerm.colNetworkSUID, Long.class) != null && tempRow
+						.get(EnrichmentTerm.colNetworkSUID, Long.class).equals(network.getSUID())) {
 					netTables.add(current);
 				}
 			}
