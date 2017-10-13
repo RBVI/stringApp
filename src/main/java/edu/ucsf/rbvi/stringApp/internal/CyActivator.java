@@ -27,6 +27,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.tasks.AddTermsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeConfidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExpandNetworkTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetNetworkTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.FindProteinsTaskFactory;
@@ -215,6 +216,16 @@ public class CyActivator extends AbstractCyActivator {
 		}
 
 		
+		{
+			ExportEnrichmentTaskFactory exportEnrichment = new ExportEnrichmentTaskFactory(manager);
+			Properties props = new Properties();
+			props.setProperty(PREFERRED_MENU, "File.Export");
+			props.setProperty(TITLE, "STRING Enrichment");
+			props.setProperty(MENU_GRAVITY, "4.0");
+			props.setProperty(IN_MENU_BAR, "true");
+			registerService(bc, exportEnrichment, NetworkTaskFactory.class, props);
+		}
+
 		GetEnrichmentTaskFactory getEnrichment = new GetEnrichmentTaskFactory(manager);
 		Properties propsEnrichment = new Properties();
 		propsEnrichment.setProperty(PREFERRED_MENU, "Apps.STRING");
