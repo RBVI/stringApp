@@ -56,7 +56,7 @@ public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 	         longDescription="The maximum number of proteins and compounds "+
 					                 "to return in addition to the query set",
 					 exampleStringValue="100")
-	public BoundedInteger limit = new BoundedInteger(1, 10, 10000, false, false);
+	public BoundedInteger limit = new BoundedInteger(0, 10, 10000, false, false);
 
 	@Tunable(description = "Confidence cutoff",
 	         longDescription="The confidence score reflects the cumulated evidence that this "+
