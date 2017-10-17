@@ -82,6 +82,7 @@ public class ExportEnrichmentTask extends AbstractTask {
 		for (CyTable table : enrichmentTables) {
 			enrichmentTableNames.add(table.getTitle());
 		}
+		Collections.sort(enrichmentTableNames);
 		availableTables = new ListMultipleSelection<>(enrichmentTableNames);
 		if (enrichmentTableNames.size() > 0)
 			availableTables.setSelectedValues(Collections.singletonList(enrichmentTableNames.get(0)));
