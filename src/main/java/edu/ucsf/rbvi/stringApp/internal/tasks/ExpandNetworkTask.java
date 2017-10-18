@@ -187,6 +187,7 @@ public class ExpandNetworkTask extends AbstractTask {
 			return;
 		}
 		monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
+		manager.flushEvents();
 
 		// If we have a view, re-apply the style and layout
 		monitor.setStatusMessage("Updating style");

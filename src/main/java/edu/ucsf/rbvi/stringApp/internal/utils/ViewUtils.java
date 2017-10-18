@@ -69,7 +69,7 @@ public class ViewUtils {
 
 	public static void updateNodeStyle(StringManager manager, 
 	                                   CyNetworkView view, List<CyNode> nodes) {
-		manager.flushEvents();
+		// manager.flushEvents();
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
 		VisualStyle style = vmm.getVisualStyle(view);
 		for (CyNode node: nodes) {
@@ -79,7 +79,7 @@ public class ViewUtils {
 	}
 
 	public static void updateEdgeStyle(StringManager manager, CyNetworkView view, List<CyEdge> edges) {
-		manager.flushEvents();
+		// manager.flushEvents();
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
 		VisualStyle style = vmm.getVisualStyle(view);
 		for (CyEdge edge: edges) {
@@ -443,7 +443,7 @@ public class ViewUtils {
 	
 	public static void updateNodeColorsHost(StringManager manager, 
 	                                        CyNetwork net, CyNetworkView view) {
-		manager.flushEvents();
+		// manager.flushEvents();
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
 		VisualMappingFunctionFactory discreteFactory = manager
 				.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
