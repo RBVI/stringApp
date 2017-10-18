@@ -35,7 +35,7 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 
-	@Tunable(description = "Protein query", required = true)
+	@Tunable(description = "Protein ", required = true)
 	public String query = null;
 
 	@Tunable(description = "Species", context = "nogui")
@@ -44,7 +44,7 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 	@Tunable (description="Taxon ID", context="nogui")
 	public int taxonID = -1;
 
-	@Tunable(description = "Number of proteins")
+	@Tunable(description = "Maximum additional interactors")
 	public BoundedInteger limit = new BoundedInteger(0, 10, 10000, false, false);
 
 	@Tunable(description = "Confidence cutoff")
@@ -78,7 +78,7 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 			}
 		}
 		if (sp == null) {
-			monitor.showMessage(TaskMonitor.Level.ERROR, "Unknown or missing species");
+			monitor.showMessage(TaskMonitor.Level.ERROR, "Unknown or missing species or NCBI taxon ID");
 			return;
 		}
 

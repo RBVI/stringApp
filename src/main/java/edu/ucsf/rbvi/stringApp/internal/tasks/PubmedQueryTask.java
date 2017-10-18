@@ -43,8 +43,8 @@ public class PubmedQueryTask extends AbstractTask implements ObservableTask {
 	@Tunable (description="Taxon ID", context="nogui")
 	public int taxonID = -1;
 
-	@Tunable (description="Number of proteins")
-	public BoundedInteger limit = new BoundedInteger(1, 10, 10000, false, false);
+	@Tunable (description="Maximum number of proteins")
+	public BoundedInteger limit = new BoundedInteger(0, 100, 10000, false, false);
 
 	@Tunable (description="Confidence cutoff")
 	public BoundedDouble cutoff = new BoundedDouble(0.0, 0.4, 1.0, false, false);

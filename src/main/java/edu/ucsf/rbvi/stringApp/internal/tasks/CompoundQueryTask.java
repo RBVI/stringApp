@@ -35,7 +35,7 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 
-	@Tunable(description = "Compound or protein query", required = true)
+	@Tunable(description = "Compound or protein names or identifiers", required = true)
 	public String query = null;
 
 	@Tunable(description = "Species", context = "nogui")
@@ -44,8 +44,8 @@ public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 	@Tunable (description="Taxon ID", context="nogui")
 	public int taxonID = -1;
 
-	@Tunable(description = "Number of interaction")
-	public BoundedInteger limit = new BoundedInteger(1, 10, 10000, false, false);
+	@Tunable(description = "Maximum additional interactors")
+	public BoundedInteger limit = new BoundedInteger(0, 10, 10000, false, false);
 
 	@Tunable(description = "Confidence cutoff")
 	public BoundedDouble cutoff = new BoundedDouble(0.0, 0.4, 1.0, false, false);
