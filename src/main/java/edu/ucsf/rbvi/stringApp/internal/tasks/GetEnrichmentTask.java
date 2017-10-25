@@ -307,7 +307,7 @@ public class GetEnrichmentTask extends AbstractTask {
 		Set<CyTable> oldTables = ModelUtils.getEnrichmentTables(manager, network);
 		for (CyTable table : oldTables) {
 			tableManager.deleteTable(table.getSUID());
-			eventHelper.flushPayloadEvents();
+			manager.flushEvents();
 		}
 	}
 

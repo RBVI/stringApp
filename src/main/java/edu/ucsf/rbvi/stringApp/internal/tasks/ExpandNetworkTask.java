@@ -187,7 +187,6 @@ public class ExpandNetworkTask extends AbstractTask {
 			return;
 		}
 		monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
-		manager.flushEvents();
 
 		// If we have a view, re-apply the style and layout
 		monitor.setStatusMessage("Updating style");
@@ -199,6 +198,7 @@ public class ExpandNetworkTask extends AbstractTask {
 		}
 		// System.out.println("Done");
 		if (netView != null) {
+			netView.updateView();
 			monitor.setStatusMessage("Updating layout");
 			// layoutAll();
 			// experimental, layout only the new nodes
