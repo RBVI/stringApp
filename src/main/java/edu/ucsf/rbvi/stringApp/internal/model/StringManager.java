@@ -253,6 +253,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	}
 
 	public void handleEvent(SessionLoadedEvent arg0) {
+		if (labelsTaskFactory == null || imagesTaskFactory == null) return;
+
 		String sessionValueLabels = ModelUtils.getStringProperty(this,
 				ModelUtils.showEnhancedLabelsFlag, SavePolicy.SESSION_FILE);
 		// System.out.println("show labels: " + sessionValueLabels);
