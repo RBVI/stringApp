@@ -73,21 +73,28 @@ public class SearchOptionsPanel extends JPanel {
 	NumberFormat formatter = new DecimalFormat("#0.00");
 	NumberFormat intFormatter = new DecimalFormat("#0");
 	private boolean ignore = false;
+	private final boolean isDisease;
 	private String netSpecies = "Homo sapiens";
 
 	private Species species = null;
 	private int additionalNodes = 10;
 	private int confidence = 40;
 
-	// Special constructor used for new NetworkSearchTaskFactory options.
-	public SearchOptionsPanel(final StringManager manager) {
+	public SearchOptionsPanel(final StringManager manager, final boolean isDisease) {
 		super(new GridBagLayout());
 		this.manager = manager;
+		this.isDisease = isDisease;
+		if (isDisease) additionalNodes = 100;
 		initOptions();
 	}
 
+	// Special constructor used for new NetworkSearchTaskFactory options.
+	public SearchOptionsPanel(final StringManager manager) {
+		this(manager, false);
+	}
+
 	private void initOptions() {
-		setPreferredSize(new Dimension(600,200));
+		setPreferredSize(new Dimension(700,200));
 		EasyGBC c = new EasyGBC();
 		List<Species> speciesList = getSpeciesList();
 		JPanel speciesBox = createSpeciesComboBox(speciesList);
@@ -262,17 +269,25 @@ public class SearchOptionsPanel extends JPanel {
 		Font labelFont;
 		{
 			c.anchor("west").noExpand().insets(0,5,0,5);
-			JLabel additionalNodesLabel = new JLabel("Maximum additional interactors:");
+			JLabel additionalNodesLabel;
+			if (isDisease)
+				additionalNodesLabel = new JLabel("Maximum number of proteins:");
+			else
+				additionalNodesLabel = new JLabel("Maximum additional interactors:");
+
 			labelFont = additionalNodesLabel.getFont();
 			additionalNodesLabel.setFont(new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()));
 			additionalNodesPanel.add(additionalNodesLabel, c);
 		}
 
 		{
-			additionalNodesSlider = new JSlider();
+			int maxValue = 100;
+			if (isDisease)
+				maxValue = 2000;
+			additionalNodesSlider = new JSlider(0, maxValue, additionalNodes);
 			Dictionary<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
 			Font valueFont = new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()-4);
-			for (int value = 0; value <= 100; value += 10) {
+			for (int value = 0; value <= maxValue; value += maxValue/10) {
 				JLabel label = new JLabel(Integer.toString(value));
 				label.setFont(valueFont);
 				labels.put(value, label);
@@ -299,7 +314,7 @@ public class SearchOptionsPanel extends JPanel {
 		{
 			additionalNodesValue = new JTextField(4);
 			additionalNodesValue.setHorizontalAlignment(JTextField.RIGHT);
-			additionalNodesValue.setText("0");
+			additionalNodesValue.setText(""+additionalNodes);
 			c.right().noExpand().insets(0,5,0,5);
 			additionalNodesPanel.add(additionalNodesValue, c);
 

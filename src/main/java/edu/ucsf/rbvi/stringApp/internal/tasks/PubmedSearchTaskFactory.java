@@ -127,7 +127,7 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	// NOTE: we need to use reasonable defaults since it's likely the user won't actually change it...
 	@Override
 	public JComponent getOptionsComponent() {
-		optionsPanel = new SearchOptionsPanel(manager);
+		optionsPanel = new SearchOptionsPanel(manager, true);
 		return optionsPanel;
 	}
 

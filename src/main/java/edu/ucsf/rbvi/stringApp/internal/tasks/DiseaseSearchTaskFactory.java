@@ -32,6 +32,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetAnnotationsTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ImportNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.ui.DiseaseQueryPanel;
+import edu.ucsf.rbvi.stringApp.internal.ui.SearchOptionsPanel;
 
 public class DiseaseSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	StringManager manager;
@@ -52,6 +53,7 @@ public class DiseaseSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 																		"proteins from 2,031 organisms.</html>";
 
 	private StringNetwork stringNetwork = null;
+	private SearchOptionsPanel optionsPanel = null;
 
 	private static final Icon icon = new ImageIcon(
       StringSearchTaskFactory.class.getResource("/images/disease_logo.png"));
@@ -124,6 +126,9 @@ public class DiseaseSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	// NOTE: we need to use reasonable defaults since it's likely the user won't actually change it...
 	@Override
 	public JComponent getOptionsComponent() {
+		// optionsPanel = new SearchOptionsPanel(manager, true);
+		// return optionsPanel;
+		// We don't use an options component for disease
 		return null;
 	}
 
