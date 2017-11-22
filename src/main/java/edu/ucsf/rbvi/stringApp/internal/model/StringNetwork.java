@@ -86,7 +86,7 @@ public class StringNetwork {
 		} 
 		
 		// also call the viruses API
-		{
+		if (manager.isVirusesEnabled()) {
 			// http://viruses.string-db.org/cgi/webservice_handler.pl?species=11320&identifiers=NS1_I34A1
 			// &caller_identity=string_app_v1_1_1&output=json&request=resolveList
 			url = manager.getResolveURL(Databases.VIRUSES.getAPIName());
@@ -99,7 +99,7 @@ public class StringNetwork {
 			manager.info("URL:" + url + "?species=" + Integer.toString(taxon) + "&caller_identity="
 					+ StringManager.CallerIdentity + "&identifiers=" + encTerms);
 			// Get the results
-			// results = HttpUtils.postJSON(url, args, manager);
+			results = HttpUtils.postJSON(url, args, manager);
 
 			if (results != null) {
 				updateAnnotations(results, terms);

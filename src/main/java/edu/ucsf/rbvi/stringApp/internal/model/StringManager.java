@@ -61,6 +61,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String CallerIdentity = "string_app";
 	public static String APIVERSION = "String-api-version";
 	public static String RESULT = "QueryResult";
+	
+	public static boolean enableViruses = false;
 
 	public StringManager(CyServiceRegistrar registrar) {
 		this.registrar = registrar;
@@ -218,6 +220,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		return STRINGResolveURI;
 	}
 
+	public boolean isVirusesEnabled() {
+		return enableViruses;
+	}
+	
 	public void info(String info) {
 		logger.info(info);
 	}

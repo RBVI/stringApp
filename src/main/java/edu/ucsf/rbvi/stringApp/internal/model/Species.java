@@ -29,16 +29,20 @@ public class Species implements Comparable<Species> {
 		if (line.startsWith("#"))
 			return;
 		String columns[] = line.trim().split("\t");
-		if (columns.length != 6)
+		if (columns.length < 4)
 			throw new IllegalArgumentException("Can't parse line: "+line + "\n" + columns.length);
 		try {
 			int tax = Integer.parseInt(columns[0]);
 			List<String> intPartnersList = new ArrayList<String>();
-			String[] intPartnersArray = columns[4].trim().split(",");
-			for (String intPartner : intPartnersArray) {
-				intPartnersList.add(intPartner.trim());
+			String nodeColor = "#92B4AF";
+			if (columns.length == 6) {
+				String[] intPartnersArray = columns[4].trim().split(",");
+				for (String intPartner : intPartnersArray) {
+					intPartnersList.add(intPartner.trim());
+				}
+				nodeColor = columns[5].trim();
 			}
-			init(tax, columns[1].trim(), columns[2].trim(), columns[3].trim(), columns[5].trim(), intPartnersList);
+			init(tax, columns[1].trim(), columns[2].trim(), columns[3].trim(), nodeColor, intPartnersList);
 		} catch (NumberFormatException nfe) {
 			nfe.printStackTrace();
 			init(0, columns[1].trim(), columns[2].trim(), columns[3].trim(), "#92B4AF",
@@ -85,7 +89,9 @@ public class Species implements Comparable<Species> {
 
 		InputStream stream = null;
 		try {
-			URL resource = Species.class.getResource("/species_viruses.txt");
+			URL resource = Species.class.getResource("/species.txt");
+			if (manager.isVirusesEnabled())
+				resource = Species.class.getResource("/species_viruses.txt");				
 			stream = resource.openConnection().getInputStream();
 		} catch (Exception e) {
 			e.printStackTrace();
