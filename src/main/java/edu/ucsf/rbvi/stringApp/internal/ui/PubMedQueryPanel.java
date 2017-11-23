@@ -89,6 +89,7 @@ public class PubMedQueryPanel extends JPanel {
 	private boolean ignore = false;
 	private final Species species;
 	private int confidence = 40;
+	private int proteinLimit = 100;
 
 	public PubMedQueryPanel(final StringManager manager) {
 		super(new GridBagLayout());
@@ -107,13 +108,14 @@ public class PubMedQueryPanel extends JPanel {
 	}
 
 	public PubMedQueryPanel(final StringManager manager, StringNetwork stringNetwork, String query,
-	                        final Species species, int confidence) {
+	                        final Species species, int confidence, int additionalNodes) {
 		super(new GridBagLayout());
 		this.manager = manager;
 		this.stringNetwork = stringNetwork;
 		this.initialStringNetwork = stringNetwork;
 		this.species = species;
 		this.confidence = confidence;
+		this.proteinLimit = additionalNodes;
 		init();
 		pubmedQuery.setText(query);
 	}
@@ -239,7 +241,7 @@ public class PubMedQueryPanel extends JPanel {
 		}
 
 		{
-			limitSlider = new JSlider(0, 2000, 100);
+			limitSlider = new JSlider(0, 2000, proteinLimit);
 			Dictionary<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
 			Font valueFont = new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()-4);
 			for (int value = 0; value <= 2000; value += 400) {
@@ -268,7 +270,7 @@ public class PubMedQueryPanel extends JPanel {
 		{
 			limitValue = new JTextField(4);
 			limitValue.setHorizontalAlignment(JTextField.RIGHT);
-			limitValue.setText("100");
+			limitValue.setText(""+proteinLimit);
 			c.right().noExpand().insets(0,5,0,5);
 			limitPanel.add(limitValue, c);
 
@@ -336,7 +338,7 @@ public class PubMedQueryPanel extends JPanel {
 		{
 			confidenceValue = new JTextField(4);
 			confidenceValue.setHorizontalAlignment(JTextField.RIGHT);
-			confidenceValue.setText("0.40");
+			confidenceValue.setText(formatter.format(((double)confidence)/100.0));
 			c.right().noExpand().insets(0,5,0,5);
 			confidencePanel.add(confidenceValue, c);
 

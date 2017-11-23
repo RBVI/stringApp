@@ -364,7 +364,7 @@ public class GetTermsPanel extends JPanel {
 		{
 			confidenceValue = new JTextField(4);
 			confidenceValue.setHorizontalAlignment(JTextField.RIGHT);
-			confidenceValue.setText("0.40");
+			confidenceValue.setText(formatter.format(((double)confidence)/100.0));
 			c.right().noExpand().insets(0,5,0,5);
 			confidencePanel.add(confidenceValue, c);
 
@@ -431,7 +431,7 @@ public class GetTermsPanel extends JPanel {
 		{
 			additionalNodesValue = new JTextField(4);
 			additionalNodesValue.setHorizontalAlignment(JTextField.RIGHT);
-			additionalNodesValue.setText("0");
+			additionalNodesValue.setText(""+additionalNodes);
 			c.right().noExpand().insets(0,5,0,5);
 			additionalNodesPanel.add(additionalNodesValue, c);
 
