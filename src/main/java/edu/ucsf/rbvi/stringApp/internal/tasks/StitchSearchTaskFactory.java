@@ -72,7 +72,7 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 		stringNetwork = new StringNetwork(manager);
 		int taxon = getTaxId();
 
-		terms = ModelUtils.convertTerms(terms, true, false);
+		terms = ModelUtils.convertTerms(terms, true, true);
 
 		return new TaskIterator(new GetAnnotationsTask(stringNetwork, taxon, terms, Databases.STITCH.getAPIName()));
 	}
