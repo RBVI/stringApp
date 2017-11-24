@@ -77,7 +77,7 @@ public class SearchOptionsPanel extends JPanel {
 	private String netSpecies = "Homo sapiens";
 
 	private Species species = null;
-	private int additionalNodes = 10;
+	private int additionalNodes = 0;
 	private int confidence = 40;
 
 	public SearchOptionsPanel(final StringManager manager, final boolean isPubMed, final boolean isDisease) {
