@@ -387,7 +387,7 @@ public class PubMedQueryPanel extends JPanel {
 	private double confidenceInputError() {
 		confidenceValue.setBackground(Color.RED);
 		JOptionPane.showMessageDialog(null, 
-				                          "Please enter a confence cutoff between 0.0 and 1.0", 
+				                          "Please enter a confidence cutoff between 0.0 and 1.0", 
 											            "Alert", JOptionPane.ERROR_MESSAGE);
 		confidenceValue.setBackground(UIManager.getColor("TextField.background"));
 

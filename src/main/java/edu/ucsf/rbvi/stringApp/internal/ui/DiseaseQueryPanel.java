@@ -534,7 +534,6 @@ public class DiseaseQueryPanel extends JPanel {
 				return;
 			}
 			// Always create the resolution panel
-			/*
 			if (entityList.size() == 1) {
 				diseaseEntity = entityList.get(0);
 
@@ -544,9 +543,8 @@ public class DiseaseQueryPanel extends JPanel {
 					}
 				});
 			} else {
-			*/
 				createResolutionPanel();
-			//}
+			}
 		}
 	}
 

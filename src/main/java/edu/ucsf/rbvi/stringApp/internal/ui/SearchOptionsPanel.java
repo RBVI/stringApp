@@ -80,17 +80,17 @@ public class SearchOptionsPanel extends JPanel {
 	private int additionalNodes = 10;
 	private int confidence = 40;
 
-	public SearchOptionsPanel(final StringManager manager, final boolean isDisease) {
+	public SearchOptionsPanel(final StringManager manager, final boolean isPubMed, final boolean isDisease) {
 		super(new GridBagLayout());
 		this.manager = manager;
 		this.isDisease = isDisease;
-		if (isDisease) additionalNodes = 100;
+		if (isDisease || isPubMed) additionalNodes = 100;
 		initOptions();
 	}
 
 	// Special constructor used for new NetworkSearchTaskFactory options.
 	public SearchOptionsPanel(final StringManager manager) {
-		this(manager, false);
+		this(manager, false, false);
 	}
 
 	private void initOptions() {
@@ -138,7 +138,7 @@ public class SearchOptionsPanel extends JPanel {
 		speciesCombo = new JComboBox<Species>(speciesList.toArray(new Species[1]));
 		JComboBoxDecorator.decorate(speciesCombo, true, true); 
 
-		if (species == null) {
+		if (species == null || isDisease) {
 			// Set Human as the default
 			for (Species s: speciesList) {
 				if (s.toString().equals(netSpecies)) {
@@ -150,6 +150,8 @@ public class SearchOptionsPanel extends JPanel {
 			speciesCombo.setSelectedItem(species);
 		}
 		c.right().expandHoriz().insets(0,5,0,5);
+		if (isDisease)
+			speciesCombo.setEnabled(false);
 		speciesPanel.add(speciesCombo, c);
 		return speciesPanel;
 	}

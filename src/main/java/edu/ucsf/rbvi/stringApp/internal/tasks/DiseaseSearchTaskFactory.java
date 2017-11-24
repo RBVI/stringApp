@@ -126,10 +126,10 @@ public class DiseaseSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	// NOTE: we need to use reasonable defaults since it's likely the user won't actually change it...
 	@Override
 	public JComponent getOptionsComponent() {
-		// optionsPanel = new SearchOptionsPanel(manager, true);
-		// return optionsPanel;
+		optionsPanel = new SearchOptionsPanel(manager, false, true);
+		return optionsPanel;
 		// We don't use an options component for disease
-		return null;
+		// return null;
 	}
 
 	@Override
