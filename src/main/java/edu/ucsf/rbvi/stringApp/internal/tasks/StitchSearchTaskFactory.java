@@ -39,7 +39,11 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 	static String STITCH_URL = "http://stitch-db.org";
 	static String STITCH_NAME = "STITCH compound query";
 	static String STITCH_DESC = "Search STITCH for protein-compound interactions";
-	static String STITCH_DESC_LONG = "<html>STITCH is a resource to explore known and predicted interactions of chemicals and proteins. Chemicals are linked to other chemicals and proteins by evidence derived from experiments, databases and the literature.  <p>STITCH contains interactions for between 300,000 small molecules and 2.6 million proteins from 1133 organisms.</p></html>";
+	static String STITCH_DESC_LONG = "<html>The compound query retrieves a STITCH network for one or more proteins or compounds. <br />"
+										+ "STITCH is a resource to explore known and predicted interactions of chemicals and <br />"
+										+ "proteins. Chemicals are linked to other chemicals and proteins by evidence derived <br />"
+										+ "from experiments, databases and the literature. STITCH contains interactions for <br />"
+										+ "between 300,000 small molecules and 2.6 million proteins from 1133 organisms.</html>";
 
 	private StringNetwork stringNetwork = null;
 	private SearchOptionsPanel optionsPanel = null;

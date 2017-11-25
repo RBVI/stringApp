@@ -39,7 +39,11 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 	static String STRING_URL = "http://string-db.org";
 	static String STRING_NAME = "STRING protein query";
 	static String STRING_DESC = "Search STRING for protein-protein interactions";
-	static String STRING_DESC_LONG = "<html>STRING is a database of known and predicted protein interactions.  The interactions include direct (physical) and indirect (functional) associations; they are derived from four sources: <ul><li>Genomic Context</li><li>High-throughput Experiments</li><li>(Conserved) Coexpression</li><li>Previous Knowledge</li></ul>	 STRING quantitatively integrates interaction data from these sources for a large number of organisms, and transfers information between these organisms where applicable. The database currently covers 9,643,763 proteins from 2,031 organisms.</html>";
+	static String STRING_DESC_LONG = "<html>The protein query retrieves a STRING network for one or more proteins. <br />"
+										+ "STRING is a database of known and predicted protein interactions for <br />"
+										+ "thousands of organisms, which are integrated from several sources, <br />"
+										+ "scored, and transferred across orthologs. The network  includes both <br />"
+										+ "physical interactions and functional associations.</html>";
 
 	private StringNetwork stringNetwork = null;
 	private SearchOptionsPanel optionsPanel = null;

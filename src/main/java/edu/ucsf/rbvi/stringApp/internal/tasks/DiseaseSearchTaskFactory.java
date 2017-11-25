@@ -40,17 +40,13 @@ public class DiseaseSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	static String DISEASE_URL = "http://string-db.org";
 	static String DISEASE_NAME = "STRING disease query";
 	static String DISEASE_DESC = "Search STRING for protein-protein interactions";
-	static String DISEASE_DESC_LONG =  "<html>Enter a disease term and create a STRING network by finding all "+
-																		"proteins associated with the disease in the DISEASE database."+
-																		"<p>DISEASE is a database of "+
-																		"known and predicted protein interactions.  The interactions include direct "+
-																		"(physical) and indirect (functional) associations; they are derived from four "+
-																		"sources: <ul><li>Genomic Context</li><li>High-throughput Experiments</li>"+
-																		"<li>(Conserved) Coexpression</li><li>Previous Knowledge</li></ul>	 "+
-																		"DISEASE quantitatively integrates interaction data from these sources "+
-																		"for a large number of organisms, and transfers information between "+
-																		"these organisms where applicable. The database currently covers 9,643,763 "+
-																		"proteins from 2,031 organisms.</html>";
+	static String DISEASE_DESC_LONG = "<html>The disease query retrieves a STRING network for the top-N human proteins associated <br />"
+										  + "with the queried disease in the DISEASES database. DISEASES is a weekly updated web <br />"
+										  + "resource that integrates evidence on disease-gene associations from automatic text <br />"
+										  + "mining, manually curated literature, cancer mutation data, and genome-wide association <br />"
+										  + "studies. STRING is a database of known and predicted protein interactions for thousands <br />"
+										  + "of organisms, which are integrated from several sources, scored, and transferred across <br />"
+										  + "orthologs. The network  includes both physical interactions and functional associations.</html>";
 
 	private StringNetwork stringNetwork = null;
 	private SearchOptionsPanel optionsPanel = null;

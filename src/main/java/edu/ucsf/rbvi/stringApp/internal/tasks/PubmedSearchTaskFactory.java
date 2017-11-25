@@ -40,16 +40,11 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	static String PUBMED_URL = "http://string-db.org";
 	static String PUBMED_NAME = "STRING pubmed query";
 	static String PUBMED_DESC = "Search STRING for protein-protein interactions based on pubmed queries";
-	static String PUBMED_DESC_LONG =  "<html>Enter a Pubmed query and create a STRING network by finding all "+
-																		"proteins mentioned in the resulting publications.<p>STRING is a database of "+
-																		"known and predicted protein interactions.  The interactions include direct "+
-																		"(physical) and indirect (functional) associations; they are derived from four "+
-																		"sources: <ul><li>Genomic Context</li><li>High-throughput Experiments</li>"+
-																		"<li>(Conserved) Coexpression</li><li>Previous Knowledge</li></ul>	 "+
-																		"STRING quantitatively integrates interaction data from these sources "+
-																		"for a large number of organisms, and transfers information between "+
-																		"these organisms where applicable. The database currently covers 9,643,763 "+
-																		"proteins from 2,031 organisms.</html>";
+	static String PUBMED_DESC_LONG =  "<html>The Pubmed query retrieves a STRING network pertaining to any topic of interest <br />"
+											+ "based on text mining of PubMed abstracts. STRING is a database of known and <br />"
+											+ "predicted protein interactions for thousands of organisms, which are integrated <br />"
+											+ "from several sources, scored, and transferred across orthologs. The network <br />"
+											+ "includes both physical interactions and functional associations.</html>";
 
 	private StringNetwork stringNetwork = null;
 	private SearchOptionsPanel optionsPanel = null;
