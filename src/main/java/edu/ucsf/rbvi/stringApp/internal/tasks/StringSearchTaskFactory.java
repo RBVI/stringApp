@@ -3,18 +3,22 @@ package edu.ucsf.rbvi.stringApp.internal.tasks;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 import org.cytoscape.application.swing.search.AbstractNetworkSearchTaskFactory;
+import org.cytoscape.application.swing.search.NetworkSearchTaskFactory;
 import org.cytoscape.work.FinishStatus;
 import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.TaskFactory;
@@ -23,6 +27,8 @@ import org.cytoscape.work.TaskObserver;
 import org.cytoscape.io.webservice.NetworkImportWebServiceClient;
 import org.cytoscape.io.webservice.SearchWebServiceClient;
 import org.cytoscape.io.webservice.swing.AbstractWebServiceGUIClient;
+import org.cytoscape.util.swing.LookAndFeelUtil;
+
 
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
@@ -31,6 +37,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.GetAnnotationsTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ImportNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.ui.GetTermsPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.SearchOptionsPanel;
+import edu.ucsf.rbvi.stringApp.internal.ui.SearchQueryComponent;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory implements TaskObserver {
@@ -47,6 +54,7 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 
 	private StringNetwork stringNetwork = null;
 	private SearchOptionsPanel optionsPanel = null;
+	private SearchQueryComponent queryComponent = null;
 
 	private static final Icon icon = new ImageIcon(
       StringSearchTaskFactory.class.getResource("/images/string_logo.png"));
@@ -67,7 +75,7 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 	public boolean isReady() { return true; }
 
 	public TaskIterator createTaskIterator() {
-		String terms = getQuery();
+		String terms = queryComponent.getQueryText();
 
 		if (terms == null) {
 			throw new NullPointerException("Query string is null.");
@@ -76,7 +84,7 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 		stringNetwork = new StringNetwork(manager);
 		int taxon = getTaxId();
 
-		terms = ModelUtils.convertTerms(terms, true, true);
+		// terms = ModelUtils.convertTerms(terms, true, true);
 
 		return new TaskIterator(new GetAnnotationsTask(stringNetwork, taxon, terms, Databases.STRING.getAPIName()));
 	}
@@ -112,7 +120,9 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 
 	@Override
 	public JComponent getQueryComponent() {
-		return null;
+		if (queryComponent == null)
+			queryComponent = new SearchQueryComponent();
+		return queryComponent;
 	}
 
 	@Override
@@ -208,8 +218,7 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 		// System.out.println("Importing "+stringIds);
 		TaskFactory factory = new ImportNetworkTaskFactory(stringNetwork, getSpecies(), 
 		                                                   taxon, confidence, additionalNodes, stringIds,
-																											 queryTermMap, Databases.STRING.getAPIName());
+		                                                   queryTermMap, Databases.STRING.getAPIName());
 		manager.execute(factory.createTaskIterator());
 	}
-
 }

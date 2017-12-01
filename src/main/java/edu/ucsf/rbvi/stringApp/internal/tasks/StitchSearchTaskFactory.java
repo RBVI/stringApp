@@ -31,6 +31,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.GetAnnotationsTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ImportNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.ui.GetTermsPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.SearchOptionsPanel;
+import edu.ucsf.rbvi.stringApp.internal.ui.SearchQueryComponent;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory implements TaskObserver {
@@ -47,6 +48,7 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 
 	private StringNetwork stringNetwork = null;
 	private SearchOptionsPanel optionsPanel = null;
+	private SearchQueryComponent queryComponent = null;
 
 	private static final Icon icon = new ImageIcon(
       StringSearchTaskFactory.class.getResource("/images/stitch_logo.png"));
@@ -67,7 +69,7 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 	public boolean isReady() { return true; }
 
 	public TaskIterator createTaskIterator() {
-		String terms = getQuery();
+		String terms = queryComponent.getQueryText();
 
 		if (terms == null) {
 			throw new NullPointerException("Query string is null.");
@@ -75,8 +77,6 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 
 		stringNetwork = new StringNetwork(manager);
 		int taxon = getTaxId();
-
-		terms = ModelUtils.convertTerms(terms, true, true);
 
 		return new TaskIterator(new GetAnnotationsTask(stringNetwork, taxon, terms, Databases.STITCH.getAPIName()));
 	}
@@ -112,7 +112,9 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 
 	@Override
 	public JComponent getQueryComponent() {
-		return null;
+		if (queryComponent == null)
+			queryComponent = new SearchQueryComponent();
+		return queryComponent;
 	}
 
 	@Override
