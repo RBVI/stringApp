@@ -1,6 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -38,10 +39,14 @@ import org.cytoscape.model.CyTable;
 import org.cytoscape.model.events.RowSetRecord;
 import org.cytoscape.model.events.RowsSetEvent;
 import org.cytoscape.model.events.RowsSetListener;
+import org.cytoscape.view.model.CyNetworkView;
+import org.cytoscape.view.model.CyNetworkViewManager;
+import org.cytoscape.view.vizmap.VisualMappingManager;
 
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
 public class EnrichmentCytoPanel extends JPanel
 		implements CytoPanelComponent2, ListSelectionListener, ActionListener, RowsSetListener {
@@ -51,20 +56,17 @@ public class EnrichmentCytoPanel extends JPanel
 	JPanel topPanel;
 	JPanel mainPanel;
 	JScrollPane scrollPane;
-	String showTable;
-	JComboBox<String> boxTables;
+	public final static String showTable = EnrichmentTerm.termTables[6];
+	// JComboBox<String> boxTables;
 	List<String> availableTables;
-	boolean createBoxTables = true;
+	// boolean createBoxTables = true;
 	JButton butDrawCharts;
 	JButton butAnalyzedNodes;
-	final String colEnrichmentTerms = "enrichmentTerms";
-	final String colEnrichmentTermsPieChart = "enrichmentTermsPieChart";
-	final String colEnrichmentPieChart = "enrichmentPieChart";
+	JLabel labelPPIEnrichment;
 
 	public EnrichmentCytoPanel(StringManager manager) {
 		this.manager = manager;
 		enrichmentTables = new HashMap<String, JTable>();
-		showTable = null;
 		this.setLayout(new BorderLayout());
 		initPanel();
 	}
@@ -103,7 +105,8 @@ public class EnrichmentCytoPanel extends JPanel
 		JTable table = enrichmentTables.get(showTable);
 		// No idea why this was needed...
 		// table.getSelectedColumn() != 0 &&
-		if (table.getSelectedColumnCount() == 1 && table.getSelectedRow() > -1) {
+		if (table.getSelectedColumn() != EnrichmentTerm.chartColumn
+				&& table.getSelectedColumnCount() == 1 && table.getSelectedRow() > -1) {
 			// System.out.println("get value at " + table.getSelectedRow() + " and " +
 			// EnrichmentTerm.nodeSUIDColumn);
 			Object cellContent = table.getModel().getValueAt(table.getSelectedRow(),
@@ -120,20 +123,22 @@ public class EnrichmentCytoPanel extends JPanel
 
 	// TODO: make this network-specific
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource().equals(boxTables)) {
-			if (boxTables.getSelectedItem() == null) {
-				return;
-			}
-			// System.out.println("change selected table");
-			showTable = (String) boxTables.getSelectedItem();
-			// TODO: do some cleanup for old table?
-			createBoxTables = false;
-			initPanel();
-			createBoxTables = true;
-		} else if (e.getSource().equals(butDrawCharts)) {
+		// if (e.getSource().equals(boxTables)) {
+		// if (boxTables.getSelectedItem() == null) {
+		// return;
+		// }
+		// // System.out.println("change selected table");
+		// showTable = (String) boxTables.getSelectedItem();
+		// // TODO: do some cleanup for old table?
+		// createBoxTables = false;
+		// initPanel();
+		// createBoxTables = true;
+		// } else
+		if (e.getSource().equals(butDrawCharts)) {
 			// do something fancy here...
 			// piechart: attributelist="test3" colorlist="modulated" showlabels="false"
-			// drawCharts();
+			Map<EnrichmentTerm, Color> preselectedTerms = getUserSelectedTerms();
+			drawCharts(preselectedTerms);
 		} else if (e.getSource().equals(butAnalyzedNodes)) {
 			CyNetwork network = manager.getCurrentNetwork();
 			List<CyNode> analyzedNodes = ModelUtils.getEnrichmentNodes(network);  
@@ -171,28 +176,36 @@ public class EnrichmentCytoPanel extends JPanel
 			this.add(mainPanel, BorderLayout.CENTER);
 			// return;
 		} else {
-			Collections.sort(availableTables);
-			boxTables = new JComboBox<String>(availableTables.toArray(new String[0]));
-			if (createBoxTables) {
-				if (availableTables.contains(EnrichmentTerm.termTables[0])) {
-					showTable = EnrichmentTerm.termTables[0];
-				} else {
-					showTable = availableTables.get(0);
-				}
-			}
-			boxTables.setSelectedItem(showTable);
-			boxTables.addActionListener(this);
+			// Collections.sort(availableTables);
+			// boxTables = new JComboBox<String>(availableTables.toArray(new String[0]));
+			// if (createBoxTables) {
+			//	if (availableTables.contains(EnrichmentTerm.termTables[0])) {
+			//		showTable = EnrichmentTerm.termTables[0];
+			//	} else {
+			//		showTable = availableTables.get(0);
+			//	}
+			//}
+			// boxTables.setSelectedItem(showTable);
+			// boxTables.addActionListener(this);
 
-			// butDrawCharts = new JButton("Draw pie charts");
-			// butDrawCharts.addActionListener(this);
+			butDrawCharts = new JButton("Draw pie charts");
+			butDrawCharts.addActionListener(this);
 
 			butAnalyzedNodes = new JButton("Select analyzed nodes");
 			butAnalyzedNodes.addActionListener(this);
 
+			labelPPIEnrichment = new JLabel("PPI Enrichment: " + ppiEnrichment.toString());
+			labelPPIEnrichment.setToolTipText(
+					"<html>If the PPI enrichment is less or equal 0.05, this means that <br />"
+							+ "your proteins have more interactions among themselves than what would be expected for a  <br />"
+							+ "random set of proteins of similar size, drawn from the genome. Such an enrichment indicates  <br />"
+							+ "that the proteins are at least partially biologically connected, as a group.</html>");
+
 			topPanel = new JPanel(new BorderLayout());
-			topPanel.add(boxTables, BorderLayout.EAST);
-			// topPanel.add(butDrawCharts, BorderLayout.WEST);
-			topPanel.add(butAnalyzedNodes, BorderLayout.WEST);
+			topPanel.add(butDrawCharts, BorderLayout.WEST);
+			topPanel.add(labelPPIEnrichment, BorderLayout.CENTER);
+			topPanel.add(butAnalyzedNodes, BorderLayout.EAST);
+			// topPanel.add(boxTables, BorderLayout.EAST);
 			this.add(topPanel, BorderLayout.NORTH);
 
 			JTable currentTable = enrichmentTables.get(showTable);
@@ -231,6 +244,7 @@ public class EnrichmentCytoPanel extends JPanel
 		jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		jTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jTable.getSelectionModel().addListSelectionListener(this);
+		// jTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
 
 		enrichmentTables.put(cyTable.getTitle(), jTable);
 	}
@@ -280,6 +294,111 @@ public class EnrichmentCytoPanel extends JPanel
 			return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
 					column);
 		}
+	}
+
+	private void drawCharts(Map<EnrichmentTerm, Color> selectedTerms) {
+		CyNetwork network = manager.getCurrentNetwork();
+		if (network == null || selectedTerms.size() == 0)
+			return;
+
+		CyTable nodeTable = network.getDefaultNodeTable();
+		ModelUtils.createListColumnIfNeeded(nodeTable, String.class,
+				EnrichmentTerm.colEnrichmentTermsNames);
+		ModelUtils.createListColumnIfNeeded(nodeTable, Integer.class,
+				EnrichmentTerm.colEnrichmentTermsIntegers);
+		ModelUtils.createColumnIfNeeded(nodeTable, String.class,
+				EnrichmentTerm.colEnrichmentPassthrough);
+
+		// final String pieChart = "piechart: attributelist=\"enrichmentTermsIntegers\"
+		// colorlist=\"modulated\" showlabels=\"false\" ";
+
+		String colorList = "";
+		for (EnrichmentTerm term : selectedTerms.keySet()) {
+			Color color = selectedTerms.get(term);
+			if (color != null) {
+				String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(),
+						color.getBlue());
+				colorList += hex + ",";
+			} else {
+				colorList += "" + ",";
+			}
+			String selTerm = term.getName();
+			List<Long> enrichedNodeSUIDs = term.getNodesSUID();
+			for (CyNode node : network.getNodeList()) {
+				List<Integer> nodeTermsIntegers = nodeTable.getRow(node.getSUID())
+						.getList(EnrichmentTerm.colEnrichmentTermsIntegers, Integer.class);
+				List<String> nodeTermsNames = nodeTable.getRow(node.getSUID())
+						.getList(EnrichmentTerm.colEnrichmentTermsNames, String.class);
+				if (nodeTermsIntegers == null)
+					nodeTermsIntegers = new ArrayList<Integer>();
+				if (nodeTermsNames == null) {
+					nodeTermsNames = new ArrayList<String>();
+				}
+				if (enrichedNodeSUIDs.contains(node.getSUID())) {
+					nodeTermsNames.add(selTerm);
+					nodeTermsIntegers.add(new Integer(1));
+				} else {
+					nodeTermsNames.add("");
+					nodeTermsIntegers.add(new Integer(0));
+				}
+				nodeTable.getRow(node.getSUID()).set(EnrichmentTerm.colEnrichmentTermsIntegers,
+						nodeTermsIntegers);
+				nodeTable.getRow(node.getSUID()).set(EnrichmentTerm.colEnrichmentTermsNames,
+						nodeTermsNames);
+			}
+		}
+		colorList = colorList.substring(0, colorList.length() - 1) + "\"";
+		final String circChart = "circoschart: firstarc=1.0 arcwidth=0.4 attributelist=\"enrichmentTermsIntegers\" showlabels=\"false\" colorlist=\" "
+				+ colorList;
+		for (CyRow row : nodeTable.getAllRows()) {
+			row.set(EnrichmentTerm.colEnrichmentPassthrough, circChart);
+		}
+
+		// System.out.println(selectedTerms);
+		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
+		CyNetworkViewManager netManager = manager.getService(CyNetworkViewManager.class);
+		CyNetworkView netView = null;
+		for (CyNetworkView currNetView : netManager.getNetworkViewSet()) {
+			if (vmm.getVisualStyle(currNetView).getTitle().startsWith(ViewUtils.STYLE_NAME) || vmm
+					.getVisualStyle(currNetView).getTitle().startsWith(ViewUtils.STYLE_NAME_ORG)) {
+				netView = currNetView;
+				ViewUtils.updatePieCharts(manager, vmm.getVisualStyle(currNetView), network, true);
+			}
+		}
+		netView.updateView();
+	}
+
+	private Map<EnrichmentTerm, Color> getUserSelectedTerms() {
+		Map<EnrichmentTerm, Color> selectedTerms = new HashMap<EnrichmentTerm, Color>();
+		CyNetwork network = manager.getCurrentNetwork();
+		if (network == null)
+			return selectedTerms;
+
+		// Set<CyTable> currTables = ModelUtils.getEnrichmentTables(manager, network);
+		// for (CyTable currTable : currTables) {
+		CyTable currTable = ModelUtils.getEnrichmentTable(manager, network,
+				EnrichmentTerm.termTables[6]);
+		if (currTable.getColumn(EnrichmentTerm.colShowChart) == null
+				|| currTable.getRowCount() == 0) {
+			return selectedTerms;
+		}
+		for (CyRow row : currTable.getAllRows()) {
+			if (currTable.getColumn(EnrichmentTerm.colShowChart) != null
+					&& row.get(EnrichmentTerm.colShowChart, Boolean.class) != null
+					&& row.get(EnrichmentTerm.colShowChart, Boolean.class)) {
+				String selTerm = row.get(EnrichmentTerm.colName, String.class);
+				if (selTerm != null) {
+					EnrichmentTerm enrTerm = new EnrichmentTerm(selTerm,
+							row.get(EnrichmentTerm.colDescription, String.class),
+							row.get(EnrichmentTerm.colCategory, String.class), -1.0, -1.0,
+							row.get(EnrichmentTerm.colFDR, Double.class));
+					enrTerm.setNodesSUID(row.getList(EnrichmentTerm.colGenesSUID, Long.class));
+					selectedTerms.put(enrTerm, Color.BLACK);
+				}
+			}
+		}
+		// System.out.println(selectedTerms);
+		return selectedTerms;
 	}
 
 }

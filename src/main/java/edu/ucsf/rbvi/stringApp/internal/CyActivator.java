@@ -312,15 +312,22 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(MENU_GRAVITY, "4.0");
 			props.setProperty(IN_MENU_BAR, "true");
 			registerService(bc, exportEnrichment, NetworkTaskFactory.class, props);
+
+			Properties props2 = new Properties();
+			props2.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
+			props2.setProperty(TITLE, "Export enrichment results");
+			props2.setProperty(MENU_GRAVITY, "4.0");
+			props2.setProperty(IN_MENU_BAR, "true");
+			registerService(bc, exportEnrichment, NetworkTaskFactory.class, props2);
 		}
 
 		GetEnrichmentTaskFactory getEnrichment = new GetEnrichmentTaskFactory(manager);
 		Properties propsEnrichment = new Properties();
-		propsEnrichment.setProperty(PREFERRED_MENU, "Apps.STRING");
+		propsEnrichment.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
 		propsEnrichment.setProperty(TITLE, "Retrieve functional enrichment");
-		propsEnrichment.setProperty(MENU_GRAVITY, "4.0");
+		propsEnrichment.setProperty(MENU_GRAVITY, "1.0");
 		propsEnrichment.setProperty(IN_MENU_BAR, "true");
-		propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
+		// propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 		registerService(bc, getEnrichment, NetworkTaskFactory.class, propsEnrichment);
 
 		if (haveGUI) {

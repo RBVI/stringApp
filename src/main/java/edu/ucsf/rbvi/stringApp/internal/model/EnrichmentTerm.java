@@ -6,6 +6,7 @@ import java.util.List;
 public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	String name;
 	String description;
+	String category;
 	double pvalue;
 	double bonfPValue;
 	double fdrPValue;
@@ -16,15 +17,16 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	public static final String enrichmentURL = "http://version-10.string-db.org/cgi/webservices/enrichmentWrapper.pl";
 
 	public static final String[] termCategories = new String[] { "Process", "Component", "Function",
-			"InterPro", "KEGG", "Pfam" };
+			"InterPro", "KEGG", "Pfam", "All" };
 	public static final String[] termTables = new String[] {
 			"STRING Enrichment: GO Biological Process", "STRING Enrichment: GO Cellular Component",
 			"STRING Enrichment: GO Molecular Function", "STRING Enrichment: InterPro",
-			"STRING Enrichment: KEGG", "STRING Enrichment: Pfam" };
+			"STRING Enrichment: KEGG", "STRING Enrichment: Pfam", "STRING Enrichment: All" };
 
 	public static final String colID = "term id";
 	public static final String colName = "term name";
 	public static final String colDescription = "termDescription";
+	public static final String colCategory = "category";
 	public static final String colPvalue = "pValue";
 	public static final String colBonferroni = "bonferroni";
 	public static final String colFDR = "falseDiscoveryRate";
@@ -34,14 +36,21 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	public static final String colNetworkSUID = "network.SUID";
 	public static final String colShowChart = "showInPieChart";
 
-	public static final String[] swingColumns = new String[] { colName, colDescription, colFDR,
-			colGenesCount, colGenes, colGenesSUID };
-	public static final int nodeSUIDColumn = 5;
-	public static final int fdrColumn = 2;
+	public static final String colEnrichmentTermsNames = "enrichmentTermsNames";
+	public static final String colEnrichmentTermsIntegers = "enrichmentTermsIntegers";
+	public static final String colEnrichmentPassthrough = "enrichmentPassthrough";
 
+	
+	public static final String[] swingColumns = new String[] { colCategory, colShowChart, colName, colDescription, colFDR,
+			colGenesCount, colGenes, colGenesSUID };
+	public static final int nodeSUIDColumn = 7;
+	public static final int fdrColumn = 4;
+	public static final int chartColumn = 1;
+	
 	public EnrichmentTerm() {
 		this.name = "";
 		this.description = "";
+		this.category = "";
 		this.pvalue = -1.0;
 		this.bonfPValue = -1.0;
 		this.fdrPValue = -1.0;
@@ -50,10 +59,23 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 
 	}
 
-	public EnrichmentTerm(String name, String description, double pvalue, double bonfPValue,
+	public EnrichmentTerm(String enrichmentCategory) {
+		this.name = "";
+		this.description = "";
+		this.category = enrichmentCategory;
+		this.pvalue = -1.0;
+		this.bonfPValue = -1.0;
+		this.fdrPValue = -1.0;
+		this.genes = new ArrayList<String>();
+		this.nodes = new ArrayList<Long>();
+
+	}
+
+	public EnrichmentTerm(String name, String description, String category, double pvalue, double bonfPValue,
 			double fdrPValue) {
 		this.name = name;
 		this.description = description;
+		this.category = category;
 		this.pvalue = pvalue;
 		this.bonfPValue = bonfPValue;
 		this.fdrPValue = fdrPValue;
@@ -75,6 +97,14 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 
 	public void setDescription(String desc) {
 		this.description = desc;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
 	public double getPValue() {

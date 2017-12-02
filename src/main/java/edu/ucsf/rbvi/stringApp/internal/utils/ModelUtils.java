@@ -226,6 +226,105 @@ public class ModelUtils {
 		return nodes;
 	}
 
+	public static List<EnrichmentTerm> getEnrichmentFromJSON(StringManager manager,
+			JSONObject object, double enrichmentCutoff, Map<String, Long> stringNodesMap,
+			CyNetwork network) {
+		JSONArray enrichmentArray = getResultsFromJSON(object, JSONArray.class);
+		if (enrichmentArray == null)
+			return null;
+
+		List<EnrichmentTerm> results = new ArrayList<>();
+		// {"p_value":0.01,"number_of_genes":"3","description":"single organism signaling","ncbiTaxonId":"9606",
+		// "term":"GO:0044700","inputGenes":"SMO,CDK2,TP53","fdr":0.877,"bonferroni":1,"category":"Process",
+		// "preferredNames":"SMO,CDK2,TP53"}
+		for (Object enrObject : enrichmentArray) {
+			JSONObject enr = (JSONObject) enrObject;
+			EnrichmentTerm currTerm = new EnrichmentTerm();
+			if (enr.containsKey("term"))
+				currTerm.setName((String) enr.get("term"));
+			if (enr.containsKey("category"))
+				currTerm.setCategory((String) enr.get("category"));
+			if (enr.containsKey("description"))
+				currTerm.setDescription((String) enr.get("description"));
+			if (enr.containsKey("pvalue"))
+				currTerm.setPValue(((Number) enr.get("pvalue")).doubleValue());
+			if (enr.containsKey("bonferroni"))
+				currTerm.setBonfPValue(((Number) enr.get("bonferroni")).doubleValue());
+			if (enr.containsKey("fdr"))
+				currTerm.setFDRPValue(((Number) enr.get("fdr")).doubleValue());
+			if (enr.containsKey("inputGenes")) {
+				List<String> currGeneList = new ArrayList<String>();
+				List<Long> currNodeList = new ArrayList<Long>();
+				JSONArray genes = (JSONArray)enr.get("inputGenes");
+				for (int i = 0; i < genes.size(); i++) {
+					String enrGeneEnsemblID = (String)genes.get(i);
+					String enrGeneNodeName = enrGeneEnsemblID;
+					if (stringNodesMap.containsKey(enrGeneEnsemblID)) {
+						final Long nodeSUID = stringNodesMap.get(enrGeneEnsemblID);
+						currNodeList.add(nodeSUID);
+						if (network.getDefaultNodeTable().getColumn(CyNetwork.NAME) != null) {
+							enrGeneNodeName = network.getDefaultNodeTable().getRow(nodeSUID)
+									.get(CyNetwork.NAME, String.class);
+						}
+					}
+					currGeneList.add(enrGeneNodeName);
+				}
+				currTerm.setGenes(currGeneList);
+				currTerm.setNodesSUID(currNodeList);
+			}
+			if (enr.containsKey("error")) {
+				System.out.println("error");
+				return null;
+			}
+			if (enr.containsKey("Error")) {
+				System.out.println("An error occured while retrieving ppi enrichment.");
+			}
+			if (enr.containsKey("ErrorMessage")) {
+				System.out.println(enr.get("ErrorMessage"));
+				return null;
+			}
+			// save only if above cutoff
+			if (currTerm.getFDRPValue() <= enrichmentCutoff)
+				results.add(currTerm);
+		}
+		return results;
+	}
+
+	public static Double getEnrichmentPPIFromJSON(StringManager manager, JSONObject object,
+			double enrichmentCutoff, Map<String, Long> stringNodesMap, CyNetwork network) {
+		Double ppienrichment = null;
+		JSONArray ppienrichmentArray = getResultsFromJSON(object, JSONArray.class);
+		if (ppienrichmentArray == null)
+			return null;
+
+		// {"p_value":"1.03e-10","average_node_degree":13,"expected_number_of_edges":43,"number_of_edges":91,
+		// "local_clustering_coefficient":1,"number_of_nodes":14}
+		for (Object enrObject : ppienrichmentArray) {
+			JSONObject enr = (JSONObject) enrObject;
+
+			if (enr.containsKey("p_value")) {
+				if (((String)enr.get("p_value")).equals("0"))
+					ppienrichment = new Double(1e-16);
+				else
+					ppienrichment = new Double((String) enr.get("p_value"));
+			}
+			if (enr.containsKey("expected_number_of_edges")) {
+				long exp_edges = ((Long) enr.get("expected_number_of_edges")).longValue();
+			}
+			if (enr.containsKey("number_of_edges")) {
+				long num_edges = ((Long) enr.get("number_of_edges")).longValue();
+			}			
+			if (enr.containsKey("Error")) {
+				System.out.println("An error occured while retrieving ppi enrichment.");
+			}
+			if (enr.containsKey("ErrorMessage")) {
+				System.out.println(enr.get("ErrorMessage"));
+				return null;
+			}
+		}
+		return ppienrichment;
+	}
+
 	public static List<CyNode> augmentNetworkFromJSON(StringManager manager, CyNetwork net,
 			List<CyEdge> newEdges, JSONObject object, Map<String, String> queryTermMap,
 			String useDATABASE) {
@@ -944,7 +1043,24 @@ public class ModelUtils {
 		return netTables;
 	}
 
-	public static List<EnrichmentTerm> parseXMLDOM(Object results, double cutoff, CyNetwork network,
+	public static CyTable getEnrichmentTable(StringManager manager, CyNetwork network, String name) {
+		CyTableManager tableManager = manager.getService(CyTableManager.class);
+		Set<CyTable> currTables = tableManager.getAllTables(true);
+		for (CyTable current : currTables) {
+			if (name.equals(current.getTitle())
+					&& current.getColumn(EnrichmentTerm.colNetworkSUID) != null
+					&& current.getAllRows().size() > 0) {
+				CyRow tempRow = current.getAllRows().get(0);
+				if (tempRow.get(EnrichmentTerm.colNetworkSUID, Long.class) != null && tempRow
+						.get(EnrichmentTerm.colNetworkSUID, Long.class).equals(network.getSUID())) {
+					return current;
+				}
+			}
+		}
+		return null;
+	}
+
+	public static List<EnrichmentTerm> parseXMLDOM(Object results, double cutoff, String enrichmentCategory, CyNetwork network,
 			Map<String, Long> stringNodesMap, StringManager manager) {
 		if (!(results instanceof Document)) {
 			return null;
@@ -1047,7 +1163,7 @@ public class ModelUtils {
 					// System.out.println(enrGenes);
 					// }
 					if (!name.equals("") && fdr > -1 && fdr <= cutoff) {
-						EnrichmentTerm enrTerm = new EnrichmentTerm(name, descr, pvalue, bonf, fdr);
+						EnrichmentTerm enrTerm = new EnrichmentTerm(name, descr, enrichmentCategory, pvalue, bonf, fdr);
 						enrTerm.setGenes(enrGenes);
 						enrTerm.setNodesSUID(enrNodes);
 						enrichmentTerms.add(enrTerm);

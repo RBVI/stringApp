@@ -51,10 +51,13 @@ public class StringNetwork {
 		// }
 
 		// always call the string API first to resolve all potential protein IDs
-		String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/resolveList";
+		// new API 
+		String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/get_string_ids";
+		// String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/resolveList";
 		Map<String, String> args = new HashMap<>();
 		args.put("species", Integer.toString(taxon));			
 		args.put("identifiers", encTerms);
+		// args.put("limit", "");
 		args.put("caller_identity", StringManager.CallerIdentity);
 		manager.info("URL: "+url+"?species="+Integer.toString(taxon)+"&caller_identity="+StringManager.CallerIdentity+"&identifiers="+encTerms);
 		// Get the results

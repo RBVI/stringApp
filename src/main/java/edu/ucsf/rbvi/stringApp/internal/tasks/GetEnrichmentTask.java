@@ -1,6 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,9 +29,11 @@ import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.TaskMonitor.Level;
 import org.cytoscape.work.Tunable;
+import org.json.simple.JSONObject;
 
 import edu.ucsf.rbvi.stringApp.internal.io.EnrichmentSAXHandler;
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
@@ -49,23 +52,23 @@ public class GetEnrichmentTask extends AbstractTask {
 	@Tunable(description = "Enrichment cutoff", gravity = 1.0)
 	public double cutoff = 0.05;
 
-	@Tunable(description = "GO Biological Process", gravity = 2.0)
-	public boolean goProcess = true;
+	//@Tunable(description = "GO Biological Process", gravity = 2.0)
+	public boolean goProcess = false;
 
-	@Tunable(description = "GO Molecular Function", gravity = 3.0)
-	public boolean goFunction = true;
+	//@Tunable(description = "GO Molecular Function", gravity = 3.0)
+	public boolean goFunction = false;
 
-	@Tunable(description = "GO Cellular Compartment", gravity = 4.0)
-	public boolean goCompartment = true;
+	//@Tunable(description = "GO Cellular Compartment", gravity = 4.0)
+	public boolean goCompartment = false;
 
-	@Tunable(description = "KEGG Pathways", gravity = 5.0)
-	public boolean kegg = true;
+	//@Tunable(description = "KEGG Pathways", gravity = 5.0)
+	public boolean kegg = false;
 
-	@Tunable(description = "Pfam domains", gravity = 6.0)
-	public boolean pfam = true;
+	//@Tunable(description = "Pfam domains", gravity = 6.0)
+	public boolean pfam = false;
 
-	@Tunable(description = "InterPro domains", gravity = 7.0)
-	public boolean interPro = true;
+	//@Tunable(description = "InterPro domains", gravity = 7.0)
+	public boolean interPro = false;
 
 	public GetEnrichmentTask(StringManager manager, CyNetwork network, CyNetworkView netView,
 			ShowEnrichmentPanelTaskFactory showFactory) {
@@ -125,6 +128,10 @@ public class GetEnrichmentTask extends AbstractTask {
 		// clear old results
 		deleteOldTables();
 
+		// retrieve enrichment (new API)
+		getEnrichmentJSON(selected, species);
+		Double ppie = getEnrichmentPPIJSON(selected, species);
+
 		// retrieve enrichment
 		String[] selectedNodes = selected.split("\n");
 		if (goProcess) {
@@ -181,6 +188,58 @@ public class GetEnrichmentTask extends AbstractTask {
 		}
 	}
 
+	private void getEnrichmentJSON(String selected, String species) {
+		Map<String, String> args = new HashMap<String, String>();
+		String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/enrichment";
+		args.put("identifiers", selected);
+		args.put("species", species);
+		args.put("caller_identity", StringManager.CallerIdentity);
+		JSONObject results = HttpUtils.postJSON(url, args, manager);
+		if (results == null) {
+			monitor.setStatusMessage(
+					"Enrichment retrieval returned no results, possibly due to an error.");
+			return;
+		}
+		List<EnrichmentTerm> terms = ModelUtils.getEnrichmentFromJSON(manager, results, cutoff, stringNodesMap, network);
+		if (terms == null) {
+			monitor.setStatusMessage(
+					"Enrichment retrieval returned no results, possibly due to an error.");
+			return; 
+		} else if (terms.size() > 0) {
+			Collections.sort(terms);
+			enrichmentResult.put(EnrichmentTerm.termCategories[6], terms);
+			saveEnrichmentTable(EnrichmentTerm.termTables[6], EnrichmentTerm.termCategories[6]);
+		}		
+	}
+	
+	private Double getEnrichmentPPIJSON(String selected, String species) {
+		Map<String, String> args = new HashMap<String, String>();
+		String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/ppi_enrichment";
+		args.put("identifiers", selected);
+		args.put("species", species);
+		args.put("required_score", "400");
+		Double confidence = ModelUtils.getConfidence(network);
+		if (confidence != null) {
+			confidence = confidence*1000;
+			args.put("required_score", confidence.toString());
+		}
+		args.put("caller_identity", StringManager.CallerIdentity);
+		JSONObject results = HttpUtils.postJSON(url, args, manager);
+		if (results == null) {
+			monitor.setStatusMessage(
+					"Enrichment retrieval returned no results, possibly due to an error.");
+			return null;
+		}
+		System.out.println(results.toString());
+		Double ppiEnrichment = ModelUtils.getEnrichmentPPIFromJSON(manager, results, cutoff, stringNodesMap, network);
+		if (ppiEnrichment == null) {
+			monitor.setStatusMessage(
+					"PPI Enrichment retrieval returned no results, possibly due to an error.");
+			return null; 
+		} 
+		return ppiEnrichment;
+	}
+
 	private boolean getEnrichment(String[] selectedNodes, String filter, String species,
 			String enrichmentCategory) throws Exception {
 		Map<String, String> queryMap = new HashMap<String, String>();
@@ -211,7 +270,7 @@ public class GetEnrichmentTask extends AbstractTask {
 		// 1000 + " seconds.");
 		// time = System.currentTimeMillis();
 		// parse using SAX
-		EnrichmentSAXHandler myHandler = new EnrichmentSAXHandler(network, stringNodesMap, cutoff);
+		EnrichmentSAXHandler myHandler = new EnrichmentSAXHandler(network, stringNodesMap, cutoff, enrichmentCategory);
 		// TODO: change for release
 		HttpUtils.postXMLSAX(EnrichmentTerm.enrichmentURL, queryMap, manager, myHandler);
 		if (!myHandler.isStatusOK()) {
@@ -275,6 +334,9 @@ public class GetEnrichmentTask extends AbstractTask {
 		if (table.getColumn(EnrichmentTerm.colDescription) == null) {
 			table.createColumn(EnrichmentTerm.colDescription, String.class, false);
 		}
+		if (table.getColumn(EnrichmentTerm.colCategory) == null) {
+			table.createColumn(EnrichmentTerm.colCategory, String.class, false);
+		}
 		if (table.getColumn(EnrichmentTerm.colFDR) == null) {
 			table.createColumn(EnrichmentTerm.colFDR, Double.class, false);
 		}
@@ -283,6 +345,9 @@ public class GetEnrichmentTask extends AbstractTask {
 		}
 		if (table.getColumn(EnrichmentTerm.colGenes) == null) {
 			table.createListColumn(EnrichmentTerm.colGenes, String.class, false);
+		}
+		if (table.getColumn(EnrichmentTerm.colShowChart) == null) {
+			table.createColumn(EnrichmentTerm.colShowChart, Boolean.class, false);
 		}
 
 		// table.createColumn(EnrichmentTerm.colPvalue, Double.class, false);
@@ -302,11 +367,13 @@ public class GetEnrichmentTask extends AbstractTask {
 			CyRow row = table.getRow((long) i);
 			row.set(EnrichmentTerm.colName, term.getName());
 			row.set(EnrichmentTerm.colDescription, term.getDescription());
+			row.set(EnrichmentTerm.colCategory, term.getCategory());
 			row.set(EnrichmentTerm.colFDR, term.getFDRPValue());
 			row.set(EnrichmentTerm.colGenesCount, term.getGenes().size());
 			row.set(EnrichmentTerm.colGenes, term.getGenes());
 			row.set(EnrichmentTerm.colGenesSUID, term.getNodesSUID());
 			row.set(EnrichmentTerm.colNetworkSUID, network.getSUID());
+			row.set(EnrichmentTerm.colShowChart, false);
 		}
 	}
 

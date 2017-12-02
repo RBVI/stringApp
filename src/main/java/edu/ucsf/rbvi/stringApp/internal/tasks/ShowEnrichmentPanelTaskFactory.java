@@ -36,7 +36,7 @@ public class ShowEnrichmentPanelTaskFactory extends AbstractTaskFactory {
 	public void reregister() {
 		manager.unregisterService(this, TaskFactory.class);
 		Properties props = new Properties();
-		props.setProperty(PREFERRED_MENU, "Apps.STRING");
+		props.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
 		if (ShowEnrichmentPanelTask.isPanelRegistered(manager)) {
 			props.setProperty(TITLE, "Hide enrichment panel");
 			show = false;
@@ -44,7 +44,7 @@ public class ShowEnrichmentPanelTaskFactory extends AbstractTaskFactory {
 			props.setProperty(TITLE, "Show enrichment panel");
 			show = true;
 		}
-		props.setProperty(MENU_GRAVITY, "5.0");
+		props.setProperty(MENU_GRAVITY, "2.0");
 		props.setProperty(IN_MENU_BAR, "true");
 		manager.registerService(this, TaskFactory.class, props);
 	}

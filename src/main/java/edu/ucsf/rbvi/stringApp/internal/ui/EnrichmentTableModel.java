@@ -35,7 +35,7 @@ public class EnrichmentTableModel extends AbstractTableModel {
 	public Object getValueAt(int row, int col) {
 		final String colName = columnNames[col];
 		final Long rowName = rowNames[row];
-		// swingColumns = new String[] { colShownChart, colName, colDescription, colFDR,
+		// swingColumns = new String[] { colShowChart, colName, colDescription, colFDR,
 		// colGenesCount, colGenes, colGenesSUID };
 		if (colName.equals(EnrichmentTerm.colShowChart)) {
 			return cyTable.getRow(rowName).get(colName, Boolean.class);

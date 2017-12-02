@@ -28,6 +28,7 @@ import org.cytoscape.view.vizmap.mappings.ContinuousMapping;
 import org.cytoscape.view.vizmap.mappings.DiscreteMapping;
 import org.cytoscape.view.vizmap.mappings.PassthroughMapping;
 
+import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
@@ -478,6 +479,28 @@ public class ViewUtils {
 		vmm.setCurrentVisualStyle(style);
 	}
 
+	public static void updatePieCharts(StringManager manager, VisualStyle stringStyle,
+			CyNetwork net, boolean show) {
+
+		VisualMappingFunctionFactory passthroughFactory = manager
+				.getService(VisualMappingFunctionFactory.class, "(mapping.type=passthrough)");
+		VisualLexicon lex = manager.getService(RenderingEngineManager.class)
+				.getDefaultVisualLexicon();
+		// Set up the passthrough mapping for the label
+		if (show) {
+			{
+				VisualProperty customGraphics = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_4");
+				PassthroughMapping pMapping = (PassthroughMapping) passthroughFactory
+						.createVisualMappingFunction(EnrichmentTerm.colEnrichmentPassthrough, String.class,
+								customGraphics);
+				stringStyle.addVisualMappingFunction(pMapping);
+			}
+		} else {
+			stringStyle
+					.removeVisualMappingFunction(lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_4"));
+		}
+	}
+	
 	private static String getStyleName(StringManager manager, CyNetwork network) {
 		String networkName = manager.getNetworkName(network);
 		String styleName = STYLE_NAME;
