@@ -544,12 +544,12 @@ public class GetTermsPanel extends JPanel {
 		TaskFactory factory = null;
 		if (!queryAddNodes) {
 			factory = new ImportNetworkTaskFactory(stringNetwork, speciesCombo.getSelectedItem().toString(), 
-		                                                   taxon, confidence, additionalNodes, stringIds,
-																						 queryTermMap, useDATABASE);
+			                                       taxon, confidence, additionalNodes, stringIds,
+			                                       queryTermMap, useDATABASE);
 		} else {
 			factory = new ImportNetworkTaskFactory(stringNetwork, (String)speciesPartnerCombo.getSelectedItem(), 
-                    taxon, confidence, additionalNodes, stringIds,
-													 queryTermMap, useDATABASE);
+			                                       taxon, confidence, additionalNodes, stringIds,
+			                                       queryTermMap, useDATABASE);
 		}
 		cancel();
 		manager.execute(factory.createTaskIterator());
@@ -693,11 +693,17 @@ public class GetTermsPanel extends JPanel {
 			// Start our task cascade
     		String speciesName = "";
     		if (!queryAddNodes) {
-				speciesName = speciesCombo.getSelectedItem().toString();
+					speciesName = speciesCombo.getSelectedItem().toString();
     		} else {
     			speciesName = (String)speciesPartnerCombo.getSelectedItem();
     		}
 			int taxon = Species.getSpeciesTaxId(speciesName);
+			if (taxon == -1) {
+				// Oops -- unknown species
+				JOptionPane.showMessageDialog(null, "Unknown species: '"+speciesName+"'",
+							                        "Unknown species", JOptionPane.ERROR_MESSAGE); 
+				return;
+			}
 			if (stringNetwork == null)
 				stringNetwork = new StringNetwork(manager);
 

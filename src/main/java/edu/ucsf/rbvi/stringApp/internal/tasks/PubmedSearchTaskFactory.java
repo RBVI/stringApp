@@ -27,6 +27,7 @@ import org.cytoscape.io.webservice.SearchWebServiceClient;
 import org.cytoscape.io.webservice.swing.AbstractWebServiceGUIClient;
 
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
+import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetAnnotationsTask;
@@ -38,9 +39,9 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	StringManager manager;
 	static String PUBMED_ID = "edu.ucsf.rbvi.pubmed";
 	static String PUBMED_URL = "http://string-db.org";
-	static String PUBMED_NAME = "STRING pubmed query";
-	static String PUBMED_DESC = "Search STRING for protein-protein interactions based on pubmed queries";
-	static String PUBMED_DESC_LONG =  "<html>The Pubmed query retrieves a STRING network pertaining to any topic of interest <br />"
+	static String PUBMED_NAME = "STRING PubMed query";
+	static String PUBMED_DESC = "Search STRING for protein-protein interactions based on PubMed queries";
+	static String PUBMED_DESC_LONG =  "<html>The PubMed query retrieves a STRING network pertaining to any topic of interest <br />"
 											+ "based on text mining of PubMed abstracts. STRING is a database of known and <br />"
 											+ "predicted protein interactions for thousands of organisms, which are integrated <br />"
 											+ "from several sources, scored, and transferred across orthologs. The network <br />"
@@ -80,10 +81,18 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run () {
+						Species species;
+						try {
+							species = optionsPanel.getSpecies();
+						} catch (ClassCastException e) {
+							String speciesText = optionsPanel.getSpeciesText();
+							m.showMessage(TaskMonitor.Level.ERROR, "Unknown species: '"+speciesText+"'");
+							return;
+						}
 						JDialog d = new JDialog();
 						d.setTitle("Resolve Ambiguous Terms");
 						PubMedQueryPanel panel = new PubMedQueryPanel(manager, stringNetwork, terms, 
-						                                              optionsPanel.getSpecies(),
+						                                              species,
 						                                              optionsPanel.getConfidence(),
 						                                              optionsPanel.getAdditionalNodes());
 						d.setContentPane(panel);

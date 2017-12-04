@@ -81,6 +81,7 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 
 		stringNetwork = new StringNetwork(manager);
 		int taxon = getTaxId();
+		if (taxon == -1) return new TaskIterator(null);
 
 		return new TaskIterator(new GetAnnotationsTask(stringNetwork, taxon, terms, Databases.STITCH.getAPIName()));
 	}
@@ -125,10 +126,22 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 	public TaskObserver getTaskObserver() { return this; }
 
 	public int getTaxId() {
-		// This will eventually come from the OptionsComponent...
-		if (optionsPanel.getSpecies() != null)
-			return optionsPanel.getSpecies().getTaxId();
-		return 9606; // Homo sapiens
+		try {
+			if (optionsPanel.getSpecies() != null) {
+				return optionsPanel.getSpecies().getTaxId();
+			}
+			return 9606; // Homo sapiens
+		} catch (ClassCastException e) {
+			// The user might not have given us a full species name
+			String name = optionsPanel.getSpeciesText();
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					JOptionPane.showMessageDialog(null, "Unknown species: '"+name+"'",
+								                        "Unknown species", JOptionPane.ERROR_MESSAGE); 
+				}
+			});
+			return -1;
+		}
 	}
 
 	public String getSpecies() {
