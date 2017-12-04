@@ -136,7 +136,6 @@ public class SearchOptionsPanel extends JPanel {
 		c.noExpand().insets(0,5,0,5);
 		speciesPanel.add(speciesLabel, c);
 		speciesCombo = new JComboBox<Species>(speciesList.toArray(new Species[1]));
-		JComboBoxDecorator.decorate(speciesCombo, true, true); 
 
 		if (species == null || isDisease) {
 			// Set Human as the default
@@ -149,6 +148,7 @@ public class SearchOptionsPanel extends JPanel {
 		} else {
 			speciesCombo.setSelectedItem(species);
 		}
+		JComboBoxDecorator.decorate(speciesCombo, true, true); 
 		c.right().expandHoriz().insets(0,5,0,5);
 		if (isDisease)
 			speciesCombo.setEnabled(false);

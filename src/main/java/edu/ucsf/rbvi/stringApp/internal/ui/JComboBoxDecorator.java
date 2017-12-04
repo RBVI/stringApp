@@ -5,10 +5,13 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 
@@ -31,17 +34,22 @@ public class JComboBoxDecorator {
 
 	public static void decorate(final JComboBox<Species> jcb, boolean editable,
 			final List<Species> entries) {
+
+		Species selectedSpecies = (Species)jcb.getSelectedItem();
 		jcb.setEditable(editable);
 		jcb.setModel(new DefaultComboBoxModel(entries.toArray()));
 
-		final JTextField textField = (JTextField) jcb.getEditor().getEditorComponent();
+		final JTextField textField = (JTextField)jcb.getEditor().getEditorComponent();
+		textField.setText(selectedSpecies.getName());
 
 		textField.addKeyListener(new KeyAdapter() {
-			public void keyTyped(KeyEvent e) {
+			public void keyReleased(KeyEvent e) {
 				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
+				 	public void run() {
+						int currentCaretPosition=textField.getCaretPosition();
 						comboFilter(textField.getText(), jcb, entries);
-					}
+						textField.setCaretPosition(currentCaretPosition);
+				 	}
 				});
 			}
 		});
@@ -72,11 +80,22 @@ public class JComboBoxDecorator {
 			changed = false;
 		}
 
-		if (changed && entriesFiltered.size() > 0) {
+		if (changed && entriesFiltered.size() > 1) {
 			previousEntries = entriesFiltered;
 			jcb.setModel(new DefaultComboBoxModel(entriesFiltered.toArray()));
 			jcb.setSelectedItem(enteredText);
 			jcb.showPopup();
+		} else if (entriesFiltered.size() == 1) {
+			if (entriesFiltered.get(0).toString().equalsIgnoreCase(enteredText)) {
+				previousEntries = new ArrayList<Species>();
+				jcb.setSelectedItem(entriesFiltered.get(0));
+				jcb.hidePopup();
+			} else {
+				previousEntries = entriesFiltered;
+				jcb.setModel(new DefaultComboBoxModel(entriesFiltered.toArray()));
+				jcb.setSelectedItem(enteredText);
+				jcb.showPopup();
+			}
 		} else if (entriesFiltered.size() == 0) {
 			previousEntries = new ArrayList<Species>();
 			jcb.hidePopup();

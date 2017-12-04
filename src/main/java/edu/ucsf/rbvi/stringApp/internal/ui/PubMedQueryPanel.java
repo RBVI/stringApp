@@ -189,7 +189,6 @@ public class PubMedQueryPanel extends JPanel {
 		c.noExpand().insets(0,5,0,5);
 		speciesPanel.add(speciesLabel, c);
 		speciesCombo = new JComboBox<Species>(speciesList.toArray(new Species[0]));
-		JComboBoxDecorator.decorate(speciesCombo, true, true); 
 
 		if (species == null) {
 			// Set Human as the default
@@ -202,6 +201,7 @@ public class PubMedQueryPanel extends JPanel {
 		} else {
 			speciesCombo.setSelectedItem(species);
 		}
+		JComboBoxDecorator.decorate(speciesCombo, true, true); 
 		c.right().expandHoriz().insets(0,5,0,5);
 		speciesPanel.add(speciesCombo, c);
 		return speciesPanel;
