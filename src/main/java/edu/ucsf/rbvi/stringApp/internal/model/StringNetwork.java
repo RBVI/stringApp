@@ -154,15 +154,10 @@ public class StringNetwork {
 	}
 
 	public boolean haveResolvedNames() {
-		if (resolvedIdMap == null)
+		// allows users to not resolve some of the proteins but still needs at least one protein as input
+		if (resolvedIdMap == null || resolvedIdMap.size() > 0)
 			return true;
-
-		for (String key: annotations.keySet()) {
-			if (!resolvedIdMap.containsKey(key) || resolvedIdMap.get(key).size() == 0) {
-				return false;
-			}
-		}
-		return true;
+		return false;
 	}
 
 	public int getResolvedTerms() { return resolvedIdMap.size(); }

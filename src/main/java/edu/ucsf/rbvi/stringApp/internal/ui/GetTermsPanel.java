@@ -712,8 +712,9 @@ public class GetTermsPanel extends JPanel {
 				return;
 			}
 			
-			// Strip off any blank lines
+			// Strip off any blank lines as well as trailing spaces
 			terms = terms.replaceAll("(?m)^\\s*", "");
+			terms = terms.replaceAll("(?m)\\s*$", "");
 			manager.info("Getting annotations for "+speciesName+"terms: "+terms);
 
 			// Launch a task to get the annotations. 
