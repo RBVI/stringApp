@@ -92,7 +92,9 @@ public class ModelUtils {
 	public static String CONFIDENCE = "confidence score";
 	public static String DATABASE = "database";
 	public static String NET_SPECIES = "species";
-
+	public static String NET_ANALYZED_NODES = "analyzedNodes.SUID";
+	
+	
 	// Session information
 	public static String showStructureImagesFlag = "showStructureImages";
 	public static String showEnhancedLabelsFlag = "showEnhancedLabels";
@@ -820,6 +822,23 @@ public class ModelUtils {
 		return availableTypes;
 	}	
 
+	public static List<CyNode> getEnrichmentNodes(CyNetwork net) {
+		List<CyNode> analyzedNodes = new ArrayList<CyNode>();
+		if (net != null) {
+			CyTable netTable = net.getDefaultNetworkTable();
+			if (netTable.getColumn(ModelUtils.NET_ANALYZED_NODES) != null) {
+				List<Long> nodesSUID = (List<Long>) netTable.getRow(net.getSUID())
+						.get(ModelUtils.NET_ANALYZED_NODES, List.class);
+				for (CyNode netNode : net.getNodeList()) {
+					if (nodesSUID.contains(netNode.getSUID())) {
+						analyzedNodes.add(netNode);
+					}
+				}
+			}
+		}
+		return analyzedNodes;
+	}
+	
 	
 	public static void shortenCompoundNames(CyNetwork network, List<CyNode> nodes) {
 		HashMap<String, List<CyNode>> shortNames = new HashMap<String, List<CyNode>>();

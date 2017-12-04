@@ -26,11 +26,11 @@ public class ShowEnrichmentPanelTaskFactory extends AbstractTaskFactory {
 	}
 
 	public TaskIterator createTaskIterator() {
-		return new TaskIterator(new ShowEnrichmentPanelTask(manager, this, show, null));
+		return new TaskIterator(new ShowEnrichmentPanelTask(manager, this, show));
 	}
 
-	public TaskIterator createTaskIterator(boolean show, List<CyNode> analyzedNodes) {
-		return new TaskIterator(new ShowEnrichmentPanelTask(manager, this, show, analyzedNodes));
+	public TaskIterator createTaskIterator(boolean show) {
+		return new TaskIterator(new ShowEnrichmentPanelTask(manager, this, show));
 	}
 
 	public void reregister() {

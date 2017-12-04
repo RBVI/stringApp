@@ -48,7 +48,6 @@ public class EnrichmentCytoPanel extends JPanel
 
 	final StringManager manager;
 	Map<String, JTable> enrichmentTables;
-	List<CyNode> analyzedNodes;
 	JPanel topPanel;
 	JPanel mainPanel;
 	JScrollPane scrollPane;
@@ -62,10 +61,9 @@ public class EnrichmentCytoPanel extends JPanel
 	final String colEnrichmentTermsPieChart = "enrichmentTermsPieChart";
 	final String colEnrichmentPieChart = "enrichmentPieChart";
 
-	public EnrichmentCytoPanel(StringManager manager, List<CyNode> analyzedNodes) {
+	public EnrichmentCytoPanel(StringManager manager) {
 		this.manager = manager;
 		enrichmentTables = new HashMap<String, JTable>();
-		this.analyzedNodes = analyzedNodes;
 		showTable = null;
 		this.setLayout(new BorderLayout());
 		initPanel();
@@ -138,6 +136,7 @@ public class EnrichmentCytoPanel extends JPanel
 			// drawCharts();
 		} else if (e.getSource().equals(butAnalyzedNodes)) {
 			CyNetwork network = manager.getCurrentNetwork();
+			List<CyNode> analyzedNodes = ModelUtils.getEnrichmentNodes(network);  
 			if (network == null || analyzedNodes == null)
 				return;
 			for (CyNode node : analyzedNodes) {
@@ -264,10 +263,6 @@ public class EnrichmentCytoPanel extends JPanel
 		if (selectedNetwork != null) {
 			initPanel(selectedNetwork);
 		}
-	}
-
-	public void setAnalyzedNodes(List<CyNode> analyzedNodes) {
-		this.analyzedNodes = analyzedNodes;
 	}
 
 	static class DecimalFormatRenderer extends DefaultTableCellRenderer {

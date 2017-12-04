@@ -20,7 +20,6 @@ import org.cytoscape.model.CyTable;
 import org.cytoscape.model.CyTableFactory;
 import org.cytoscape.model.CyTableManager;
 import org.cytoscape.model.SavePolicy;
-import org.cytoscape.task.analyze.AnalyzeNetworkCollectionTaskFactory;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ProvidesTitle;
@@ -161,9 +160,19 @@ public class GetEnrichmentTask extends AbstractTask {
 				saveEnrichmentTable(EnrichmentTerm.termTables[4], EnrichmentTerm.termCategories[4]);
 		}
 
+		// save analyzed nodes in network table
+		CyTable netTable = network.getDefaultNetworkTable();
+		ModelUtils.createListColumnIfNeeded(netTable, Long.class, ModelUtils.NET_ANALYZED_NODES);
+		List<Long> analyzedNodesSUID = new ArrayList<Long>();
+		for (CyNode node : analyzedNodes) {
+			analyzedNodesSUID.add(node.getSUID());
+		}
+		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ANALYZED_NODES, analyzedNodesSUID);		
+		
+		// show enrichment results
 		if (enrichmentResult.size() > 0) {
 			SynchronousTaskManager<?> taskM = manager.getService(SynchronousTaskManager.class);
-			TaskIterator ti = showFactory.createTaskIterator(true, analyzedNodes);
+			TaskIterator ti = showFactory.createTaskIterator(true);
 			taskM.execute(ti);
 		} else {
 			// TODO: Some error message to the user

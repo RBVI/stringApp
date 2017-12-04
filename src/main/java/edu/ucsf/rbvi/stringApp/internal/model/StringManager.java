@@ -1,12 +1,12 @@
 package edu.ucsf.rbvi.stringApp.internal.model;
 
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.CyUserLog;
 import org.cytoscape.command.AvailableCommands;
@@ -14,26 +14,23 @@ import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
+import org.cytoscape.model.CyNode;
 import org.cytoscape.model.events.NetworkAddedEvent;
 import org.cytoscape.model.events.NetworkAddedListener;
 import org.cytoscape.property.CyProperty;
 import org.cytoscape.property.CyProperty.SavePolicy;
 import org.cytoscape.service.util.CyServiceRegistrar;
-import org.cytoscape.session.events.SessionAboutToBeLoadedEvent;
-import org.cytoscape.session.events.SessionAboutToBeLoadedListener;
 import org.cytoscape.session.events.SessionLoadedEvent;
 import org.cytoscape.session.events.SessionLoadedListener;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewFactory;
-import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.work.SynchronousTaskManager;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskObserver;
-import org.apache.log4j.Logger;
 
-import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
@@ -46,6 +43,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	final AvailableCommands availableCommands;
 	private ShowImagesTaskFactory imagesTaskFactory;
 	private ShowEnhancedLabelsTaskFactory labelsTaskFactory;
+	private ShowEnrichmentPanelTaskFactory enrichmentTaskFactory;
 	private boolean showImage = true;
 	private boolean showEnhancedLabels = true;
 	private boolean ignore = false;
@@ -259,29 +257,51 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	}
 
 	public void handleEvent(SessionLoadedEvent arg0) {
-		if (labelsTaskFactory == null || imagesTaskFactory == null) return;
 
-		String sessionValueLabels = ModelUtils.getStringProperty(this,
-				ModelUtils.showEnhancedLabelsFlag, SavePolicy.SESSION_FILE);
-		// System.out.println("show labels: " + sessionValueLabels);
-		if (sessionValueLabels != null) {
-			showEnhancedLabels = Boolean.parseBoolean(sessionValueLabels);
-		} else {
-			ModelUtils.setStringProperty(this, ModelUtils.showEnhancedLabelsFlag,
-					new Boolean(showEnhancedLabels), SavePolicy.SESSION_FILE);
+		// load enrichment
+		if (enrichmentTaskFactory != null) {
+			Set<CyNetwork> networks = arg0.getLoadedSession().getNetworks();
+			boolean show = false;
+			for (CyNetwork network : networks) {
+				if (ModelUtils.getEnrichmentNodes(network).size() > 0) {
+					show = true;
+					break;
+				}
+			}
+			if (show) {
+				SynchronousTaskManager<?> taskM = getService(SynchronousTaskManager.class);
+				taskM.execute(enrichmentTaskFactory.createTaskIterator(true));
+				enrichmentTaskFactory.reregister();
+			}
 		}
-		labelsTaskFactory.reregister();
-
-		String sessionValueImage = ModelUtils.getStringProperty(this,
-				ModelUtils.showStructureImagesFlag, SavePolicy.SESSION_FILE);
-		// System.out.println("show image: " + sessionValueImage);
-		if (sessionValueImage != null) {
-			showImage = Boolean.parseBoolean(sessionValueImage);
-		} else {
-			ModelUtils.setStringProperty(this, ModelUtils.showStructureImagesFlag,
-					new Boolean(showImage), SavePolicy.SESSION_FILE);
+		
+		// check if enhanced labels should be shown or not
+		if (labelsTaskFactory != null) {
+			String sessionValueLabels = ModelUtils.getStringProperty(this,
+					ModelUtils.showEnhancedLabelsFlag, SavePolicy.SESSION_FILE);
+			// System.out.println("show labels: " + sessionValueLabels);
+			if (sessionValueLabels != null) {
+				showEnhancedLabels = Boolean.parseBoolean(sessionValueLabels);
+			} else {
+				ModelUtils.setStringProperty(this, ModelUtils.showEnhancedLabelsFlag,
+						new Boolean(showEnhancedLabels), SavePolicy.SESSION_FILE);
+			}
+			labelsTaskFactory.reregister();
 		}
-		imagesTaskFactory.reregister();
+		
+		// check if structure images should be shown or not
+		if (imagesTaskFactory != null) {
+			String sessionValueImage = ModelUtils.getStringProperty(this,
+					ModelUtils.showStructureImagesFlag, SavePolicy.SESSION_FILE);
+			// System.out.println("show image: " + sessionValueImage);
+			if (sessionValueImage != null) {
+				showImage = Boolean.parseBoolean(sessionValueImage);
+			} else {
+				ModelUtils.setStringProperty(this, ModelUtils.showStructureImagesFlag,
+						new Boolean(showImage), SavePolicy.SESSION_FILE);
+			}
+			imagesTaskFactory.reregister();
+		}
 	}
 
 	public void setShowImagesTaskFactory(ShowImagesTaskFactory factory) {
@@ -290,6 +310,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	
 	public void setShowEnhancedLabelsTaskFactory(ShowEnhancedLabelsTaskFactory factory) {
 		labelsTaskFactory = factory;		
+	}
+
+	public void setShowEnrichmentPanelTaskFactory(ShowEnrichmentPanelTaskFactory factory) {
+		enrichmentTaskFactory = factory;		
 	}
 
 	public <T> T getService(Class<? extends T> clazz) {

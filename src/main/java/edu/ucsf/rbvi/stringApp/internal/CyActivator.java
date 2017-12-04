@@ -327,6 +327,7 @@ public class CyActivator extends AbstractCyActivator {
 			ShowEnrichmentPanelTaskFactory showEnrichment = new ShowEnrichmentPanelTaskFactory(manager);
 			showEnrichment.reregister();
 			getEnrichment.setShowEnrichmentPanelFactory(showEnrichment);
+			manager.setShowEnrichmentPanelTaskFactory(showEnrichment);
 
 			ShowResultsPanelTaskFactory showResults = new ShowResultsPanelTaskFactory(manager);
 			showResults.reregister();
