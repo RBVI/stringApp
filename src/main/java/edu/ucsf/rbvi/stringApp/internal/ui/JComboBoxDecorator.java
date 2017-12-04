@@ -36,11 +36,13 @@ public class JComboBoxDecorator {
 			final List<Species> entries) {
 
 		Species selectedSpecies = (Species)jcb.getSelectedItem();
+		// System.out.println("JComboBoxDecorator: selectedItem = "+selectedSpecies);
 		jcb.setEditable(editable);
 		jcb.setModel(new DefaultComboBoxModel(entries.toArray()));
 
 		final JTextField textField = (JTextField)jcb.getEditor().getEditorComponent();
-		textField.setText(selectedSpecies.getName());
+		// textField.setText(selectedSpecies.getName());
+		jcb.setSelectedItem(selectedSpecies);
 
 		textField.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
