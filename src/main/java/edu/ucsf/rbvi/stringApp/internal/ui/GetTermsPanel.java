@@ -52,6 +52,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
 
+import org.apache.log4j.Logger;
+
+import org.cytoscape.application.CyUserLog;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.work.FinishStatus;
 import org.cytoscape.work.ObservableTask;
@@ -73,6 +76,8 @@ public class GetTermsPanel extends JPanel {
 	StringNetwork stringNetwork = null;
 	StringNetwork initialStringNetwork = null;
 	final StringManager manager;
+	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
+
 	// Map<String, List<String>> resolvedIdMap = null;
 	// Map<String, List<Annotation>> annotations = null;
 
@@ -741,6 +746,7 @@ public class GetTermsPanel extends JPanel {
 				int additionalNodes = additionalNodesSlider.getValue();
 				// This mimics the String web site behavior
 				if (stringNetwork.getResolvedTerms() == 1 && additionalNodes == 0) {
+					/*
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
 							JOptionPane.showMessageDialog(null, 
@@ -748,6 +754,9 @@ public class GetTermsPanel extends JPanel {
 										       "Hint", JOptionPane.WARNING_MESSAGE); 
 						}
 					});
+					*/
+					additionalNodes = 10;
+					logger.warn("STRING: Only one protein or compound was selected -- additional interactions set to 10");
 				}
 				//	additionalNodes = 10;
 

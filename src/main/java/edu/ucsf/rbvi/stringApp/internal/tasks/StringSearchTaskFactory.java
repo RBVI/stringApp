@@ -17,6 +17,9 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
+import org.apache.log4j.Logger;
+
+import org.cytoscape.application.CyUserLog;
 import org.cytoscape.application.swing.search.AbstractNetworkSearchTaskFactory;
 import org.cytoscape.application.swing.search.NetworkSearchTaskFactory;
 import org.cytoscape.work.FinishStatus;
@@ -55,6 +58,7 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 	private StringNetwork stringNetwork = null;
 	private SearchOptionsPanel optionsPanel = null;
 	private SearchQueryComponent queryComponent = null;
+	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
 
 	private static final Icon icon = new ImageIcon(
       StringSearchTaskFactory.class.getResource("/images/string_logo.png"));
@@ -178,6 +182,7 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 			int additionalNodes = getAdditionalNodes();
 			// This mimics the String web site behavior
 			if (stringNetwork.getResolvedTerms() == 1 && additionalNodes == 0) {
+				/*
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						JOptionPane.showMessageDialog(null, 
@@ -185,6 +190,9 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 									       "Hint", JOptionPane.WARNING_MESSAGE); 
 					}
 				});
+				*/
+				additionalNodes = 10;
+				logger.warn("STRING Protein: Only one protein was selected -- additional interactions set to 10");
 			}
 			//	additionalNodes = 10;
 
