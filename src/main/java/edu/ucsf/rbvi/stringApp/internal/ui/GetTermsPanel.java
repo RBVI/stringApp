@@ -306,6 +306,8 @@ public class GetTermsPanel extends JPanel {
 					importButton.setEnabled(true);
 					backButton.setEnabled(false);
 					importButton.setAction(new InitialAction());
+					speciesCombo.setEnabled(true);
+					wholeOrgBox.setEnabled(true);
 					getParent().revalidate();
         }
 			});
@@ -556,6 +558,8 @@ public class GetTermsPanel extends JPanel {
 	}
 
 	public void createResolutionPanel() {
+		speciesCombo.setEnabled(false);
+		wholeOrgBox.setEnabled(false);
 		mainSearchPanel.removeAll();
 		mainSearchPanel.revalidate();
 		mainSearchPanel.repaint();

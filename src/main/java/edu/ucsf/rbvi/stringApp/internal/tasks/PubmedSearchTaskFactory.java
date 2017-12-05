@@ -1,20 +1,29 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
 import org.cytoscape.application.swing.search.AbstractNetworkSearchTaskFactory;
+import org.cytoscape.util.swing.LookAndFeelUtil;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.FinishStatus;
 import org.cytoscape.work.ObservableTask;
@@ -49,6 +58,7 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 
 	private StringNetwork stringNetwork = null;
 	private SearchOptionsPanel optionsPanel = null;
+	private JTextField queryComponent = null;
 
 	private static final Icon icon = new ImageIcon(
       StringSearchTaskFactory.class.getResource("/images/pubmed_logo.png"));
@@ -138,7 +148,55 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 
 	@Override
 	public JComponent getQueryComponent() {
-		return null;
+		if (queryComponent == null) {
+			queryComponent = new MySearchComponent();
+		}
+		return queryComponent;
+	}
+
+	private class MySearchComponent extends JTextField {
+		Color msgColor;
+		private static final String DEF_SEARCH_TEXT = "Enter one term per line.      Set species →";
+		final int vgap = 1;
+		final int hgap = 5;
+
+		public MySearchComponent() {
+			super();
+			init();
+		}
+
+		private void init() {
+			msgColor = UIManager.getColor("Label.disabledForeground");
+			setMinimumSize(getPreferredSize());
+			setBorder(BorderFactory.createEmptyBorder(vgap, hgap, vgap, hgap));
+			setFont(getFont().deriveFont(LookAndFeelUtil.getSmallFontSize()));
+
+			return;
+		}
+
+		@Override
+		public void paint(Graphics g) {
+			super.paint(g);
+			Color msgColor = UIManager.getColor("Label.disabledForeground");
+
+			if (getText() == null || getText().trim().isEmpty()) {
+				Graphics2D g2 = (Graphics2D) g.create();
+				g2.setRenderingHints(
+					new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON));
+				// Set the font
+				g2.setFont(getFont());
+				// Get the FontMetrics
+				FontMetrics metrics = g2.getFontMetrics(getFont());
+				// Determine the X coordinate for the text
+				int x = 5;
+				// Determine the Y coordinate for the text (note we add the ascent, as in java 2d 0 is top of the screen)
+				int y = (metrics.getHeight() / 2) + metrics.getAscent() + 5;
+				// Draw
+				g2.setColor(msgColor);
+				g2.drawString(DEF_SEARCH_TEXT, x, y);
+				g2.dispose();
+			}
+		}
 	}
 
 	@Override

@@ -38,7 +38,7 @@ public class SearchQueryComponent extends JTextField {
 	private JTextArea queryTextArea = null;
 	private JScrollPane queryScroll = null;
 	private JPopupMenu popup = null;
-	private static final String DEF_SEARCH_TEXT = "Enter one term per line...";
+	private static final String DEF_SEARCH_TEXT = "Enter one term per line.      Set species →";
 	final int vgap = 1;
 	final int hgap = 5;
 	final String tooltip;
