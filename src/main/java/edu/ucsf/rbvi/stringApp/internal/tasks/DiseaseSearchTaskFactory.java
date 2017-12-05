@@ -14,6 +14,9 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
+import org.apache.log4j.Logger;
+
+import org.cytoscape.application.CyUserLog;
 import org.cytoscape.application.swing.search.AbstractNetworkSearchTaskFactory;
 import org.cytoscape.work.FinishStatus;
 import org.cytoscape.work.AbstractTask;
@@ -50,6 +53,7 @@ public class DiseaseSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 
 	private StringNetwork stringNetwork = null;
 	private SearchOptionsPanel optionsPanel = null;
+	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
 
 	private static final Icon icon = new ImageIcon(
       StringSearchTaskFactory.class.getResource("/images/disease_logo.png"));
@@ -72,8 +76,12 @@ public class DiseaseSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	public TaskIterator createTaskIterator() {
 		final String terms = getQuery();
 
-		if (terms == null) {
-			throw new NullPointerException("Query string is null.");
+		if (terms == null || terms.length() == 0) {
+			logger.warn("No disease terms provided: nothing done");
+			return new TaskIterator(new AbstractTask() {
+				@Override
+				public void run(TaskMonitor m) { return; }
+			});
 		}
 
 		return new TaskIterator(new AbstractTask() {
@@ -84,7 +92,8 @@ public class DiseaseSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 					public void run () {
 						JDialog d = new JDialog();
 						d.setTitle("Resolve Ambiguous Terms");
-						DiseaseQueryPanel panel = new DiseaseQueryPanel(manager, stringNetwork, terms);
+						// DiseaseQueryPanel panel = new DiseaseQueryPanel(manager, stringNetwork, terms);
+						DiseaseQueryPanel panel = new DiseaseQueryPanel(manager, stringNetwork, terms, optionsPanel.getConfidence(), optionsPanel.getAdditionalNodes());
 						d.setContentPane(panel);
 						d.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 						d.pack();

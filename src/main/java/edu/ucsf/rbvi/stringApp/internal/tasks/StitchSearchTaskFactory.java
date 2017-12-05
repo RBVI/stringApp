@@ -18,10 +18,12 @@ import org.apache.log4j.Logger;
 
 import org.cytoscape.application.CyUserLog;
 import org.cytoscape.application.swing.search.AbstractNetworkSearchTaskFactory;
+import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.FinishStatus;
 import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
+import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.TaskObserver;
 import org.cytoscape.io.webservice.NetworkImportWebServiceClient;
 import org.cytoscape.io.webservice.SearchWebServiceClient;
@@ -75,13 +77,22 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 	public TaskIterator createTaskIterator() {
 		String terms = queryComponent.getQueryText();
 
-		if (terms == null) {
-			throw new NullPointerException("Query string is null.");
+		if (terms == null || terms.length() == 0) {
+			logger.warn("No protein or compound identifiers provided: nothing done");
+			return new TaskIterator(new AbstractTask() {
+				@Override
+				public void run(TaskMonitor m) { return; }
+			});
 		}
 
 		stringNetwork = new StringNetwork(manager);
 		int taxon = getTaxId();
-		if (taxon == -1) return new TaskIterator(null);
+		if (taxon == -1) {
+			return new TaskIterator(new AbstractTask() {
+				@Override
+				public void run(TaskMonitor m) { return; }
+			});
+		}
 
 		return new TaskIterator(new GetAnnotationsTask(stringNetwork, taxon, terms, Databases.STITCH.getAPIName()));
 	}

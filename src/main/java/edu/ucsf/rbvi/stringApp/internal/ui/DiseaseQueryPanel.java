@@ -92,6 +92,9 @@ public class DiseaseQueryPanel extends JPanel {
 	List<EntityIdentifier> entityList;
 	Species species = Species.getSpecies("Homo sapiens");
 
+	private int confidence = 40;
+	private int additionalNodes = 100;
+
 	private boolean ignore = false;
 
 	public DiseaseQueryPanel(final StringManager manager) {
@@ -101,20 +104,24 @@ public class DiseaseQueryPanel extends JPanel {
 	}
 
 	public DiseaseQueryPanel(final StringManager manager, StringNetwork stringNetwork) {
-		super(new GridBagLayout());
-		this.manager = manager;
-		this.stringNetwork = stringNetwork;
-		this.initialStringNetwork = stringNetwork;
-		init();
+		this(manager, stringNetwork, null, 40, 100);
 	}
 
+
 	public DiseaseQueryPanel(final StringManager manager, StringNetwork stringNetwork, String query) {
+		this(manager, stringNetwork,query, 40, 100);
+	}
+
+	public DiseaseQueryPanel(final StringManager manager, StringNetwork stringNetwork, String query, int confidence, int additionalNodes) {
 		super(new GridBagLayout());
 		this.manager = manager;
 		this.stringNetwork = stringNetwork;
 		this.initialStringNetwork = stringNetwork;
+		this.confidence = confidence;
+		this.additionalNodes = additionalNodes;
 		init();
-		searchTerms.setText(query);
+		if (query != null)
+			searchTerms.setText(query);
 	}
 
 	public void doImport() {
@@ -232,7 +239,7 @@ public class DiseaseQueryPanel extends JPanel {
 		}
 
 		{
-			limitSlider = new JSlider(0, 2000, 100);
+			limitSlider = new JSlider(0, 2000, additionalNodes);
 			Dictionary<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
 			Font valueFont = new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()-4);
 			for (int value = 0; value <= 2000; value += 400) {
@@ -261,7 +268,7 @@ public class DiseaseQueryPanel extends JPanel {
 		{
 			limitValue = new JTextField(4);
 			limitValue.setHorizontalAlignment(JTextField.RIGHT);
-			limitValue.setText("100");
+			limitValue.setText(""+additionalNodes);
 			c.right().noExpand().insets(0,5,0,5);
 			limitPanel.add(limitValue, c);
 
@@ -298,7 +305,7 @@ public class DiseaseQueryPanel extends JPanel {
 		}
 
 		{
-			confidenceSlider = new JSlider();
+			confidenceSlider = new JSlider(0,100,confidence);
 			Dictionary<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
 			Font valueFont = new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()-4);
 			for (int value = 0; value <= 100; value += 10) {
@@ -329,7 +336,7 @@ public class DiseaseQueryPanel extends JPanel {
 		{
 			confidenceValue = new JTextField(4);
 			confidenceValue.setHorizontalAlignment(JTextField.RIGHT);
-			confidenceValue.setText("0.40");
+			confidenceValue.setText(formatter.format(((double)confidence)/100.0));
 			c.right().noExpand().insets(0,5,0,5);
 			confidencePanel.add(confidenceValue, c);
 

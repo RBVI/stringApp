@@ -5,12 +5,16 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -21,8 +25,14 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
+import org.apache.log4j.Logger;
+
+import org.cytoscape.application.CyUserLog;
 import org.cytoscape.application.swing.search.AbstractNetworkSearchTaskFactory;
+import org.cytoscape.application.swing.search.NetworkSearchTaskFactory;
 import org.cytoscape.util.swing.LookAndFeelUtil;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.FinishStatus;
@@ -59,6 +69,7 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	private StringNetwork stringNetwork = null;
 	private SearchOptionsPanel optionsPanel = null;
 	private JTextField queryComponent = null;
+	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
 
 	private static final Icon icon = new ImageIcon(
       StringSearchTaskFactory.class.getResource("/images/pubmed_logo.png"));
@@ -79,10 +90,14 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	public boolean isReady() { return true; }
 
 	public TaskIterator createTaskIterator() {
-		final String terms = getQuery();
+		final String terms = queryComponent.getText();
 
-		if (terms == null) {
-			throw new NullPointerException("Query string is null.");
+		if (terms == null || terms.length() == 0) {
+			logger.warn("No PubMed terms provided: nothing done");
+			return new TaskIterator(new AbstractTask() {
+				@Override
+				public void run(TaskMonitor m) { return; }
+			});
 		}
 
 		return new TaskIterator(new AbstractTask() {
@@ -154,11 +169,14 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 		return queryComponent;
 	}
 
+
+	// We want a private class so we can add our helper text
 	private class MySearchComponent extends JTextField {
 		Color msgColor;
 		private static final String DEF_SEARCH_TEXT = "Enter one term per line.      Set species →";
 		final int vgap = 1;
 		final int hgap = 5;
+		private boolean haveFocus = false;
 
 		public MySearchComponent() {
 			super();
@@ -171,6 +189,36 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 			setBorder(BorderFactory.createEmptyBorder(vgap, hgap, vgap, hgap));
 			setFont(getFont().deriveFont(LookAndFeelUtil.getSmallFontSize()));
 
+			getDocument().addDocumentListener(new DocumentListener() {
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					fireQueryChanged();
+				}
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+					fireQueryChanged();
+				}
+				@Override
+				public void changedUpdate(DocumentEvent e) {
+					// Nothing to do here...
+				}
+			});
+
+			addActionListener( new AbstractAction() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					MySearchComponent.this.firePropertyChange(NetworkSearchTaskFactory.SEARCH_REQUESTED_PROPERTY, null, null);
+				}
+			});
+
+			addFocusListener(new FocusListener() {
+				@Override
+				public void focusLost(FocusEvent e) { haveFocus = false; }
+
+				@Override
+				public void focusGained(FocusEvent e) { haveFocus = true; }
+			});
+
 			return;
 		}
 
@@ -179,7 +227,7 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 			super.paint(g);
 			Color msgColor = UIManager.getColor("Label.disabledForeground");
 
-			if (getText() == null || getText().trim().isEmpty()) {
+			if ((getText() == null || getText().trim().isEmpty()) && !haveFocus) {
 				Graphics2D g2 = (Graphics2D) g.create();
 				g2.setRenderingHints(
 					new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON));
@@ -196,6 +244,11 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 				g2.drawString(DEF_SEARCH_TEXT, x, y);
 				g2.dispose();
 			}
+		}
+
+
+		private void fireQueryChanged() {
+			MySearchComponent.this.firePropertyChange(NetworkSearchTaskFactory.QUERY_PROPERTY, null, null);
 		}
 	}
 
