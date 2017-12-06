@@ -86,6 +86,9 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 
 	public TaskIterator createTaskIterator() {
 		String terms = queryComponent.getQueryText();
+		// Strip off any blank lines as well as trailing spaces
+		terms = terms.replaceAll("(?m)^\\s*", "");
+		terms = terms.replaceAll("(?m)\\s*$", "");
 
 		stringNetwork = new StringNetwork(manager);
 		int taxon = getTaxId();
