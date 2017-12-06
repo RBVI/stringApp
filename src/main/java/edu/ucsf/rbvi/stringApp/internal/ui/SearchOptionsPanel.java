@@ -356,10 +356,14 @@ public class SearchOptionsPanel extends JPanel {
 			try {
 				val = Integer.valueOf(additionalNodesValue.getText());
 			} catch (NumberFormatException nfe) {
-				val = addNodesInputError();
+				val = addNodesInputError(100);
 			}
-		} else if (n.intValue() > 100 || n.intValue() < 0) {
-			val = addNodesInputError();
+		} else if (n.intValue() < 0) {
+			val = addNodesInputError(100);
+		} else if (n.intValue() > 100 && !isDisease ) {
+			val = addNodesInputError(100);
+		} else if (n.intValue() > 2000 && isDisease) {
+			val = addNodesInputError(2000);
 		} else {
 			val = n.intValue();
 		}
@@ -369,10 +373,10 @@ public class SearchOptionsPanel extends JPanel {
 		ignore = false;
 	}
 	
-	private int addNodesInputError() {
+	private int addNodesInputError(int maxAddNodes) {
 		additionalNodesValue.setBackground(Color.RED);
 		JOptionPane.showMessageDialog(null, 
-				                          "Please enter a number of additional nodes between 0 and 100", 
+				                          "Please enter a number of additional nodes between 0 and " + maxAddNodes, 
 											            "Alert", JOptionPane.ERROR_MESSAGE);
 		additionalNodesValue.setBackground(UIManager.getColor("TextField.background"));
 
