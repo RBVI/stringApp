@@ -112,8 +112,11 @@ public class SearchQueryComponent extends JTextField {
 
 	public String getQueryText() {
 		if (queryTextArea == null) return null;
+		String terms = queryTextArea.getText();
+		terms = terms.replaceAll("(?m)^\\s*", "");
+		terms = terms.replaceAll("(?m)\\s*$", "");
 
-		return queryTextArea.getText();
+		return terms;
 	}
 
 	private void showQueryPopup() {
