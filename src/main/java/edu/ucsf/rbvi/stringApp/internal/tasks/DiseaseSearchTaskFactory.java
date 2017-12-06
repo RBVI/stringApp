@@ -71,18 +71,14 @@ public class DiseaseSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 		this.manager = manager;
 	}
 
-	public boolean isReady() { return true; }
+	public boolean isReady() { 
+		if (getQuery() != null && getQuery().length() > 0)
+			return true; 
+		return false;
+	}
 
 	public TaskIterator createTaskIterator() {
 		final String terms = getQuery();
-
-		if (terms == null || terms.length() == 0) {
-			logger.warn("No disease terms provided: nothing done");
-			return new TaskIterator(new AbstractTask() {
-				@Override
-				public void run(TaskMonitor m) { return; }
-			});
-		}
 
 		return new TaskIterator(new AbstractTask() {
 			@Override

@@ -72,28 +72,17 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 		this.manager = manager;
 	}
 
-	public boolean isReady() { return true; }
+	public boolean isReady() { 
+		if (queryComponent.getQueryText() != null && queryComponent.getQueryText().length() > 0 && getTaxId() != -1)
+			return true; 
+		return false;
+	}
 
 	public TaskIterator createTaskIterator() {
 		String terms = queryComponent.getQueryText();
 
-		if (terms == null || terms.length() == 0) {
-			logger.warn("No protein or compound identifiers provided: nothing done");
-			return new TaskIterator(new AbstractTask() {
-				@Override
-				public void run(TaskMonitor m) { return; }
-			});
-		}
-
 		stringNetwork = new StringNetwork(manager);
 		int taxon = getTaxId();
-		if (taxon == -1) {
-			return new TaskIterator(new AbstractTask() {
-				@Override
-				public void run(TaskMonitor m) { return; }
-			});
-		}
-
 		return new TaskIterator(new GetAnnotationsTask(stringNetwork, taxon, terms, Databases.STITCH.getAPIName()));
 	}
 
