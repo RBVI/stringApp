@@ -232,9 +232,9 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 				// Get the FontMetrics
 				FontMetrics metrics = g2.getFontMetrics(getFont());
 				// Determine the X coordinate for the text
-				int x = 5;
+				int x = hgap;
 				// Determine the Y coordinate for the text (note we add the ascent, as in java 2d 0 is top of the screen)
-				int y = (metrics.getHeight() / 2) + metrics.getAscent() + 5;
+				int y = (metrics.getHeight() / 2) + metrics.getAscent() + vgap;
 				// Draw
 				g2.setColor(msgColor);
 				g2.drawString(DEF_SEARCH_TEXT, x, y);

@@ -160,7 +160,12 @@ public class StringNetwork {
 		return false;
 	}
 
-	public int getResolvedTerms() { return resolvedIdMap.size(); }
+	public int getResolvedTerms() { 
+		int i = 0;
+		for (List<String> terms: resolvedIdMap.values())
+			i += terms.size();
+		return i; 
+	}
 
 	public List<String> combineIds(Map<String, String> reverseMap) {
 		List<String> ids = new ArrayList<>();
