@@ -92,11 +92,11 @@ public class DiseaseSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 						d.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 						// DiseaseQueryPanel panel = new DiseaseQueryPanel(manager, stringNetwork, terms);
 						DiseaseQueryPanel panel = new DiseaseQueryPanel(manager, stringNetwork, terms, optionsPanel.getConfidence(), optionsPanel.getAdditionalNodes());
+						panel.doImport();
 						d.setContentPane(panel);
 						d.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 						d.pack();
 						d.setVisible(true);
-						panel.doImport();
 					}
 				});
 			}
