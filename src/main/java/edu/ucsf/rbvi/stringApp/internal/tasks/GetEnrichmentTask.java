@@ -349,6 +349,9 @@ public class GetEnrichmentTask extends AbstractTask {
 		if (table.getColumn(EnrichmentTerm.colShowChart) == null) {
 			table.createColumn(EnrichmentTerm.colShowChart, Boolean.class, false);
 		}
+		if (table.getColumn(EnrichmentTerm.colChartColor) == null) {
+			table.createColumn(EnrichmentTerm.colChartColor, String.class, false);
+		}
 
 		// table.createColumn(EnrichmentTerm.colPvalue, Double.class, false);
 		// table.createColumn(EnrichmentTerm.colBonferroni, Double.class, false);
@@ -374,11 +377,11 @@ public class GetEnrichmentTask extends AbstractTask {
 			row.set(EnrichmentTerm.colGenesSUID, term.getNodesSUID());
 			row.set(EnrichmentTerm.colNetworkSUID, network.getSUID());
 			row.set(EnrichmentTerm.colShowChart, false);
+			row.set(EnrichmentTerm.colChartColor, "#ffffff");
 		}
 	}
 
 	private void deleteOldTables() {
-		CyEventHelper eventHelper = manager.getService(CyEventHelper.class);
 		CyTableManager tableManager = manager.getService(CyTableManager.class);
 		Set<CyTable> oldTables = ModelUtils.getEnrichmentTables(manager, network);
 		for (CyTable table : oldTables) {

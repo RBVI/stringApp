@@ -105,7 +105,8 @@ public class EnrichmentCytoPanel extends JPanel
 		JTable table = enrichmentTables.get(showTable);
 		// No idea why this was needed...
 		// table.getSelectedColumn() != 0 &&
-		if (table.getSelectedColumn() != EnrichmentTerm.chartColumn
+		if (table.getSelectedColumn() != EnrichmentTerm.chartColumnSel
+				&& table.getSelectedColumn() != EnrichmentTerm.chartColumnCol
 				&& table.getSelectedColumnCount() == 1 && table.getSelectedRow() > -1) {
 			// System.out.println("get value at " + table.getSelectedRow() + " and " +
 			// EnrichmentTerm.nodeSUIDColumn);
@@ -137,7 +138,7 @@ public class EnrichmentCytoPanel extends JPanel
 		if (e.getSource().equals(butDrawCharts)) {
 			// do something fancy here...
 			// piechart: attributelist="test3" colorlist="modulated" showlabels="false"
-			Map<EnrichmentTerm, Color> preselectedTerms = getUserSelectedTerms();
+			Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
 			drawCharts(preselectedTerms);
 		} else if (e.getSource().equals(butAnalyzedNodes)) {
 			CyNetwork network = manager.getCurrentNetwork();
@@ -244,7 +245,8 @@ public class EnrichmentCytoPanel extends JPanel
 		jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		jTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jTable.getSelectionModel().addListSelectionListener(this);
-		// jTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
+		jTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
+		jTable.setDefaultEditor(Color.class, new ColorEditor());
 
 		enrichmentTables.put(cyTable.getTitle(), jTable);
 	}
@@ -296,17 +298,18 @@ public class EnrichmentCytoPanel extends JPanel
 		}
 	}
 
-	private void drawCharts(Map<EnrichmentTerm, Color> selectedTerms) {
+	private void drawCharts(Map<EnrichmentTerm, String> selectedTerms) {
 		CyNetwork network = manager.getCurrentNetwork();
 		if (network == null || selectedTerms.size() == 0)
 			return;
 
 		CyTable nodeTable = network.getDefaultNodeTable();
-		ModelUtils.createListColumnIfNeeded(nodeTable, String.class,
+		// replace columns
+		ModelUtils.replaceListColumnIfNeeded(nodeTable, String.class,
 				EnrichmentTerm.colEnrichmentTermsNames);
-		ModelUtils.createListColumnIfNeeded(nodeTable, Integer.class,
+		ModelUtils.replaceListColumnIfNeeded(nodeTable, Integer.class,
 				EnrichmentTerm.colEnrichmentTermsIntegers);
-		ModelUtils.createColumnIfNeeded(nodeTable, String.class,
+		ModelUtils.replaceColumnIfNeeded(nodeTable, String.class,
 				EnrichmentTerm.colEnrichmentPassthrough);
 
 		// final String pieChart = "piechart: attributelist=\"enrichmentTermsIntegers\"
@@ -314,11 +317,13 @@ public class EnrichmentCytoPanel extends JPanel
 
 		String colorList = "";
 		for (EnrichmentTerm term : selectedTerms.keySet()) {
-			Color color = selectedTerms.get(term);
+			// Color color = selectedTerms.get(term);
+			String color = selectedTerms.get(term);
 			if (color != null) {
-				String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(),
-						color.getBlue());
-				colorList += hex + ",";
+				//String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(),
+				//		color.getBlue());
+				//colorList += hex + ",";
+				colorList += color + ",";
 			} else {
 				colorList += "" + ",";
 			}
@@ -368,8 +373,8 @@ public class EnrichmentCytoPanel extends JPanel
 		netView.updateView();
 	}
 
-	private Map<EnrichmentTerm, Color> getUserSelectedTerms() {
-		Map<EnrichmentTerm, Color> selectedTerms = new HashMap<EnrichmentTerm, Color>();
+	private Map<EnrichmentTerm, String> getUserSelectedTerms() {
+		Map<EnrichmentTerm, String> selectedTerms = new HashMap<EnrichmentTerm, String>();
 		CyNetwork network = manager.getCurrentNetwork();
 		if (network == null)
 			return selectedTerms;
@@ -393,7 +398,11 @@ public class EnrichmentCytoPanel extends JPanel
 							row.get(EnrichmentTerm.colCategory, String.class), -1.0, -1.0,
 							row.get(EnrichmentTerm.colFDR, Double.class));
 					enrTerm.setNodesSUID(row.getList(EnrichmentTerm.colGenesSUID, Long.class));
-					selectedTerms.put(enrTerm, Color.BLACK);
+					
+					if (currTable.getColumn(EnrichmentTerm.colChartColor) != null
+							&& row.get(EnrichmentTerm.colChartColor, String.class) != null) {
+						selectedTerms.put(enrTerm, row.get(EnrichmentTerm.colChartColor, String.class));
+					}
 				}
 			}
 		}

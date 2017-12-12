@@ -35,17 +35,19 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	public static final String colGenesCount = "countInGeneSet";
 	public static final String colNetworkSUID = "network.SUID";
 	public static final String colShowChart = "showInPieChart";
+	public static final String colChartColor = "colorInPieChart";
 
 	public static final String colEnrichmentTermsNames = "enrichmentTermsNames";
 	public static final String colEnrichmentTermsIntegers = "enrichmentTermsIntegers";
 	public static final String colEnrichmentPassthrough = "enrichmentPassthrough";
 
 	
-	public static final String[] swingColumns = new String[] { colCategory, colShowChart, colName, colDescription, colFDR,
+	public static final String[] swingColumns = new String[] { colCategory, colShowChart, colChartColor, colName, colDescription, colFDR,
 			colGenesCount, colGenes, colGenesSUID };
-	public static final int nodeSUIDColumn = 7;
-	public static final int fdrColumn = 4;
-	public static final int chartColumn = 1;
+	public static final int nodeSUIDColumn = 8;
+	public static final int fdrColumn = 5;
+	public static final int chartColumnSel = 1;
+	public static final int chartColumnCol = 2;
 	
 	public EnrichmentTerm() {
 		this.name = "";

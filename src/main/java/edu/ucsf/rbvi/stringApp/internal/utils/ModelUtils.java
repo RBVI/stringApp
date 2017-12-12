@@ -855,9 +855,23 @@ public class ModelUtils {
 		table.createColumn(columnName, clazz, false);
 	}
 
+	public static void replaceColumnIfNeeded(CyTable table, Class<?> clazz, String columnName) {
+		if (table.getColumn(columnName) != null) 
+			table.deleteColumn(columnName);
+		
+		table.createColumn(columnName, clazz, false);
+	}
+
 	public static void createListColumnIfNeeded(CyTable table, Class<?> clazz, String columnName) {
 		if (table.getColumn(columnName) != null)
 			return;
+
+		table.createListColumn(columnName, clazz, false);
+	}
+
+	public static void replaceListColumnIfNeeded(CyTable table, Class<?> clazz, String columnName) {
+		if (table.getColumn(columnName) != null)
+			table.deleteColumn(columnName);
 
 		table.createListColumn(columnName, clazz, false);
 	}
