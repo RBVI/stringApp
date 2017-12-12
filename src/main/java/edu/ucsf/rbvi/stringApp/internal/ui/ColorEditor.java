@@ -56,7 +56,7 @@ public class ColorEditor extends AbstractCellEditor
     Color currentColor;
     JButton button;
     JColorChooser colorChooser;
-    JDialog dialog;
+    JColorChooserBrewer dialog;
     protected static final String EDIT = "edit";
 
     public ColorEditor() {
@@ -69,12 +69,7 @@ public class ColorEditor extends AbstractCellEditor
         button.addActionListener(this);
         button.setBorderPainted(false);
 
-        //Set up the dialog that the button brings up.
-        colorChooser = new JColorChooser();
-        // colorChooser = new JColorChooserBrewer();
-		dialog = JColorChooser.createDialog(button, "Pick a Color", true, // modal
-				colorChooser, this, // OK button handler
-				null); // no CANCEL button handler
+				dialog = JColorChooserBrewer.createDialog(null, "Pick a Color", true, this, null);
     }
 
     /**
@@ -86,7 +81,7 @@ public class ColorEditor extends AbstractCellEditor
             //The user has clicked the cell, so
             //bring up the dialog.
             button.setBackground(currentColor);
-            colorChooser.setColor(currentColor);
+            dialog.setColor(currentColor);
             // colorChooser.showDialog();
             dialog.setVisible(true);
 
@@ -94,7 +89,7 @@ public class ColorEditor extends AbstractCellEditor
             fireEditingStopped();
 
         } else { //User pressed dialog's "OK" button.
-            currentColor = colorChooser.getColor();
+            currentColor = dialog.getColor();
         }
     }
 

@@ -49,6 +49,7 @@ package org.jcolorbrewer.ui;
 // GUI
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -117,6 +118,16 @@ public class JColorChooserBrewer
 	 */
 	protected boolean okWasPressed = false;
 
+	/**
+	 * OK Action Listener
+	 */
+	protected ActionListener okListener = null;
+
+	/**
+	 * Cancel Action Listener
+	 */
+	protected ActionListener cancelListener = null;
+
 
 
 
@@ -166,6 +177,15 @@ public class JColorChooserBrewer
 		this.parent = parent;
 
 		this.initialize( );
+	}
+
+	static public JColorChooserBrewer createDialog(Frame parent, String title, boolean modal,
+	                                               ActionListener okListener, ActionListener cancelListener) {
+		JColorChooserBrewer dialog = new JColorChooserBrewer(parent);
+		dialog.setModal(modal);
+		dialog.okListener = okListener;
+		dialog.cancelListener = cancelListener;
+		return dialog;
 	}
 
 
@@ -289,12 +309,11 @@ public class JColorChooserBrewer
 		this.getRootPane( ).setDefaultButton(okButton);
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent e) {
-				System.out.println("CLICKED");
-
 				JColorChooserBrewer.this.okWasPressed = true;
 				JColorChooserBrewer.this.setVisible(false);
 				getColorPalette();
-				System.out.println("Got color: "+getColor());
+				if (JColorChooserBrewer.this.okListener != null) 
+					JColorChooserBrewer.this.okListener.actionPerformed(e);
 			}
 		});
 		buttonGridPanel.add( okButton );
@@ -306,6 +325,8 @@ public class JColorChooserBrewer
 				setColorBrewer(JColorChooserBrewer.this.startingColorBrewer);
 				JColorChooserBrewer.this.okWasPressed = false;
 				JColorChooserBrewer.this.setVisible(false);
+				if (JColorChooserBrewer.this.cancelListener != null) 
+					JColorChooserBrewer.this.cancelListener.actionPerformed(e);
 			}
 		});
 		buttonGridPanel.add( cancelButton );
