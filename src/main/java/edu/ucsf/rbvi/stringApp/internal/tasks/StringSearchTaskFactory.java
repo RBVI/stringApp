@@ -1,5 +1,6 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
+import java.awt.Dialog;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -220,6 +221,7 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 				public void run() {
 					JDialog d = new JDialog();
 					d.setTitle("Resolve Ambiguous Terms");
+					d.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 					GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, Databases.STRING.getAPIName(), 
 					                                        getSpecies(), false, getConfidence(), getAdditionalNodes());
 					panel.createResolutionPanel();

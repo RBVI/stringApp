@@ -1,5 +1,6 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
+import java.awt.Dialog;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -212,6 +213,7 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					JDialog d = new JDialog();
+					d.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 					d.setTitle("Resolve Ambiguous Terms");
 					GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, Databases.STITCH.getAPIName(), 
 					                                        getSpecies(), false, getConfidence(), getAdditionalNodes());

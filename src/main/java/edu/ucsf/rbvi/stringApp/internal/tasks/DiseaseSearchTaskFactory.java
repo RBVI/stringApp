@@ -1,5 +1,6 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
+import java.awt.Dialog;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -88,6 +89,7 @@ public class DiseaseSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 					public void run () {
 						JDialog d = new JDialog();
 						d.setTitle("Resolve Ambiguous Terms");
+						d.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 						// DiseaseQueryPanel panel = new DiseaseQueryPanel(manager, stringNetwork, terms);
 						DiseaseQueryPanel panel = new DiseaseQueryPanel(manager, stringNetwork, terms, optionsPanel.getConfidence(), optionsPanel.getAdditionalNodes());
 						d.setContentPane(panel);

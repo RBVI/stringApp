@@ -1,6 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -112,6 +113,7 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 						}
 						JDialog d = new JDialog();
 						d.setTitle("Resolve Ambiguous Terms");
+						d.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 						PubMedQueryPanel panel = new PubMedQueryPanel(manager, stringNetwork, terms, 
 						                                              species,
 						                                              optionsPanel.getConfidence(),
