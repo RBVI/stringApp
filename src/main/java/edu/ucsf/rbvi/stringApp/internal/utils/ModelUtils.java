@@ -93,7 +93,7 @@ public class ModelUtils {
 	public static String DATABASE = "database";
 	public static String NET_SPECIES = "species";
 	public static String NET_ANALYZED_NODES = "analyzedNodes.SUID";
-	
+	public static String NET_PPI_ENRICHMENT = "ppiEnrichment";
 	
 	// Session information
 	public static String showStructureImagesFlag = "showStructureImages";
@@ -952,6 +952,16 @@ public class ModelUtils {
 		return analyzedNodes;
 	}
 	
+	public static Double getPPIEnrichment(CyNetwork net) {
+		if (net != null) {
+			CyTable netTable = net.getDefaultNetworkTable();
+			if (netTable.getColumn(ModelUtils.NET_PPI_ENRICHMENT) != null) {
+				return (Double) netTable.getRow(net.getSUID()).get(ModelUtils.NET_PPI_ENRICHMENT,
+						Double.class);
+			}
+		}
+		return null;
+	}
 	
 	public static void shortenCompoundNames(CyNetwork network, List<CyNode> nodes) {
 		HashMap<String, List<CyNode>> shortNames = new HashMap<String, List<CyNode>>();

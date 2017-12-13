@@ -63,6 +63,10 @@ public class EnrichmentCytoPanel extends JPanel
 	JButton butDrawCharts;
 	JButton butAnalyzedNodes;
 	JLabel labelPPIEnrichment;
+	
+	final String colEnrichmentTerms = "enrichmentTerms";
+	final String colEnrichmentTermsPieChart = "enrichmentTermsPieChart";
+	final String colEnrichmentPieChart = "enrichmentPieChart";
 
 	public EnrichmentCytoPanel(StringManager manager) {
 		this.manager = manager;
@@ -195,13 +199,17 @@ public class EnrichmentCytoPanel extends JPanel
 			butAnalyzedNodes = new JButton("Select analyzed nodes");
 			butAnalyzedNodes.addActionListener(this);
 
-			labelPPIEnrichment = new JLabel("PPI Enrichment: " + ppiEnrichment.toString());
-			labelPPIEnrichment.setToolTipText(
-					"<html>If the PPI enrichment is less or equal 0.05, this means that <br />"
-							+ "your proteins have more interactions among themselves than what would be expected for a  <br />"
-							+ "random set of proteins of similar size, drawn from the genome. Such an enrichment indicates  <br />"
-							+ "that the proteins are at least partially biologically connected, as a group.</html>");
-
+			Double ppiEnrichment = ModelUtils.getPPIEnrichment(network);
+			labelPPIEnrichment = new JLabel();
+			if (ppiEnrichment != null) {				
+				labelPPIEnrichment = new JLabel("PPI Enrichment: " + ppiEnrichment.toString());
+				labelPPIEnrichment.setToolTipText(
+						"<html>If the PPI enrichment is less or equal 0.05, this means that <br />"
+								+ "your proteins have more interactions among themselves than what would be expected for a  <br />"
+								+ "random set of proteins of similar size, drawn from the genome. Such an enrichment indicates  <br />"
+								+ "that the proteins are at least partially biologically connected, as a group.</html>");
+			}
+			
 			topPanel = new JPanel(new BorderLayout());
 			topPanel.add(butDrawCharts, BorderLayout.WEST);
 			topPanel.add(labelPPIEnrichment, BorderLayout.CENTER);

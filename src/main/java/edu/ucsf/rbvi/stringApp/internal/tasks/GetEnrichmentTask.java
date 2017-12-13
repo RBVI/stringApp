@@ -21,6 +21,7 @@ import org.cytoscape.model.CyTable;
 import org.cytoscape.model.CyTableFactory;
 import org.cytoscape.model.CyTableManager;
 import org.cytoscape.model.SavePolicy;
+import org.cytoscape.task.analyze.AnalyzeNetworkCollectionTaskFactory;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ProvidesTitle;
@@ -175,6 +176,10 @@ public class GetEnrichmentTask extends AbstractTask {
 			analyzedNodesSUID.add(node.getSUID());
 		}
 		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ANALYZED_NODES, analyzedNodesSUID);		
+		
+		// save ppi enrichment in network table
+		ModelUtils.createColumnIfNeeded(netTable, Double.class, ModelUtils.NET_PPI_ENRICHMENT);
+		netTable.getRow(network.getSUID()).set(ModelUtils.NET_PPI_ENRICHMENT, ppie);
 		
 		// show enrichment results
 		if (enrichmentResult.size() > 0) {
