@@ -235,7 +235,7 @@ public class GetEnrichmentTask extends AbstractTask {
 					"Enrichment retrieval returned no results, possibly due to an error.");
 			return null;
 		}
-		System.out.println(results.toString());
+		// System.out.println(results.toString());
 		Double ppiEnrichment = ModelUtils.getEnrichmentPPIFromJSON(manager, results, cutoff, stringNodesMap, network);
 		if (ppiEnrichment == null) {
 			monitor.setStatusMessage(
@@ -351,9 +351,9 @@ public class GetEnrichmentTask extends AbstractTask {
 		if (table.getColumn(EnrichmentTerm.colGenes) == null) {
 			table.createListColumn(EnrichmentTerm.colGenes, String.class, false);
 		}
-		if (table.getColumn(EnrichmentTerm.colShowChart) == null) {
-			table.createColumn(EnrichmentTerm.colShowChart, Boolean.class, false);
-		}
+		// if (table.getColumn(EnrichmentTerm.colShowChart) == null) {
+		//	table.createColumn(EnrichmentTerm.colShowChart, Boolean.class, false);
+		// }
 		if (table.getColumn(EnrichmentTerm.colChartColor) == null) {
 			table.createColumn(EnrichmentTerm.colChartColor, String.class, false);
 		}
@@ -381,8 +381,8 @@ public class GetEnrichmentTask extends AbstractTask {
 			row.set(EnrichmentTerm.colGenes, term.getGenes());
 			row.set(EnrichmentTerm.colGenesSUID, term.getNodesSUID());
 			row.set(EnrichmentTerm.colNetworkSUID, network.getSUID());
-			row.set(EnrichmentTerm.colShowChart, false);
-			row.set(EnrichmentTerm.colChartColor, "#ffffff");
+			// row.set(EnrichmentTerm.colShowChart, false);
+			row.set(EnrichmentTerm.colChartColor, "");
 		}
 	}
 
