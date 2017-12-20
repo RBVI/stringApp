@@ -42,10 +42,14 @@ import org.cytoscape.model.events.RowsSetListener;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.vizmap.VisualMappingManager;
+import org.cytoscape.work.TaskIterator;
+import org.cytoscape.work.TaskManager;
 import org.jcolorbrewer.ColorBrewer;
 
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.tasks.FilterEnrichmentTableTask;
+import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
@@ -61,16 +65,23 @@ public class EnrichmentCytoPanel extends JPanel
 	// JComboBox<String> boxTables;
 	List<String> availableTables;
 	// boolean createBoxTables = true;
-	JButton butDrawCharts;
+	JButton butDrawCharts; 
 	JButton butResetCharts;
 	JButton butAnalyzedNodes;
+	JButton butFilter;
 	JLabel labelPPIEnrichment;
 
-	final int autoSelectedNodesNum = 10;
+	final int autoSelectedNodesNum = 6;
+	
 	final String colEnrichmentTerms = "enrichmentTerms";
 	final String colEnrichmentTermsPieChart = "enrichmentTermsPieChart";
 	final String colEnrichmentPieChart = "enrichmentPieChart";
 
+	final String butFilterName = "Filter table";
+	final String butDrawChartsName = "Draw charts";
+	final String butResetChartsName = "Reset charts";
+	final String butAnalyzedNodesName = "Select analyzed nodes";
+	
 	public EnrichmentCytoPanel(StringManager manager) {
 		this.manager = manager;
 		enrichmentTables = new HashMap<String, JTable>();
@@ -162,7 +173,10 @@ public class EnrichmentCytoPanel extends JPanel
 				network.getDefaultNodeTable().getRow(node.getSUID()).set(CyNetwork.SELECTED, true);
 				// System.out.println("select node: " + nodeID);
 			}
-
+		} else if (e.getSource().equals(butFilter)) {
+			// ...
+			TaskManager<?, ?> tm = manager.getService(TaskManager.class);
+			tm.execute(new TaskIterator(new FilterEnrichmentTableTask(manager)));
 		}
 	}
 
@@ -202,17 +216,21 @@ public class EnrichmentCytoPanel extends JPanel
 			// boxTables.setSelectedItem(showTable);
 			// boxTables.addActionListener(this);
 
-			JPanel buttonsPanel = new JPanel(new GridLayout(1, 2)); 
-			butDrawCharts = new JButton("Draw pie charts");
+			JPanel buttonsPanel = new JPanel(new GridLayout(1, 3)); 
+			butFilter = new JButton(butFilterName);
+			butFilter.addActionListener(this);
+
+			butDrawCharts = new JButton(butDrawChartsName);
 			butDrawCharts.addActionListener(this);
 
-			butResetCharts = new JButton("Reset pie charts");
+			butResetCharts = new JButton(butResetChartsName);
 			butResetCharts.addActionListener(this);
 
+			buttonsPanel.add(butFilter);
 			buttonsPanel.add(butDrawCharts);
 			buttonsPanel.add(butResetCharts);
 			
-			butAnalyzedNodes = new JButton("Select analyzed nodes");
+			butAnalyzedNodes = new JButton(butAnalyzedNodesName);
 			butAnalyzedNodes.addActionListener(this);
 
 			Double ppiEnrichment = ModelUtils.getPPIEnrichment(network);
@@ -220,10 +238,9 @@ public class EnrichmentCytoPanel extends JPanel
 			if (ppiEnrichment != null) {				
 				labelPPIEnrichment = new JLabel("PPI Enrichment: " + ppiEnrichment.toString());
 				labelPPIEnrichment.setToolTipText(
-						"<html>If the PPI enrichment is less or equal 0.05, this means that <br />"
-								+ "your proteins have more interactions among themselves than what would be expected for a  <br />"
-								+ "random set of proteins of similar size, drawn from the genome. Such an enrichment indicates  <br />"
-								+ "that the proteins are at least partially biologically connected, as a group.</html>");
+						"<html>If the PPI enrichment is less or equal 0.05, your proteins have more interactions among themselves <br />"
+							+ "than what would be expected for a random set of proteins of similar size, drawn from the genome. Such <br />"
+							+ "an enrichment indicates that the proteins are at least partially biologically connected, as a group.</html>");
 			}
 			
 			topPanel = new JPanel(new BorderLayout());
@@ -370,6 +387,7 @@ public class EnrichmentCytoPanel extends JPanel
 		// colorlist=\"modulated\" showlabels=\"false\" ";
 
 		String colorList = "";
+		List<String> shownTermNames = new ArrayList<String>();
 		for (EnrichmentTerm term : selectedTerms.keySet()) {
 			// Color color = selectedTerms.get(term);
 			String color = selectedTerms.get(term);
@@ -382,6 +400,7 @@ public class EnrichmentCytoPanel extends JPanel
 				colorList += "" + ",";
 			}
 			String selTerm = term.getName();
+			shownTermNames.add(selTerm);
 			List<Long> enrichedNodeSUIDs = term.getNodesSUID();
 			for (CyNode node : network.getNodeList()) {
 				List<Integer> nodeTermsIntegers = nodeTable.getRow(node.getSUID())
@@ -426,6 +445,14 @@ public class EnrichmentCytoPanel extends JPanel
 		}
 		if (netView != null)
 			netView.updateView();
+		
+		// save in network table
+		CyTable netTable = network.getDefaultNetworkTable();
+		ModelUtils.createListColumnIfNeeded(netTable, String.class, ModelUtils.NET_ENRICHMENT_VISTEMRS);
+		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_VISTEMRS, shownTermNames);
+		
+		ModelUtils.createColumnIfNeeded(netTable, String.class, ModelUtils.NET_ENRICHMENT_VISCOLORS);
+		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_VISCOLORS, colorList);
 	}
 	
 	

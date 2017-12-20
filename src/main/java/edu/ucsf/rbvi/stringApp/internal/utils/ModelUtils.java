@@ -94,6 +94,8 @@ public class ModelUtils {
 	public static String NET_SPECIES = "species";
 	public static String NET_ANALYZED_NODES = "analyzedNodes.SUID";
 	public static String NET_PPI_ENRICHMENT = "ppiEnrichment";
+	public static String NET_ENRICHMENT_VISTEMRS = "visualizedTerms";
+	public static String NET_ENRICHMENT_VISCOLORS = "visualizedTermsColors";
 	
 	// Session information
 	public static String showStructureImagesFlag = "showStructureImages";
@@ -243,7 +245,11 @@ public class ModelUtils {
 			if (enr.containsKey("term"))
 				currTerm.setName((String) enr.get("term"));
 			if (enr.containsKey("category"))
-				currTerm.setCategory((String) enr.get("category"));
+				if (EnrichmentTerm.termCategoryNames.containsKey((String) enr.get("category"))) {
+					currTerm.setCategory(EnrichmentTerm.termCategoryNames.get((String) enr.get("category")));
+				} else {
+					currTerm.setCategory((String) enr.get("category"));
+				}
 			if (enr.containsKey("description"))
 				currTerm.setDescription((String) enr.get("description"));
 			if (enr.containsKey("pvalue"))
@@ -264,7 +270,7 @@ public class ModelUtils {
 						currNodeList.add(nodeSUID);
 						if (network.getDefaultNodeTable().getColumn(CyNetwork.NAME) != null) {
 							enrGeneNodeName = network.getDefaultNodeTable().getRow(nodeSUID)
-									.get(CyNetwork.NAME, String.class);
+									.get(DISPLAY, String.class);
 						}
 					}
 					currGeneList.add(enrGeneNodeName);
@@ -961,6 +967,18 @@ public class ModelUtils {
 			}
 		}
 		return null;
+	}
+	
+	public static List<String> getVisualizedEnrichmentTerms(CyNetwork net) {
+		if (net != null) {
+			CyTable netTable = net.getDefaultNetworkTable();
+			if (netTable.getColumn(ModelUtils.NET_ENRICHMENT_VISTEMRS) != null) {
+				return netTable.getRow(net.getSUID()).getList(ModelUtils.NET_ENRICHMENT_VISTEMRS,
+						String.class);
+			}
+		}
+		return null;
+		
 	}
 	
 	public static void shortenCompoundNames(CyNetwork network, List<CyNode> nodes) {

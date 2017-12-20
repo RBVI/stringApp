@@ -1,6 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
@@ -18,6 +19,18 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 
 	public static final String[] termCategories = new String[] { "Process", "Component", "Function",
 			"InterPro", "KEGG", "Pfam", "All" };
+	public static final HashMap<String, String> termCategoryNames;
+	static {
+		termCategoryNames = new HashMap<String, String>(8);
+		termCategoryNames.put("Process",  "GO Process");
+		termCategoryNames.put("Component",  "GO Component");
+		termCategoryNames.put("Function",  "GO Function");
+		termCategoryNames.put("InterPro",  "InterPro");
+		termCategoryNames.put("Pfam",  "Pfam");
+		termCategoryNames.put("KEGG",  "KEGG");
+		termCategoryNames.put("All",  "All");
+	}; 
+	
 	public static final String[] termTables = new String[] {
 			"STRING Enrichment: GO Biological Process", "STRING Enrichment: GO Cellular Component",
 			"STRING Enrichment: GO Molecular Function", "STRING Enrichment: InterPro",
@@ -25,17 +38,17 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 
 	public static final String colID = "term id";
 	public static final String colName = "term name";
-	public static final String colDescription = "termDescription";
+	public static final String colDescription = "description";
 	public static final String colCategory = "category";
-	public static final String colPvalue = "pValue";
-	public static final String colBonferroni = "bonferroni";
-	public static final String colFDR = "falseDiscoveryRate";
-	public static final String colGenes = "enrichedGenes";
+	public static final String colPvalue = "p-value";
+	public static final String colBonferroni = "bonferroni p-value";
+	public static final String colFDR = "FDR p-value";
+	public static final String colGenes = "enriched genes";
 	public static final String colGenesSUID = "nodes.SUID";
-	public static final String colGenesCount = "countInGeneSet";
+	public static final String colGenesCount = "# enriched genes";
 	public static final String colNetworkSUID = "network.SUID";
 	// public static final String colShowChart = "showInPieChart";
-	public static final String colChartColor = "chartColor";
+	public static final String colChartColor = "chart color";
 
 	public static final String colEnrichmentTermsNames = "enrichmentTermsNames";
 	public static final String colEnrichmentTermsIntegers = "enrichmentTermsIntegers";

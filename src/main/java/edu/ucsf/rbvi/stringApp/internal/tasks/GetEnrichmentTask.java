@@ -222,17 +222,18 @@ public class GetEnrichmentTask extends AbstractTask {
 		String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/ppi_enrichment";
 		args.put("identifiers", selected);
 		args.put("species", species);
-		args.put("required_score", "400");
-		Double confidence = ModelUtils.getConfidence(network);
-		if (confidence != null) {
-			confidence = confidence*1000;
-			args.put("required_score", confidence.toString());
+		if (ModelUtils.getConfidence(network) == null) {
+			monitor.setStatusMessage(
+					"PPI enrichment cannot be retrieved because of missing confidence values.");
+			return null;		
 		}
+		Double confidence = ModelUtils.getConfidence(network)*1000;
+		args.put("required_score", confidence.toString());
 		args.put("caller_identity", StringManager.CallerIdentity);
 		JSONObject results = HttpUtils.postJSON(url, args, manager);
 		if (results == null) {
 			monitor.setStatusMessage(
-					"Enrichment retrieval returned no results, possibly due to an error.");
+					"PPI enrichment retrieval returned no results, possibly due to an error.");
 			return null;
 		}
 		// System.out.println(results.toString());
