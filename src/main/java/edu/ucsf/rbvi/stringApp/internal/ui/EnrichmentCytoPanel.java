@@ -3,6 +3,8 @@ package edu.ucsf.rbvi.stringApp.internal.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,7 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -39,6 +43,7 @@ import org.cytoscape.model.CyTable;
 import org.cytoscape.model.events.RowSetRecord;
 import org.cytoscape.model.events.RowsSetEvent;
 import org.cytoscape.model.events.RowsSetListener;
+import org.cytoscape.util.swing.IconManager;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.vizmap.VisualMappingManager;
@@ -70,6 +75,9 @@ public class EnrichmentCytoPanel extends JPanel
 	JButton butAnalyzedNodes;
 	JButton butFilter;
 	JLabel labelPPIEnrichment;
+	private static final Icon chartIcon = new ImageIcon(
+      EnrichmentCytoPanel.class.getResource("/images/chart20.png"));
+	final Font iconFont;
 
 	final int autoSelectedNodesNum = 6;
 	
@@ -86,6 +94,8 @@ public class EnrichmentCytoPanel extends JPanel
 		this.manager = manager;
 		enrichmentTables = new HashMap<String, JTable>();
 		this.setLayout(new BorderLayout());
+		IconManager iconManager = manager.getService(IconManager.class);
+		iconFont = iconManager.getIconFont(22.0f);
 		initPanel();
 	}
 
@@ -217,14 +227,33 @@ public class EnrichmentCytoPanel extends JPanel
 			// boxTables.addActionListener(this);
 
 			JPanel buttonsPanel = new JPanel(new GridLayout(1, 3)); 
-			butFilter = new JButton(butFilterName);
+			butFilter = new JButton(IconManager.ICON_FILTER);
+			butFilter.setFont(iconFont);
 			butFilter.addActionListener(this);
+			butFilter.setToolTipText(butFilterName);
+			butFilter.setBorderPainted(false);
+			butFilter.setContentAreaFilled(false);
+			butFilter.setFocusPainted(false);
+			butFilter.setBorder(BorderFactory.createEmptyBorder(2,2,2,0));
 
-			butDrawCharts = new JButton(butDrawChartsName);
+			// butDrawCharts = new JButton(butDrawChartsName);
+			butDrawCharts = new JButton(chartIcon);
 			butDrawCharts.addActionListener(this);
+			butDrawCharts.setToolTipText(butDrawChartsName);
+			butDrawCharts.setBorderPainted(false);
+			butDrawCharts.setContentAreaFilled(false);
+			butDrawCharts.setFocusPainted(false);
+			butDrawCharts.setBorder(BorderFactory.createEmptyBorder(2,0,2,2));
 
-			butResetCharts = new JButton(butResetChartsName);
+
+			butResetCharts = new JButton(IconManager.ICON_CIRCLE_O);
+			butResetCharts.setFont(iconFont);
 			butResetCharts.addActionListener(this);
+			butResetCharts.setToolTipText(butResetChartsName);
+			butResetCharts.setBorderPainted(false);
+			butResetCharts.setContentAreaFilled(false);
+			butResetCharts.setFocusPainted(false);
+			butResetCharts.setBorder(BorderFactory.createEmptyBorder(2,2,2,20));
 
 			buttonsPanel.add(butFilter);
 			buttonsPanel.add(butDrawCharts);

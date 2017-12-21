@@ -117,6 +117,17 @@ public class DivergingColorPalettePanel extends ColorBlindAwareColorChooserPanel
 		}
 	}
 
+	@Override
+	public void setSelectedPalette(String palette) {
+		ColorSelectionModel model = getColorSelectionModel();
+		for (ColorBrewer plt: ColorBrewer.getQualitativeColorPalettes(isShowColorBlindSave())) {
+			if (plt.name().equals(selectedPalette)) {
+				((ColorPanelSelectionModel) model).setColorBrewer(plt);
+				break;
+			}
+		}
+	}
+
 	public String getDisplayName() {return "Diverging";}
 	
 	public void stateChanged(ChangeEvent ce) {

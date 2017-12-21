@@ -75,8 +75,7 @@ import org.jcolorbrewer.ColorBrewer;
 public class QualitativeColorPalettePanel extends ColorBlindAwareColorChooserPanel
                                implements ActionListener {
 	private static final long serialVersionUID = 1L;
-	protected String selectedPalette = null;
-
+	// protected String selectedPalette = null;
 
 	protected JToggleButton createPalette(ColorBrewer brewer, Border normalBorder) {
 		JToggleButton palette = new JToggleButton();
@@ -109,6 +108,8 @@ public class QualitativeColorPalettePanel extends ColorBlindAwareColorChooserPan
 		}
 	}
 
+	@Override
+
 	public void actionPerformed(ActionEvent e) {
 		ColorSelectionModel model = getColorSelectionModel();
 
@@ -130,6 +131,17 @@ public class QualitativeColorPalettePanel extends ColorBlindAwareColorChooserPan
 	
 	public void stateChanged(ChangeEvent ce) {
 		getColorSelectionModel().setSelectedColor(new Color(1));
+	}
+
+	@Override
+	public void setSelectedPalette(String palette) {
+		ColorSelectionModel model = getColorSelectionModel();
+		for (ColorBrewer plt: ColorBrewer.getQualitativeColorPalettes(isShowColorBlindSave())) {
+			if (plt.name().equals(selectedPalette)) {
+				((ColorPanelSelectionModel) model).setColorBrewer(plt);
+				break;
+			}
+		}
 	}
 
 	@Override

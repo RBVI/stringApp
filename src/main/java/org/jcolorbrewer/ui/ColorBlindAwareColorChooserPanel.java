@@ -3,6 +3,7 @@ package org.jcolorbrewer.ui;
 import java.awt.Container;
 import javax.swing.*;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
+import javax.swing.colorchooser.ColorSelectionModel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,7 @@ public abstract class ColorBlindAwareColorChooserPanel extends AbstractColorChoo
 
     boolean showColorBlindSave = false;
 		ColorBlindAwareColorChooserPanel chooserPanel;
+		protected String selectedPalette = null;
 
     List<Container> currentButtons = new ArrayList<Container>();
 
@@ -27,6 +29,8 @@ public abstract class ColorBlindAwareColorChooserPanel extends AbstractColorChoo
 				chooserPanel = null;
         this.repaint();
     }
+
+		abstract public void setSelectedPalette(String palette);
 
     public void updateChooser() {
 

@@ -77,10 +77,9 @@ import org.jcolorbrewer.ColorBrewer;
 public class QualitativeColorPanel extends ColorBlindAwareColorChooserPanel
                                implements ActionListener {
 	private static final long serialVersionUID = 1L;
-	protected String selectedPalette = null;
+	// protected String selectedPalette = null;
 
 	Map<String, JPanel> paletteMap;
-
 
 	protected JPanel createPalette(ColorBrewer brewer, Border normalBorder, Border selectedBorder) {
 		JPanel panel = new JPanel();
@@ -114,6 +113,12 @@ public class QualitativeColorPanel extends ColorBlindAwareColorChooserPanel
 
 		Border border = BorderFactory.createEmptyBorder(2,4,2,4);
 		Border selectedBorder = BorderFactory.createLineBorder(Color.blue, 2);
+
+		if (selectedPalette == null) {
+			ColorPanelSelectionModel model = (ColorPanelSelectionModel)getColorSelectionModel();
+			ColorBrewer b = model.getColorBrewer();
+			if (b != null) selectedPalette = b.name();
+		}
 
 		for (ColorBrewer palette: ColorBrewer.getQualitativeColorPalettes(isShowColorBlindSave())) {
 			if ( isShowColorBlindSave() ){
@@ -149,6 +154,21 @@ public class QualitativeColorPanel extends ColorBlindAwareColorChooserPanel
 	}
 
 	public String getDisplayName() {return "Brewer Qualitative";}
+
+	@Override
+	public void setSelectedPalette(String palette) {
+		selectedPalette = palette;
+		ColorSelectionModel model = getColorSelectionModel();
+		for (ColorBrewer plt: ColorBrewer.getQualitativeColorPalettes(isShowColorBlindSave())) {
+			JPanel selectedPanel = paletteMap.get(plt.name());
+			if (plt.name().equals(selectedPalette)) {
+				((ColorPanelSelectionModel) model).setColorBrewer(plt);
+				selectedPanel.setBorder(BorderFactory.createLineBorder(Color.blue, 2));
+			} else {
+				selectedPanel.setBorder(BorderFactory.createEmptyBorder(2,4,2,4));
+			}
+		}
+	}
 	
 	public void stateChanged(ChangeEvent ce) {
 		// getColorSelectionModel().setSelectedColor(new Color(1));

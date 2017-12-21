@@ -35,6 +35,7 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.table.TableCellEditor;
 
 import org.jcolorbrewer.ui.JColorChooserBrewer;
+import org.jcolorbrewer.ColorBrewer;
 
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
@@ -54,6 +55,7 @@ public class ColorEditor extends AbstractCellEditor
                          implements TableCellEditor,
 			            ActionListener {
     Color currentColor;
+		ColorBrewer currentPalette;
     JButton button;
     JColorChooser colorChooser;
     JColorChooserBrewer dialog;
@@ -82,6 +84,7 @@ public class ColorEditor extends AbstractCellEditor
             //bring up the dialog.
             button.setBackground(currentColor);
             dialog.setColor(currentColor);
+						dialog.setColorBrewer(currentPalette);
             // colorChooser.showDialog();
             dialog.setVisible(true);
 
@@ -90,6 +93,7 @@ public class ColorEditor extends AbstractCellEditor
 
         } else { //User pressed dialog's "OK" button.
             currentColor = dialog.getColor();
+						currentPalette = dialog.getColorPalette();
         }
     }
 

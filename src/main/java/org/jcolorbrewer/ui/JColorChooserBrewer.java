@@ -111,7 +111,7 @@ public class JColorChooserBrewer
 	 * Starting color, set by setColor, and the color we return
 	 * to on a reset.
 	 */
-	protected ColorBrewer startingColorBrewer = ColorBrewer.BrBG;
+	protected ColorBrewer startingColorBrewer = ColorBrewer.Paired;
 
 	/**
 	 * True if OK was pressed; false otherwise.
@@ -248,6 +248,7 @@ public class JColorChooserBrewer
 			newPanels[i+1] = oldPanels[i];
 		}
 		colorChooser.setChooserPanels(newPanels);
+		panels[0].setSelectedPalette(startingColorBrewer.name());
 		
 		// overwrite the default preview panel
 		// colorChooser.setPreviewPanel(new JPanel()); 
@@ -263,7 +264,6 @@ public class JColorChooserBrewer
 		final JPanel cbFriendlyGridPanel = new JPanel( );
 
 		cbFriendlyPanel.add(cbFriendlyGridPanel);
-
 
 		final JCheckBox colorBlindOnly = new JCheckBox("show only colorblind-friendly");
 		colorBlindOnly.addActionListener(new ActionListener() {
@@ -299,6 +299,12 @@ public class JColorChooserBrewer
 			public void actionPerformed(final ActionEvent e) {
 
 				setColorBrewer(JColorChooserBrewer.this.startingColorBrewer);
+				setColor(JColorChooserBrewer.this.startingColor);
+				for (ColorBlindAwareColorChooserPanel cbccp : panels) {
+					cbccp.setSelectedPalette(JColorChooserBrewer.this.startingColorBrewer.name());
+					cbccp.updateChooser();
+					colorChooser.repaint();
+				}
 			}
 		});
 		buttonGridPanel.add( resetButton );
@@ -311,7 +317,7 @@ public class JColorChooserBrewer
 			public void actionPerformed(final ActionEvent e) {
 				JColorChooserBrewer.this.okWasPressed = true;
 				JColorChooserBrewer.this.setVisible(false);
-				getColorPalette();
+				startingColorBrewer = getColorPalette();
 				if (JColorChooserBrewer.this.okListener != null) 
 					JColorChooserBrewer.this.okListener.actionPerformed(e);
 			}
@@ -486,7 +492,6 @@ public class JColorChooserBrewer
 	public ColorBrewer getColorPalette( )
 	{
 		ColorPanelSelectionModel model = (ColorPanelSelectionModel)colorChooser.getSelectionModel();
-		System.out.println("Got brewer palette "+model.getColorBrewer());
 		return model.getColorBrewer();
 	}
 
@@ -495,10 +500,12 @@ public class JColorChooserBrewer
 	 *
 	 * @param	color		the new color
 	 */
-	public void setColorBrewer(final ColorBrewer brewer)
+	public void setColorBrewer(ColorBrewer brewer)
 	{
+		if (brewer == null) brewer = startingColorBrewer;
 		ColorPanelSelectionModel model = (ColorPanelSelectionModel)colorChooser.getSelectionModel();
 		model.setColorBrewer(brewer);
+		startingColorBrewer = brewer;
 	}
 	
 	public static void main(String[] args){
