@@ -41,6 +41,7 @@ import org.w3c.dom.NodeList;
 
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
+import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.EntityIdentifier;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
@@ -245,8 +246,8 @@ public class ModelUtils {
 			if (enr.containsKey("term"))
 				currTerm.setName((String) enr.get("term"));
 			if (enr.containsKey("category"))
-				if (EnrichmentTerm.termCategoryNames.containsKey((String) enr.get("category"))) {
-					currTerm.setCategory(EnrichmentTerm.termCategoryNames.get((String) enr.get("category")));
+				if (TermCategory.containsKey((String) enr.get("category"))) {
+					currTerm.setCategory(TermCategory.getName((String) enr.get("category")));
 				} else {
 					currTerm.setCategory((String) enr.get("category"));
 				}
@@ -1069,7 +1070,7 @@ public class ModelUtils {
 	public static Set<CyTable> getEnrichmentTables(StringManager manager, CyNetwork network) {
 		CyTableManager tableManager = manager.getService(CyTableManager.class);
 		Set<CyTable> netTables = new HashSet<CyTable>();
-		Set<String> tableNames = new HashSet<String>(Arrays.asList(EnrichmentTerm.termTables));
+		Set<String> tableNames = new HashSet<String>(TermCategory.getTables());
 		Set<CyTable> currTables = tableManager.getAllTables(true);
 		for (CyTable current : currTables) {
 			if (tableNames.contains(current.getTitle())

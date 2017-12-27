@@ -52,6 +52,7 @@ import org.cytoscape.work.TaskManager;
 import org.jcolorbrewer.ColorBrewer;
 
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
+import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.tasks.FilterEnrichmentTableTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
@@ -66,7 +67,7 @@ public class EnrichmentCytoPanel extends JPanel
 	JPanel topPanel;
 	JPanel mainPanel;
 	JScrollPane scrollPane;
-	public final static String showTable = EnrichmentTerm.termTables[6];
+	public final static String showTable = TermCategory.ALL.getTable();
 	// JComboBox<String> boxTables;
 	List<String> availableTables;
 	// boolean createBoxTables = true;
@@ -75,6 +76,7 @@ public class EnrichmentCytoPanel extends JPanel
 	JButton butAnalyzedNodes;
 	JButton butFilter;
 	JLabel labelPPIEnrichment;
+	EnrichmentTableModel tableModel;
 	private static final Icon chartIcon = new ImageIcon(
       EnrichmentCytoPanel.class.getResource("/images/chart20.png"));
 	final Font iconFont;
@@ -186,7 +188,7 @@ public class EnrichmentCytoPanel extends JPanel
 		} else if (e.getSource().equals(butFilter)) {
 			// ...
 			TaskManager<?, ?> tm = manager.getService(TaskManager.class);
-			tm.execute(new TaskIterator(new FilterEnrichmentTableTask(manager)));
+			tm.execute(new TaskIterator(new FilterEnrichmentTableTask(manager, tableModel)));
 		}
 	}
 
@@ -227,6 +229,7 @@ public class EnrichmentCytoPanel extends JPanel
 			// boxTables.addActionListener(this);
 
 			JPanel buttonsPanel = new JPanel(new GridLayout(1, 3)); 
+			//TODO: replace with better icon
 			butFilter = new JButton(IconManager.ICON_FILTER);
 			butFilter.setFont(iconFont);
 			butFilter.addActionListener(this);
@@ -302,8 +305,8 @@ public class EnrichmentCytoPanel extends JPanel
 	}
 
 	private void createJTable(CyTable cyTable) {
-		EnrichmentTableModel tableModel = new EnrichmentTableModel(cyTable,
-				EnrichmentTerm.swingColumns);
+		tableModel = new EnrichmentTableModel(cyTable,
+		                                      EnrichmentTerm.swingColumns);
 		JTable jTable = new JTable(tableModel);
 		TableColumnModel tcm = jTable.getColumnModel();
 		tcm.removeColumn(tcm.getColumn(EnrichmentTerm.nodeSUIDColumn));
@@ -384,7 +387,7 @@ public class EnrichmentCytoPanel extends JPanel
 
 		// remove colors from table?
 		CyTable currTable = ModelUtils.getEnrichmentTable(manager, network,
-				EnrichmentTerm.termTables[6]);
+		                                                  TermCategory.ALL.getTable());
 		if (currTable.getRowCount() == 0) {
 			return;
 		}
@@ -395,7 +398,8 @@ public class EnrichmentCytoPanel extends JPanel
 				row.set(EnrichmentTerm.colChartColor, "");
 			}
 		}
-		initPanel();
+		// initPanel();
+		tableModel.fireTableDataChanged();
 	}
 	
 	private void drawCharts(Map<EnrichmentTerm, String> selectedTerms) {
@@ -494,7 +498,7 @@ public class EnrichmentCytoPanel extends JPanel
 		// Set<CyTable> currTables = ModelUtils.getEnrichmentTables(manager, network);
 		// for (CyTable currTable : currTables) {
 		CyTable currTable = ModelUtils.getEnrichmentTable(manager, network,
-				EnrichmentTerm.termTables[6]);
+		                                                  TermCategory.ALL.getTable());
 		// currTable.getColumn(EnrichmentTerm.colShowChart) == null || 
 		if (currTable.getRowCount() == 0) {
 			return selectedTerms;
@@ -526,15 +530,17 @@ public class EnrichmentCytoPanel extends JPanel
 			return selectedTerms;
 
 		CyTable currTable = ModelUtils.getEnrichmentTable(manager, network,
-				EnrichmentTerm.termTables[6]);
+		                                                  TermCategory.ALL.getTable());
 		if (currTable.getRowCount() == 0) {
 			return selectedTerms;
 		}
 		
-		List<CyRow> rows = currTable.getAllRows();
+		// List<CyRow> rows = currTable.getAllRows();
 		Color[] colors = ColorBrewer.Paired.getColorPalette(autoSelectedNodesNum);
+		Long[] rowNames = tableModel.getRowNames();
 		for (int i = 0; i < autoSelectedNodesNum; i++) {
-			CyRow row = rows.get(i);
+			
+			CyRow row = currTable.getRow(rowNames[i]);
 			String selTerm = row.get(EnrichmentTerm.colName, String.class);
 			if (selTerm != null) {
 				EnrichmentTerm enrTerm = new EnrichmentTerm(selTerm,
@@ -548,7 +554,8 @@ public class EnrichmentCytoPanel extends JPanel
 				selectedTerms.put(enrTerm, color);
 			}
 		}
-		initPanel();
+		// initPanel();
+		tableModel.fireTableDataChanged();
 		return selectedTerms;
 	}
 	

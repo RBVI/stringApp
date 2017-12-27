@@ -17,24 +17,56 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	public static final String enrichmentURLTest = "http://gamma.string-db.org/cgi/webservices/enrichmentWrapper.pl";
 	public static final String enrichmentURL = "http://version-10.string-db.org/cgi/webservices/enrichmentWrapper.pl";
 
-	public static final String[] termCategories = new String[] { "Process", "Component", "Function",
-			"InterPro", "KEGG", "Pfam", "All" };
-	public static final HashMap<String, String> termCategoryNames;
-	static {
-		termCategoryNames = new HashMap<String, String>(8);
-		termCategoryNames.put("Process",  "GO Process");
-		termCategoryNames.put("Component",  "GO Component");
-		termCategoryNames.put("Function",  "GO Function");
-		termCategoryNames.put("InterPro",  "InterPro");
-		termCategoryNames.put("Pfam",  "Pfam");
-		termCategoryNames.put("KEGG",  "KEGG");
-		termCategoryNames.put("All",  "All");
-	}; 
-	
-	public static final String[] termTables = new String[] {
-			"STRING Enrichment: GO Biological Process", "STRING Enrichment: GO Cellular Component",
-			"STRING Enrichment: GO Molecular Function", "STRING Enrichment: InterPro",
-			"STRING Enrichment: KEGG", "STRING Enrichment: Pfam", "STRING Enrichment: All" };
+	// Change to an enum?
+	public static enum TermCategory {
+		GOPROCESS("Process", "GO Process", "STRING Enrichment: GO Biological Process"),
+		GOCOMPONENT("Component", "GO Component", "STRING Enrichment: GO Cellular Component"),
+		GOFUNCTION("Function", "GO Function", "STRING Enrichment: GO Molecular Function"),
+		INTERPRO("InterPro", "InterPro", "STRING Enrichment: InterPro"),
+		KEGG("KEGG", "KEGG Pathways", "STRING Enrichment: KEGG"),
+		PFAM("PFAM", "PFAM", "STRING Enrichment: Pfam"),
+		ALL("All", "All", "STRING Enrichment: All");
+
+		String key, name, table;
+		TermCategory(String key, String name, String table) {
+			this.key = key;
+			this.name = name;
+			this.table = table;
+		}
+
+		public String getKey() { return key; }
+		public String getName() { return name; }
+		public String getTable() { return table; }
+		public String toString() { return name; }
+		static public List<String> getCategories() {
+			List<String> cats = new ArrayList<String>();
+			for (TermCategory tc: values()) {
+				cats.add(tc.getKey());
+			}
+			return cats;
+		}
+		static public List<String> getTables() {
+			List<String> tables = new ArrayList<String>();
+			for (TermCategory tc: values()) {
+				tables.add(tc.getTable());
+			}
+			return tables;
+		}
+		static public boolean containsKey(String key) {
+			for (TermCategory tc: values()) {
+				if (tc.getKey().equals(key))
+					return true;
+			}
+			return false;
+		}
+		static public String getName(String key) {
+			for (TermCategory tc: values()) {
+				if (tc.getKey().equals(key))
+					return tc.getName();
+			}
+			return null;
+		}
+	}
 
 	public static final String colID = "term id";
 	public static final String colName = "term name";

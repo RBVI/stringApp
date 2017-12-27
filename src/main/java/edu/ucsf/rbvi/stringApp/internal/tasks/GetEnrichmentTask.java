@@ -36,6 +36,7 @@ import edu.ucsf.rbvi.stringApp.internal.io.EnrichmentSAXHandler;
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
+import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
@@ -137,35 +138,41 @@ public class GetEnrichmentTask extends AbstractTask {
 		String[] selectedNodes = selected.split("\n");
 		if (goProcess) {
 			monitor.setStatusMessage("Retrieving functional enrichment for GO Biological Process.");
-			if (getEnrichment(selectedNodes, "fat", species, EnrichmentTerm.termCategories[0]))
-				saveEnrichmentTable(EnrichmentTerm.termTables[0], EnrichmentTerm.termCategories[0]);
+			TermCategory category = TermCategory.GOPROCESS;
+			if (getEnrichment(selectedNodes, "fat", species, category.getKey()))
+				saveEnrichmentTable(category.getTable(), category.getKey());
 		}
 		if (goCompartment) {
 			monitor.setStatusMessage(
 					"Retrieving functional enrichment for GO Cellular Compartment.");
-			if (getEnrichment(selectedNodes, "fat", species, EnrichmentTerm.termCategories[2]))
-				saveEnrichmentTable(EnrichmentTerm.termTables[2], EnrichmentTerm.termCategories[2]);
+			TermCategory category = TermCategory.GOCOMPONENT;
+			if (getEnrichment(selectedNodes, "fat", species, category.getKey()))
+				saveEnrichmentTable(category.getTable(), category.getKey());
 		}
 		if (goFunction) {
 			monitor.setStatusMessage("Retrieving functional enrichment for GO Molecular Function.");
-			if (getEnrichment(selectedNodes, "fat", species, EnrichmentTerm.termCategories[1]))
-				saveEnrichmentTable(EnrichmentTerm.termTables[1], EnrichmentTerm.termCategories[1]);
+			TermCategory category = TermCategory.GOFUNCTION;
+			if (getEnrichment(selectedNodes, "fat", species, category.getKey()))
+				saveEnrichmentTable(category.getTable(), category.getKey());
 		}
 		if (interPro) {
 			monitor.setStatusMessage(
 					"Retrieving functional enrichment for INTERPRO Protein Domains and Features.");
-			if (getEnrichment(selectedNodes, "", species, EnrichmentTerm.termCategories[5]))
-				saveEnrichmentTable(EnrichmentTerm.termTables[5], EnrichmentTerm.termCategories[5]);
+			TermCategory category = TermCategory.INTERPRO;
+			if (getEnrichment(selectedNodes, "fat", species, category.getKey()))
+				saveEnrichmentTable(category.getTable(), category.getKey());
 		}
 		if (kegg) {
 			monitor.setStatusMessage("Retrieving functional enrichment for KEGG Pathways.");
-			if (getEnrichment(selectedNodes, "", species, EnrichmentTerm.termCategories[3]))
-				saveEnrichmentTable(EnrichmentTerm.termTables[3], EnrichmentTerm.termCategories[3]);
+			TermCategory category = TermCategory.KEGG;
+			if (getEnrichment(selectedNodes, "fat", species, category.getKey()))
+				saveEnrichmentTable(category.getTable(), category.getKey());
 		}
 		if (pfam) {
 			monitor.setStatusMessage("Retrieving functional enrichment for PFAM Protein Domains.");
-			if (getEnrichment(selectedNodes, "", species, EnrichmentTerm.termCategories[4]))
-				saveEnrichmentTable(EnrichmentTerm.termTables[4], EnrichmentTerm.termCategories[4]);
+			TermCategory category = TermCategory.PFAM;
+			if (getEnrichment(selectedNodes, "fat", species, category.getKey()))
+				saveEnrichmentTable(category.getTable(), category.getKey());
 		}
 
 		// save analyzed nodes in network table
@@ -212,8 +219,9 @@ public class GetEnrichmentTask extends AbstractTask {
 			return; 
 		} else if (terms.size() > 0) {
 			Collections.sort(terms);
-			enrichmentResult.put(EnrichmentTerm.termCategories[6], terms);
-			saveEnrichmentTable(EnrichmentTerm.termTables[6], EnrichmentTerm.termCategories[6]);
+			TermCategory category = TermCategory.ALL;
+			enrichmentResult.put(category.getKey(), terms);
+			saveEnrichmentTable(category.getTable(), category.getKey());
 		}		
 	}
 	
