@@ -7,6 +7,7 @@ import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.Tunable;
+import org.cytoscape.work.util.BoundedDouble;
 import org.cytoscape.work.util.ListMultipleSelection;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
@@ -43,15 +44,19 @@ public class FilterEnrichmentTableTask extends AbstractTask {
 
 	@Tunable(description = "Select categories", 
 	         tooltip = "Select the enrichment categories to show in the table",
-					 gravity = 1.0)
+	         gravity = 1.0)
 	public ListMultipleSelection<TermCategory> categories = new ListMultipleSelection<>(TermCategory.values());
 
-	@Tunable(description = "Remove overlapping", gravity = 8.0)
+	@Tunable(description = "Remove overlapping", 
+	         tooltip = "Removes terms whose enriched genes significantly overlap with already selected terms",
+	         gravity = 8.0)
 	public boolean removeOverlapping = false;
 
-	@Tunable(description = "Overlap cutoff", params="slider=true", gravity = 9.0)
-	public double overlapCutoff = 0.7;
-	// public BoundedDouble ovlCutoff = new BoundedDouble(0.0, 0.7, 1.0, false, false);
+	@Tunable(description = "Overlap cutoff", 
+	         tooltip = "<html>This is the maximum Jaccard similarity that will be allowed.<br/>"+
+	                   "Values larger than this cutoff will be excluded.</html>",
+	         params="slider=true", gravity = 9.0)
+	public BoundedDouble overlapCutoff = new BoundedDouble(0.0, 0.3, 1.0, false, false);
 	
 	public FilterEnrichmentTableTask(StringManager manager, EnrichmentTableModel tableModel) {
 		this.manager = manager;
@@ -65,7 +70,7 @@ public class FilterEnrichmentTableTask extends AbstractTask {
 		// Filter the current list
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				tableModel.filter(categoryList, removeOverlapping, overlapCutoff);
+				tableModel.filter(categoryList, removeOverlapping, overlapCutoff.getValue());
 			}
 		});
 	}
