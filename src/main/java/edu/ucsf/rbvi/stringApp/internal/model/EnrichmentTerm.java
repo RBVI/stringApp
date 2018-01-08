@@ -45,6 +45,14 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 			}
 			return cats;
 		}
+		static public List<TermCategory> getValues() {
+			List<TermCategory> cats = new ArrayList<TermCategory>();
+			for (TermCategory tc: values()) {
+				if (tc != ALL)
+					cats.add(tc);
+			}
+			return cats;
+		}
 		static public List<String> getTables() {
 			List<String> tables = new ArrayList<String>();
 			for (TermCategory tc: values()) {

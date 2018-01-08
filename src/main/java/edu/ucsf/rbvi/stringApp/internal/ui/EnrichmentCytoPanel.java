@@ -56,6 +56,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.tasks.FilterEnrichmentTableTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.SettingsTask;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
@@ -71,6 +72,7 @@ public class EnrichmentCytoPanel extends JPanel
 	// JComboBox<String> boxTables;
 	List<String> availableTables;
 	// boolean createBoxTables = true;
+	JButton butSettings; 
 	JButton butDrawCharts; 
 	JButton butResetCharts;
 	JButton butAnalyzedNodes;
@@ -81,12 +83,11 @@ public class EnrichmentCytoPanel extends JPanel
       EnrichmentCytoPanel.class.getResource("/images/chart20.png"));
 	final Font iconFont;
 
-	final int autoSelectedNodesNum = 6;
-	
 	final String colEnrichmentTerms = "enrichmentTerms";
 	final String colEnrichmentTermsPieChart = "enrichmentTermsPieChart";
 	final String colEnrichmentPieChart = "enrichmentPieChart";
 
+	final String butSettingsName = "Settings";
 	final String butFilterName = "Filter table";
 	final String butDrawChartsName = "Draw charts";
 	final String butResetChartsName = "Reset charts";
@@ -166,11 +167,12 @@ public class EnrichmentCytoPanel extends JPanel
 		// createBoxTables = true;
 		// } else
 		if (e.getSource().equals(butDrawCharts)) {
+			resetCharts();
 			// do something fancy here...
 			// piechart: attributelist="test3" colorlist="modulated" showlabels="false"
 			Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
 			if (preselectedTerms.size() == 0) {
-				preselectedTerms = getAutoSelectedTopTerms(autoSelectedNodesNum);
+				preselectedTerms = getAutoSelectedTopTerms(manager.topTerms);
 			}
 			drawCharts(preselectedTerms);
 		} else if (e.getSource().equals(butResetCharts)) {
@@ -189,6 +191,9 @@ public class EnrichmentCytoPanel extends JPanel
 			// ...
 			TaskManager<?, ?> tm = manager.getService(TaskManager.class);
 			tm.execute(new TaskIterator(new FilterEnrichmentTableTask(manager, tableModel)));
+		} else if (e.getSource().equals(butSettings)) {
+			TaskManager<?, ?> tm = manager.getService(TaskManager.class);
+			tm.execute(new TaskIterator(new SettingsTask(manager)));
 		}
 	}
 
@@ -229,7 +234,15 @@ public class EnrichmentCytoPanel extends JPanel
 			// boxTables.addActionListener(this);
 
 			JPanel buttonsPanel = new JPanel(new GridLayout(1, 3)); 
-			//TODO: replace with better icon
+			butSettings = new JButton(IconManager.ICON_COG);
+			butSettings.setFont(iconFont);
+			butSettings.addActionListener(this);
+			butSettings.setToolTipText(butSettingsName);
+			butSettings.setBorderPainted(false);
+			butSettings.setContentAreaFilled(false);
+			butSettings.setFocusPainted(false);
+			butSettings.setBorder(BorderFactory.createEmptyBorder(2,2,2,0));
+
 			butFilter = new JButton(IconManager.ICON_FILTER);
 			butFilter.setFont(iconFont);
 			butFilter.addActionListener(this);
@@ -237,7 +250,7 @@ public class EnrichmentCytoPanel extends JPanel
 			butFilter.setBorderPainted(false);
 			butFilter.setContentAreaFilled(false);
 			butFilter.setFocusPainted(false);
-			butFilter.setBorder(BorderFactory.createEmptyBorder(2,2,2,0));
+			butFilter.setBorder(BorderFactory.createEmptyBorder(2,0,2,2));
 
 			// butDrawCharts = new JButton(butDrawChartsName);
 			butDrawCharts = new JButton(chartIcon);
@@ -258,6 +271,7 @@ public class EnrichmentCytoPanel extends JPanel
 			butResetCharts.setFocusPainted(false);
 			butResetCharts.setBorder(BorderFactory.createEmptyBorder(2,2,2,20));
 
+			buttonsPanel.add(butSettings);
 			buttonsPanel.add(butFilter);
 			buttonsPanel.add(butDrawCharts);
 			buttonsPanel.add(butResetCharts);
@@ -536,9 +550,9 @@ public class EnrichmentCytoPanel extends JPanel
 		}
 		
 		// List<CyRow> rows = currTable.getAllRows();
-		Color[] colors = ColorBrewer.Paired.getColorPalette(autoSelectedNodesNum);
+		Color[] colors = manager.brewerPalette.getColorPalette(manager.topTerms);
 		Long[] rowNames = tableModel.getRowNames();
-		for (int i = 0; i < autoSelectedNodesNum; i++) {
+		for (int i = 0; i < manager.topTerms; i++) {
 			
 			CyRow row = currTable.getRow(rowNames[i]);
 			String selTerm = row.get(EnrichmentTerm.colName, String.class);

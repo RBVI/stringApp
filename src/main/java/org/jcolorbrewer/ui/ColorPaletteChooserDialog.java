@@ -117,9 +117,25 @@ public class ColorPaletteChooserDialog
 	 */
 	protected boolean okWasPressed = false;
 
+	/**
+	 * The palette type, if specified
+	 */
+	protected PALETTE_TYPE type = null;
 
+	ColorBlindAwareColorChooserPanel[] panels = new ColorBlindAwareColorChooserPanel[3];
 
+	public enum PALETTE_TYPE {
+		SEQUENTIAL(3),
+		DIVERGING(1),
+		QUALITATIVE(2);
 
+		int palette;
+		PALETTE_TYPE(int type) {
+			palette = type;
+		}
+
+		public int getType() { return palette; }
+	}
 
 //----------------------------------------------------------------------
 //  Constructors / Initializers
@@ -168,8 +184,23 @@ public class ColorPaletteChooserDialog
 		this.initialize( );
 	}
 
+	/**
+	 * Create a modal color chooser dialog to select a color.
+	 *
+	 * @param	parent		the parent frame for this dialog
+	 */
+	public ColorPaletteChooserDialog( final Frame parent, final PALETTE_TYPE type)
+	{
+		super( parent, true );		// Always modal
 
-	ColorBlindAwareColorChooserPanel[] panels = new ColorBlindAwareColorChooserPanel[3];
+		this.parent = parent;
+		this.type = type;
+		if (type != null)
+			panels = new ColorBlindAwareColorChooserPanel[1];
+
+		this.initialize( );
+	}
+
 
 	/**
 	 * Initializes the GUI for the window.  That GUI
@@ -215,9 +246,22 @@ public class ColorPaletteChooserDialog
 	
 		// overwrite the color chooser panels
 
-		panels[0] = new SequentialColorPalettePanel();
-		panels[1] = new DivergingColorPalettePanel();
-		panels[2] = new QualitativeColorPalettePanel();
+		if (type != null) {
+			switch (type) {
+				case SEQUENTIAL:
+					panels[0] = new SequentialColorPalettePanel();
+					break;
+				case DIVERGING:
+					panels[0] = new DivergingColorPalettePanel();
+					break;
+				case QUALITATIVE:
+					panels[0] = new QualitativeColorPalettePanel();
+			}
+		} else {
+			panels[0] = new SequentialColorPalettePanel();
+			panels[1] = new DivergingColorPalettePanel();
+			panels[2] = new QualitativeColorPalettePanel();
+		}
 		colorChooser.setChooserPanels(panels);
 		
 		// overwrite the default preview panel
@@ -280,7 +324,7 @@ public class ColorPaletteChooserDialog
 		this.getRootPane( ).setDefaultButton(okButton);
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent e) {
-				System.out.println("CLICKED");
+				// System.out.println("CLICKED");
 
 				ColorPaletteChooserDialog.this.okWasPressed = true;
 				ColorPaletteChooserDialog.this.setVisible(false);

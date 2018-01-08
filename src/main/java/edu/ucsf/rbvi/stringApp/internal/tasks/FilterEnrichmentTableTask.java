@@ -45,7 +45,7 @@ public class FilterEnrichmentTableTask extends AbstractTask {
 	@Tunable(description = "Select categories", 
 	         tooltip = "Select the enrichment categories to show in the table",
 	         gravity = 1.0)
-	public ListMultipleSelection<TermCategory> categories = new ListMultipleSelection<>(TermCategory.values());
+	public ListMultipleSelection<TermCategory> categories = new ListMultipleSelection<>(TermCategory.getValues());
 
 	@Tunable(description = "Remove overlapping", 
 	         tooltip = "Removes terms whose enriched genes significantly overlap with already selected terms",
@@ -56,11 +56,13 @@ public class FilterEnrichmentTableTask extends AbstractTask {
 	         tooltip = "<html>This is the maximum Jaccard similarity that will be allowed.<br/>"+
 	                   "Values larger than this cutoff will be excluded.</html>",
 	         params="slider=true", gravity = 9.0)
-	public BoundedDouble overlapCutoff = new BoundedDouble(0.0, 0.3, 1.0, false, false);
+	public BoundedDouble overlapCutoff = new BoundedDouble(0.0, 0.5, 1.0, false, false);
 	
 	public FilterEnrichmentTableTask(StringManager manager, EnrichmentTableModel tableModel) {
 		this.manager = manager;
 		this.tableModel = tableModel;
+		overlapCutoff.setValue(manager.overlapCutoff);
+		categories.setSelectedValues(manager.categoryFilter);
 	}
 
 	@Override
@@ -71,6 +73,9 @@ public class FilterEnrichmentTableTask extends AbstractTask {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				tableModel.filter(categoryList, removeOverlapping, overlapCutoff.getValue());
+				manager.overlapCutoff = overlapCutoff.getValue();
+				manager.categoryFilter = categories.getSelectedValues();
+				manager.updateSettings();
 			}
 		});
 	}

@@ -113,11 +113,20 @@ public class QualitativeColorPalettePanel extends ColorBlindAwareColorChooserPan
 	public void actionPerformed(ActionEvent e) {
 		ColorSelectionModel model = getColorSelectionModel();
 
-		String command = ((JButton)e.getSource()).getActionCommand();
+		String command;
+		if (e.getSource() instanceof JButton) {
+			command = ((JButton)e.getSource()).getActionCommand();
+		} else if (e.getSource() instanceof JToggleButton) {
+			command = ((JToggleButton)e.getSource()).getActionCommand();
+		} else {
+			return; // Shouldn't happen
+		}
 		String[] colorSplit = command.split(":");
 		selectedPalette = colorSplit[0];
-		Color color = new Color(Integer.parseInt(colorSplit[1]));
-		model.setSelectedColor(color);
+		if (colorSplit.length == 2) {
+			Color color = new Color(Integer.parseInt(colorSplit[1]));
+			model.setSelectedColor(color);
+		}
 
 		for (ColorBrewer palette: ColorBrewer.getQualitativeColorPalettes(isShowColorBlindSave())) {
 			if (palette.name().equals(selectedPalette)) {

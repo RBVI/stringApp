@@ -525,6 +525,8 @@ public enum ColorBrewer {
 			 return interpolatedColors(colorCount);
 		 }
 	 }
+
+	 public String toString() { return paletteDescription; }
 	 
 	 public static ColorBrewer[] getSequentialColorPalettes(boolean colorBlindSave) {
 		 return getPalettes(3, colorBlindSave);

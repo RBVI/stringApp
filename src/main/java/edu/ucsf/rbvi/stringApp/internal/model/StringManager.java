@@ -29,10 +29,13 @@ import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskObserver;
 
+import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+
+import org.jcolorbrewer.ColorBrewer;
 
 public class StringManager implements NetworkAddedListener, SessionLoadedListener {
 	final CyServiceRegistrar registrar;
@@ -61,6 +64,13 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String RESULT = "QueryResult";
 	
 	public static boolean enableViruses = false;
+
+	// These are various default values that are saved and restored from
+	// the network table
+	public double overlapCutoff = 0.5;
+	public int topTerms = 8;
+	public ColorBrewer brewerPalette = ColorBrewer.Paired;
+	public List<TermCategory> categoryFilter = TermCategory.getValues();
 
 	public StringManager(CyServiceRegistrar registrar) {
 		this.registrar = registrar;
@@ -242,6 +252,9 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		ignore = false;
 	}
 
+	public void updateSettings() {
+	}
+
 	public void handleEvent(NetworkAddedEvent nae) {
 		CyNetwork network = nae.getNetwork();
 		if (ignore) return;
@@ -350,6 +363,4 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			haveChemViz = availableCommands.getNamespaces().contains("chemviz");
 		return haveChemViz;
 	}
-
-	
 }
