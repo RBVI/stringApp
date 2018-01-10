@@ -27,8 +27,8 @@ public class SettingsTask extends AbstractTask implements ActionListener {
 	
 	@Tunable(description = "Number of terms to chart",
 	         tooltip = "Set the default number of terms to use for charts",
-	         gravity = 1.0)
-	public BoundedInteger nTerms = new BoundedInteger(1, 8, 10, false, false);
+	         gravity = 1.0, params="slider=true")
+	public BoundedInteger nTerms = new BoundedInteger(1, 8, 8, false, false);
 	
 	@Tunable(description = "Default Brewer palette",
 	         tooltip = "Set the default Brewer palette for charts",

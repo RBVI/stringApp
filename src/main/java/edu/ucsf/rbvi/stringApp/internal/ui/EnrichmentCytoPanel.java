@@ -123,6 +123,8 @@ public class EnrichmentCytoPanel extends JPanel
 		return null;
 	}
 
+	public EnrichmentTableModel getTableModel() { return tableModel; }
+
 	// table selection handler
 	public void valueChanged(ListSelectionEvent e) {
 		if (e.getValueIsAdjusting())
@@ -385,7 +387,7 @@ public class EnrichmentCytoPanel extends JPanel
 		}
 	}
 
-	private void resetCharts() {
+	public void resetCharts() {
 		CyNetwork network = manager.getCurrentNetwork();
 		if (network == null)
 			return;
@@ -414,6 +416,15 @@ public class EnrichmentCytoPanel extends JPanel
 		}
 		// initPanel();
 		tableModel.fireTableDataChanged();
+	}
+
+	public void drawCharts() {
+		resetCharts();
+		Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
+		if (preselectedTerms.size() == 0) {
+			preselectedTerms = getAutoSelectedTopTerms(manager.topTerms);
+		}
+		drawCharts(preselectedTerms);
 	}
 	
 	private void drawCharts(Map<EnrichmentTerm, String> selectedTerms) {

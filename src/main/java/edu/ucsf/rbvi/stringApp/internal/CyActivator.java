@@ -34,13 +34,17 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeConfidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.DiseaseSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExpandNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.FilterEnrichmentTableTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetNetworkTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.HideChartsTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.FindProteinsTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.OpenEvidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.PubmedSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.SetConfidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.SetLabelAttributeTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.SettingsTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowChartsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
@@ -239,6 +243,58 @@ public class CyActivator extends AbstractCyActivator {
 		}
 
 		{
+			FilterEnrichmentTableTaskFactory filterFactory = 
+							new FilterEnrichmentTableTaskFactory(manager);
+			Properties props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "filter enrichment");
+			props.setProperty(COMMAND_DESCRIPTION, 
+										           "Filter the terms in the enrichment table");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+    	props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
+			registerService(bc, filterFactory, TaskFactory.class, props);
+		}
+
+		{
+			ShowChartsTaskFactory showChartsFactory = 
+							new ShowChartsTaskFactory(manager);
+			Properties props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "show charts");
+			props.setProperty(COMMAND_DESCRIPTION, 
+										           "Show the enrichment charts");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+    	props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
+			registerService(bc, showChartsFactory, TaskFactory.class, props);
+		}
+		
+		{
+			HideChartsTaskFactory hideChartsFactory = 
+							new HideChartsTaskFactory(manager);
+			Properties props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "hide charts");
+			props.setProperty(COMMAND_DESCRIPTION, 
+										           "Hide the enrichment charts");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+    	props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
+			registerService(bc, hideChartsFactory, TaskFactory.class, props);
+		}
+		
+		{
+			SettingsTaskFactory settingsFactory = 
+							new SettingsTaskFactory(manager);
+			Properties props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "settings");
+			props.setProperty(COMMAND_DESCRIPTION, 
+										           "Adjust various settings");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+    	props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
+			registerService(bc, settingsFactory, TaskFactory.class, props);
+		}
+
+		{
 			// Register our "Add Nodes" factory
 			ExpandNetworkTaskFactory addNodes = new ExpandNetworkTaskFactory(manager);
 			Properties props = new Properties();
@@ -322,13 +378,25 @@ public class CyActivator extends AbstractCyActivator {
 		}
 
 		GetEnrichmentTaskFactory getEnrichment = new GetEnrichmentTaskFactory(manager);
-		Properties propsEnrichment = new Properties();
-		propsEnrichment.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
-		propsEnrichment.setProperty(TITLE, "Retrieve functional enrichment");
-		propsEnrichment.setProperty(MENU_GRAVITY, "1.0");
-		propsEnrichment.setProperty(IN_MENU_BAR, "true");
-		// propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
-		registerService(bc, getEnrichment, NetworkTaskFactory.class, propsEnrichment);
+		{
+			Properties propsEnrichment = new Properties();
+			propsEnrichment.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
+			propsEnrichment.setProperty(TITLE, "Retrieve functional enrichment");
+			propsEnrichment.setProperty(MENU_GRAVITY, "1.0");
+			propsEnrichment.setProperty(IN_MENU_BAR, "true");
+			propsEnrichment.setProperty(COMMAND_NAMESPACE, "string");
+			propsEnrichment.setProperty(COMMAND, "retrieve enrichment");
+			propsEnrichment.setProperty(COMMAND_DESCRIPTION, 
+			                            "Retrieve functional enrichment for the current String network");
+			propsEnrichment.setProperty(COMMAND_LONG_DESCRIPTION, 
+			                            "Retrieve the functional enrichment for the current String network."+
+			                            "This includes enrichment for GO Process, GO Component, GO Function, "+
+			                            "InterPro, KEGG Pathways, and PFAM.");
+			propsEnrichment.setProperty(COMMAND_SUPPORTS_JSON, "true");
+    	propsEnrichment.setProperty(COMMAND_EXAMPLE_JSON, GetEnrichmentTaskFactory.EXAMPLE_JSON);
+			// propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
+			registerService(bc, getEnrichment, NetworkTaskFactory.class, propsEnrichment);
+		}
 
 		if (haveGUI) {
 			ShowEnrichmentPanelTaskFactory showEnrichment = new ShowEnrichmentPanelTaskFactory(manager);

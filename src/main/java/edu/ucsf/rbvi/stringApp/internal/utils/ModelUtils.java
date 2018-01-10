@@ -95,6 +95,12 @@ public class ModelUtils {
 	public static String NET_SPECIES = "species";
 	public static String NET_ANALYZED_NODES = "analyzedNodes.SUID";
 	public static String NET_PPI_ENRICHMENT = "ppiEnrichment";
+	public static String NET_ENRICHMENT_NODES = "enrichmentNodes";
+	public static String NET_ENRICHMENT_EXPECTED_EDGES = "enrichmentExpectedEdges";
+	public static String NET_ENRICHMENT_EDGES = "enrichmentEdges";
+	public static String NET_ENRICHMENT_CLSTR = "enrichmentClusteringCoeff";
+	public static String NET_ENRICHMENT_DEGREE = "enrichmentAvgDegree";
+
 	public static String NET_ENRICHMENT_VISTEMRS = "visualizedTerms";
 	public static String NET_ENRICHMENT_VISCOLORS = "visualizedTermsColors";
 	
@@ -297,9 +303,12 @@ public class ModelUtils {
 		return results;
 	}
 
-	public static Double getEnrichmentPPIFromJSON(StringManager manager, JSONObject object,
-			double enrichmentCutoff, Map<String, Long> stringNodesMap, CyNetwork network) {
-		Double ppienrichment = null;
+	public static Map<String, String> getEnrichmentPPIFromJSON(StringManager manager, 
+	                                                           JSONObject object,
+	                                                           double enrichmentCutoff, 
+	                                                           Map<String, Long> stringNodesMap, 
+	                                                           CyNetwork network) {
+		Map<String, String> values = new HashMap<>();
 		JSONArray ppienrichmentArray = getResultsFromJSON(object, JSONArray.class);
 		if (ppienrichmentArray == null)
 			return null;
@@ -311,25 +320,34 @@ public class ModelUtils {
 
 			if (enr.containsKey("p_value")) {
 				if (((String)enr.get("p_value")).equals("0"))
-					ppienrichment = new Double(1e-16);
+					values.put(NET_PPI_ENRICHMENT, new Double(1e-16).toString());
 				else
-					ppienrichment = new Double((String) enr.get("p_value"));
+					values.put(NET_PPI_ENRICHMENT, (String)enr.get("p_value"));
 			}
 			if (enr.containsKey("expected_number_of_edges")) {
-				long exp_edges = ((Long) enr.get("expected_number_of_edges")).longValue();
+				values.put(NET_ENRICHMENT_EXPECTED_EDGES, enr.get("expected_number_of_edges").toString());
 			}
 			if (enr.containsKey("number_of_edges")) {
-				long num_edges = ((Long) enr.get("number_of_edges")).longValue();
-			}			
+				values.put(NET_ENRICHMENT_EDGES, enr.get("number_of_edges").toString());
+			}
+			if (enr.containsKey("average_node_degree")) {
+				values.put(NET_ENRICHMENT_DEGREE, enr.get("average_node_degree").toString());
+			}
+			if (enr.containsKey("local_clustering_coefficient")) {
+				values.put(NET_ENRICHMENT_CLSTR, enr.get("local_clustering_coefficient").toString());
+			}
+			if (enr.containsKey("number_of_nodes")) {
+				values.put(NET_ENRICHMENT_NODES, enr.get("number_of_nodes").toString());
+			}
 			if (enr.containsKey("Error")) {
 				System.out.println("An error occured while retrieving ppi enrichment.");
 			}
 			if (enr.containsKey("ErrorMessage")) {
-				System.out.println(enr.get("ErrorMessage"));
-				return null;
+				values.put("ErrorMessage", (String) enr.get("ErrorMessage"));
+				return values;
 			}
 		}
-		return ppienrichment;
+		return values;
 	}
 
 	public static List<CyNode> augmentNetworkFromJSON(StringManager manager, CyNetwork net,

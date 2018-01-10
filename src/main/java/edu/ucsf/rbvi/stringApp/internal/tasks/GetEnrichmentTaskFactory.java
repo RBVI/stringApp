@@ -15,6 +15,7 @@ public class GetEnrichmentTaskFactory extends AbstractNetworkTaskFactory
 		implements NetworkViewTaskFactory {
 	final StringManager manager;
 	ShowEnrichmentPanelTaskFactory showFactory;
+	public static String EXAMPLE_JSON = GetEnrichmentTask.EXAMPLE_JSON;
 
 	public GetEnrichmentTaskFactory(final StringManager manager) {
 		this.manager = manager;

@@ -1,12 +1,15 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.SwingUtilities;
 
 import org.cytoscape.work.AbstractTask;
+import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.Tunable;
+import org.cytoscape.work.json.JSONResult;
 import org.cytoscape.work.util.BoundedDouble;
 import org.cytoscape.work.util.ListMultipleSelection;
 
@@ -14,7 +17,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentTableModel;
 
-public class FilterEnrichmentTableTask extends AbstractTask {
+public class FilterEnrichmentTableTask extends AbstractTask implements ObservableTask {
 
 	private StringManager manager;
 	private EnrichmentTableModel tableModel;
@@ -78,6 +81,25 @@ public class FilterEnrichmentTableTask extends AbstractTask {
 				manager.updateSettings();
 			}
 		});
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <R> R getResults(Class<? extends R> clzz) {
+		if (clzz.equals(String.class)) {
+			return (R)"";
+		} else if (clzz.equals(JSONResult.class)) {
+			JSONResult res = () -> {
+				return "{}";
+			};
+			return (R)res;
+		}
+		return null;
+	}
+
+	@Override
+	public List<Class<?>> getResultClasses() {
+		return Arrays.asList(JSONResult.class, String.class);
 	}
 
 }

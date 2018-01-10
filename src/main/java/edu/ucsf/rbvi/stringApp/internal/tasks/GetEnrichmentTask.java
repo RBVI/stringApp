@@ -1,6 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -24,12 +25,14 @@ import org.cytoscape.model.SavePolicy;
 import org.cytoscape.task.analyze.AnalyzeNetworkCollectionTaskFactory;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.AbstractTask;
+import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.SynchronousTaskManager;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.TaskMonitor.Level;
 import org.cytoscape.work.Tunable;
+import org.cytoscape.work.json.JSONResult;
 import org.json.simple.JSONObject;
 
 import edu.ucsf.rbvi.stringApp.internal.io.EnrichmentSAXHandler;
@@ -40,13 +43,14 @@ import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
-public class GetEnrichmentTask extends AbstractTask {
+public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 	final CyNetwork network;
 	final CyNetworkView netView;
 	final Map<String, List<EnrichmentTerm>> enrichmentResult;
 	final Map<String, Long> stringNodesMap;
 	final ShowEnrichmentPanelTaskFactory showFactory;
+	private Map<String, String> ppiSummary;
 	List<CyNode> analyzedNodes;
 	TaskMonitor monitor;
 	// boolean guiMode;
@@ -71,6 +75,8 @@ public class GetEnrichmentTask extends AbstractTask {
 
 	//@Tunable(description = "InterPro domains", gravity = 7.0)
 	public boolean interPro = false;
+
+	public CyTable enrichmentTable = null;
 
 	public GetEnrichmentTask(StringManager manager, CyNetwork network, CyNetworkView netView,
 			ShowEnrichmentPanelTaskFactory showFactory) {
@@ -132,7 +138,7 @@ public class GetEnrichmentTask extends AbstractTask {
 
 		// retrieve enrichment (new API)
 		getEnrichmentJSON(selected, species);
-		Double ppie = getEnrichmentPPIJSON(selected, species);
+		ppiSummary = getEnrichmentPPIJSON(selected, species);
 
 		// retrieve enrichment
 		String[] selectedNodes = selected.split("\n");
@@ -182,12 +188,16 @@ public class GetEnrichmentTask extends AbstractTask {
 		for (CyNode node : analyzedNodes) {
 			analyzedNodesSUID.add(node.getSUID());
 		}
-		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ANALYZED_NODES, analyzedNodesSUID);		
-		
+		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ANALYZED_NODES, analyzedNodesSUID);
+
 		// save ppi enrichment in network table
-		ModelUtils.createColumnIfNeeded(netTable, Double.class, ModelUtils.NET_PPI_ENRICHMENT);
-		netTable.getRow(network.getSUID()).set(ModelUtils.NET_PPI_ENRICHMENT, ppie);
-		
+		writeDouble(netTable, ppiSummary, ModelUtils.NET_PPI_ENRICHMENT);
+		writeInteger(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_NODES);
+		writeInteger(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_EXPECTED_EDGES);
+		writeInteger(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_EDGES);
+		writeDouble(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_CLSTR);
+		writeDouble(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_DEGREE);
+
 		// show enrichment results
 		if (enrichmentResult.size() > 0) {
 			SynchronousTaskManager<?> taskM = manager.getService(SynchronousTaskManager.class);
@@ -197,6 +207,21 @@ public class GetEnrichmentTask extends AbstractTask {
 			// TODO: Some error message to the user
 			monitor.setStatusMessage(
 					"Enrichment retrieval returned no results, possibly due to an error.");
+		}
+	}
+
+	private void writeDouble(CyTable table, Map<String, String> data, String column) {
+		ModelUtils.createColumnIfNeeded(table, Double.class, column);
+		if (data.containsKey(column)) {
+			Double v = Double.parseDouble(data.get(column));
+			table.getRow(network.getSUID()).set(column, v);
+		}
+	}
+	private void writeInteger(CyTable table, Map<String, String> data, String column) {
+		ModelUtils.createColumnIfNeeded(table, Integer.class, column);
+		if (data.containsKey(column)) {
+			Integer v = Integer.parseInt(data.get(column));
+			table.getRow(network.getSUID()).set(column, v);
 		}
 	}
 
@@ -216,16 +241,16 @@ public class GetEnrichmentTask extends AbstractTask {
 		if (terms == null) {
 			monitor.setStatusMessage(
 					"Enrichment retrieval returned no results, possibly due to an error.");
-			return; 
+			return;
 		} else if (terms.size() > 0) {
 			Collections.sort(terms);
 			TermCategory category = TermCategory.ALL;
 			enrichmentResult.put(category.getKey(), terms);
 			saveEnrichmentTable(category.getTable(), category.getKey());
-		}		
+		}
 	}
-	
-	private Double getEnrichmentPPIJSON(String selected, String species) {
+
+	private Map<String, String> getEnrichmentPPIJSON(String selected, String species) {
 		Map<String, String> args = new HashMap<String, String>();
 		String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/ppi_enrichment";
 		args.put("identifiers", selected);
@@ -233,7 +258,7 @@ public class GetEnrichmentTask extends AbstractTask {
 		if (ModelUtils.getConfidence(network) == null) {
 			monitor.setStatusMessage(
 					"PPI enrichment cannot be retrieved because of missing confidence values.");
-			return null;		
+			return null;
 		}
 		Double confidence = ModelUtils.getConfidence(network)*1000;
 		args.put("required_score", confidence.toString());
@@ -244,13 +269,17 @@ public class GetEnrichmentTask extends AbstractTask {
 					"PPI enrichment retrieval returned no results, possibly due to an error.");
 			return null;
 		}
-		// System.out.println(results.toString());
-		Double ppiEnrichment = ModelUtils.getEnrichmentPPIFromJSON(manager, results, cutoff, stringNodesMap, network);
+		Map<String, String> ppiEnrichment = 
+						ModelUtils.getEnrichmentPPIFromJSON(manager, results, cutoff, stringNodesMap, network);
 		if (ppiEnrichment == null) {
 			monitor.setStatusMessage(
 					"PPI Enrichment retrieval returned no results, possibly due to an error.");
-			return null; 
-		} 
+			return null;
+		}  else if (ppiEnrichment.containsKey("ErrorMessage")) {
+			monitor.setStatusMessage(
+					"PPI Enrichment retrieval failed: "+ppiEnrichment.get("ErrorMessage"));
+			return null;
+		}
 		return ppiEnrichment;
 	}
 
@@ -331,40 +360,40 @@ public class GetEnrichmentTask extends AbstractTask {
 		CyTableFactory tableFactory = manager.getService(CyTableFactory.class);
 		CyTableManager tableManager = manager.getService(CyTableManager.class);
 
-		CyTable table = tableFactory.createTable(tableName, EnrichmentTerm.colID, Long.class, false,
+		enrichmentTable = tableFactory.createTable(tableName, EnrichmentTerm.colID, Long.class, false,
 				true);
-		table.setSavePolicy(SavePolicy.SESSION_FILE);
-		tableManager.addTable(table);
+		enrichmentTable.setSavePolicy(SavePolicy.SESSION_FILE);
+		tableManager.addTable(enrichmentTable);
 
-		if (table.getColumn(EnrichmentTerm.colGenesSUID) == null) {
-			table.createListColumn(EnrichmentTerm.colGenesSUID, Long.class, false);
+		if (enrichmentTable.getColumn(EnrichmentTerm.colGenesSUID) == null) {
+			enrichmentTable.createListColumn(EnrichmentTerm.colGenesSUID, Long.class, false);
 		}
-		if (table.getColumn(EnrichmentTerm.colNetworkSUID) == null) {
-			table.createColumn(EnrichmentTerm.colNetworkSUID, Long.class, false);
+		if (enrichmentTable.getColumn(EnrichmentTerm.colNetworkSUID) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colNetworkSUID, Long.class, false);
 		}
-		if (table.getColumn(EnrichmentTerm.colName) == null) {
-			table.createColumn(EnrichmentTerm.colName, String.class, false);
+		if (enrichmentTable.getColumn(EnrichmentTerm.colName) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colName, String.class, false);
 		}
-		if (table.getColumn(EnrichmentTerm.colDescription) == null) {
-			table.createColumn(EnrichmentTerm.colDescription, String.class, false);
+		if (enrichmentTable.getColumn(EnrichmentTerm.colDescription) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colDescription, String.class, false);
 		}
-		if (table.getColumn(EnrichmentTerm.colCategory) == null) {
-			table.createColumn(EnrichmentTerm.colCategory, String.class, false);
+		if (enrichmentTable.getColumn(EnrichmentTerm.colCategory) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colCategory, String.class, false);
 		}
-		if (table.getColumn(EnrichmentTerm.colFDR) == null) {
-			table.createColumn(EnrichmentTerm.colFDR, Double.class, false);
+		if (enrichmentTable.getColumn(EnrichmentTerm.colFDR) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colFDR, Double.class, false);
 		}
-		if (table.getColumn(EnrichmentTerm.colGenesCount) == null) {
-			table.createColumn(EnrichmentTerm.colGenesCount, Integer.class, false);
+		if (enrichmentTable.getColumn(EnrichmentTerm.colGenesCount) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colGenesCount, Integer.class, false);
 		}
-		if (table.getColumn(EnrichmentTerm.colGenes) == null) {
-			table.createListColumn(EnrichmentTerm.colGenes, String.class, false);
+		if (enrichmentTable.getColumn(EnrichmentTerm.colGenes) == null) {
+			enrichmentTable.createListColumn(EnrichmentTerm.colGenes, String.class, false);
 		}
 		// if (table.getColumn(EnrichmentTerm.colShowChart) == null) {
 		//	table.createColumn(EnrichmentTerm.colShowChart, Boolean.class, false);
 		// }
-		if (table.getColumn(EnrichmentTerm.colChartColor) == null) {
-			table.createColumn(EnrichmentTerm.colChartColor, String.class, false);
+		if (enrichmentTable.getColumn(EnrichmentTerm.colChartColor) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colChartColor, String.class, false);
 		}
 
 		// table.createColumn(EnrichmentTerm.colPvalue, Double.class, false);
@@ -376,12 +405,12 @@ public class GetEnrichmentTask extends AbstractTask {
 			return;
 		}
 		if (processTerms.size() == 0) {
-			CyRow row = table.getRow((long) 0);
+			CyRow row = enrichmentTable.getRow((long) 0);
 			row.set(EnrichmentTerm.colNetworkSUID, network.getSUID());
 		}
 		for (int i = 0; i < processTerms.size(); i++) {
 			EnrichmentTerm term = processTerms.get(i);
-			CyRow row = table.getRow((long) i);
+			CyRow row = enrichmentTable.getRow((long) i);
 			row.set(EnrichmentTerm.colName, term.getName());
 			row.set(EnrichmentTerm.colDescription, term.getDescription());
 			row.set(EnrichmentTerm.colCategory, term.getCategory());
@@ -393,6 +422,7 @@ public class GetEnrichmentTask extends AbstractTask {
 			// row.set(EnrichmentTerm.colShowChart, false);
 			row.set(EnrichmentTerm.colChartColor, "");
 		}
+		return;
 	}
 
 	private void deleteOldTables() {
@@ -455,5 +485,67 @@ public class GetEnrichmentTask extends AbstractTask {
 	public String getTitle() {
 		return "Retrieve functional enrichment";
 	}
+
+	public static String EXAMPLE_JSON = 
+					"{\"EnrichmentTable\": 101,"+
+					"\""+ModelUtils.NET_PPI_ENRICHMENT+"\": 1e-16,"+
+					"\""+ModelUtils.NET_ENRICHMENT_NODES+"\": 15,"+
+					"\""+ModelUtils.NET_ENRICHMENT_EDGES+"\": 30,"+
+					"\""+ModelUtils.NET_ENRICHMENT_EXPECTED_EDGES+"\": 57,"+
+					"\""+ModelUtils.NET_ENRICHMENT_CLSTR+"\": 0.177,"+
+					"\""+ModelUtils.NET_ENRICHMENT_DEGREE+"\": 2.66}";
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <R> R getResults(Class<? extends R> clzz) {
+		if (clzz.equals(CyTable.class)) {
+			return (R) enrichmentTable;
+		} else if (clzz.equals(String.class)) {
+			String result = "Enrichment results summary:";
+			result = addStringResult(result, ModelUtils.NET_PPI_ENRICHMENT);
+			result = addStringResult(result, ModelUtils.NET_ENRICHMENT_NODES);
+			result = addStringResult(result, ModelUtils.NET_ENRICHMENT_EXPECTED_EDGES);
+			result = addStringResult(result, ModelUtils.NET_ENRICHMENT_EDGES);
+			result = addStringResult(result, ModelUtils.NET_ENRICHMENT_CLSTR);
+			result = addStringResult(result, ModelUtils.NET_ENRICHMENT_DEGREE);
+			return (R)result;
+		} else if (clzz.equals(Long.class)) {
+			return (R) enrichmentTable.getSUID();
+		} else if (clzz.equals(JSONResult.class)) {
+			JSONResult res = () -> {
+				if (enrichmentTable == null) return "{}";
+        String result = "{\"EnrichmentTable\": "+enrichmentTable.getSUID();
+
+				result = addResult(result, ModelUtils.NET_PPI_ENRICHMENT);
+				result = addResult(result, ModelUtils.NET_ENRICHMENT_NODES);
+				result = addResult(result, ModelUtils.NET_ENRICHMENT_EXPECTED_EDGES);
+				result = addResult(result, ModelUtils.NET_ENRICHMENT_EDGES);
+				result = addResult(result, ModelUtils.NET_ENRICHMENT_CLSTR);
+				result = addResult(result, ModelUtils.NET_ENRICHMENT_DEGREE);
+				result += "}";
+				return result;
+      };
+      return (R)res;
+		}
+		return null;
+	}
+
+	@Override
+	public List<Class<?>> getResultClasses() {
+		return Arrays.asList(JSONResult.class, String.class, Long.class, CyTable.class);
+	}
+
+	private String addResult(String result, String key) {
+		if (ppiSummary.containsKey(key))
+			result += ", \""+key+"\": "+ppiSummary.get(key);
+		return result;
+	}
+	private String addStringResult(String result, String key) {
+		if (ppiSummary.containsKey(key)) {
+			result += "\n   "+key+"="+ppiSummary.get(key);
+		}
+		return result;
+	}
+
 
 }

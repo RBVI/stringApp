@@ -116,7 +116,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		return network;
 	}
 
-	public CyNetwork createStringNetwork(String name, StringNetwork stringNet, String useDATABASE, String species) {
+	public CyNetwork createStringNetwork(String name, StringNetwork stringNet, 
+	                                     String useDATABASE, String species) {
 		CyNetwork network = createNetwork(name);
 		ModelUtils.setDatabase(network, useDATABASE);
 		ModelUtils.setNetSpecies(network, species);
