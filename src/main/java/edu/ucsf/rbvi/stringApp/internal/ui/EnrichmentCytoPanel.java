@@ -91,7 +91,7 @@ public class EnrichmentCytoPanel extends JPanel
 	final String butFilterName = "Filter table";
 	final String butDrawChartsName = "Draw charts";
 	final String butResetChartsName = "Reset charts";
-	final String butAnalyzedNodesName = "Select analyzed nodes";
+	final String butAnalyzedNodesName = "Select all analyzed nodes";
 	
 	public EnrichmentCytoPanel(StringManager manager) {
 		this.manager = manager;
@@ -278,8 +278,13 @@ public class EnrichmentCytoPanel extends JPanel
 			buttonsPanel.add(butDrawCharts);
 			buttonsPanel.add(butResetCharts);
 			
-			butAnalyzedNodes = new JButton(butAnalyzedNodesName);
+			butAnalyzedNodes = new JButton(IconManager.ICON_CHECK_SQUARE_O);			
 			butAnalyzedNodes.addActionListener(this);
+			butAnalyzedNodes.setFont(iconFont);
+			butAnalyzedNodes.setToolTipText(butAnalyzedNodesName);
+			butAnalyzedNodes.setBorderPainted(false);
+			butAnalyzedNodes.setContentAreaFilled(false);
+			butAnalyzedNodes.setFocusPainted(false);
 
 			Double ppiEnrichment = ModelUtils.getPPIEnrichment(network);
 			labelPPIEnrichment = new JLabel();
