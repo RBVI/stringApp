@@ -50,15 +50,15 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 	         gravity = 1.0)
 	public ListMultipleSelection<TermCategory> categories = new ListMultipleSelection<>(TermCategory.getValues());
 
-	@Tunable(description = "Remove overlapping", 
+	@Tunable(description = "Remove redundant terms", 
 	         tooltip = "Removes terms whose enriched genes significantly overlap with already selected terms",
 	         gravity = 8.0)
 	public boolean removeOverlapping = false;
 
-	@Tunable(description = "Overlap cutoff", 
+	@Tunable(description = "Redundancy cutoff", 
 	         tooltip = "<html>This is the maximum Jaccard similarity that will be allowed.<br/>"+
 	                   "Values larger than this cutoff will be excluded.</html>",
-	         params="slider=true", gravity = 9.0)
+	         params="slider=true", dependsOn="removeOverlapping=true", gravity = 9.0)
 	public BoundedDouble overlapCutoff = new BoundedDouble(0.0, 0.5, 1.0, false, false);
 	
 	public FilterEnrichmentTableTask(StringManager manager, EnrichmentTableModel tableModel) {
