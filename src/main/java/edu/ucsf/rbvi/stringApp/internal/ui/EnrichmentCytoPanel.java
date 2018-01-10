@@ -69,6 +69,7 @@ public class EnrichmentCytoPanel extends JPanel
 	JPanel mainPanel;
 	JScrollPane scrollPane;
 	public final static String showTable = TermCategory.ALL.getTable();
+	boolean clearSelection = false;
 	// JComboBox<String> boxTables;
 	List<String> availableTables;
 	// boolean createBoxTables = true;
@@ -141,9 +142,9 @@ public class EnrichmentCytoPanel extends JPanel
 		// table.getSelectedColumn() != EnrichmentTerm.chartColumnSel
 		if (table.getSelectedColumn() != EnrichmentTerm.chartColumnCol
 				&& table.getSelectedColumnCount() == 1 && table.getSelectedRow() > -1) {
-			// System.out.println("get value at " + table.getSelectedRow() + " and " +
-			// EnrichmentTerm.nodeSUIDColumn);
-			Object cellContent = table.getModel().getValueAt(table.getSelectedRow(),
+			// System.out.println("get value at " + table.getSelectedRow() + " and " + EnrichmentTerm.nodeSUIDColumn);
+			// System.out.println(table.getValueAt(table.getSelectedRow(), 2));
+			Object cellContent = table.getModel().getValueAt(table.convertRowIndexToModel(table.getSelectedRow()),
 					EnrichmentTerm.nodeSUIDColumn);
 			if (cellContent instanceof List) {
 				List<Long> nodeIDs = (List<Long>) cellContent;
@@ -347,11 +348,13 @@ public class EnrichmentCytoPanel extends JPanel
 
 	private void clearNetworkSelection(CyNetwork network) {
 		List<CyNode> nodes = network.getNodeList();
+		clearSelection = true;
 		for (CyNode node : nodes) {
 			if (network.getRow(node).get(CyNetwork.SELECTED, Boolean.class)) {
 				network.getRow(node).set(CyNetwork.SELECTED, false);
 			}
 		}
+		clearSelection = false;
 	}
 
 	public void handleEvent(RowsSetEvent rse) {
@@ -372,6 +375,17 @@ public class EnrichmentCytoPanel extends JPanel
 		}
 		if (selectedNetwork != null) {
 			initPanel(selectedNetwork);
+		}
+		CyNetwork network = manager.getCurrentNetwork();
+		if (!clearSelection && network != null) {
+			List<CyNode> nodes = network.getNodeList();
+			for (CyNode node : nodes) {
+				if (network.getRow(node).get(CyNetwork.SELECTED, Boolean.class)) {
+					return;
+				}
+			}
+			JTable currentTable = enrichmentTables.get(showTable);
+			currentTable.clearSelection();
 		}
 	}
 
