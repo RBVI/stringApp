@@ -1,6 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.utils;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
+import org.cytoscape.model.CyTable;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.model.View;
@@ -31,11 +33,16 @@ import org.cytoscape.view.vizmap.mappings.PassthroughMapping;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.model.StringManager.ChartType;
 
 public class ViewUtils {
 	public static String STYLE_NAME = "STRING style";
 	public static String STYLE_NAME_ORG = "Organism STRING style";
 	public static String STYLE_ORG = "Organism ";
+
+	// Our chart strings
+	static String PIE_CHART = "piechart: attributelist=\"enrichmentTermsIntegers\" showlabels=\"false\" colorlist=\"";
+	static String CIRCOS_CHART = "circoschart: firstarc=1.0 arcwidth=0.4 attributelist=\"enrichmentTermsIntegers\" showlabels=\"false\" colorlist=\"";
 
 	public static CyNetworkView styleNetwork(StringManager manager, CyNetwork network,
 	                                         CyNetworkView netView) {
@@ -501,6 +508,141 @@ public class ViewUtils {
 		}
 	}
 	
+	public static void drawCharts(StringManager manager, 
+	                              Map<EnrichmentTerm, String> selectedTerms, 
+																StringManager.ChartType type) {
+		CyNetwork network = manager.getCurrentNetwork();
+		if (network == null || selectedTerms.size() == 0)
+			return;
+
+		CyTable nodeTable = network.getDefaultNodeTable();
+		createColumns(nodeTable);
+
+		List<String> colorList = getColorList(selectedTerms);
+		List<String> shownTermNames = getTermNames(network, nodeTable, selectedTerms);
+
+		for (CyNode node: network.getNodeList()) {
+			List<Integer> nodeTermsIntegers = 
+							nodeTable.getRow(node.getSUID()).getList(EnrichmentTerm.colEnrichmentTermsIntegers,Integer.class);
+			String nodeColor = nodeColors(colorList, nodeTermsIntegers, type);
+			nodeTable.getRow(node.getSUID()).set(EnrichmentTerm.colEnrichmentPassthrough, nodeColor);
+			nodeTable.getRow(node.getSUID()).set(EnrichmentTerm.colEnrichmentTermsIntegers,nodeTermsIntegers);
+		}
+
+		// System.out.println(selectedTerms);
+		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
+		CyNetworkViewManager netManager = manager.getService(CyNetworkViewManager.class);
+		CyNetworkView netView = null;
+		for (CyNetworkView currNetView : netManager.getNetworkViewSet()) {
+			if (vmm.getVisualStyle(currNetView).getTitle().startsWith(ViewUtils.STYLE_NAME) || vmm
+					.getVisualStyle(currNetView).getTitle().startsWith(ViewUtils.STYLE_NAME_ORG)) {
+				netView = currNetView;
+				ViewUtils.updatePieCharts(manager, vmm.getVisualStyle(currNetView), network, true);
+			}
+		}
+		if (netView != null)
+			netView.updateView();
+		
+		// save in network table
+		CyTable netTable = network.getDefaultNetworkTable();
+		ModelUtils.createListColumnIfNeeded(netTable, String.class, ModelUtils.NET_ENRICHMENT_VISTEMRS);
+		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_VISTEMRS, shownTermNames);
+		
+		ModelUtils.createListColumnIfNeeded(netTable, String.class, ModelUtils.NET_ENRICHMENT_VISCOLORS);
+		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_VISCOLORS, colorList);
+	}
+
+	private static void createColumns(CyTable nodeTable) {
+		// replace columns
+		ModelUtils.replaceListColumnIfNeeded(nodeTable, String.class,
+				EnrichmentTerm.colEnrichmentTermsNames);
+		ModelUtils.replaceListColumnIfNeeded(nodeTable, Integer.class,
+				EnrichmentTerm.colEnrichmentTermsIntegers);
+		ModelUtils.replaceColumnIfNeeded(nodeTable, String.class,
+				EnrichmentTerm.colEnrichmentPassthrough);
+	}
+
+	private static List<String> getColorList(Map<EnrichmentTerm, String> selectedTerms) {
+		List<String> colorList = new ArrayList<String>();
+		for (EnrichmentTerm term : selectedTerms.keySet()) {
+			// Color color = selectedTerms.get(term);
+			String color = selectedTerms.get(term);
+			if (color != null) {
+				//String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(),
+				//		color.getBlue());
+				//colorList += hex + ",";
+				colorList.add(color);
+			} else {
+				colorList.add("");
+			}
+		}
+		return colorList;
+	}
+	
+	private static List<String> getTermNames(CyNetwork network, CyTable nodeTable,
+	                                         Map<EnrichmentTerm, String> selectedTerms) { 
+		List<String> shownTermNames = new ArrayList<>();
+		boolean firstTerm = true;
+		for (EnrichmentTerm term : selectedTerms.keySet()) {
+			String selTerm = term.getName();
+			shownTermNames.add(selTerm);
+			List<Long> enrichedNodeSUIDs = term.getNodesSUID();
+			for (CyNode node : network.getNodeList()) {
+				List<Integer> nodeTermsIntegers = nodeTable.getRow(node.getSUID())
+						.getList(EnrichmentTerm.colEnrichmentTermsIntegers, Integer.class);
+				List<String> nodeTermsNames = nodeTable.getRow(node.getSUID())
+						.getList(EnrichmentTerm.colEnrichmentTermsNames, String.class);
+				if (firstTerm || nodeTermsIntegers == null)
+					nodeTermsIntegers = new ArrayList<Integer>();
+				if (firstTerm || nodeTermsNames == null) {
+					nodeTermsNames = new ArrayList<String>();
+				}
+				if (enrichedNodeSUIDs.contains(node.getSUID())) {
+					nodeTermsNames.add(selTerm);
+					nodeTermsIntegers.add(new Integer(1));
+				} else {
+					nodeTermsNames.add("");
+					nodeTermsIntegers.add(new Integer(0));
+				}
+				nodeTable.getRow(node.getSUID()).set(EnrichmentTerm.colEnrichmentTermsIntegers, nodeTermsIntegers);
+				nodeTable.getRow(node.getSUID()).set(EnrichmentTerm.colEnrichmentTermsNames, nodeTermsNames);
+			}
+			if (firstTerm) firstTerm = false;
+		}
+		return shownTermNames;
+	}
+
+	private static String nodeColors(List<String> colors, List<Integer> nodeTermFlags, ChartType type) {
+		boolean foundTerm = false;
+		for (Integer term: nodeTermFlags) {
+			if (term > 0) {
+				foundTerm = true;
+				break;
+			}
+		}
+		if (!foundTerm) return null;
+
+		String colorString = "";
+		if (type.equals(ChartType.FULL)|| type.equals(ChartType.PIE)) {
+			for (String color: colors) {
+				colorString += color+",";
+			}
+		} else {
+			for (int i = 0; i < colors.size(); i++) {
+				if (nodeTermFlags.get(i) > 0) {
+					colorString += colors.get(i)+",";
+				} else {
+					colorString += "#ffffff,";
+					nodeTermFlags.set(i, new Integer(1));
+				}
+			}
+			if (!foundTerm) return null;
+		}
+		if (type.equals(ChartType.PIE) || type.equals(ChartType.SPLIT_PIE))
+			return PIE_CHART+colorString.substring(0, colorString.length()-1)+"\"";
+		return CIRCOS_CHART+colorString.substring(0, colorString.length()-1)+"\"";
+	}
+
 	private static String getStyleName(StringManager manager, CyNetwork network) {
 		String networkName = manager.getNetworkName(network);
 		String styleName = STYLE_NAME;

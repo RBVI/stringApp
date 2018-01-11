@@ -17,6 +17,7 @@ import org.cytoscape.work.util.BoundedInteger;
 import org.cytoscape.work.util.ListSingleSelection;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.model.StringManager.ChartType;
 import org.jcolorbrewer.ColorBrewer;
 import org.jcolorbrewer.ui.ColorPaletteChooserDialog;
 import org.jcolorbrewer.ui.ColorPaletteChooserDialog.PALETTE_TYPE;
@@ -24,20 +25,25 @@ import org.jcolorbrewer.ui.ColorPaletteChooserDialog.PALETTE_TYPE;
 public class SettingsTask extends AbstractTask implements ActionListener {
 
 	private StringManager manager;
+
+	@Tunable(description = "Type of chart to draw",
+	         tooltip = "Set the desired chart type",
+	         gravity = 1.0)
+	public ListSingleSelection<ChartType> chartType;
 	
 	@Tunable(description = "Number of terms to chart",
 	         tooltip = "Set the default number of terms to use for charts",
-	         gravity = 1.0, params="slider=true")
+	         gravity = 2.0, params="slider=true")
 	public BoundedInteger nTerms = new BoundedInteger(1, 8, 8, false, false);
 	
 	@Tunable(description = "Default Brewer palette",
 	         tooltip = "Set the default Brewer palette for charts",
-	         gravity = 2.0, context="nogui")
+	         gravity = 3.0, context="nogui")
 	public ListSingleSelection<ColorBrewer> defaultPalette;
 
 	@Tunable(description = "Change Color Palette",
 	         tooltip = "Set the default Brewer color palette for charts",
-	         gravity = 2.0, context="gui")
+	         gravity = 3.0, context="gui")
 	public UserAction paletteChooser = new UserAction(this);
 
 	@Tunable(description = "Default overlap cutoff", 
@@ -52,6 +58,8 @@ public class SettingsTask extends AbstractTask implements ActionListener {
 		overlapCutoff.setValue(manager.overlapCutoff);
 		ColorBrewer[] palettes = ColorBrewer.getQualitativeColorPalettes(false);
 		defaultPalette = new ListSingleSelection<ColorBrewer>(Arrays.asList(palettes));
+		chartType = new ListSingleSelection<ChartType>(ChartType.values());
+		chartType.setSelectedValue(manager.chartType);
 		if (manager.brewerPalette != null) defaultPalette.setSelectedValue(manager.brewerPalette);
 	}
 
@@ -60,6 +68,7 @@ public class SettingsTask extends AbstractTask implements ActionListener {
 		manager.topTerms = nTerms.getValue();
 		manager.overlapCutoff = overlapCutoff.getValue();
 		manager.brewerPalette = defaultPalette.getSelectedValue();
+		manager.chartType = chartType.getSelectedValue();
 		manager.updateSettings();
 	}
 

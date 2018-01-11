@@ -177,7 +177,7 @@ public class EnrichmentCytoPanel extends JPanel
 			if (preselectedTerms.size() == 0) {
 				preselectedTerms = getAutoSelectedTopTerms(manager.topTerms);
 			}
-			drawCharts(preselectedTerms);
+			ViewUtils.drawCharts(manager, preselectedTerms, manager.chartType);
 		} else if (e.getSource().equals(butResetCharts)) {
 			// reset colors and selection
 			resetCharts();
@@ -443,95 +443,8 @@ public class EnrichmentCytoPanel extends JPanel
 		if (preselectedTerms.size() == 0) {
 			preselectedTerms = getAutoSelectedTopTerms(manager.topTerms);
 		}
-		drawCharts(preselectedTerms);
+		ViewUtils.drawCharts(manager, preselectedTerms, manager.chartType);
 	}
-	
-	private void drawCharts(Map<EnrichmentTerm, String> selectedTerms) {
-		CyNetwork network = manager.getCurrentNetwork();
-		if (network == null || selectedTerms.size() == 0)
-			return;
-
-		CyTable nodeTable = network.getDefaultNodeTable();
-		// replace columns
-		ModelUtils.replaceListColumnIfNeeded(nodeTable, String.class,
-				EnrichmentTerm.colEnrichmentTermsNames);
-		ModelUtils.replaceListColumnIfNeeded(nodeTable, Integer.class,
-				EnrichmentTerm.colEnrichmentTermsIntegers);
-		ModelUtils.replaceColumnIfNeeded(nodeTable, String.class,
-				EnrichmentTerm.colEnrichmentPassthrough);
-
-		// final String pieChart = "piechart: attributelist=\"enrichmentTermsIntegers\"
-		// colorlist=\"modulated\" showlabels=\"false\" ";
-
-		String colorList = "";
-		List<String> shownTermNames = new ArrayList<String>();
-		for (EnrichmentTerm term : selectedTerms.keySet()) {
-			// Color color = selectedTerms.get(term);
-			String color = selectedTerms.get(term);
-			if (color != null) {
-				//String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(),
-				//		color.getBlue());
-				//colorList += hex + ",";
-				colorList += color + ",";
-			} else {
-				colorList += "" + ",";
-			}
-			String selTerm = term.getName();
-			shownTermNames.add(selTerm);
-			List<Long> enrichedNodeSUIDs = term.getNodesSUID();
-			for (CyNode node : network.getNodeList()) {
-				List<Integer> nodeTermsIntegers = nodeTable.getRow(node.getSUID())
-						.getList(EnrichmentTerm.colEnrichmentTermsIntegers, Integer.class);
-				List<String> nodeTermsNames = nodeTable.getRow(node.getSUID())
-						.getList(EnrichmentTerm.colEnrichmentTermsNames, String.class);
-				if (nodeTermsIntegers == null)
-					nodeTermsIntegers = new ArrayList<Integer>();
-				if (nodeTermsNames == null) {
-					nodeTermsNames = new ArrayList<String>();
-				}
-				if (enrichedNodeSUIDs.contains(node.getSUID())) {
-					nodeTermsNames.add(selTerm);
-					nodeTermsIntegers.add(new Integer(1));
-				} else {
-					nodeTermsNames.add("");
-					nodeTermsIntegers.add(new Integer(0));
-				}
-				nodeTable.getRow(node.getSUID()).set(EnrichmentTerm.colEnrichmentTermsIntegers,
-						nodeTermsIntegers);
-				nodeTable.getRow(node.getSUID()).set(EnrichmentTerm.colEnrichmentTermsNames,
-						nodeTermsNames);
-			}
-		}
-		colorList = colorList.substring(0, colorList.length() - 1) + "\"";
-		final String circChart = "circoschart: firstarc=1.0 arcwidth=0.4 attributelist=\"enrichmentTermsIntegers\" showlabels=\"false\" colorlist=\" "
-				+ colorList;
-		for (CyRow row : nodeTable.getAllRows()) {
-			row.set(EnrichmentTerm.colEnrichmentPassthrough, circChart);
-		}
-
-		// System.out.println(selectedTerms);
-		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
-		CyNetworkViewManager netManager = manager.getService(CyNetworkViewManager.class);
-		CyNetworkView netView = null;
-		for (CyNetworkView currNetView : netManager.getNetworkViewSet()) {
-			if (vmm.getVisualStyle(currNetView).getTitle().startsWith(ViewUtils.STYLE_NAME) || vmm
-					.getVisualStyle(currNetView).getTitle().startsWith(ViewUtils.STYLE_NAME_ORG)) {
-				netView = currNetView;
-				ViewUtils.updatePieCharts(manager, vmm.getVisualStyle(currNetView), network, true);
-			}
-		}
-		if (netView != null)
-			netView.updateView();
-		
-		// save in network table
-		CyTable netTable = network.getDefaultNetworkTable();
-		ModelUtils.createListColumnIfNeeded(netTable, String.class, ModelUtils.NET_ENRICHMENT_VISTEMRS);
-		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_VISTEMRS, shownTermNames);
-		
-		ModelUtils.createColumnIfNeeded(netTable, String.class, ModelUtils.NET_ENRICHMENT_VISCOLORS);
-		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_VISCOLORS, colorList);
-	}
-	
 	
 	private Map<EnrichmentTerm, String> getUserSelectedTerms() {
 		Map<EnrichmentTerm, String> selectedTerms = new HashMap<EnrichmentTerm, String>();

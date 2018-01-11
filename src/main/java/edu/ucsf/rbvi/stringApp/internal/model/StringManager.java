@@ -71,6 +71,22 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public int topTerms = 8;
 	public ColorBrewer brewerPalette = ColorBrewer.Paired;
 	public List<TermCategory> categoryFilter = TermCategory.getValues();
+	public ChartType chartType = ChartType.SPLIT;
+
+	// This is the chart type enum
+	public enum ChartType {
+		SPLIT("Split donut"),
+		FULL("Full donut"),
+		SPLIT_PIE("Split Pie Chart"),
+		PIE("Pie Chart");
+
+		String name;
+		ChartType(String name) {
+			this.name = name;
+		}
+
+		public String toString() { return name; }
+	}
 
 	public StringManager(CyServiceRegistrar registrar) {
 		this.registrar = registrar;
