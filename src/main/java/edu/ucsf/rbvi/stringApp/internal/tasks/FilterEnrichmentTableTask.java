@@ -6,6 +6,7 @@ import javax.swing.SwingUtilities;
 
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ObservableTask;
+import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.Tunable;
@@ -102,4 +103,8 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 		return Arrays.asList(JSONResult.class, String.class);
 	}
 
+	@ProvidesTitle
+	public String getTitle() {
+		return "Filter STRING Enrichment table";
+	}
 }

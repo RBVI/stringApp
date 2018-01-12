@@ -8,6 +8,7 @@ import java.util.List;
 import javax.swing.SwingUtilities;
 
 import org.cytoscape.work.AbstractTask;
+import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.Tunable;
@@ -81,4 +82,9 @@ public class SettingsTask extends AbstractTask implements ActionListener {
 		// System.out.println("Default panel is: "+defaultPalette.getSelectedValue());
 	}
 
+	
+	@ProvidesTitle
+	public String getTitle() {
+		return "Settings for STRING Enrichment table";
+	}	
 }

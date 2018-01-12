@@ -12,6 +12,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import org.cytoscape.application.swing.CytoPanelComponent2;
 import org.cytoscape.application.swing.CytoPanelName;
@@ -90,8 +93,8 @@ public class EnrichmentCytoPanel extends JPanel
 	final String colEnrichmentPieChart = "enrichmentPieChart";
 
 	final String butSettingsName = "Settings";
-	final String butFilterName = "Filter table";
-	final String butDrawChartsName = "Draw charts";
+	final String butFilterName = "Filter enrichment table";
+	final String butDrawChartsName = "Draw charts using default color palette";
 	final String butResetChartsName = "Reset charts";
 	final String butAnalyzedNodesName = "Select all analyzed nodes";
 	
@@ -238,16 +241,7 @@ public class EnrichmentCytoPanel extends JPanel
 			// boxTables.setSelectedItem(showTable);
 			// boxTables.addActionListener(this);
 
-			JPanel buttonsPanel = new JPanel(new GridLayout(1, 3)); 
-			butSettings = new JButton(IconManager.ICON_COG);
-			butSettings.setFont(iconFont);
-			butSettings.addActionListener(this);
-			butSettings.setToolTipText(butSettingsName);
-			butSettings.setBorderPainted(false);
-			butSettings.setContentAreaFilled(false);
-			butSettings.setFocusPainted(false);
-			butSettings.setBorder(BorderFactory.createEmptyBorder(2,2,2,0));
-
+			JPanel buttonsPanelLeft = new JPanel(new GridLayout(1, 3)); 
 			butFilter = new JButton(IconManager.ICON_FILTER);
 			butFilter.setFont(iconFont);
 			butFilter.addActionListener(this);
@@ -255,9 +249,8 @@ public class EnrichmentCytoPanel extends JPanel
 			butFilter.setBorderPainted(false);
 			butFilter.setContentAreaFilled(false);
 			butFilter.setFocusPainted(false);
-			butFilter.setBorder(BorderFactory.createEmptyBorder(2,0,2,2));
+			butFilter.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
 
-			// butDrawCharts = new JButton(butDrawChartsName);
 			butDrawCharts = new JButton(chartIcon);
 			butDrawCharts.addActionListener(this);
 			butDrawCharts.setToolTipText(butDrawChartsName);
@@ -276,11 +269,11 @@ public class EnrichmentCytoPanel extends JPanel
 			butResetCharts.setFocusPainted(false);
 			butResetCharts.setBorder(BorderFactory.createEmptyBorder(2,2,2,20));
 
-			buttonsPanel.add(butSettings);
-			buttonsPanel.add(butFilter);
-			buttonsPanel.add(butDrawCharts);
-			buttonsPanel.add(butResetCharts);
+			buttonsPanelLeft.add(butFilter);
+			buttonsPanelLeft.add(butDrawCharts);
+			buttonsPanelLeft.add(butResetCharts);
 			
+			JPanel buttonsPanelRight = new JPanel(new GridLayout(1, 2)); 
 			butAnalyzedNodes = new JButton(IconManager.ICON_CHECK_SQUARE_O);			
 			butAnalyzedNodes.addActionListener(this);
 			butAnalyzedNodes.setFont(iconFont);
@@ -288,6 +281,19 @@ public class EnrichmentCytoPanel extends JPanel
 			butAnalyzedNodes.setBorderPainted(false);
 			butAnalyzedNodes.setContentAreaFilled(false);
 			butAnalyzedNodes.setFocusPainted(false);
+			butAnalyzedNodes.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+
+			butSettings = new JButton(IconManager.ICON_COG);
+			butSettings.setFont(iconFont);
+			butSettings.addActionListener(this);
+			butSettings.setToolTipText(butSettingsName);
+			butSettings.setBorderPainted(false);
+			butSettings.setContentAreaFilled(false);
+			butSettings.setFocusPainted(false);
+			butSettings.setBorder(BorderFactory.createEmptyBorder(2,2,2,20));
+
+			buttonsPanelRight.add(butAnalyzedNodes);
+			buttonsPanelRight.add(butSettings);
 
 			Double ppiEnrichment = ModelUtils.getPPIEnrichment(network);
 			labelPPIEnrichment = new JLabel();
@@ -300,9 +306,9 @@ public class EnrichmentCytoPanel extends JPanel
 			}
 			
 			topPanel = new JPanel(new BorderLayout());
-			topPanel.add(buttonsPanel, BorderLayout.WEST);
+			topPanel.add(buttonsPanelLeft, BorderLayout.WEST);
 			topPanel.add(labelPPIEnrichment, BorderLayout.CENTER);
-			topPanel.add(butAnalyzedNodes, BorderLayout.EAST);
+			topPanel.add(buttonsPanelRight, BorderLayout.EAST);
 			// topPanel.add(boxTables, BorderLayout.EAST);
 			this.add(topPanel, BorderLayout.NORTH);
 
