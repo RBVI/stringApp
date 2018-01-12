@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -137,22 +138,23 @@ public class EnrichmentCytoPanel extends JPanel
 		clearNetworkSelection(network);
 		// TODO: clear table selection when switching
 		JTable table = enrichmentTables.get(showTable);
-		// No idea why this was needed...
-		// table.getSelectedColumn() != 0 &&
-		// table.getSelectedColumn() != EnrichmentTerm.chartColumnSel
-		if (table.getSelectedColumn() != EnrichmentTerm.chartColumnCol
-				&& table.getSelectedColumnCount() == 1 && table.getSelectedRow() > -1) {
-			// System.out.println("get value at " + table.getSelectedRow() + " and " + EnrichmentTerm.nodeSUIDColumn);
-			// System.out.println(table.getValueAt(table.getSelectedRow(), 2));
-			Object cellContent = table.getModel().getValueAt(table.convertRowIndexToModel(table.getSelectedRow()),
-					EnrichmentTerm.nodeSUIDColumn);
-			if (cellContent instanceof List) {
-				List<Long> nodeIDs = (List<Long>) cellContent;
-				for (Long nodeID : nodeIDs) {
-					network.getDefaultNodeTable().getRow(nodeID).set(CyNetwork.SELECTED, true);
-					// System.out.println("select node: " + nodeID);
+		if (table.getSelectedColumnCount() == 1 && table.getSelectedRow() > -1) {
+			if (table.getSelectedColumn() != EnrichmentTerm.chartColumnCol) {
+				Object cellContent = table.getModel().getValueAt(
+						table.convertRowIndexToModel(table.getSelectedRow()),
+						EnrichmentTerm.nodeSUIDColumn);
+				if (cellContent instanceof List) {
+					List<Long> nodeIDs = (List<Long>) cellContent;
+					for (Long nodeID : nodeIDs) {
+						network.getDefaultNodeTable().getRow(nodeID).set(CyNetwork.SELECTED, true);
+					}
 				}
 			}
+		} else {
+			// re-draw charts if the user changed the color
+			Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
+			if (preselectedTerms.size() > 0)
+				ViewUtils.drawCharts(manager, preselectedTerms, manager.chartType);
 		}
 	}
 
@@ -375,7 +377,9 @@ public class EnrichmentCytoPanel extends JPanel
 		}
 		if (selectedNetwork != null) {
 			initPanel(selectedNetwork);
+			return;
 		}
+		// experimental: clear term selection when all network nodes are unselected
 		CyNetwork network = manager.getCurrentNetwork();
 		if (!clearSelection && network != null) {
 			List<CyNode> nodes = network.getNodeList();
@@ -447,7 +451,7 @@ public class EnrichmentCytoPanel extends JPanel
 	}
 	
 	private Map<EnrichmentTerm, String> getUserSelectedTerms() {
-		Map<EnrichmentTerm, String> selectedTerms = new HashMap<EnrichmentTerm, String>();
+		Map<EnrichmentTerm, String> selectedTerms = new TreeMap<EnrichmentTerm, String>();
 		CyNetwork network = manager.getCurrentNetwork();
 		if (network == null)
 			return selectedTerms;
@@ -481,7 +485,7 @@ public class EnrichmentCytoPanel extends JPanel
 
 	
 	private Map<EnrichmentTerm, String> getAutoSelectedTopTerms(int termNumber) {
-		Map<EnrichmentTerm, String> selectedTerms = new HashMap<EnrichmentTerm, String>();
+		Map<EnrichmentTerm, String> selectedTerms = new TreeMap<EnrichmentTerm, String>();
 		CyNetwork network = manager.getCurrentNetwork();
 		if (network == null)
 			return selectedTerms;
