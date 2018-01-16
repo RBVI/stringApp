@@ -76,6 +76,9 @@ public class QualitativeColorPalettePanel extends ColorBlindAwareColorChooserPan
                                implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	// protected String selectedPalette = null;
+	private JToggleButton selectedButton = null;
+	Border normalBorder = BorderFactory.createEmptyBorder(2,4,2,4);
+	Border selectedBorder = BorderFactory.createLineBorder(Color.blue, 2);
 
 	protected JToggleButton createPalette(ColorBrewer brewer, Border normalBorder) {
 		JToggleButton palette = new JToggleButton();
@@ -92,8 +95,6 @@ public class QualitativeColorPalettePanel extends ColorBlindAwareColorChooserPan
 		setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 
 		//ButtonGroup boxOfPalettes = new ButtonGroup();
-		Border border = BorderFactory.createEmptyBorder(2,4,2,4);
-		Border selectedBorder = BorderFactory.createLineBorder(Color.blue, 2);
 
 		for (ColorBrewer palette: ColorBrewer.getQualitativeColorPalettes(isShowColorBlindSave())) {
 			if ( isShowColorBlindSave() ){
@@ -102,27 +103,32 @@ public class QualitativeColorPalettePanel extends ColorBlindAwareColorChooserPan
 				}
 			}
 
-			JToggleButton button = createPalette(palette, border);
+			JToggleButton button = createPalette(palette, normalBorder);
 			add(button);
 			currentButtons.add(button);
 		}
 	}
 
 	@Override
-
 	public void actionPerformed(ActionEvent e) {
 		ColorSelectionModel model = getColorSelectionModel();
+
+		if (selectedButton != null)
+			selectedButton.setBorder(normalBorder);
 
 		String command;
 		if (e.getSource() instanceof JButton) {
 			command = ((JButton)e.getSource()).getActionCommand();
 		} else if (e.getSource() instanceof JToggleButton) {
 			command = ((JToggleButton)e.getSource()).getActionCommand();
+			selectedButton = (JToggleButton)e.getSource();
+			selectedButton.setBorder(selectedBorder);
 		} else {
 			return; // Shouldn't happen
 		}
 		String[] colorSplit = command.split(":");
 		selectedPalette = colorSplit[0];
+
 		if (colorSplit.length == 2) {
 			Color color = new Color(Integer.parseInt(colorSplit[1]));
 			model.setSelectedColor(color);
