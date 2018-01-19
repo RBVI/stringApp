@@ -105,7 +105,7 @@ public class JColorChooserBrewer
 	 * Starting color, set by setColor, and the color we return
 	 * to on a reset.
 	 */
-	protected Color startingColor = Color.white;
+	protected Color startingColor = null;
 	
 	/**
 	 * Starting color, set by setColor, and the color we return

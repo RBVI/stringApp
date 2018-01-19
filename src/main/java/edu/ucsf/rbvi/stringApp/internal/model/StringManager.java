@@ -53,7 +53,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private Boolean haveChemViz = null;
 	private Map<CyNetwork, StringNetwork> stringNetworkMap;
 
-	public static String STRINGResolveURI = "http://string-db.org/api/";
+	public static String STRINGResolveURI = "https://string-db.org/api/";
 	public static String STITCHResolveURI = "http://stitch.embl.de/api/";
 	public static String VIRUSESResolveURI = "http://viruses.string-db.org/cgi/webservice_handler.pl";
 	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
