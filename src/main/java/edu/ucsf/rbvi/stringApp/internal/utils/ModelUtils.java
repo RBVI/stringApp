@@ -1247,6 +1247,11 @@ public class ModelUtils {
 		p.setProperty(propertyKey, propertyValue.toString());
 	}
 
+	public static void setStringProperty(CyProperty<Properties> properties, String propertyKey, Object propertyValue) {
+		Properties p = properties.getProperties();
+		p.setProperty(propertyKey, propertyValue.toString());
+	}
+
 	public static String getStringProperty(StringManager manager,
 			String propertyKey, SavePolicy savePolicy) {
 		CyProperty<Properties> sessionProperties = getPropertyService(manager,
@@ -1257,28 +1262,74 @@ public class ModelUtils {
 		return null;
 	}
 
-	private static CyProperty<Properties> getPropertyService(StringManager manager,
+	public static boolean hasProperty(CyProperty<Properties> properties, String propertyKey) {
+		Properties p = properties.getProperties();
+		if (p.getProperty(propertyKey) != null) 
+			return true;
+		return false;
+	}
+	public static String getStringProperty(CyProperty<Properties> properties, String propertyKey) {
+		Properties p = properties.getProperties();
+		if (p.getProperty(propertyKey) != null) 
+			return p.getProperty(propertyKey);
+		return null;
+	}
+
+	public static Double getDoubleProperty(StringManager manager, String propertyKey, SavePolicy policy) {
+		String value = ModelUtils.getStringProperty(manager, propertyKey, policy);
+		if (value == null) return null;
+		return Double.valueOf(value);
+	}
+
+	public static Double getDoubleProperty(CyProperty<Properties> properties, String propertyKey) {
+		String value = ModelUtils.getStringProperty(properties, propertyKey);
+		if (value == null) return null;
+		return Double.valueOf(value);
+	}
+
+	public static Integer getIntegerProperty(StringManager manager, String propertyKey, SavePolicy policy) {
+		String value = ModelUtils.getStringProperty(manager, propertyKey, policy);
+		if (value == null) return null;
+		return Integer.valueOf(value);
+	}
+
+	public static Integer getIntegerProperty(CyProperty<Properties> properties, String propertyKey) {
+		String value = ModelUtils.getStringProperty(properties, propertyKey);
+		if (value == null) return null;
+		return Integer.valueOf(value);
+	}
+
+	public static CyProperty<Properties> getPropertyService(StringManager manager,
 			SavePolicy policy) {
 			String name = "stringApp";
-			// Do we already have a session with our properties
-			CySessionManager sessionManager = manager.getService(CySessionManager.class);
-			CySession session = sessionManager.getCurrentSession();
-			if (session != null) {
-				Set<CyProperty<?>> sessionProperties = session.getProperties();
-				for (CyProperty<?> cyProp : sessionProperties) {
-					if (cyProp.getName() != null && cyProp.getName().equals(name)) {
-						return (CyProperty<Properties>) cyProp;
+			if (policy.equals(SavePolicy.SESSION_FILE)) {
+				// Do we already have a session with our properties
+				CySessionManager sessionManager = manager.getService(CySessionManager.class);
+				CySession session = sessionManager.getCurrentSession();
+				if (session != null) {
+					Set<CyProperty<?>> sessionProperties = session.getProperties();
+					for (CyProperty<?> cyProp : sessionProperties) {
+						if (cyProp.getName() != null && cyProp.getName().equals(name)) {
+							return (CyProperty<Properties>) cyProp;
+						}
 					}
 				}
-			}
-			// Either we have a null session or our properties aren't in this session
-			Properties props = new Properties();
-			CyProperty<Properties> service = new SimpleCyProperty(name, props, Properties.class,
+				// Either we have a null session or our properties aren't in this session
+				Properties props = new Properties();
+				CyProperty<Properties> service = new SimpleCyProperty(name, props, Properties.class,
 					SavePolicy.SESSION_FILE);
-			Properties serviceProps = new Properties();
-			serviceProps.setProperty("cyPropertyName", service.getName());
-			manager.registerAllServices(service, serviceProps);
-			return service;
+				Properties serviceProps = new Properties();
+				serviceProps.setProperty("cyPropertyName", service.getName());
+				manager.registerAllServices(service, serviceProps);
+				return service;
+			} else if (policy.equals(SavePolicy.CONFIG_DIR) || policy.equals(SavePolicy.SESSION_FILE_AND_CONFIG_DIR)) {
+				CyProperty<Properties> service = new ConfigPropsReader(policy, name);
+				Properties serviceProps = new Properties();
+				serviceProps.setProperty("cyPropertyName", service.getName());
+				manager.registerAllServices(service, serviceProps);
+				return service;
+		}
+		return null;
 	}
 
 	public static class ConfigPropsReader extends AbstractConfigDirPropsReader {

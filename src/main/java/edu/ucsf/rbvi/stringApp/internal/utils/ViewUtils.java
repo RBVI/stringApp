@@ -43,6 +43,7 @@ public class ViewUtils {
 	// Our chart strings
 	static String PIE_CHART = "piechart: attributelist=\"enrichmentTermsIntegers\" showlabels=\"false\" colorlist=\"";
 	static String CIRCOS_CHART = "circoschart: firstarc=1.0 arcwidth=0.4 attributelist=\"enrichmentTermsIntegers\" showlabels=\"false\" colorlist=\"";
+	static String CIRCOS_CHART2 = "circoschart: borderwidth=0 firstarc=1.0 arcwidth=0.4 attributelist=\"enrichmentTermsIntegers\" showlabels=\"false\" colorlist=\"";
 
 	public static CyNetworkView styleNetwork(StringManager manager, CyNetwork network,
 	                                         CyNetworkView netView) {
@@ -630,9 +631,15 @@ public class ViewUtils {
 		} else {
 			for (int i = 0; i < colors.size(); i++) {
 				if (nodeTermFlags.get(i) > 0) {
-					colorString += colors.get(i)+",";
+					if (type.equals(ChartType.TEETH))
+						colorString += colors.get(i)+"ff,";
+					else
+						colorString += colors.get(i)+",";
 				} else {
-					colorString += "#ffffff,";
+					if (type.equals(ChartType.TEETH))
+						colorString += "#ffffff00,";
+					else
+						colorString += "#ffffff,";
 					nodeTermFlags.set(i, new Integer(1));
 				}
 			}
@@ -640,6 +647,8 @@ public class ViewUtils {
 		}
 		if (type.equals(ChartType.PIE) || type.equals(ChartType.SPLIT_PIE))
 			return PIE_CHART+colorString.substring(0, colorString.length()-1)+"\"";
+		if (type.equals(ChartType.TEETH))
+			return CIRCOS_CHART2+colorString.substring(0, colorString.length()-1)+"\"";
 		return CIRCOS_CHART+colorString.substring(0, colorString.length()-1)+"\"";
 	}
 

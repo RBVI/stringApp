@@ -1,5 +1,6 @@
 package edu.ucsf.rbvi.stringApp.internal.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +78,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public enum ChartType {
 		SPLIT("Split donut"),
 		FULL("Full donut"),
+		TEETH("Donut slices only"),
 		SPLIT_PIE("Split Pie Chart"),
 		PIE("Pie Chart");
 
@@ -98,6 +100,24 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		stringNetworkMap = new HashMap<>();
 		if (!haveEnhancedGraphics())
 			showEnhancedLabels = false;
+
+		// Get our default settings
+		CyProperty<Properties> configProps = ModelUtils.getPropertyService(this, SavePolicy.CONFIG_DIR);
+		if (ModelUtils.hasProperty(configProps, "overlapCutoff")) {
+			setOverlapCutoff(ModelUtils.getDoubleProperty(configProps,"overlapCutoff"));
+		}
+		if (ModelUtils.hasProperty(configProps, "topTerms")) {
+			setTopTerms(ModelUtils.getIntegerProperty(configProps,"topTerms"));
+		}
+		if (ModelUtils.hasProperty(configProps, "chartType")) {
+			setChartType(ModelUtils.getStringProperty(configProps,"chartType"));
+		}
+		if (ModelUtils.hasProperty(configProps, "brewerPalette")) {
+			setBrewerPalette(ModelUtils.getStringProperty(configProps,"brewerPalette"));
+		}
+		if (ModelUtils.hasProperty(configProps, "categoryFilter")) {
+			setCategoryFilter(ModelUtils.getStringProperty(configProps,"categoryFilter"));
+		}
 	}
 
 	public CyNetwork createNetwork(String name) {
@@ -270,6 +290,20 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	}
 
 	public void updateSettings() {
+		CyProperty<Properties> configProps = ModelUtils.getPropertyService(this, SavePolicy.CONFIG_DIR);
+		ModelUtils.setStringProperty(configProps, "overlapCutoff", Double.toString(overlapCutoff));
+		ModelUtils.setStringProperty(configProps,"topTerms", Integer.toString(topTerms));
+		ModelUtils.setStringProperty(configProps,"chartType", chartType.name());
+		ModelUtils.setStringProperty(configProps,"brewerPalette", brewerPalette.name());
+		{
+			String categories = "";
+			for (TermCategory c: categoryFilter) {
+				categories += c.name()+",";
+			}
+			if (categories.length() > 1)
+				categories = categories.substring(categories.length()-1);
+			ModelUtils.setStringProperty(configProps,"categoryFilter", categories);
+		}
 	}
 
 	public void handleEvent(NetworkAddedEvent nae) {
@@ -379,5 +413,34 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		if (haveChemViz == null)
 			haveChemViz = availableCommands.getNamespaces().contains("chemviz");
 		return haveChemViz;
+	}
+
+	// Getters and Setters for defaults
+	public double getOverlapCutoff() { return overlapCutoff; }
+	public void setOverlapCutoff(double cutoff) { overlapCutoff = cutoff; }
+	public int getTopTerms() { return topTerms; }
+	public void setTopTerms(int topN) { topTerms = topN; }
+	public List<TermCategory> getCategoryFilter() { return categoryFilter; }
+	public void setCategoryFilter(List<TermCategory> categories) { categoryFilter = categories; }
+	public void setCategoryFilter(String categories) { 
+		List<TermCategory> catList = new ArrayList<>();
+		if (categories == null) return;
+		String[] catArray = categories.split(",");
+		for (String c: catArray) {
+			catList.add(Enum.valueOf(TermCategory.class, c));
+		}
+		categoryFilter = catList;
+	}
+
+	public ColorBrewer getBrewerPalette() { return brewerPalette; }
+	public void setBrewerPalette(ColorBrewer palette) { brewerPalette = palette; }
+	public void setBrewerPalette(String palette) { 
+		brewerPalette = Enum.valueOf(ColorBrewer.class, palette);
+	}
+
+	public ChartType getChartType() { return chartType; }
+	public void setChartType(ChartType type) { chartType = type; }
+	public void setChartType(String type) { 
+		chartType = Enum.valueOf(ChartType.class, type);
 	}
 }

@@ -491,7 +491,7 @@ public class EnrichmentCytoPanel extends JPanel
 
 	
 	private Map<EnrichmentTerm, String> getAutoSelectedTopTerms(int termNumber) {
-		Map<EnrichmentTerm, String> selectedTerms = new TreeMap<EnrichmentTerm, String>();
+		Map<EnrichmentTerm, String> selectedTerms = new HashMap<EnrichmentTerm, String>();
 		CyNetwork network = manager.getCurrentNetwork();
 		if (network == null)
 			return selectedTerms;
@@ -506,7 +506,7 @@ public class EnrichmentCytoPanel extends JPanel
 		Color[] colors = manager.brewerPalette.getColorPalette(manager.topTerms);
 		Long[] rowNames = tableModel.getRowNames();
 		for (int i = 0; i < manager.topTerms; i++) {
-			
+
 			CyRow row = currTable.getRow(rowNames[i]);
 			String selTerm = row.get(EnrichmentTerm.colName, String.class);
 			if (selTerm != null) {
@@ -516,7 +516,7 @@ public class EnrichmentCytoPanel extends JPanel
 						row.get(EnrichmentTerm.colFDR, Double.class));
 				enrTerm.setNodesSUID(row.getList(EnrichmentTerm.colGenesSUID, Long.class));
 				String color = String.format("#%02x%02x%02x", colors[i].getRed(), colors[i].getGreen(),
-						colors[i].getBlue());;
+						colors[i].getBlue());
 				row.set(EnrichmentTerm.colChartColor, color);
 				selectedTerms.put(enrTerm, color);
 			}
