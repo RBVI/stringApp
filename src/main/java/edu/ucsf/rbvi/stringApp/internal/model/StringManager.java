@@ -427,7 +427,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		if (categories == null) return;
 		String[] catArray = categories.split(",");
 		for (String c: catArray) {
-			catList.add(Enum.valueOf(TermCategory.class, c));
+			try {
+				catList.add(Enum.valueOf(TermCategory.class, c));
+			} catch (Exception e) {
+			}
 		}
 		categoryFilter = catList;
 	}
