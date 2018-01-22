@@ -214,7 +214,7 @@ public class EnrichmentCytoPanel extends JPanel
 	        JPopupMenu popup = (JPopupMenu)c.getParent();
 	        JTable table = (JTable)popup.getInvoker();
 	        // System.out.println("action listener: " + table.getSelectedRow() + " : " + table.getSelectedColumn());
-			if (table.getSelectedRow() > 0) {
+			if (table.getSelectedRow() > -1) {
 				resetColor(table.getSelectedRow());
 			}
 		}
@@ -366,7 +366,7 @@ public class EnrichmentCytoPanel extends JPanel
 		jTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
 		jTable.setDefaultEditor(Color.class, new ColorEditor());
 		popupMenu = new JPopupMenu();
-		menuItemReset = new JMenuItem("Reset color");
+		menuItemReset = new JMenuItem("Remove color");
 		popupMenu.add(menuItemReset);
 		jTable.setComponentPopupMenu(popupMenu);
 		jTable.addMouseListener(new MouseAdapter() {
@@ -534,7 +534,7 @@ public class EnrichmentCytoPanel extends JPanel
 	}
 	
 	private Map<EnrichmentTerm, String> getUserSelectedTerms() {
-		Map<EnrichmentTerm, String> selectedTerms = new TreeMap<EnrichmentTerm, String>();
+		Map<EnrichmentTerm, String> selectedTerms = new HashMap<EnrichmentTerm, String>();
 		CyNetwork network = manager.getCurrentNetwork();
 		if (network == null)
 			return selectedTerms;
