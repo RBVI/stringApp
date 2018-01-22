@@ -35,6 +35,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -381,12 +382,13 @@ public class EnrichmentCytoPanel extends JPanel
 		jTable.setDefaultEditor(Color.class, new ColorEditor());
 		popupMenu = new JPopupMenu();
 		menuItemReset = new JMenuItem("Remove color");
+		menuItemReset.addActionListener(this);
 		popupMenu.add(menuItemReset);
 		jTable.setComponentPopupMenu(popupMenu);
 		jTable.addMouseListener(new MouseAdapter() {
 			
 			public void mousePressed(MouseEvent e) {
-				if (e.isPopupTrigger()) {
+				if (e.isPopupTrigger() || SwingUtilities.isRightMouseButton(e)) {
 					JTable source = (JTable) e.getSource();
 					int row = source.rowAtPoint(e.getPoint());
 					int column = source.columnAtPoint(e.getPoint());
@@ -397,7 +399,7 @@ public class EnrichmentCytoPanel extends JPanel
 			}
 
 			public void mouseReleased(MouseEvent e) {
-				if (e.isPopupTrigger()) {
+				if (e.isPopupTrigger() || SwingUtilities.isRightMouseButton(e)) {
 					JTable source = (JTable) e.getSource();
 					int row = source.rowAtPoint(e.getPoint());
 					int column = source.columnAtPoint(e.getPoint());
@@ -407,7 +409,6 @@ public class EnrichmentCytoPanel extends JPanel
 				}
 			}
 		});
-		menuItemReset.addActionListener(this);
 		// jTable.addMouseListener(new TableMouseListener(jTable));
 
 		enrichmentTables.put(cyTable.getTitle(), jTable);
@@ -476,12 +477,13 @@ public class EnrichmentCytoPanel extends JPanel
 	}
 
 	public void resetColor(int currentRow) {
+		JTable currentTable = enrichmentTables.get(showTable);
+		// currentRow = currentTable.getSelectedRow();
 		CyNetwork network = manager.getCurrentNetwork();
 		if (network == null)
 			return;
 		CyTable enrichmentTable = ModelUtils.getEnrichmentTable(manager, network,
                 TermCategory.ALL.getTable());
-		JTable currentTable = enrichmentTables.get(showTable);
 		Color color = (Color)currentTable.getModel().getValueAt(
 				currentTable.convertRowIndexToModel(currentRow),
 				EnrichmentTerm.chartColumnCol);
@@ -500,7 +502,8 @@ public class EnrichmentCytoPanel extends JPanel
 				row.set(EnrichmentTerm.colChartColor, "");
 			}
 		}
-
+		tableModel.fireTableDataChanged();
+		
 		// re-draw charts if the user changed the color
 		Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
 		if (preselectedTerms.size() > 0)
