@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -534,7 +535,7 @@ public class EnrichmentCytoPanel extends JPanel
 	}
 	
 	private Map<EnrichmentTerm, String> getUserSelectedTerms() {
-		Map<EnrichmentTerm, String> selectedTerms = new HashMap<EnrichmentTerm, String>();
+		Map<EnrichmentTerm, String> selectedTerms = new LinkedHashMap<EnrichmentTerm, String>();
 		CyNetwork network = manager.getCurrentNetwork();
 		if (network == null)
 			return selectedTerms;
@@ -568,7 +569,7 @@ public class EnrichmentCytoPanel extends JPanel
 
 	
 	private Map<EnrichmentTerm, String> getAutoSelectedTopTerms(int termNumber) {
-		Map<EnrichmentTerm, String> selectedTerms = new HashMap<EnrichmentTerm, String>();
+		Map<EnrichmentTerm, String> selectedTerms = new LinkedHashMap<EnrichmentTerm, String>();
 		CyNetwork network = manager.getCurrentNetwork();
 		if (network == null)
 			return selectedTerms;
