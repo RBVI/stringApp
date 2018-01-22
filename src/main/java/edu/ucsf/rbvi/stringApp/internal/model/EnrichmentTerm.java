@@ -101,6 +101,7 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	public static final int fdrColumn = 4;
 	// public static final int chartColumnSel = 1;
 	public static final int chartColumnCol = 1;
+	public static final int nameColumn = 2;
 	
 	public EnrichmentTerm() {
 		this.name = "";

@@ -8,6 +8,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,7 +27,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -83,6 +87,8 @@ public class EnrichmentCytoPanel extends JPanel
 	JButton butAnalyzedNodes;
 	JButton butFilter;
 	JLabel labelPPIEnrichment;
+	JMenuItem menuItemReset; 
+	JPopupMenu popupMenu;
 	EnrichmentTableModel tableModel;
 	private static final Icon chartIcon = new ImageIcon(
       EnrichmentCytoPanel.class.getResource("/images/chart20.png"));
@@ -152,12 +158,12 @@ public class EnrichmentCytoPanel extends JPanel
 						network.getDefaultNodeTable().getRow(nodeID).set(CyNetwork.SELECTED, true);
 					}
 				}
+			} else {
+				// re-draw charts if the user changed the color
+				Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
+				if (preselectedTerms.size() > 0)
+					ViewUtils.drawCharts(manager, preselectedTerms, manager.chartType);
 			}
-		} else {
-			// re-draw charts if the user changed the color
-			Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
-			if (preselectedTerms.size() > 0)
-				ViewUtils.drawCharts(manager, preselectedTerms, manager.chartType);
 		}
 	}
 
@@ -202,6 +208,15 @@ public class EnrichmentCytoPanel extends JPanel
 		} else if (e.getSource().equals(butSettings)) {
 			TaskManager<?, ?> tm = manager.getService(TaskManager.class);
 			tm.execute(new TaskIterator(new SettingsTask(manager)));
+		} else if (e.getSource().equals(menuItemReset)) {
+			// System.out.println("reset color now");
+			Component c = (Component)e.getSource();
+	        JPopupMenu popup = (JPopupMenu)c.getParent();
+	        JTable table = (JTable)popup.getInvoker();
+	        // System.out.println("action listener: " + table.getSelectedRow() + " : " + table.getSelectedColumn());
+			if (table.getSelectedRow() > 0) {
+				resetColor(table.getSelectedRow());
+			}
 		}
 	}
 
@@ -350,6 +365,36 @@ public class EnrichmentCytoPanel extends JPanel
 		jTable.getSelectionModel().addListSelectionListener(this);
 		jTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
 		jTable.setDefaultEditor(Color.class, new ColorEditor());
+		popupMenu = new JPopupMenu();
+		menuItemReset = new JMenuItem("Reset color");
+		popupMenu.add(menuItemReset);
+		jTable.setComponentPopupMenu(popupMenu);
+		jTable.addMouseListener(new MouseAdapter() {
+			
+			public void mousePressed(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					JTable source = (JTable) e.getSource();
+					int row = source.rowAtPoint(e.getPoint());
+					int column = source.columnAtPoint(e.getPoint());
+					if (!source.isRowSelected(row)) {
+						source.changeSelection(row, column, false, false);
+					}
+				}
+			}
+
+			public void mouseReleased(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					JTable source = (JTable) e.getSource();
+					int row = source.rowAtPoint(e.getPoint());
+					int column = source.columnAtPoint(e.getPoint());
+					if (!source.isRowSelected(row)) {
+						source.changeSelection(row, column, false, false);
+					}
+				}
+			}
+		});
+		menuItemReset.addActionListener(this);
+		// jTable.addMouseListener(new TableMouseListener(jTable));
 
 		enrichmentTables.put(cyTable.getTitle(), jTable);
 	}
@@ -416,6 +461,38 @@ public class EnrichmentCytoPanel extends JPanel
 		}
 	}
 
+	public void resetColor(int currentRow) {
+		CyNetwork network = manager.getCurrentNetwork();
+		if (network == null)
+			return;
+		CyTable enrichmentTable = ModelUtils.getEnrichmentTable(manager, network,
+                TermCategory.ALL.getTable());
+		JTable currentTable = enrichmentTables.get(showTable);
+		Color color = (Color)currentTable.getModel().getValueAt(
+				currentTable.convertRowIndexToModel(currentRow),
+				EnrichmentTerm.chartColumnCol);
+		String termName = (String)currentTable.getModel().getValueAt(
+				currentTable.convertRowIndexToModel(currentRow),
+				EnrichmentTerm.nameColumn);
+		if (color == null || termName == null) 
+			return;
+
+		//currentTable.getModel().setValueAt(Color.OPAQUE, currentTable.convertRowIndexToModel(currentRow),
+		//		EnrichmentTerm.chartColumnCol);
+		for (CyRow row : enrichmentTable.getAllRows()) {
+			if (enrichmentTable.getColumn(EnrichmentTerm.colName) != null
+					&& row.get(EnrichmentTerm.colName, String.class) != null
+					&& row.get(EnrichmentTerm.colName, String.class).equals(termName)) {
+				row.set(EnrichmentTerm.colChartColor, "");
+			}
+		}
+
+		// re-draw charts if the user changed the color
+		Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
+		if (preselectedTerms.size() > 0)
+			ViewUtils.drawCharts(manager, preselectedTerms, manager.chartType);
+	}
+	
 	public void resetCharts() {
 		CyNetwork network = manager.getCurrentNetwork();
 		if (network == null)
