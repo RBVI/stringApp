@@ -37,6 +37,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
@@ -70,7 +72,7 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
 public class EnrichmentCytoPanel extends JPanel
-		implements CytoPanelComponent2, ListSelectionListener, ActionListener, RowsSetListener {
+		implements CytoPanelComponent2, ListSelectionListener, ActionListener, RowsSetListener, TableModelListener {
 
 	final StringManager manager;
 	Map<String, JTable> enrichmentTables;
@@ -159,12 +161,22 @@ public class EnrichmentCytoPanel extends JPanel
 						network.getDefaultNodeTable().getRow(nodeID).set(CyNetwork.SELECTED, true);
 					}
 				}
-			} else {
-				// re-draw charts if the user changed the color
-				Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
-				if (preselectedTerms.size() > 0)
-					ViewUtils.drawCharts(manager, preselectedTerms, manager.chartType);
 			}
+		}
+	}
+	
+	@Override
+	public void tableChanged(TableModelEvent e) {
+		int column = e.getColumn();
+		if (column != EnrichmentTerm.chartColumnCol)
+			return;
+		// int row = e.getFirstRow();
+		// TableModel model = (TableModel)e.getSource();
+		// String columnName = model.getColumnName(column);
+		// Object data = model.getValueAt(row, column);
+		Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
+		if (preselectedTerms.size() > 0) {
+			ViewUtils.drawCharts(manager, preselectedTerms, manager.chartType);
 		}
 	}
 
@@ -364,6 +376,7 @@ public class EnrichmentCytoPanel extends JPanel
 		jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		jTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jTable.getSelectionModel().addListSelectionListener(this);
+		jTable.getModel().addTableModelListener(this);
 		jTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
 		jTable.setDefaultEditor(Color.class, new ColorEditor());
 		popupMenu = new JPopupMenu();
@@ -551,7 +564,8 @@ public class EnrichmentCytoPanel extends JPanel
 		for (CyRow row : currTable.getAllRows()) {
 			if (currTable.getColumn(EnrichmentTerm.colChartColor) != null
 					&& row.get(EnrichmentTerm.colChartColor, String.class) != null
-					&& !row.get(EnrichmentTerm.colChartColor, String.class).equals("")) {
+					&& !row.get(EnrichmentTerm.colChartColor, String.class).equals("")
+					&& !row.get(EnrichmentTerm.colChartColor, String.class).equals("#ffffff")) {
 				String selTerm = row.get(EnrichmentTerm.colName, String.class);
 				if (selTerm != null) {
 					EnrichmentTerm enrTerm = new EnrichmentTerm(selTerm,

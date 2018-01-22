@@ -75,8 +75,10 @@ public class ColorRenderer extends JLabel implements TableCellRenderer {
 			}
 		}
 
-		setToolTipText("RGB value: " + newColor.getRed() + ", " + newColor.getGreen() + ", "
+		if (newColor != null) { 
+			setToolTipText("RGB value: " + newColor.getRed() + ", " + newColor.getGreen() + ", "
 				+ newColor.getBlue());
+		}
 		return this;
 	}
 }
