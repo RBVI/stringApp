@@ -38,11 +38,15 @@ public class Annotation {
 	}
 
 	public static Map<String, List<Annotation>> getAnnotations(JSONObject json, String queryTerms) {
+		Map<String, List<Annotation>> map = new HashMap<>();
+		return getAnnotations(json, queryTerms, map);
+	}
+
+	public static Map<String, List<Annotation>> getAnnotations(JSONObject json, String queryTerms,
+	                                                           Map<String, List<Annotation>> map) {
 		String[] terms = queryTerms.trim().split("\n");
 		JSONArray annotationArray = ModelUtils.getResultsFromJSON(json, JSONArray.class);
 		Integer version = ModelUtils.getVersionFromJSON(json);
-
-		Map<String, List<Annotation>> map = new HashMap<>();
 
 		// If we switch the API back to use a start of 0, this will need to change
 		int queryIndexStart = 0;

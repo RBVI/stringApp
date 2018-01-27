@@ -50,6 +50,17 @@ public class StringNetwork {
 		// return new HashMap<String, List<Annotation>>();
 		// }
 
+		// Split the terms up into groups of 2000
+		String[] termsArray = encTerms.split("\n");
+		annotations = new HashMap<>();
+		for (int i = 0; i < termsArray.length; i = i+2000) {
+			String termsBatch = getTerms(termsArray, i, i+2000, termsArray.length);
+			annotations = getAnnotationBatch(taxon, termsBatch, useDATABASE);
+		}
+		return annotations;
+	}
+
+	private Map<String, List<Annotation>> getAnnotationBatch(int taxon, final String encTerms, String useDATABASE) {
 		// always call the string API first to resolve all potential protein IDs
 		// new API 
 		String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/get_string_ids";
@@ -65,7 +76,7 @@ public class StringNetwork {
 
 		if (results != null) {
 			// System.out.println("Got results");
-			annotations = Annotation.getAnnotations(results, terms);
+			annotations = Annotation.getAnnotations(results, encTerms, annotations);
 			// System.out.println("Get annotations returns "+annotations.size());
 		}
 		results = null;
@@ -83,7 +94,7 @@ public class StringNetwork {
 			results = HttpUtils.postJSON(url, args, manager);
 
 			if (results != null) {
-				updateAnnotations(results, terms);
+				updateAnnotations(results, encTerms);
 			}
 			results = null;
 		} 
@@ -105,12 +116,26 @@ public class StringNetwork {
 			results = HttpUtils.postJSON(url, args, manager);
 
 			if (results != null) {
-				updateAnnotations(results, terms);
+				updateAnnotations(results, encTerms);
 			}
 			results = null;
 		 }
 		
 		return annotations;
+	}
+
+	private String getTerms(String[] termsArray, int start, int end, int length) {
+		if (end > length) end = length;
+		StringBuilder terms = null;
+		for (int i = start; i < (end-1); i++) {
+			if (terms == null) {
+				terms = new StringBuilder();
+				terms.append(termsArray[i]);
+			} else {
+				terms.append("\n"+termsArray[i]);
+			}
+		}
+		return terms.toString();
 	}
 
 	
