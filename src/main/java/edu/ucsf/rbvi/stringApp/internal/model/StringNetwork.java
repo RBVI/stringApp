@@ -125,6 +125,7 @@ public class StringNetwork {
 	}
 
 	private String getTerms(String[] termsArray, int start, int end, int length) {
+		if (length == 1) return termsArray[0];
 		if (end > length) end = length;
 		StringBuilder terms = null;
 		for (int i = start; i < (end-1); i++) {
