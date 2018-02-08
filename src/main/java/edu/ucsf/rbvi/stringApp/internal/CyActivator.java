@@ -460,6 +460,34 @@ public class CyActivator extends AbstractCyActivator {
 		}
 
 		{
+			// Register our show image commands
+			ShowImagesTaskFactory showImagesTF = new ShowImagesTaskFactory(manager, true);
+			Properties props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "show images");
+			props.setProperty(COMMAND_DESCRIPTION, 
+			                  "Show the structure images on the nodes");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+			                  "Show the structure images on the nodes");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "false");
+			registerService(bc, showImagesTF, TaskFactory.class, props);
+		}
+		
+		{
+			// Register our hide image commands
+			ShowImagesTaskFactory showImagesTF = new ShowImagesTaskFactory(manager, false);
+			Properties props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "hide images");
+			props.setProperty(COMMAND_DESCRIPTION, 
+			                  "Hide the structure images on the nodes");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+			                  "Hide the structure images on the nodes");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "false");
+			registerService(bc, showImagesTF, TaskFactory.class, props);
+		}
+
+		{
 			// Register our "show enhanced labels" toggle
 			ShowEnhancedLabelsTaskFactory showEnhancedLabelsTF = new ShowEnhancedLabelsTaskFactory(manager);
 			showEnhancedLabelsTF.reregister();
