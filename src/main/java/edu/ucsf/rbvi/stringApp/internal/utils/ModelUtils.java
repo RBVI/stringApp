@@ -275,9 +275,12 @@ public class ModelUtils {
 					if (stringNodesMap.containsKey(enrGeneEnsemblID)) {
 						final Long nodeSUID = stringNodesMap.get(enrGeneEnsemblID);
 						currNodeList.add(nodeSUID);
-						if (network.getDefaultNodeTable().getColumn(CyNetwork.NAME) != null) {
+						if (network.getDefaultNodeTable().getColumn(DISPLAY) != null) {
 							enrGeneNodeName = network.getDefaultNodeTable().getRow(nodeSUID)
 									.get(DISPLAY, String.class);
+						} else if (network.getDefaultNodeTable().getColumn(CyNetwork.NAME) != null) {
+							enrGeneNodeName = network.getDefaultNodeTable().getRow(nodeSUID)
+									.get(CyNetwork.NAME, String.class);
 						}
 					}
 					currGeneList.add(enrGeneNodeName);
