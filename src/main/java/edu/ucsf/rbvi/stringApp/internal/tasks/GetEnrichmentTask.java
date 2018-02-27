@@ -55,7 +55,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	TaskMonitor monitor;
 	// boolean guiMode;
 
-	@Tunable(description = "Enrichment cutoff", gravity = 1.0)
+	@Tunable(description = "Enrichment p-value cutoff", gravity = 1.0)
 	public double cutoff = 0.05;
 
 	//@Tunable(description = "GO Biological Process", gravity = 2.0)

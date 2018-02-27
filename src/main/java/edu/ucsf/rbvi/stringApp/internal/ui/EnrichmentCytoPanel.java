@@ -66,6 +66,8 @@ import org.jcolorbrewer.ColorBrewer;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTableTask;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.FilterEnrichmentTableTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.SettingsTask;
@@ -89,6 +91,7 @@ public class EnrichmentCytoPanel extends JPanel
 	JButton butDrawCharts; 
 	JButton butResetCharts;
 	JButton butAnalyzedNodes;
+	JButton butExportTable;
 	JButton butFilter;
 	JLabel labelPPIEnrichment;
 	JMenuItem menuItemReset; 
@@ -107,6 +110,7 @@ public class EnrichmentCytoPanel extends JPanel
 	final String butDrawChartsName = "Draw charts using default color palette";
 	final String butResetChartsName = "Reset charts";
 	final String butAnalyzedNodesName = "Select all analyzed nodes";
+	final String butExportTableDescr = "Export enrichment table";
 	
 	public EnrichmentCytoPanel(StringManager manager) {
 		this.manager = manager;
@@ -194,6 +198,8 @@ public class EnrichmentCytoPanel extends JPanel
 		// initPanel();
 		// createBoxTables = true;
 		// } else
+		TaskManager<?, ?> tm = manager.getService(TaskManager.class);
+		CyNetwork network = manager.getCurrentNetwork();
 		if (e.getSource().equals(butDrawCharts)) {
 			resetCharts();
 			// do something fancy here...
@@ -207,7 +213,6 @@ public class EnrichmentCytoPanel extends JPanel
 			// reset colors and selection
 			resetCharts();
 		} else if (e.getSource().equals(butAnalyzedNodes)) {
-			CyNetwork network = manager.getCurrentNetwork();
 			List<CyNode> analyzedNodes = ModelUtils.getEnrichmentNodes(network);  
 			if (network == null || analyzedNodes == null)
 				return;
@@ -217,11 +222,12 @@ public class EnrichmentCytoPanel extends JPanel
 			}
 		} else if (e.getSource().equals(butFilter)) {
 			// ...
-			TaskManager<?, ?> tm = manager.getService(TaskManager.class);
 			tm.execute(new TaskIterator(new FilterEnrichmentTableTask(manager, tableModel)));
 		} else if (e.getSource().equals(butSettings)) {
-			TaskManager<?, ?> tm = manager.getService(TaskManager.class);
 			tm.execute(new TaskIterator(new SettingsTask(manager)));
+		} else if (e.getSource().equals(butExportTable)) {
+			if (network != null)
+				tm.execute(new TaskIterator(new ExportEnrichmentTableTask(manager, network)));
 		} else if (e.getSource().equals(menuItemReset)) {
 			// System.out.println("reset color now");
 			Component c = (Component)e.getSource();
@@ -302,7 +308,7 @@ public class EnrichmentCytoPanel extends JPanel
 			buttonsPanelLeft.add(butDrawCharts);
 			buttonsPanelLeft.add(butResetCharts);
 			
-			JPanel buttonsPanelRight = new JPanel(new GridLayout(1, 2)); 
+			JPanel buttonsPanelRight = new JPanel(new GridLayout(1, 3)); 
 			butAnalyzedNodes = new JButton(IconManager.ICON_CHECK_SQUARE_O);			
 			butAnalyzedNodes.addActionListener(this);
 			butAnalyzedNodes.setFont(iconFont);
@@ -311,6 +317,15 @@ public class EnrichmentCytoPanel extends JPanel
 			butAnalyzedNodes.setContentAreaFilled(false);
 			butAnalyzedNodes.setFocusPainted(false);
 			butAnalyzedNodes.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+
+			butExportTable = new JButton(IconManager.ICON_SAVE);			
+			butExportTable.addActionListener(this);
+			butExportTable.setFont(iconFont);
+			butExportTable.setToolTipText(butExportTableDescr);
+			butExportTable.setBorderPainted(false);
+			butExportTable.setContentAreaFilled(false);
+			butExportTable.setFocusPainted(false);
+			butExportTable.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
 			butSettings = new JButton(IconManager.ICON_COG);
 			butSettings.setFont(iconFont);
@@ -322,6 +337,7 @@ public class EnrichmentCytoPanel extends JPanel
 			butSettings.setBorder(BorderFactory.createEmptyBorder(2,2,2,20));
 
 			buttonsPanelRight.add(butAnalyzedNodes);
+			buttonsPanelRight.add(butExportTable);
 			buttonsPanelRight.add(butSettings);
 
 			Double ppiEnrichment = ModelUtils.getPPIEnrichment(network);
