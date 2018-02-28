@@ -128,7 +128,7 @@ public class StringNetwork {
 		if (length == 1) return termsArray[0];
 		if (end > length) end = length;
 		StringBuilder terms = null;
-		for (int i = start; i < (end-1); i++) {
+		for (int i = start; i < (end); i++) {
 			if (terms == null) {
 				terms = new StringBuilder();
 				terms.append(termsArray[i]);
