@@ -380,7 +380,7 @@ public class ViewUtils {
 		                 manager.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
 		{
 			DiscreteMapping<String,Color> dMapping = 
-				(DiscreteMapping) discreteFactory.createVisualMappingFunction("Name", String.class, 
+				(DiscreteMapping) discreteFactory.createVisualMappingFunction(CyNetwork.NAME, String.class, 
 				                                                              BasicVisualLexicon.NODE_FILL_COLOR);
 
 			// Set the node colors around the color wheel

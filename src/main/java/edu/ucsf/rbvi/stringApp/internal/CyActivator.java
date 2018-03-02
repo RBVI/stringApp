@@ -37,6 +37,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.FilterEnrichmentTableTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetNetworkTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.GetSpeciesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.HideChartsTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.FindProteinsTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.OpenEvidenceTaskFactory;
@@ -396,6 +397,21 @@ public class CyActivator extends AbstractCyActivator {
     	propsEnrichment.setProperty(COMMAND_EXAMPLE_JSON, GetEnrichmentTaskFactory.EXAMPLE_JSON);
 			// propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 			registerService(bc, getEnrichment, NetworkTaskFactory.class, propsEnrichment);
+		}
+
+		GetSpeciesTaskFactory getSpecies = new GetSpeciesTaskFactory(manager);
+		{
+			Properties props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "list species");
+			props.setProperty(COMMAND_DESCRIPTION, 
+			                            "Retrieve a list of the species for string.");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+			                            "Retrieve the list of species known to string, including the texonomy ID.");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+    	props.setProperty(COMMAND_EXAMPLE_JSON, "[{\"taxonomyId\": 9606, \"scientificName\": \"Homo sapiens\", \"abbreviatedName\":\"Homo sapiens\"}]");
+			// propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
+			registerService(bc, getSpecies, TaskFactory.class, props);
 		}
 
 		if (haveGUI) {
