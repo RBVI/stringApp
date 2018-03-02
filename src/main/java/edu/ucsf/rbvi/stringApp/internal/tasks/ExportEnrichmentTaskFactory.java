@@ -25,7 +25,7 @@ public class ExportEnrichmentTaskFactory extends AbstractNetworkTaskFactory {
 
 	@Override
 	public TaskIterator createTaskIterator(CyNetwork network) {
-		return new TaskIterator(new ExportEnrichmentTask(manager, network));
+		return new TaskIterator(new ExportEnrichmentTableTask(manager, network));
 	}
 
 }
