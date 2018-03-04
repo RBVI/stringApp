@@ -144,7 +144,6 @@ public class SearchQueryComponent extends JTextField {
 	}
 
 	private void updateQueryTextField() {
-		// Set<String> query = getAreaText();
 		// String text = query.stream().collect(Collectors.joining(" "));
 		// TODO: truncate the text -- no need for this to be the entire string
 		String text = queryTextArea.getText();
@@ -152,26 +151,6 @@ public class SearchQueryComponent extends JTextField {
 			text = text.substring(0, 30)+"...";
 		setText(text);
   }
-
-	private Set<String> getAreaText() {
-		Set<String> query = new HashSet<>();
-		String text = queryTextArea.getText();
-		if (text.length() > 30) {
-			text = text.substring(0, 30)+"...";
-			System.out.println("Text: "+text);
-		}
-		String[] split = text.split("\n");
-
-		for (String s: split) {
-			s = s.trim();
-
-			if (!s.isEmpty())
-				query.add(s);
-		}
-
-		return query;
-
-	}
 
 	private void fireQueryChanged() {
 		firePropertyChange(NetworkSearchTaskFactory.QUERY_PROPERTY, null, null);

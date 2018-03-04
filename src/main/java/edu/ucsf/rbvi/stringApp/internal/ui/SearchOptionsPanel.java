@@ -70,22 +70,33 @@ public class SearchOptionsPanel extends JPanel {
 	JTextField confidenceValue;
 	JSlider additionalNodesSlider;
 	JTextField additionalNodesValue;
+	JCheckBox useSmartDelimiters;
+	JPanel advancedOptions;
 	NumberFormat formatter = new DecimalFormat("#0.00");
 	NumberFormat intFormatter = new DecimalFormat("#0");
 	private boolean ignore = false;
 	private final boolean isDisease;
+	private final boolean isPubMed;
+	private final boolean showSpecies;
 	private String netSpecies = "Homo sapiens";
 
 	private Species species = null;
 	private int additionalNodes = 0;
 	private int confidence = 40;
 
-	public SearchOptionsPanel(final StringManager manager, final boolean isPubMed, final boolean isDisease) {
+	public SearchOptionsPanel(final StringManager manager, final boolean isPubMed, 
+	                          final boolean isDisease, final boolean showSpecies) {
 		super(new GridBagLayout());
 		this.manager = manager;
 		this.isDisease = isDisease;
+		this.isPubMed = isPubMed;
+		this.showSpecies = showSpecies;
 		if (isDisease || isPubMed) additionalNodes = 100;
 		initOptions();
+	}
+
+	public SearchOptionsPanel(final StringManager manager, final boolean isPubMed, final boolean isDisease) {
+		this(manager, isPubMed, isDisease, true);
 	}
 
 	// Special constructor used for new NetworkSearchTaskFactory options.
@@ -96,9 +107,11 @@ public class SearchOptionsPanel extends JPanel {
 	private void initOptions() {
 		setPreferredSize(new Dimension(700,200));
 		EasyGBC c = new EasyGBC();
-		List<Species> speciesList = getSpeciesList();
-		JPanel speciesBox = createSpeciesComboBox(speciesList);
-		add(speciesBox, c.expandHoriz().insets(5,5,0,5));
+		if (showSpecies) {
+			List<Species> speciesList = getSpeciesList();
+			JPanel speciesBox = createSpeciesComboBox(speciesList);
+			add(speciesBox, c.expandHoriz().insets(5,5,0,5));
+		}
 
 		// Create the slider for the confidence cutoff
 		JPanel confidenceSlider = createConfidenceSlider();
@@ -107,6 +120,12 @@ public class SearchOptionsPanel extends JPanel {
 		// Create the slider for the additional nodes
 		JPanel additionalNodesSlider = createAdditionalNodesSlider();
 		add(additionalNodesSlider, c.down().expandBoth().insets(5,5,0,5));
+
+		if (!isDisease && !isPubMed) {
+			// Add some "advanced" options
+			advancedOptions = createAdvancedOptions();
+			add(advancedOptions, c.down().expandBoth().insets(5,5,0,5));
+		}
 
 		// Add Query/Cancel buttons
 		// JPanel buttonPanel =  createControlButtons(true);
@@ -127,6 +146,29 @@ public class SearchOptionsPanel extends JPanel {
 			}
 		}
 		return speciesList;
+	}
+
+	JPanel createAdvancedOptions() {
+		JPanel advancedPanel = new JPanel(new GridBagLayout());
+		advancedPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		EasyGBC c = new EasyGBC();
+		JLabel optionsLabel = new JLabel("<html><b>Options:</b></html>");
+		c.anchor("west").insets(0,5,0,5);
+		advancedPanel.add(optionsLabel, c);
+		c.right().expandHoriz().insets(0,10,0,5);
+		useSmartDelimiters = new JCheckBox("Use Smart Delimiters", false);
+		useSmartDelimiters.setToolTipText("<html>\"Smart\" delimiters attempts to provide flexibility "+
+		                                  "<br/>to the format of the query terms.  If the entered query "+
+		                                  "<br/>doesn't contain any newlines, then tabs, commas, and "+
+		                                  "<br/>semicolins will be tried as delimiters, in that order.  "+
+		                                  "<br/>Note that smart delimiters don't support quotes - to escape "+
+		                                  "<br/>a delimiter, use backslash.</html>");
+		advancedPanel.add(useSmartDelimiters, c);
+		return advancedPanel;
+	}
+
+	public boolean getUseSmartDelimiters() {
+		return useSmartDelimiters.isSelected();
 	}
 
 	JPanel createSpeciesComboBox(List<Species> speciesList) {
@@ -266,6 +308,10 @@ public class SearchOptionsPanel extends JPanel {
 	public int getConfidence() {
 		return confidenceSlider.getValue();
 	}
+
+	public void showAdvancedOptions(boolean show) {
+		advancedOptions.setVisible(show);
+	}
 	
 	JPanel createAdditionalNodesSlider() {
 		JPanel additionalNodesPanel = new JPanel(new GridBagLayout());
@@ -344,6 +390,15 @@ public class SearchOptionsPanel extends JPanel {
 
 	public int getAdditionalNodes() {
 		return additionalNodesSlider.getValue();
+	}
+
+	public void enableAdditionalNodes(boolean enable) {
+		if (!enable) {
+			additionalNodesSlider.setValue(0);
+			additionalNodesValue.setText("0");
+		}
+		additionalNodesSlider.setEnabled(enable);
+		additionalNodesValue.setEnabled(enable);
 	}
 
 	private void addNodesFieldValueChanged() {

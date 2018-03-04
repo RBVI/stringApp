@@ -70,6 +70,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetAnnotationsTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ImportNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.TextUtils;
 
 // TODO: [Optional] Improve non-gui mode
 public class GetTermsPanel extends JPanel { 
@@ -85,13 +86,10 @@ public class GetTermsPanel extends JPanel {
 	JPanel mainSearchPanel;
 	JComboBox<Species> speciesCombo;
 	JComboBox<String> speciesPartnerCombo;
-	JSlider confidenceSlider;
-	JTextField confidenceValue;
-	JSlider additionalNodesSlider;
-	JTextField additionalNodesValue;
 	JCheckBox wholeOrgBox;
 	JButton importButton;
 	JButton backButton;
+	SearchOptionsPanel optionsPanel;
 	NumberFormat formatter = new DecimalFormat("#0.00");
 	NumberFormat intFormatter = new DecimalFormat("#0");
 	private boolean ignore = false;
@@ -154,7 +152,7 @@ public class GetTermsPanel extends JPanel {
 
 			// Create whole organism checkbox
 			if (!useDATABASE.equals(Databases.STITCH.getAPIName())) {
-				add(organismBox, c.down().expandBoth().insets(0, 5, 0, 5));
+				add(organismBox, c.down().expandHoriz().insets(0, 5, 0, 5));
 			}
 		} else {
 			JPanel speciesBox = createSpeciesPartnerComboBox(ModelUtils.getAvailableInteractionPartners(manager.getCurrentNetwork()));
@@ -165,16 +163,9 @@ public class GetTermsPanel extends JPanel {
 		mainSearchPanel = createSearchPanel();
 		add(mainSearchPanel, c.down().expandBoth().insets(5,5,0,5));
 
-		// Create the slider for the confidence cutoff
-		JPanel confidenceSlider = createConfidenceSlider();
-		add(confidenceSlider, c.down().expandBoth().insets(5,5,0,5));
-
-		// Create the slider for the confidence cutoff
-		JPanel additionalNodesSlider = createAdditionalNodesSlider();
-		add(additionalNodesSlider, c.down().expandBoth().insets(5,5,0,5));
-
-		// Create the evidence types buttons
-		// createEvidenceButtons(manager.getEvidenceTypes());
+		optionsPanel = new SearchOptionsPanel(manager, false, false, false);
+		optionsPanel.setMinimumSize(new Dimension(400, 150));
+		add(optionsPanel, c.down().expandHoriz().insets(5,5,0,5));
 
 		// Add Query/Cancel buttons
 		JPanel buttonPanel =  createControlButtons();
@@ -218,6 +209,7 @@ public class GetTermsPanel extends JPanel {
 		mainSearchPanel.add(jsp, c);
 		mainSearchPanel.revalidate();
 		mainSearchPanel.repaint();
+		optionsPanel.showAdvancedOptions(true);
 	}
 
 	JPanel createSpeciesComboBox(List<Species> speciesList) {
@@ -270,14 +262,10 @@ public class GetTermsPanel extends JPanel {
 				if (wholeOrgBox.isSelected()) {
 					searchTerms.setText("");
 					searchTerms.setEditable(false);
-					additionalNodesSlider.setValue(0);
-					additionalNodesSlider.setEnabled(false);
-					additionalNodesValue.setText("0");
-					additionalNodesValue.setEnabled(false);
+					optionsPanel.enableAdditionalNodes(false);
 				} else {
 					searchTerms.setEditable(true);
-					additionalNodesSlider.setEnabled(true);
-					additionalNodesValue.setEnabled(true);
+					optionsPanel.enableAdditionalNodes(true);
 				}
 			}
 		});
@@ -325,213 +313,6 @@ public class GetTermsPanel extends JPanel {
 		return buttonPanel;
 	}
 
-	JPanel createConfidenceSlider() {
-		JPanel confidencePanel = new JPanel(new GridBagLayout());
-		confidencePanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-		EasyGBC c = new EasyGBC();
-
-		Font labelFont;
-		{
-			c.anchor("west").noExpand().insets(0,5,0,5);
-			JLabel confidenceLabel = new JLabel("Confidence (score) cutoff:");
-			labelFont = confidenceLabel.getFont();
-			confidenceLabel.setFont(new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()));
-			confidencePanel.add(confidenceLabel, c);
-		}
-
-		{
-			confidenceSlider = new JSlider();
-			Dictionary<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
-			Font valueFont = new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()-4);
-			for (int value = 0; value <= 100; value += 10) {
-				double labelValue = (double)value/100.0;
-				JLabel label = new JLabel(formatter.format(labelValue));
-				label.setFont(valueFont);
-				labels.put(value, label);
-			}
-			confidenceSlider.setLabelTable(labels);
-			confidenceSlider.setPaintLabels(true);
-			confidenceSlider.setValue(confidence);
-
-			confidenceSlider.addChangeListener(new ChangeListener() {
-				@Override
-				public void stateChanged(ChangeEvent e) {
-					if (ignore) return;
-					ignore = true;
-					int value = confidenceSlider.getValue();
-					confidenceValue.setText(formatter.format(((double)value)/100.0));
-					ignore = false;
-				}
-			});
-			// c.anchor("southwest").expandHoriz().insets(0,5,0,5);
-			c.right().expandHoriz().insets(0,5,0,5);
-			confidencePanel.add(confidenceSlider, c);
-		}
-
-		{
-			confidenceValue = new JTextField(4);
-			confidenceValue.setHorizontalAlignment(JTextField.RIGHT);
-			confidenceValue.setText(formatter.format(((double)confidence)/100.0));
-			c.right().noExpand().insets(0,5,0,5);
-			confidencePanel.add(confidenceValue, c);
-
-			confidenceValue.addActionListener(new AbstractAction() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					textFieldValueChanged();
-				}
-			});
-
-			confidenceValue.addFocusListener(new FocusAdapter() {
-				@Override
-				public void focusLost(FocusEvent e) {
-					textFieldValueChanged();
-				}
-			});
-
-		}
-		return confidencePanel;
-	}
-	
-	JPanel createAdditionalNodesSlider() {
-		JPanel additionalNodesPanel = new JPanel(new GridBagLayout());
-		additionalNodesPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-		EasyGBC c = new EasyGBC();
-
-		Font labelFont;
-		{
-			c.anchor("west").noExpand().insets(0,5,0,5);
-			JLabel additionalNodesLabel = new JLabel("Maximum additional interactors:");
-			labelFont = additionalNodesLabel.getFont();
-			additionalNodesLabel.setFont(new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()));
-			additionalNodesPanel.add(additionalNodesLabel, c);
-		}
-
-		{
-			additionalNodesSlider = new JSlider();
-			Dictionary<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
-			Font valueFont = new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()-4);
-			for (int value = 0; value <= 100; value += 10) {
-				JLabel label = new JLabel(Integer.toString(value));
-				label.setFont(valueFont);
-				labels.put(value, label);
-			}
-			additionalNodesSlider.setLabelTable(labels);
-			additionalNodesSlider.setPaintLabels(true);
-			additionalNodesSlider.setValue(additionalNodes);
-
-			additionalNodesSlider.addChangeListener(new ChangeListener() {
-				@Override
-				public void stateChanged(ChangeEvent e) {
-					if (ignore) return;
-					ignore = true;
-					int value = additionalNodesSlider.getValue();
-					additionalNodesValue.setText(Integer.toString(value));
-					ignore = false;
-				}
-			});
-			// c.anchor("southwest").expandHoriz().insets(0,5,0,5);
-			c.right().expandHoriz().insets(0,5,0,5);
-			additionalNodesPanel.add(additionalNodesSlider, c);
-		}
-
-		{
-			additionalNodesValue = new JTextField(4);
-			additionalNodesValue.setHorizontalAlignment(JTextField.RIGHT);
-			additionalNodesValue.setText(""+additionalNodes);
-			c.right().noExpand().insets(0,5,0,5);
-			additionalNodesPanel.add(additionalNodesValue, c);
-
-			additionalNodesValue.addActionListener(new AbstractAction() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					addNodesFieldValueChanged();
-				}
-			});
-
-			additionalNodesValue.addFocusListener(new FocusAdapter() {
-				@Override
-				public void focusLost(FocusEvent e) {
-					addNodesFieldValueChanged();
-				}
-			});
-
-		}
-		return additionalNodesPanel;
-	}
-
-	private void addNodesFieldValueChanged() {
-		if (ignore) return;
-		ignore = true;
-		String text = additionalNodesValue.getText();
-		Number n = intFormatter.parse(text, new ParsePosition(0));
-		int val = 0;
-		if (n == null) {
-			try {
-				val = Integer.valueOf(additionalNodesValue.getText());
-			} catch (NumberFormatException nfe) {
-				val = addNodesInputError();
-			}
-		} else if (n.intValue() > 100 || n.intValue() < 0) {
-			val = addNodesInputError();
-		} else {
-			val = n.intValue();
-		}
-
-		val = val;
-		additionalNodesSlider.setValue(val);
-		ignore = false;
-	}
-	
-	private int addNodesInputError() {
-		additionalNodesValue.setBackground(Color.RED);
-		JOptionPane.showMessageDialog(null, 
-				                          "Please enter a number of additional nodes between 0 and 100", 
-											            "Alert", JOptionPane.ERROR_MESSAGE);
-		additionalNodesValue.setBackground(UIManager.getColor("TextField.background"));
-
-		// Reset the value to correspond to the current slider setting
-		int val = additionalNodesSlider.getValue();
-		additionalNodesValue.setText(Integer.toString(val));
-		return val;
-	}
-	
-	private void textFieldValueChanged() {
-		if (ignore) return;
-		ignore = true;
-		String text = confidenceValue.getText();
-		Number n = formatter.parse(text, new ParsePosition(0));
-		double val = 0.0;
-		if (n == null) {
-			try {
-				val = Double.valueOf(confidenceValue.getText());
-			} catch (NumberFormatException nfe) {
-				val = inputError();
-			}
-		} else if (n.doubleValue() > 1.0 || n.doubleValue() < 0.0) {
-			val = inputError();
-		} else {
-			val = n.doubleValue();
-		}
-
-		val = val*100.0;
-		confidenceSlider.setValue((int)val);
-		ignore = false;
-	}
-
-	private double inputError() {
-		confidenceValue.setBackground(Color.RED);
-		JOptionPane.showMessageDialog(null, 
-				                          "Please enter a confence cutoff between 0.0 and 1.0", 
-											            "Alert", JOptionPane.ERROR_MESSAGE);
-		confidenceValue.setBackground(UIManager.getColor("TextField.background"));
-
-		// Reset the value to correspond to the current slider setting
-		double val = ((double)confidenceSlider.getValue())/100.0;
-		confidenceValue.setText(formatter.format(val));
-		return val;
-	}
-
 	void importNetwork(int taxon, int confidence, int additionalNodes, boolean wholeOrg) {
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = null;
@@ -563,6 +344,7 @@ public class GetTermsPanel extends JPanel {
 		mainSearchPanel.removeAll();
 		mainSearchPanel.revalidate();
 		mainSearchPanel.repaint();
+		optionsPanel.showAdvancedOptions(false);
 		final Map<String, ResolveTableModel> tableModelMap = new HashMap<>();
 		for (String term: stringNetwork.getAnnotations().keySet()) {
 			tableModelMap.put(term, new ResolveTableModel(this, term, stringNetwork.getAnnotations().get(term)));
@@ -711,20 +493,23 @@ public class GetTermsPanel extends JPanel {
 			if (stringNetwork == null)
 				stringNetwork = new StringNetwork(manager);
 
-			String terms = searchTerms.getText();
 			if (wholeOrgBox != null && wholeOrgBox.isSelected()) {
-				importNetwork(taxon, confidenceSlider.getValue(), 0, wholeOrgBox.isSelected());
+				importNetwork(taxon, optionsPanel.getConfidence(), 0, wholeOrgBox.isSelected());
 				return;
 			}
+
+			String terms = searchTerms.getText();
+			// Strip off any blank lines as well as trailing spaces
+			terms = terms.replaceAll("(?m)^\\s*", "");
+			terms = terms.replaceAll("(?m)\\s*$", "");
+			if (optionsPanel.getUseSmartDelimiters())
+				terms = TextUtils.smartDelimit(terms);
 			if (terms == null || terms.length() == 0) {
 				JOptionPane.showMessageDialog(null, "No terms were entered -- nothing to search for",
 							                        "Nothing entered", JOptionPane.ERROR_MESSAGE); 
 				return;
 			}
 			
-			// Strip off any blank lines as well as trailing spaces
-			terms = terms.replaceAll("(?m)^\\s*", "");
-			terms = terms.replaceAll("(?m)\\s*$", "");
 			manager.info("Getting annotations for "+speciesName+"terms: "+terms);
 
 			// Launch a task to get the annotations. 
@@ -754,7 +539,7 @@ public class GetTermsPanel extends JPanel {
 			}
 			boolean noAmbiguity = stringNetwork.resolveAnnotations();
 			if (noAmbiguity) {
-				int additionalNodes = additionalNodesSlider.getValue();
+				int additionalNodes = optionsPanel.getAdditionalNodes();
 				// This mimics the String web site behavior
 				if (stringNetwork.getResolvedTerms() == 1 && additionalNodes == 0) {
 					/*
@@ -775,7 +560,7 @@ public class GetTermsPanel extends JPanel {
 
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						importNetwork(taxon, confidenceSlider.getValue(), addNodes, wholeOrgBox.isSelected());
+						importNetwork(taxon, optionsPanel.getConfidence(), addNodes, wholeOrgBox.isSelected());
 					}
 				});
 			} else {
@@ -793,7 +578,7 @@ public class GetTermsPanel extends JPanel {
     public void actionPerformed(ActionEvent e) {
 			Species species = (Species)speciesCombo.getSelectedItem();
 
-			int additionalNodes = additionalNodesSlider.getValue();
+			int additionalNodes = optionsPanel.getAdditionalNodes();
 
 			if (stringNetwork.getResolvedTerms() == 1 && additionalNodes == 0) {
 				SwingUtilities.invokeLater(new Runnable() {
@@ -819,7 +604,7 @@ public class GetTermsPanel extends JPanel {
 			}
 
 			int taxon = species.getTaxId();
-			importNetwork(taxon, confidenceSlider.getValue(), additionalNodes, wholeOrgBox.isSelected());
+			importNetwork(taxon, optionsPanel.getConfidence(), additionalNodes, wholeOrgBox.isSelected());
 		}
 	}
 

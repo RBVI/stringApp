@@ -45,6 +45,7 @@ import edu.ucsf.rbvi.stringApp.internal.ui.GetTermsPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.SearchOptionsPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.SearchQueryComponent;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.TextUtils;
 
 public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory implements TaskObserver {
 	StringManager manager;
@@ -87,6 +88,8 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 
 	public TaskIterator createTaskIterator() {
 		String terms = queryComponent.getQueryText();
+		if (optionsPanel.getUseSmartDelimiters())
+			terms = TextUtils.smartDelimit(terms);
 		// Strip off any blank lines as well as trailing spaces
 
 		stringNetwork = new StringNetwork(manager);

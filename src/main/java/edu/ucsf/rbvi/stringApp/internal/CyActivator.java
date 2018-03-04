@@ -357,10 +357,19 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(TITLE, "Set as STRING network");
 			props.setProperty(MENU_GRAVITY, "10.0");
 			props.setProperty(IN_MENU_BAR, "true");
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "make string");
+			props.setProperty(COMMAND_DESCRIPTION, 
+			                            "Set the network as a STRING network");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+			                            "Sets the network as a STRING network.  This assumes that the network "+
+			                            "was originally derived from STRING and has all of the necessary STRING "+
+			                            "columns.");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+    	props.setProperty(COMMAND_EXAMPLE_JSON, "{\"network\": 123}");
 			registerService(bc, setConfidence, NetworkTaskFactory.class, props);
 		}
 
-		
 		{
 			ExportEnrichmentTaskFactory exportEnrichment = new ExportEnrichmentTaskFactory(manager);
 			Properties props = new Properties();
