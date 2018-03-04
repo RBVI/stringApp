@@ -13,18 +13,39 @@ import org.cytoscape.model.CyNetwork;
 import org.cytoscape.view.model.CyNetworkView;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+
+import org.jcolorbrewer.ColorBrewer;
 
 public class StringNetwork {
 	final StringManager manager;
 	CyNetwork network;
 	Map<String, List<String>> resolvedIdMap = null;
 	Map<String, List<Annotation>> annotations = null;
+	Map<String, String> settings = null;
+
+	// Enrichment table options for this network
+	private int topTerms = -1;
+	private double overlapCutoff = -1;
+	private ColorBrewer brewerPalette = null;
+	private List<TermCategory> categoryFilter = null;
+	private ChartType chartType = null;
+	private boolean removeOverlap = false;
+
 
 	public StringNetwork(StringManager manager) {
 		this.manager = manager;
 		resolvedIdMap = null;
 		annotations = null;
+		topTerms = manager.getTopTerms(null);
+		overlapCutoff = manager.getOverlapCutoff(null);
+		brewerPalette = manager.getBrewerPalette(null);
+		categoryFilter = manager.getCategoryFilter(null);
+		removeOverlap = manager.getRemoveOverlap(null);
+		chartType = manager.getChartType(null);
+		settings = new HashMap<>();
 	}
 
 	public void reset() {
@@ -38,6 +59,68 @@ public class StringNetwork {
 
 	public void setNetwork(CyNetwork network) {
 		this.network = network;
+
+		// Load our options
+		settings = ModelUtils.getEnrichmentSettings(network);
+		if (settings.containsKey("overlapCutoff")) {
+			overlapCutoff = Double.valueOf(settings.get("overlapCutoff"));
+		}
+		if (settings.containsKey("topTerms")) {
+			topTerms = Integer.valueOf(settings.get("topTerms"));
+		}
+		if (settings.containsKey("removeOverlap")) {
+			removeOverlap = Boolean.valueOf(settings.get("removeOverlap"));
+		}
+		if (settings.containsKey("categoryFilter")) {
+			List<String> strFilters = ModelUtils.stringToList(settings.get("categoryFilter"));
+			categoryFilter = new ArrayList<>();
+			for (String filter: strFilters) {
+				categoryFilter.add(Enum.valueOf(TermCategory.class, filter));
+			}
+		}
+		if (settings.containsKey("brewerPalette")) {
+			brewerPalette = Enum.valueOf(ColorBrewer.class, settings.get("brewerPalette"));
+		}
+		if (settings.containsKey("chartType")) {
+			chartType = Enum.valueOf(ChartType.class, settings.get("chartType"));
+		}
+	}
+
+	public double getOverlapCutoff() { return overlapCutoff; }
+	public void setOverlapCutoff(double cutoff) { overlapCutoff = cutoff; update(); }
+
+	public int getTopTerms() { return topTerms; }
+	public void setTopTerms(int tt) { topTerms = tt; update(); }
+
+	public List<TermCategory> getCategoryFilter() { return categoryFilter; }
+	public void setCategoryFilter(List<TermCategory> categories) { categoryFilter = categories; update(); }
+
+	public ColorBrewer getBrewerPalette() { return brewerPalette; }
+	public void setBrewerPalette(ColorBrewer palette) { brewerPalette = palette; update(); }
+
+	public ChartType getChartType() { return chartType; }
+	public void setChartType(ChartType type) { chartType = type; update(); }
+
+	public boolean getRemoveOverlap() { return removeOverlap; }
+	public void setRemoveOverlap(boolean remove) { removeOverlap = remove; update(); }
+
+
+	// Update our settings in the network table
+	private void update() {
+		settings.put("overlapCutoff", Double.toString(overlapCutoff));
+		settings.put("topTerms", Integer.toString(topTerms));
+		settings.put("removeOverlap", Boolean.toString(removeOverlap));
+		{
+			List<String> filters = new ArrayList<>();
+			for (TermCategory cat: categoryFilter) {
+				filters.add(cat.name());
+			}
+			settings.put("categoryFilter", ModelUtils.listToString(filters));
+		}
+		settings.put("brewerPalette", brewerPalette.name());
+		settings.put("chartType", chartType.name());
+		ModelUtils.updateEnrichmentSettings(network, settings);
+
 	}
 
 	public Map<String, List<Annotation>> getAnnotations() { return annotations; }

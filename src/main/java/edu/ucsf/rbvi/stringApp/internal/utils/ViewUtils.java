@@ -33,7 +33,7 @@ import org.cytoscape.view.vizmap.mappings.PassthroughMapping;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
-import edu.ucsf.rbvi.stringApp.internal.model.StringManager.ChartType;
+import edu.ucsf.rbvi.stringApp.internal.model.ChartType;
 
 public class ViewUtils {
 	public static String STYLE_NAME = "STRING style";
@@ -511,7 +511,7 @@ public class ViewUtils {
 	
 	public static void drawCharts(StringManager manager, 
 	                              Map<EnrichmentTerm, String> selectedTerms, 
-																StringManager.ChartType type) {
+																ChartType type) {
 		CyNetwork network = manager.getCurrentNetwork();
 		if (network == null || selectedTerms.size() == 0)
 			return;

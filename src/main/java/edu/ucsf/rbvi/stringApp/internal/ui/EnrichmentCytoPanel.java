@@ -181,7 +181,8 @@ public class EnrichmentCytoPanel extends JPanel
 		// Object data = model.getValueAt(row, column);
 		Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
 		if (preselectedTerms.size() > 0) {
-			ViewUtils.drawCharts(manager, preselectedTerms, manager.chartType);
+			CyNetwork network = manager.getCurrentNetwork();
+			ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network));
 		}
 	}
 
@@ -206,9 +207,9 @@ public class EnrichmentCytoPanel extends JPanel
 			// piechart: attributelist="test3" colorlist="modulated" showlabels="false"
 			Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
 			if (preselectedTerms.size() == 0) {
-				preselectedTerms = getAutoSelectedTopTerms(manager.topTerms);
+				preselectedTerms = getAutoSelectedTopTerms(manager.getTopTerms(network));
 			}
-			ViewUtils.drawCharts(manager, preselectedTerms, manager.chartType);
+			ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network));
 		} else if (e.getSource().equals(butResetCharts)) {
 			// reset colors and selection
 			resetCharts();
@@ -375,6 +376,7 @@ public class EnrichmentCytoPanel extends JPanel
 			// mainPanel.add(subPanel, BorderLayout.CENTER);
 		}
 
+		tableModel.filter(manager.getCategoryFilter(network), manager.getRemoveOverlap(network), manager.getOverlapCutoff(network));
 		this.revalidate();
 		this.repaint();
 	}
@@ -523,7 +525,7 @@ public class EnrichmentCytoPanel extends JPanel
 		// re-draw charts if the user changed the color
 		Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
 		if (preselectedTerms.size() > 0)
-			ViewUtils.drawCharts(manager, preselectedTerms, manager.chartType);
+			ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network));
 	}
 	
 	public void resetCharts() {
@@ -558,12 +560,16 @@ public class EnrichmentCytoPanel extends JPanel
 	}
 
 	public void drawCharts() {
+		CyNetwork network = manager.getCurrentNetwork();
+		if (network == null)
+			return;
+
 		resetCharts();
 		Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
 		if (preselectedTerms.size() == 0) {
-			preselectedTerms = getAutoSelectedTopTerms(manager.topTerms);
+			preselectedTerms = getAutoSelectedTopTerms(manager.getTopTerms(network));
 		}
-		ViewUtils.drawCharts(manager, preselectedTerms, manager.chartType);
+		ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network));
 	}
 	
 	private Map<EnrichmentTerm, String> getUserSelectedTerms() {
@@ -614,9 +620,9 @@ public class EnrichmentCytoPanel extends JPanel
 		}
 		
 		// List<CyRow> rows = currTable.getAllRows();
-		Color[] colors = manager.brewerPalette.getColorPalette(manager.topTerms);
+		Color[] colors = manager.getBrewerPalette(network).getColorPalette(manager.getTopTerms(network));
 		Long[] rowNames = tableModel.getRowNames();
-		for (int i = 0; i < manager.topTerms; i++) {
+		for (int i = 0; i < manager.getTopTerms(network); i++) {
 
 			CyRow row = currTable.getRow(rowNames[i]);
 			String selTerm = row.get(EnrichmentTerm.colName, String.class);

@@ -45,13 +45,13 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	final TaskManager<?,?> dialogTaskManager;
 	final SynchronousTaskManager<?> synchronousTaskManager;
 	final AvailableCommands availableCommands;
+
 	private ShowImagesTaskFactory imagesTaskFactory;
 	private ShowEnhancedLabelsTaskFactory labelsTaskFactory;
 	private ShowEnrichmentPanelTaskFactory enrichmentTaskFactory;
-	private boolean showImage = true;
-	private boolean showEnhancedLabels = true;
-	private boolean ignore = false;
+
 	private Boolean haveChemViz = null;
+
 	private Map<CyNetwork, StringNetwork> stringNetworkMap;
 
 	public static String STRINGResolveURI = "https://string-db.org/api/";
@@ -68,27 +68,19 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	// These are various default values that are saved and restored from
 	// the network table
-	public double overlapCutoff = 0.5;
-	public int topTerms = 8;
-	public ColorBrewer brewerPalette = ColorBrewer.Paired;
-	public List<TermCategory> categoryFilter = TermCategory.getValues();
-	public ChartType chartType = ChartType.SPLIT;
+	// TODO: move all of these to StringNetwork?
 
-	// This is the chart type enum
-	public enum ChartType {
-		SPLIT("Split donut"),
-		FULL("Full donut"),
-		TEETH("Donut slices only"),
-		SPLIT_PIE("Split Pie Chart"),
-		PIE("Pie Chart");
+	// Default values.  Network specific values are stored in StringNetwork
+	private int topTerms = 8;
+	private double overlapCutoff = 0.5;
+	private ColorBrewer brewerPalette = ColorBrewer.Paired;
+	private List<TermCategory> categoryFilter = TermCategory.getValues();
+	private ChartType chartType = ChartType.SPLIT;
+	private boolean removeOverlap = false;
+	private boolean showImage = true;
+	private boolean showEnhancedLabels = true;
 
-		String name;
-		ChartType(String name) {
-			this.name = name;
-		}
-
-		public String toString() { return name; }
-	}
+	private boolean ignore = false;
 
 	public StringManager(CyServiceRegistrar registrar) {
 		this.registrar = registrar;
@@ -104,20 +96,32 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		// Get our default settings
 		CyProperty<Properties> configProps = ModelUtils.getPropertyService(this, SavePolicy.CONFIG_DIR);
 		if (ModelUtils.hasProperty(configProps, "overlapCutoff")) {
-			setOverlapCutoff(ModelUtils.getDoubleProperty(configProps,"overlapCutoff"));
+			setOverlapCutoff(null, ModelUtils.getDoubleProperty(configProps,"overlapCutoff"));
 		}
 		if (ModelUtils.hasProperty(configProps, "topTerms")) {
-			setTopTerms(ModelUtils.getIntegerProperty(configProps,"topTerms"));
+			setTopTerms(null, ModelUtils.getIntegerProperty(configProps,"topTerms"));
 		}
 		if (ModelUtils.hasProperty(configProps, "chartType")) {
-			setChartType(ModelUtils.getStringProperty(configProps,"chartType"));
+			setChartType(null, ModelUtils.getStringProperty(configProps,"chartType"));
 		}
 		if (ModelUtils.hasProperty(configProps, "brewerPalette")) {
-			setBrewerPalette(ModelUtils.getStringProperty(configProps,"brewerPalette"));
+			setBrewerPalette(null, ModelUtils.getStringProperty(configProps,"brewerPalette"));
 		}
 		if (ModelUtils.hasProperty(configProps, "categoryFilter")) {
-			setCategoryFilter(ModelUtils.getStringProperty(configProps,"categoryFilter"));
+			setCategoryFilter(null, ModelUtils.getStringProperty(configProps,"categoryFilter"));
 		}
+		if (ModelUtils.hasProperty(configProps, "removeOverlap")) {
+			setRemoveOverlap(null, ModelUtils.getBooleanProperty(configProps,"removeOverlap"));
+		}
+
+		// If we already have networks loaded, see if they are string networks
+		for (CyNetwork network: registrar.getService(CyNetworkManager.class).getNetworkSet()) {
+			if (ModelUtils.ifString(network)) {
+				StringNetwork stringNet = new StringNetwork(this);
+				addStringNetwork(stringNet, network);
+			}
+		}
+
 	}
 
 	public CyNetwork createNetwork(String name) {
@@ -295,6 +299,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		ModelUtils.setStringProperty(configProps,"topTerms", Integer.toString(topTerms));
 		ModelUtils.setStringProperty(configProps,"chartType", chartType.name());
 		ModelUtils.setStringProperty(configProps,"brewerPalette", brewerPalette.name());
+		ModelUtils.setStringProperty(configProps,"removeOverlap", Boolean.toString(removeOverlap));
 		{
 			String categories = "";
 			for (TermCategory c: categoryFilter) {
@@ -315,16 +320,22 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		// a "score" column in the edge table
 		if (ModelUtils.isStringNetwork(network)) {
 			StringNetwork stringNet = new StringNetwork(this);
-			stringNet.setNetwork(network);
 			addStringNetwork(stringNet, network);
 		}
 	}
 
 	public void handleEvent(SessionLoadedEvent arg0) {
+		// Create string networks for any networks loaded by string
+		Set<CyNetwork> networks = arg0.getLoadedSession().getNetworks();
+		for (CyNetwork network: networks) {
+			if (ModelUtils.ifString(network)) {
+				StringNetwork stringNet = new StringNetwork(this);
+				addStringNetwork(stringNet, network);
+			}
+		}
 
 		// load enrichment
 		if (enrichmentTaskFactory != null) {
-			Set<CyNetwork> networks = arg0.getLoadedSession().getNetworks();
 			boolean show = false;
 			for (CyNetwork network : networks) {
 				if (ModelUtils.getEnrichmentNodes(network).size() > 0) {
@@ -416,13 +427,43 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	}
 
 	// Getters and Setters for defaults
-	public double getOverlapCutoff() { return overlapCutoff; }
-	public void setOverlapCutoff(double cutoff) { overlapCutoff = cutoff; }
-	public int getTopTerms() { return topTerms; }
-	public void setTopTerms(int topN) { topTerms = topN; }
-	public List<TermCategory> getCategoryFilter() { return categoryFilter; }
-	public void setCategoryFilter(List<TermCategory> categories) { categoryFilter = categories; }
-	public void setCategoryFilter(String categories) { 
+	public double getOverlapCutoff(CyNetwork network) { 
+		if (network == null || !stringNetworkMap.containsKey(network))
+			return overlapCutoff; 
+		return stringNetworkMap.get(network).getOverlapCutoff();
+	}
+	public void setOverlapCutoff(CyNetwork network, double cutoff) { 
+		if (network == null || !stringNetworkMap.containsKey(network)) {
+			overlapCutoff = cutoff; 
+			return;
+		}
+		stringNetworkMap.get(network).setOverlapCutoff(cutoff);
+	}
+
+	public int getTopTerms(CyNetwork network) { 
+		if (network == null || !stringNetworkMap.containsKey(network))
+			return topTerms; 
+		return stringNetworkMap.get(network).getTopTerms();
+	}
+	public void setTopTerms(CyNetwork network, int topN) { 
+		if (network == null || !stringNetworkMap.containsKey(network)) 
+			topTerms = topN; 
+		else
+			stringNetworkMap.get(network).setTopTerms(topN);
+	}
+
+	public List<TermCategory> getCategoryFilter(CyNetwork network) { 
+		if (network == null || !stringNetworkMap.containsKey(network))
+			return categoryFilter; 
+		return stringNetworkMap.get(network).getCategoryFilter();
+	}
+	public void setCategoryFilter(CyNetwork network, List<TermCategory> categories) { 
+		if (network == null || !stringNetworkMap.containsKey(network)) {
+			categoryFilter = categories; 
+		} else
+			stringNetworkMap.get(network).setCategoryFilter(categories);
+	}
+	public void setCategoryFilter(CyNetwork network, String categories) { 
 		List<TermCategory> catList = new ArrayList<>();
 		if (categories == null) return;
 		String[] catArray = categories.split(",");
@@ -432,18 +473,48 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			} catch (Exception e) {
 			}
 		}
-		categoryFilter = catList;
+		setCategoryFilter(network, catList);
 	}
 
-	public ColorBrewer getBrewerPalette() { return brewerPalette; }
-	public void setBrewerPalette(ColorBrewer palette) { brewerPalette = palette; }
-	public void setBrewerPalette(String palette) { 
-		brewerPalette = Enum.valueOf(ColorBrewer.class, palette);
+	public ColorBrewer getBrewerPalette(CyNetwork network) { 
+		if (network == null || !stringNetworkMap.containsKey(network))
+			return brewerPalette; 
+		return stringNetworkMap.get(network).getBrewerPalette();
+	}
+	public void setBrewerPalette(CyNetwork network, ColorBrewer palette) { 
+		if (network == null || !stringNetworkMap.containsKey(network)) {
+			brewerPalette = palette; 
+		} else
+			stringNetworkMap.get(network).setBrewerPalette(palette);
+	}
+	public void setBrewerPalette(CyNetwork network, String palette) { 
+		setBrewerPalette(network, Enum.valueOf(ColorBrewer.class, palette));
 	}
 
-	public ChartType getChartType() { return chartType; }
-	public void setChartType(ChartType type) { chartType = type; }
-	public void setChartType(String type) { 
-		chartType = Enum.valueOf(ChartType.class, type);
+	public ChartType getChartType(CyNetwork network) { 
+		if (network == null || !stringNetworkMap.containsKey(network))
+			return chartType; 
+		return stringNetworkMap.get(network).getChartType();
+	}
+	public void setChartType(CyNetwork network, ChartType type) { 
+		if (network == null || !stringNetworkMap.containsKey(network)) {
+			chartType = type; 
+		} else
+			stringNetworkMap.get(network).setChartType(type);
+	}
+	public void setChartType(CyNetwork network, String type) { 
+		setChartType(network, Enum.valueOf(ChartType.class, type));
+	}
+
+	public boolean getRemoveOverlap(CyNetwork network) { 
+		if (network == null || !stringNetworkMap.containsKey(network))
+			return removeOverlap; 
+		return stringNetworkMap.get(network).getRemoveOverlap();
+	}
+	public void setRemoveOverlap(CyNetwork network, boolean remove) { 
+		if (network == null || !stringNetworkMap.containsKey(network)) {
+			removeOverlap = remove; 
+		} else
+			stringNetworkMap.get(network).setRemoveOverlap(remove);
 	}
 }

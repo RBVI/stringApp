@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.swing.SwingUtilities;
 
+import org.cytoscape.model.CyNetwork;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
@@ -17,8 +18,8 @@ import org.cytoscape.work.util.BoundedDouble;
 import org.cytoscape.work.util.BoundedInteger;
 import org.cytoscape.work.util.ListSingleSelection;
 
+import edu.ucsf.rbvi.stringApp.internal.model.ChartType;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
-import edu.ucsf.rbvi.stringApp.internal.model.StringManager.ChartType;
 import org.jcolorbrewer.ColorBrewer;
 import org.jcolorbrewer.ui.ColorPaletteChooserDialog;
 import org.jcolorbrewer.ui.ColorPaletteChooserDialog.PALETTE_TYPE;
@@ -26,6 +27,7 @@ import org.jcolorbrewer.ui.ColorPaletteChooserDialog.PALETTE_TYPE;
 public class SettingsTask extends AbstractTask implements ActionListener {
 
 	private StringManager manager;
+	private CyNetwork network;
 
 	@Tunable(description = "Type of chart to draw",
 	         tooltip = "Set the desired chart type",
@@ -47,30 +49,44 @@ public class SettingsTask extends AbstractTask implements ActionListener {
 	         gravity = 3.0, context="gui")
 	public UserAction paletteChooser = new UserAction(this);
 
-	@Tunable(description = "Default overlap cutoff", 
+	@Tunable(description = "Overlap cutoff", 
 	         tooltip = "<html>This is the maximum Jaccard similarity that will be allowed.<br/>"+
 	                   "Values larger than this cutoff will be excluded.</html>",
 	         params="slider=true", gravity = 9.0)
 	public BoundedDouble overlapCutoff = new BoundedDouble(0.0, 0.5, 1.0, false, false);
 
+	@Tunable(description = "Make these settings the default",
+	         longDescription = "Unless this is set to true, these settings only apply to the current network",
+	         tooltip = "<html>Unless this is set to true, these settings only apply to the current network.</html>")
+	public boolean makeDefault = false;
+
 	public SettingsTask(StringManager manager) {
 		this.manager = manager;
-		nTerms.setValue(manager.topTerms);
-		overlapCutoff.setValue(manager.overlapCutoff);
+		this.network = manager.getCurrentNetwork();
+
+		nTerms.setValue(manager.getTopTerms(network));
+		overlapCutoff.setValue(manager.getOverlapCutoff(network));
 		ColorBrewer[] palettes = ColorBrewer.getQualitativeColorPalettes(false);
 		defaultPalette = new ListSingleSelection<ColorBrewer>(Arrays.asList(palettes));
 		chartType = new ListSingleSelection<ChartType>(ChartType.values());
-		chartType.setSelectedValue(manager.chartType);
-		if (manager.brewerPalette != null) defaultPalette.setSelectedValue(manager.brewerPalette);
+		chartType.setSelectedValue(manager.getChartType(network));
+		if (manager.getBrewerPalette(network) != null) defaultPalette.setSelectedValue(manager.getBrewerPalette(network));
 	}
 
 	@Override
 	public void run(TaskMonitor arg0) throws Exception {
-		manager.topTerms = nTerms.getValue();
-		manager.overlapCutoff = overlapCutoff.getValue();
-		manager.brewerPalette = defaultPalette.getSelectedValue();
-		manager.chartType = chartType.getSelectedValue();
-		manager.updateSettings();
+		if (makeDefault) {
+			manager.setTopTerms(null,nTerms.getValue());
+			manager.setOverlapCutoff(null,overlapCutoff.getValue());
+			manager.setBrewerPalette(null,defaultPalette.getSelectedValue());
+			manager.setChartType(null,chartType.getSelectedValue());
+			manager.updateSettings();
+		} else {
+			manager.setTopTerms(network,nTerms.getValue());
+			manager.setOverlapCutoff(network,overlapCutoff.getValue());
+			manager.setBrewerPalette(network,defaultPalette.getSelectedValue());
+			manager.setChartType(network,chartType.getSelectedValue());
+		}
 	}
 
 	public void actionPerformed(ActionEvent e) {

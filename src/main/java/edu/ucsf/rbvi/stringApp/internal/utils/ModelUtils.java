@@ -100,6 +100,7 @@ public class ModelUtils {
 	public static String NET_ENRICHMENT_EDGES = "enrichmentEdges";
 	public static String NET_ENRICHMENT_CLSTR = "enrichmentClusteringCoeff";
 	public static String NET_ENRICHMENT_DEGREE = "enrichmentAvgDegree";
+	public static String NET_ENRICHMENT_SETTINGS = "enrichmentSettings";
 
 	public static String NET_ENRICHMENT_VISTEMRS = "visualizedTerms";
 	public static String NET_ENRICHMENT_VISCOLORS = "visualizedTermsColors";
@@ -117,7 +118,13 @@ public class ModelUtils {
 	// Other stuff
 	public static String COMPOUND = "STITCH compounds";
 	public static String EMPTYLINE = "--------";
-	
+
+	public static boolean ifString(CyNetwork network) {
+		CyRow netRow = network.getRow(network);
+		if (netRow.isSet(CONFIDENCE) && netRow.isSet(NET_SPECIES))
+			return true;
+		return false;
+	}
 	
 	public static List<EntityIdentifier> getEntityIdsFromJSON(StringManager manager,
 			JSONObject object) {
@@ -1300,6 +1307,57 @@ public class ModelUtils {
 		String value = ModelUtils.getStringProperty(properties, propertyKey);
 		if (value == null) return null;
 		return Integer.valueOf(value);
+	}
+
+	public static Boolean getBooleanProperty(CyProperty<Properties> properties, String propertyKey) {
+		String value = ModelUtils.getStringProperty(properties, propertyKey);
+		if (value == null) return null;
+		return Boolean.valueOf(value);
+	}
+
+	public static String listToString(List<?> list) {
+		String str = "";
+		if (list == null || list.size() == 0) return str;
+		for (int i = 0; i < list.size()-1; i++) {
+			str += list.get(i)+",";
+		}
+		return str + list.get(list.size()-1).toString();
+	}
+
+	public static List<String> stringToList(String string) {
+		if (string == null || string.length() == 0) return new ArrayList<String>();
+		String [] arr = string.split(",");
+		return Arrays.asList(arr);
+	}
+
+	public static void updateEnrichmentSettings(CyNetwork network, Map<String, String> settings) {
+		String setting = "";
+		int index = 0;
+		for (String key: settings.keySet()) {
+			if (index > 0) {
+				setting += ";";
+			}
+			setting += key+"="+settings.get(key);
+			index ++;
+		}
+		createColumnIfNeeded(network.getDefaultNetworkTable(), String.class, NET_ENRICHMENT_SETTINGS);
+		network.getRow(network).set(NET_ENRICHMENT_SETTINGS, setting);
+	}
+
+	public static Map<String, String> getEnrichmentSettings(CyNetwork network) {
+		Map<String, String> settings = new HashMap<String, String>();
+		String setting = network.getRow(network).get(NET_ENRICHMENT_SETTINGS, String.class);
+		if (setting == null || setting.length() == 0)
+			return settings;
+
+		String[] settingArray = setting.split(";");
+		for (String s: settingArray) {
+			String[] pair = s.split("=");
+			if (pair.length == 2) {
+				settings.put(pair[0], pair[1]);
+			}
+		}
+		return settings;
 	}
 
 	public static CyProperty<Properties> getPropertyService(StringManager manager,

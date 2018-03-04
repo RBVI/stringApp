@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.swing.SwingUtilities;
 
+import org.cytoscape.model.CyNetwork;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.ProvidesTitle;
@@ -22,6 +23,7 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 
 	private StringManager manager;
 	private EnrichmentTableModel tableModel;
+	private CyNetwork network;
 	
 	// @Tunable(description = "Enrichment cutoff", gravity = 1.0)
 	// public double cutoff = 0.05;
@@ -64,21 +66,22 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 	
 	public FilterEnrichmentTableTask(StringManager manager, EnrichmentTableModel tableModel) {
 		this.manager = manager;
+		network = manager.getCurrentNetwork();
 		this.tableModel = tableModel;
-		overlapCutoff.setValue(manager.overlapCutoff);
-		categories.setSelectedValues(manager.categoryFilter);
+		overlapCutoff.setValue(manager.getOverlapCutoff(network));
+		categories.setSelectedValues(manager.getCategoryFilter(network));
 	}
 
 	@Override
 	public void run(TaskMonitor arg0) throws Exception {
-		System.out.println("Run filtering ...");
 		List<TermCategory> categoryList = categories.getSelectedValues();
 		// Filter the current list
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				tableModel.filter(categoryList, removeOverlapping, overlapCutoff.getValue());
-				manager.overlapCutoff = overlapCutoff.getValue();
-				manager.categoryFilter = categories.getSelectedValues();
+				manager.setRemoveOverlap(network,removeOverlapping);
+				manager.setOverlapCutoff(network,overlapCutoff.getValue());
+				manager.setCategoryFilter(network,categories.getSelectedValues());
 				manager.updateSettings();
 			}
 		});
