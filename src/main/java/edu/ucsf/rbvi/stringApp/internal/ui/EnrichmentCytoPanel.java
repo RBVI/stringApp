@@ -623,7 +623,8 @@ public class EnrichmentCytoPanel extends JPanel
 		Color[] colors = manager.getBrewerPalette(network).getColorPalette(manager.getTopTerms(network));
 		Long[] rowNames = tableModel.getRowNames();
 		for (int i = 0; i < manager.getTopTerms(network); i++) {
-
+			if (i >= rowNames.length)
+				continue;
 			CyRow row = currTable.getRow(rowNames[i]);
 			String selTerm = row.get(EnrichmentTerm.colName, String.class);
 			if (selTerm != null) {

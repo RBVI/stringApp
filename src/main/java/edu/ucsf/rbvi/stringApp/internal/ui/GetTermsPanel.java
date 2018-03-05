@@ -131,7 +131,7 @@ public class GetTermsPanel extends JPanel {
 
 	private void init() {
 		// Create the surrounding panel
-		setPreferredSize(new Dimension(800,650));
+		setPreferredSize(new Dimension(800,700));
 		EasyGBC c = new EasyGBC();
 
 		// Create the species panel
@@ -353,7 +353,7 @@ public class GetTermsPanel extends JPanel {
 		EasyGBC c = new EasyGBC();
 
 		{
-			String label = "<html><b>Multiple possible matches for some terms:</b> ";
+			String label = "<html><b>Multiple possible matches found for some terms:</b> ";
 			label += "Select the term in the left column to see the possibilities, then select the correct term from the table";
 			label += "</html>";
 
