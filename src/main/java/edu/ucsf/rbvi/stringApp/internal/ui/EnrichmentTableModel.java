@@ -190,7 +190,7 @@ public class EnrichmentTableModel extends AbstractTableModel {
 		List<Long> currentTerms = new ArrayList<Long>();
 		currentTerms.add(sortedArray[0]);
 		for (int i = 1; i < length; i++) {
-			if (jaccard2(currentTerms, sortedArray[i]) < cutoff)
+			if (jaccard(currentTerms, sortedArray[i]) < cutoff)
 				currentTerms.add(sortedArray[i]);
 		}
 		return(currentTerms.toArray(new Long[1]));
