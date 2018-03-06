@@ -18,10 +18,9 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 	final List<String> stringIds;
 	final Map<String, String> queryTermMap;
 	String useDATABASE;
-	
 
-	public ImportNetworkTaskFactory(final StringNetwork stringNet, final String species, 
-	                                int taxon, int confidence, int additional_nodes, 
+	public ImportNetworkTaskFactory(final StringNetwork stringNet, final String species,
+	                                int taxon, int confidence, int additional_nodes,
 	                                final List<String> stringIds,
 																	final Map<String, String> queryTermMap,
 																	final String useDATABASE) {
@@ -39,13 +38,14 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 		if (stringIds == null) {
 			return new TaskIterator(
 					new LoadSpeciesInteractions(stringNet, species, taxon, confidence,
-							Species.getSpeciesOfficialName(String.valueOf(taxon)), useDATABASE));
+					                            Species.getSpeciesOfficialName(String.valueOf(taxon)),
+					                            useDATABASE));
 		} else if (stringNet.getNetwork() == null) {
-			return new TaskIterator(new LoadInteractions(stringNet, species, taxon, 
-			                                             confidence, additionalNodes, stringIds, 
+			return new TaskIterator(new LoadInteractions(stringNet, species, taxon,
+			                                             confidence, additionalNodes, stringIds,
 																									 queryTermMap, "", useDATABASE));
-		} 
-		return new TaskIterator(new LoadTermsTask(stringNet, species, taxon, confidence, 
+		}
+		return new TaskIterator(new LoadTermsTask(stringNet, species, taxon, confidence,
 		                                          additionalNodes, stringIds, queryTermMap, useDATABASE));
 	}
 }

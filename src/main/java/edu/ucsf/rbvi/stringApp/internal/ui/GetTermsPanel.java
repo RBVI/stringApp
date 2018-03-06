@@ -61,6 +61,7 @@ import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskObserver;
+import org.cytoscape.work.TunableSetter;
 
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
@@ -68,12 +69,14 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetAnnotationsTask;
+import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ImportNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.TextUtils;
 
 // TODO: [Optional] Improve non-gui mode
-public class GetTermsPanel extends JPanel { 
+public class GetTermsPanel extends JPanel implements TaskObserver { 
 	StringNetwork stringNetwork = null;
 	StringNetwork initialStringNetwork = null;
 	final StringManager manager;
@@ -158,7 +161,7 @@ public class GetTermsPanel extends JPanel {
 			JPanel speciesBox = createSpeciesPartnerComboBox(ModelUtils.getAvailableInteractionPartners(manager.getCurrentNetwork()));
 			add(speciesBox, c.expandHoriz().insets(0,5,0,5));
 		}
-		
+
 		// Create the search list panel
 		mainSearchPanel = createSearchPanel();
 		add(mainSearchPanel, c.down().expandBoth().insets(5,5,0,5));
@@ -255,7 +258,6 @@ public class GetTermsPanel extends JPanel {
  
 	JPanel createOrgBox() {
 		JPanel boxPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		// orgBox = new JCheckBox("All proteins of this species");
 		wholeOrgBox = new JCheckBox(new AbstractAction("All proteins of this species") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -263,9 +265,11 @@ public class GetTermsPanel extends JPanel {
 					searchTerms.setText("");
 					searchTerms.setEditable(false);
 					optionsPanel.enableAdditionalNodes(false);
+					optionsPanel.enableLoadEnrichment(false);
 				} else {
 					searchTerms.setEditable(true);
 					optionsPanel.enableAdditionalNodes(true);
+					optionsPanel.enableLoadEnrichment(true);
 				}
 			}
 		});
@@ -273,8 +277,8 @@ public class GetTermsPanel extends JPanel {
 		boxPanel.add(wholeOrgBox);
 		return boxPanel;
 	}
-	
-	
+
+
 	JPanel createControlButtons() {
 		JPanel buttonPanel = new JPanel();
 		BoxLayout layout = new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS);
@@ -335,7 +339,10 @@ public class GetTermsPanel extends JPanel {
 			                                       queryTermMap, useDATABASE);
 		}
 		cancel();
-		manager.execute(factory.createTaskIterator());
+		if (optionsPanel.getLoadEnrichment())
+			manager.execute(factory.createTaskIterator(), this);
+		else
+			manager.execute(factory.createTaskIterator());
 	}
 
 	public void createResolutionPanel() {
@@ -403,7 +410,7 @@ public class GetTermsPanel extends JPanel {
 			termScroller.setMinimumSize(new Dimension(100, 350));
 			ac.anchor("east").expandVert();
 			annPanel.add(termScroller, ac);
-	
+
 			JScrollPane tableScroller = new JScrollPane(table);
 			ac.right().expandBoth().insets(0,5,0,5);
 			annPanel.add(tableScroller, ac);
@@ -468,6 +475,26 @@ public class GetTermsPanel extends JPanel {
 		((Window)getRootPane().getParent()).dispose();
 	}
 
+	@Override
+	public void allFinished(FinishStatus finishStatus) {
+		//
+		if (optionsPanel.getLoadEnrichment()) {
+			GetEnrichmentTaskFactory tf = new GetEnrichmentTaskFactory(manager);
+			ShowEnrichmentPanelTaskFactory showTf = new ShowEnrichmentPanelTaskFactory(manager);
+			tf.setShowEnrichmentPanelFactory(showTf);
+			TunableSetter setter = manager.getService(TunableSetter.class);
+			Map<String, Object> valueMap = new HashMap<>();
+			valueMap.put("cutoff", 0.05);
+			TaskIterator newIterator = 
+							setter.createTaskIterator(tf.createTaskIterator(manager.getCurrentNetwork()), valueMap);
+			// System.out.println("stringNetwork network = "+stringNetwork.getNetwork());
+			manager.execute(newIterator);
+		}
+	}
+
+	@Override
+	public void taskFinished(ObservableTask task) {
+	}
 
 	class InitialAction extends AbstractAction implements TaskObserver {
 		public InitialAction() {
@@ -509,7 +536,7 @@ public class GetTermsPanel extends JPanel {
 							                        "Nothing entered", JOptionPane.ERROR_MESSAGE); 
 				return;
 			}
-			
+
 			manager.info("Getting annotations for "+speciesName+"terms: "+terms);
 
 			// Launch a task to get the annotations. 
@@ -542,15 +569,6 @@ public class GetTermsPanel extends JPanel {
 				int additionalNodes = optionsPanel.getAdditionalNodes();
 				// This mimics the String web site behavior
 				if (stringNetwork.getResolvedTerms() == 1 && additionalNodes == 0) {
-					/*
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							JOptionPane.showMessageDialog(null, 
-													"This will return only one node (Hint: increase maximum interactors slider?)",
-										       "Hint", JOptionPane.WARNING_MESSAGE); 
-						}
-					});
-					*/
 					additionalNodes = 10;
 					logger.warn("STRING: Only one protein or compound was selected -- additional interactions set to 10");
 				}

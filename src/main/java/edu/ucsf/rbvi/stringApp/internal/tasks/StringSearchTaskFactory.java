@@ -198,19 +198,9 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 			int additionalNodes = getAdditionalNodes();
 			// This mimics the String web site behavior
 			if (stringNetwork.getResolvedTerms() == 1 && additionalNodes == 0) {
-				/*
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						JOptionPane.showMessageDialog(null, 
-												"This will return only one node (Hint: increase maximum interactors slider?)",
-									       "Hint", JOptionPane.WARNING_MESSAGE); 
-					}
-				});
-				*/
 				additionalNodes = 10;
 				logger.warn("STRING Protein: Only one protein was selected -- additional interactions set to 10");
 			}
-			//	additionalNodes = 10;
 
 			final int addNodes = additionalNodes;
 
@@ -244,6 +234,9 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 		TaskFactory factory = new ImportNetworkTaskFactory(stringNetwork, getSpecies(), 
 		                                                   taxon, confidence, additionalNodes, stringIds,
 		                                                   queryTermMap, Databases.STRING.getAPIName());
-		manager.execute(factory.createTaskIterator());
+		if (optionsPanel.getLoadEnrichment())
+			manager.execute(factory.createTaskIterator(), this);
+		else
+			manager.execute(factory.createTaskIterator());
 	}
 }

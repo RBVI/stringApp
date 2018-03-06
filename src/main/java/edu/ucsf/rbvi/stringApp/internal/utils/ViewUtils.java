@@ -535,6 +535,7 @@ public class ViewUtils {
 		CyNetworkViewManager netManager = manager.getService(CyNetworkViewManager.class);
 		CyNetworkView netView = null;
 		for (CyNetworkView currNetView : netManager.getNetworkViewSet()) {
+			// TODO: do we really want to insist on this?
 			if (vmm.getVisualStyle(currNetView).getTitle().startsWith(ViewUtils.STYLE_NAME) || vmm
 					.getVisualStyle(currNetView).getTitle().startsWith(ViewUtils.STYLE_NAME_ORG)) {
 				netView = currNetView;

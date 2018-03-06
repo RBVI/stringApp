@@ -200,9 +200,11 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 
 		// show enrichment results
 		if (enrichmentResult.size() > 0) {
-			SynchronousTaskManager<?> taskM = manager.getService(SynchronousTaskManager.class);
-			TaskIterator ti = showFactory.createTaskIterator(true);
-			taskM.execute(ti);
+			if (showFactory != null) {
+				SynchronousTaskManager<?> taskM = manager.getService(SynchronousTaskManager.class);
+				TaskIterator ti = showFactory.createTaskIterator(true);
+				taskM.execute(ti);
+			}
 		} else {
 			// TODO: Some error message to the user
 			monitor.setStatusMessage(

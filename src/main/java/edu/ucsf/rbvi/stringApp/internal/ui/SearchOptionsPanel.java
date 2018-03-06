@@ -71,6 +71,7 @@ public class SearchOptionsPanel extends JPanel {
 	JSlider additionalNodesSlider;
 	JTextField additionalNodesValue;
 	JCheckBox useSmartDelimiters;
+	JCheckBox loadEnrichment;
 	JPanel advancedOptions;
 	NumberFormat formatter = new DecimalFormat("#0.00");
 	NumberFormat intFormatter = new DecimalFormat("#0");
@@ -121,11 +122,9 @@ public class SearchOptionsPanel extends JPanel {
 		JPanel additionalNodesSlider = createAdditionalNodesSlider();
 		add(additionalNodesSlider, c.down().expandBoth().insets(5,5,0,5));
 
-		if (!isDisease && !isPubMed) {
-			// Add some "advanced" options
-			advancedOptions = createAdvancedOptions();
-			add(advancedOptions, c.down().expandBoth().insets(5,5,0,5));
-		}
+		// Add some "advanced" options
+		advancedOptions = createAdvancedOptions();
+		add(advancedOptions, c.down().expandBoth().insets(5,5,0,5));
 
 		// Add Query/Cancel buttons
 		// JPanel buttonPanel =  createControlButtons(true);
@@ -155,20 +154,35 @@ public class SearchOptionsPanel extends JPanel {
 		JLabel optionsLabel = new JLabel("<html><b>Options:</b></html>");
 		c.anchor("west").insets(0,5,0,5);
 		advancedPanel.add(optionsLabel, c);
+		if (!isDisease && !isPubMed) {
+			c.right().noExpand().insets(0,10,0,5);
+			useSmartDelimiters = new JCheckBox("Use Smart Delimiters", false);
+			useSmartDelimiters.setToolTipText("<html>\"Smart\" delimiters attempts to provide flexibility "+
+			                                  "<br/>to the format of the query terms.  If the entered query "+
+			                                  "<br/>doesn't contain any newlines, then tabs, commas, and "+
+			                                  "<br/>semicolins will be tried as delimiters, in that order.  "+
+			                                  "<br/>Note that smart delimiters don't support quotes - to escape "+
+			                                  "<br/>a delimiter, use backslash.</html>");
+			advancedPanel.add(useSmartDelimiters, c);
+		}
 		c.right().expandHoriz().insets(0,10,0,5);
-		useSmartDelimiters = new JCheckBox("Use Smart Delimiters", false);
-		useSmartDelimiters.setToolTipText("<html>\"Smart\" delimiters attempts to provide flexibility "+
-		                                  "<br/>to the format of the query terms.  If the entered query "+
-		                                  "<br/>doesn't contain any newlines, then tabs, commas, and "+
-		                                  "<br/>semicolins will be tried as delimiters, in that order.  "+
-		                                  "<br/>Note that smart delimiters don't support quotes - to escape "+
-		                                  "<br/>a delimiter, use backslash.</html>");
-		advancedPanel.add(useSmartDelimiters, c);
+		loadEnrichment = new JCheckBox("Load Enrichment Data", false);
+		advancedPanel.add(loadEnrichment, c);
 		return advancedPanel;
 	}
 
 	public boolean getUseSmartDelimiters() {
 		return useSmartDelimiters.isSelected();
+	}
+
+	public boolean getLoadEnrichment() {
+		if (!loadEnrichment.isEnabled())
+			return false;
+		return loadEnrichment.isSelected();
+	}
+
+	public void enableLoadEnrichment(boolean enable) {
+		loadEnrichment.setEnabled(enable);
 	}
 
 	JPanel createSpeciesComboBox(List<Species> speciesList) {
@@ -309,6 +323,10 @@ public class SearchOptionsPanel extends JPanel {
 		return confidenceSlider.getValue();
 	}
 
+	public void setConfidence(int conf) {
+		confidenceSlider.setValue(conf);
+	}
+
 	public void showAdvancedOptions(boolean show) {
 		advancedOptions.setVisible(show);
 	}
@@ -390,6 +408,10 @@ public class SearchOptionsPanel extends JPanel {
 
 	public int getAdditionalNodes() {
 		return additionalNodesSlider.getValue();
+	}
+
+	public void setAdditionalNodes(int additionalNodes) {
+		additionalNodesSlider.setValue(additionalNodes);
 	}
 
 	public void enableAdditionalNodes(boolean enable) {
