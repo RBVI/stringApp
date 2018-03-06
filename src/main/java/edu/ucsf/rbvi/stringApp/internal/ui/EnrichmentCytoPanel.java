@@ -29,6 +29,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -47,6 +48,7 @@ import javax.swing.table.TableRowSorter;
 
 import org.cytoscape.application.swing.CytoPanelComponent2;
 import org.cytoscape.application.swing.CytoPanelName;
+import org.cytoscape.command.AvailableCommands;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.CyNode;
@@ -208,6 +210,14 @@ public class EnrichmentCytoPanel extends JPanel
 			Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
 			if (preselectedTerms.size() == 0) {
 				preselectedTerms = getAutoSelectedTopTerms(manager.getTopTerms(network));
+			}
+			AvailableCommands availableCommands = (AvailableCommands) manager
+					.getService(AvailableCommands.class);
+			if (!availableCommands.getNamespaces().contains("enhancedGraphics")) {
+				JOptionPane.showMessageDialog(null,
+						"Charts will not be displayed. You need to install enhancedGraphics from the App Manager or Cytoscape App Store.",
+						"No results", JOptionPane.WARNING_MESSAGE);
+				return;
 			}
 			ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network));
 		} else if (e.getSource().equals(butResetCharts)) {
