@@ -70,6 +70,7 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 		this.tableModel = tableModel;
 		overlapCutoff.setValue(manager.getOverlapCutoff(network));
 		categories.setSelectedValues(manager.getCategoryFilter(network));
+		removeOverlapping = manager.getRemoveOverlap(network);
 	}
 
 	@Override
