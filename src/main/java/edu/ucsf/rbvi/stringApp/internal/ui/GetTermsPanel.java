@@ -480,7 +480,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		//
 		if (optionsPanel.getLoadEnrichment()) {
 			GetEnrichmentTaskFactory tf = new GetEnrichmentTaskFactory(manager);
-			ShowEnrichmentPanelTaskFactory showTf = new ShowEnrichmentPanelTaskFactory(manager);
+			ShowEnrichmentPanelTaskFactory showTf = manager.getShowEnrichmentPanelTaskFactory();
 			tf.setShowEnrichmentPanelFactory(showTf);
 			TunableSetter setter = manager.getService(TunableSetter.class);
 			Map<String, Object> valueMap = new HashMap<>();

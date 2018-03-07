@@ -391,6 +391,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		enrichmentTaskFactory = factory;		
 	}
 
+	public ShowEnrichmentPanelTaskFactory getShowEnrichmentPanelTaskFactory() {
+		return enrichmentTaskFactory;		
+	}
+
 	public <T> T getService(Class<? extends T> clazz) {
 		return registrar.getService(clazz);
 	}

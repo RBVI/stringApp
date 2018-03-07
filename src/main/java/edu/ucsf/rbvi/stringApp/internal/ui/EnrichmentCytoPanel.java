@@ -386,7 +386,8 @@ public class EnrichmentCytoPanel extends JPanel
 			// mainPanel.add(subPanel, BorderLayout.CENTER);
 		}
 
-		tableModel.filter(manager.getCategoryFilter(network), manager.getRemoveOverlap(network), manager.getOverlapCutoff(network));
+		if (tableModel != null) 
+			tableModel.filter(manager.getCategoryFilter(network), manager.getRemoveOverlap(network), manager.getOverlapCutoff(network));
 		this.revalidate();
 		this.repaint();
 	}
@@ -475,14 +476,14 @@ public class EnrichmentCytoPanel extends JPanel
 		}
 		// experimental: clear term selection when all network nodes are unselected
 		CyNetwork network = manager.getCurrentNetwork();
-		if (!clearSelection && network != null) {
+		JTable currentTable = enrichmentTables.get(showTable);
+		if (!clearSelection && network != null && currentTable != null) {
 			List<CyNode> nodes = network.getNodeList();
 			for (CyNode node : nodes) {
 				if (network.getRow(node).get(CyNetwork.SELECTED, Boolean.class)) {
 					return;
 				}
 			}
-			JTable currentTable = enrichmentTables.get(showTable);
 			currentTable.clearSelection();
 		}
 	}
