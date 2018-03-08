@@ -134,7 +134,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 
 	private void init() {
 		// Create the surrounding panel
-		setPreferredSize(new Dimension(800,700));
+		setPreferredSize(new Dimension(800,600));
 		EasyGBC c = new EasyGBC();
 
 		// Create the species panel
@@ -407,7 +407,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 			JScrollPane termScroller = new JScrollPane(termList);
 			termScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 			termScroller.setPreferredSize(new Dimension(100, 350));
-			termScroller.setMinimumSize(new Dimension(100, 350));
+			termScroller.setMinimumSize(new Dimension(100, 200));
 			ac.anchor("east").expandVert();
 			annPanel.add(termScroller, ac);
 

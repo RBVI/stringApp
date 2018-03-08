@@ -128,7 +128,7 @@ public class PubMedQueryPanel extends JPanel implements TaskObserver {
 
 	private void init() {
 		// Create the surrounding panel
-		setPreferredSize(new Dimension(600,400));
+		setPreferredSize(new Dimension(800,600));
 		EasyGBC c = new EasyGBC();
 
 		// Create the species panel
