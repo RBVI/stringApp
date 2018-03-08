@@ -100,6 +100,16 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		}
 		if (selected.length() == 0) {
 			return;
+		} 
+		if (analyzedNodes.size() > 2000) {
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					JOptionPane.showMessageDialog(null,
+							"Task cannot be performed. Enrichment can be retrieved only for at most 2000 proteins.",
+							"Error", JOptionPane.ERROR_MESSAGE);
+				}
+			});
+			return;
 		}
 		// System.out.println(selected);
 		List<String> netSpecies = ModelUtils.getNetworkSpeciesTaxons(network);
