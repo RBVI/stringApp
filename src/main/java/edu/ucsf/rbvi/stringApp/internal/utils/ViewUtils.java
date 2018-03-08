@@ -532,19 +532,11 @@ public class ViewUtils {
 
 		// System.out.println(selectedTerms);
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
-		CyNetworkViewManager netManager = manager.getService(CyNetworkViewManager.class);
-		CyNetworkView netView = null;
-		for (CyNetworkView currNetView : netManager.getNetworkViewSet()) {
-			// TODO: do we really want to insist on this?
-			if (vmm.getVisualStyle(currNetView).getTitle().startsWith(ViewUtils.STYLE_NAME) || vmm
-					.getVisualStyle(currNetView).getTitle().startsWith(ViewUtils.STYLE_NAME_ORG)) {
-				netView = currNetView;
-				ViewUtils.updatePieCharts(manager, vmm.getVisualStyle(currNetView), network, true);
-			}
-		}
-		if (netView != null)
+		CyNetworkView netView = manager.getCurrentNetworkView();
+		if (netView != null) {
+			ViewUtils.updatePieCharts(manager, vmm.getVisualStyle(netView), network, true);
 			netView.updateView();
-		
+		}		
 		// save in network table
 		CyTable netTable = network.getDefaultNetworkTable();
 		ModelUtils.createListColumnIfNeeded(netTable, String.class, ModelUtils.NET_ENRICHMENT_VISTEMRS);
