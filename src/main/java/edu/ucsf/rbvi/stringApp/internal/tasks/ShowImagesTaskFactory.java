@@ -65,6 +65,7 @@ public class ShowImagesTaskFactory extends AbstractNetworkViewTaskFactory implem
 			props.setProperty(TITLE, "Show structure images");
 		props.setProperty(MENU_GRAVITY, "7.0");
 		props.setProperty(IN_MENU_BAR, "true");
+		props.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 		manager.registerService(this, NetworkViewTaskFactory.class, props);
 	}
 }

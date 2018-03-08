@@ -355,7 +355,7 @@ public class CyActivator extends AbstractCyActivator {
 			Properties props = new Properties();
 			props.setProperty(PREFERRED_MENU, "Apps.STRING");
 			props.setProperty(TITLE, "Set as STRING network");
-			props.setProperty(MENU_GRAVITY, "10.0");
+			props.setProperty(MENU_GRAVITY, "6.0");
 			props.setProperty(IN_MENU_BAR, "true");
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "make string");

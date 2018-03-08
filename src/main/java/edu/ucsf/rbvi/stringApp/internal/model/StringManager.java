@@ -195,6 +195,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		return registrar.getService(CyApplicationManager.class).getCurrentNetwork();
 	}
 
+	public CyNetworkView getCurrentNetworkView() {
+		return registrar.getService(CyApplicationManager.class).getCurrentNetworkView();
+	}
+
 	public boolean showImage() { return showImage; }
 
 	public void setShowImage(boolean set) { 
