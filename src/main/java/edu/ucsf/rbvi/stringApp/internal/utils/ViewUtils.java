@@ -57,6 +57,7 @@ public class ViewUtils {
 		// else
 		updateColorMap(manager, stringStyle, network);
 		updateEnhancedLabels(manager, stringStyle, network, manager.showEnhancedLabels());
+		updateGlassBallEffect(manager, stringStyle, network, manager.showGlassBallEffect());
 		
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
 		vmm.setCurrentVisualStyle(stringStyle);
@@ -371,6 +372,32 @@ public class ViewUtils {
 			// dMapping.putMapValue("protein", upperRight);
 			// stringStyle.addVisualMappingFunction(dMapping);
 			// }
+		}
+	}
+
+	public static void updateGlassBallEffect(StringManager manager, VisualStyle stringStyle, 
+            CyNetwork net, boolean show) {
+
+		VisualMappingFunctionFactory passthroughFactory = manager
+				.getService(VisualMappingFunctionFactory.class, "(mapping.type=passthrough)");
+		VisualLexicon lex = manager.getService(RenderingEngineManager.class)
+				.getDefaultVisualLexicon();
+		
+		// Set up the passthrough mapping for the glass ball effect
+		if (show) {
+			{
+				VisualProperty customGraphics = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_1");
+				PassthroughMapping pMapping = 
+					(PassthroughMapping) passthroughFactory.createVisualMappingFunction(ModelUtils.STYLE, 
+					                                                                    String.class, customGraphics);
+				stringStyle.addVisualMappingFunction(pMapping);
+			}
+
+		} else {
+			stringStyle
+					.removeVisualMappingFunction(lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_1"));
+			stringStyle.removeVisualMappingFunction(
+					lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_POSITION_1"));
 		}
 	}
 

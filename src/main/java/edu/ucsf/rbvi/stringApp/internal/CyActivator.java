@@ -48,6 +48,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.SettingsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowChartsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.StitchSearchTaskFactory;
@@ -345,7 +346,7 @@ public class CyActivator extends AbstractCyActivator {
 			Properties props = new Properties();
 			props.setProperty(PREFERRED_MENU, "Apps.STRING");
 			props.setProperty(TITLE, "Set STRING label attribute");
-			props.setProperty(MENU_GRAVITY, "9.0");
+			props.setProperty(MENU_GRAVITY, "10.0");
 			props.setProperty(IN_MENU_BAR, "true");
 			registerService(bc, setLabel, NetworkTaskFactory.class, props);
 		}
@@ -517,6 +518,13 @@ public class CyActivator extends AbstractCyActivator {
 			ShowEnhancedLabelsTaskFactory showEnhancedLabelsTF = new ShowEnhancedLabelsTaskFactory(manager);
 			showEnhancedLabelsTF.reregister();
 			manager.setShowEnhancedLabelsTaskFactory(showEnhancedLabelsTF);
+		}
+
+		{
+			// Register our "show glass ball effect" toggle
+			ShowGlassBallEffectTaskFactory showGlassBallEffectTF = new ShowGlassBallEffectTaskFactory(manager);
+			showGlassBallEffectTF.reregister();
+			manager.setShowGlassBallEffectTaskFactory(showGlassBallEffectTF);
 		}
 
 		{

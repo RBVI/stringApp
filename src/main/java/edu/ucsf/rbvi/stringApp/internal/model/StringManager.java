@@ -33,6 +33,7 @@ import org.cytoscape.work.TaskObserver;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
@@ -49,6 +50,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private ShowImagesTaskFactory imagesTaskFactory;
 	private ShowEnhancedLabelsTaskFactory labelsTaskFactory;
 	private ShowEnrichmentPanelTaskFactory enrichmentTaskFactory;
+	private ShowGlassBallEffectTaskFactory glassBallTaskFactory;
 
 	private Boolean haveChemViz = null;
 
@@ -64,7 +66,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String APIVERSION = "String-api-version";
 	public static String RESULT = "QueryResult";
 	
-	public static boolean enableViruses = false;
+	public static boolean enableViruses = true;
 
 	// These are various default values that are saved and restored from
 	// the network table
@@ -79,6 +81,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private boolean removeOverlap = false;
 	private boolean showImage = true;
 	private boolean showEnhancedLabels = true;
+	private boolean showGlassBallEffect = true;
 
 	private boolean ignore = false;
 
@@ -213,6 +216,14 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		ModelUtils.setStringProperty(this, ModelUtils.showEnhancedLabelsFlag, new Boolean(set), SavePolicy.SESSION_FILE);
 	}
 
+	public boolean showGlassBallEffect() { return showGlassBallEffect; }
+	
+	public void setshowGlassBallEffect(boolean set) { 
+		showGlassBallEffect = set; 
+		ModelUtils.setStringProperty(this, ModelUtils.showGlassBallEffectFlag, new Boolean(set), SavePolicy.SESSION_FILE);
+	}
+
+	
 	public void flushEvents() {
 		cyEventHelper.flushPayloadEvents();
 	}
@@ -368,6 +379,20 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			labelsTaskFactory.reregister();
 		}
 		
+		// check if glass ball effect should be shown or not
+		if (glassBallTaskFactory != null) {
+			String sessionValueLabels = ModelUtils.getStringProperty(this,
+					ModelUtils.showGlassBallEffectFlag, SavePolicy.SESSION_FILE);
+			// System.out.println("show labels: " + sessionValueLabels);
+			if (sessionValueLabels != null) {
+				showGlassBallEffect = Boolean.parseBoolean(sessionValueLabels);
+			} else {
+				ModelUtils.setStringProperty(this, ModelUtils.showGlassBallEffectFlag,
+						new Boolean(showGlassBallEffect), SavePolicy.SESSION_FILE);
+			}
+			glassBallTaskFactory.reregister();
+		}
+
 		// check if structure images should be shown or not
 		if (imagesTaskFactory != null) {
 			String sessionValueImage = ModelUtils.getStringProperty(this,
@@ -389,6 +414,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	
 	public void setShowEnhancedLabelsTaskFactory(ShowEnhancedLabelsTaskFactory factory) {
 		labelsTaskFactory = factory;		
+	}
+
+	public void setShowGlassBallEffectTaskFactory(ShowGlassBallEffectTaskFactory factory) {
+		glassBallTaskFactory = factory;		
 	}
 
 	public void setShowEnrichmentPanelTaskFactory(ShowEnrichmentPanelTaskFactory factory) {
