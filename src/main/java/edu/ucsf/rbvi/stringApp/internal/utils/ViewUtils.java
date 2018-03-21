@@ -565,8 +565,11 @@ public class ViewUtils {
 			if (ChartType.PIE.equals(type) || ChartType.SPLIT_PIE.equals(type)) {
 				ViewUtils.updateGlassBallEffect(manager, vmm.getVisualStyle(netView), network, false);
 				manager.setshowGlassBallEffect(false);
-				manager.getShowGlassBallEffectTaskFactory().reregister();
+			} else {
+				ViewUtils.updateGlassBallEffect(manager, vmm.getVisualStyle(netView), network, true);
+				manager.setshowGlassBallEffect(true);
 			}
+			manager.getShowGlassBallEffectTaskFactory().reregister();
 			netView.updateView();
 		}		
 		// save in network table

@@ -10,6 +10,7 @@ import javax.swing.SwingUtilities;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ProvidesTitle;
+import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.Tunable;
@@ -87,6 +88,9 @@ public class SettingsTask extends AbstractTask implements ActionListener {
 			manager.setBrewerPalette(network,defaultPalette.getSelectedValue());
 			manager.setChartType(network,chartType.getSelectedValue());
 		}
+		// TODO: maybe this is a way to automatically apply settings?
+		TaskManager<?, ?> tm = manager.getService(TaskManager.class);
+		tm.execute(new ShowChartsTaskFactory(manager).createTaskIterator());
 	}
 
 	public void actionPerformed(ActionEvent e) {
