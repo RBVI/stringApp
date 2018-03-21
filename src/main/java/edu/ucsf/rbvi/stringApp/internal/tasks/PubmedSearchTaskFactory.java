@@ -1,5 +1,9 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
+import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.STRING_COLORS;
+import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.PUBMED_LAYERS;
+import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.getIconFont;
+
 import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.FontMetrics;
@@ -54,6 +58,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.GetAnnotationsTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ImportNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.ui.PubMedQueryPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.SearchOptionsPanel;
+import edu.ucsf.rbvi.stringApp.internal.utils.TextIcon;
 
 public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	StringManager manager;
@@ -72,8 +77,7 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	private JTextField queryComponent = null;
 	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
 
-	private static final Icon icon = new ImageIcon(
-      StringSearchTaskFactory.class.getResource("/images/pubmed_logo.png"));
+	private static final Icon icon = new TextIcon(PUBMED_LAYERS, getIconFont(32.0f), STRING_COLORS, 36, 36);
 
 	private static URL stringURL() {
 		try {
