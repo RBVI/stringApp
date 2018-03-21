@@ -1,42 +1,32 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
+import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.DISEASE_LAYERS;
+import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.STRING_COLORS;
+import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.getIconFont;
+
 import java.awt.Dialog;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 import org.apache.log4j.Logger;
-
 import org.cytoscape.application.CyUserLog;
 import org.cytoscape.application.swing.search.AbstractNetworkSearchTaskFactory;
-import org.cytoscape.work.FinishStatus;
 import org.cytoscape.work.AbstractTask;
-import org.cytoscape.work.ObservableTask;
-import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.TaskObserver;
-import org.cytoscape.io.webservice.NetworkImportWebServiceClient;
-import org.cytoscape.io.webservice.SearchWebServiceClient;
-import org.cytoscape.io.webservice.swing.AbstractWebServiceGUIClient;
 
-import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
-import edu.ucsf.rbvi.stringApp.internal.tasks.GetAnnotationsTask;
-import edu.ucsf.rbvi.stringApp.internal.tasks.ImportNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.ui.DiseaseQueryPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.SearchOptionsPanel;
+import edu.ucsf.rbvi.stringApp.internal.utils.TextIcon;
 
 public class DiseaseSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	StringManager manager;
@@ -56,8 +46,7 @@ public class DiseaseSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	private SearchOptionsPanel optionsPanel = null;
 	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
 
-	private static final Icon icon = new ImageIcon(
-      StringSearchTaskFactory.class.getResource("/images/disease_logo.png"));
+	private static final Icon icon = new TextIcon(DISEASE_LAYERS, getIconFont(32.0f), STRING_COLORS, 36, 36);
 
 	private static URL stringURL() {
 		try {
