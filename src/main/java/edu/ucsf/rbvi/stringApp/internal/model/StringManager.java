@@ -420,6 +420,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		glassBallTaskFactory = factory;		
 	}
 
+	public ShowGlassBallEffectTaskFactory getShowGlassBallEffectTaskFactory() {
+		return glassBallTaskFactory;
+	}
+	
 	public void setShowEnrichmentPanelTaskFactory(ShowEnrichmentPanelTaskFactory factory) {
 		enrichmentTaskFactory = factory;		
 	}

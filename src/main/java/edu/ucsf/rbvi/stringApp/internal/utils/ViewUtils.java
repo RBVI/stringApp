@@ -562,6 +562,11 @@ public class ViewUtils {
 		CyNetworkView netView = manager.getCurrentNetworkView();
 		if (netView != null) {
 			ViewUtils.updatePieCharts(manager, vmm.getVisualStyle(netView), network, true);
+			if (ChartType.PIE.equals(type) || ChartType.SPLIT_PIE.equals(type)) {
+				ViewUtils.updateGlassBallEffect(manager, vmm.getVisualStyle(netView), network, false);
+				manager.setshowGlassBallEffect(false);
+				manager.getShowGlassBallEffectTaskFactory().reregister();
+			}
 			netView.updateView();
 		}		
 		// save in network table
