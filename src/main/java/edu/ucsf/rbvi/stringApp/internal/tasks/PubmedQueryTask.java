@@ -55,7 +55,7 @@ public class PubmedQueryTask extends AbstractTask implements ObservableTask {
 	@Tunable(description = "Maximum additional interactors",
 	         longDescription="The maximum number of proteins to return in addition to the query set",
 					 exampleStringValue="100")
-	public BoundedInteger limit = new BoundedInteger(0, 10, 10000, false, false);
+	public BoundedInteger limit = new BoundedInteger(0, 100, 10000, false, false);
 
 	@Tunable(description = "Confidence cutoff",
 	         longDescription="The confidence score reflects the cumulated evidence that this "+

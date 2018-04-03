@@ -17,12 +17,13 @@ import org.cytoscape.work.util.ListMultipleSelection;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
+import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentTableModel;
 
 public class FilterEnrichmentTableTask extends AbstractTask implements ObservableTask {
 
 	private StringManager manager;
-	private EnrichmentTableModel tableModel;
+	private EnrichmentCytoPanel enrichmentPanel;
 	private CyNetwork network;
 	
 	// @Tunable(description = "Enrichment cutoff", gravity = 1.0)
@@ -64,10 +65,10 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 	         params="slider=true", dependsOn="removeOverlapping=true", gravity = 9.0)
 	public BoundedDouble overlapCutoff = new BoundedDouble(0.0, 0.5, 1.0, false, false);
 	
-	public FilterEnrichmentTableTask(StringManager manager, EnrichmentTableModel tableModel) {
+	public FilterEnrichmentTableTask(StringManager manager, EnrichmentCytoPanel panel) {
 		this.manager = manager;
 		network = manager.getCurrentNetwork();
-		this.tableModel = tableModel;
+		this.enrichmentPanel = panel;
 		overlapCutoff.setValue(manager.getOverlapCutoff(network));
 		categories.setSelectedValues(manager.getCategoryFilter(network));
 		removeOverlapping = manager.getRemoveOverlap(network);
@@ -79,6 +80,7 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 		// Filter the current list
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
+				EnrichmentTableModel tableModel = enrichmentPanel.getTableModel();
 				tableModel.filter(categoryList, removeOverlapping, overlapCutoff.getValue());
 				manager.setRemoveOverlap(network,removeOverlapping);
 				manager.setOverlapCutoff(network,overlapCutoff.getValue());

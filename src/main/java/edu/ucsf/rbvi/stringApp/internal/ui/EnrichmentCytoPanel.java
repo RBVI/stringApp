@@ -233,7 +233,7 @@ public class EnrichmentCytoPanel extends JPanel
 			}
 		} else if (e.getSource().equals(butFilter)) {
 			// ...
-			tm.execute(new TaskIterator(new FilterEnrichmentTableTask(manager, tableModel)));
+			tm.execute(new TaskIterator(new FilterEnrichmentTableTask(manager, this)));
 		} else if (e.getSource().equals(butSettings)) {
 			tm.execute(new TaskIterator(new SettingsTask(manager)));
 		} else if (e.getSource().equals(butExportTable)) {

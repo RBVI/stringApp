@@ -40,7 +40,7 @@ public class FilterEnrichmentTableTaskFactory extends AbstractTaskFactory {
 	}
 
 	public TaskIterator createTaskIterator() {
-		return new TaskIterator(new FilterEnrichmentTableTask(manager, panel.getTableModel()));
+		return new TaskIterator(new FilterEnrichmentTableTask(manager, panel));
 	}
 
 	public boolean isReady() {
