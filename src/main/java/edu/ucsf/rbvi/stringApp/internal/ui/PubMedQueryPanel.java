@@ -109,6 +109,15 @@ public class PubMedQueryPanel extends JPanel implements TaskObserver {
 		init();
 	}
 
+	public PubMedQueryPanel(final StringManager manager, StringNetwork stringNetwork, String query, 
+	                        SearchOptionsPanel searchOptions) {
+		this(manager, stringNetwork, query, 
+		     searchOptions.getSpecies(),
+		     searchOptions.getConfidence(), searchOptions.getAdditionalNodes());
+		boolean loadEnrichment = searchOptions.getLoadEnrichment();
+		optionsPanel.setLoadEnrichment(loadEnrichment);
+	}
+
 	public PubMedQueryPanel(final StringManager manager, StringNetwork stringNetwork, String query,
 	                        final Species species, int confidence, int additionalNodes) {
 		super(new GridBagLayout());

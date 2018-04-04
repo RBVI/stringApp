@@ -112,6 +112,12 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 		this(manager, stringNetwork,query, 40, 100);
 	}
 
+	public DiseaseQueryPanel(final StringManager manager, StringNetwork stringNetwork, String query, SearchOptionsPanel searchOptions) {
+		this(manager, stringNetwork, query, searchOptions.getConfidence(), searchOptions.getAdditionalNodes());
+		boolean loadEnrichment = searchOptions.getLoadEnrichment();
+		optionsPanel.setLoadEnrichment(loadEnrichment);
+	}
+
 	public DiseaseQueryPanel(final StringManager manager, StringNetwork stringNetwork, String query, int confidence, int additionalNodes) {
 		super(new GridBagLayout());
 		this.manager = manager;

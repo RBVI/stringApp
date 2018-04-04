@@ -116,6 +116,13 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 	}
 
 	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, 
+	                     String useDATABASE, boolean queryAddNodes, SearchOptionsPanel panel) {
+		this(manager, stringNetwork, useDATABASE, panel.getSpeciesText(), 
+		     queryAddNodes, panel.getConfidence(), panel.getAdditionalNodes());
+		optionsPanel.setLoadEnrichment(panel.getLoadEnrichment());
+	}
+
+	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, 
 	                     String useDATABASE, String aNetSpecies, boolean queryAddNodes,
 											 int confidence, int additionalNodes) {
 		super(new GridBagLayout());

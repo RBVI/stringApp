@@ -119,9 +119,7 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 						d.setTitle("Resolve Ambiguous Terms");
 						d.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 						PubMedQueryPanel panel = new PubMedQueryPanel(manager, stringNetwork, terms, 
-						                                              species,
-						                                              optionsPanel.getConfidence(),
-						                                              optionsPanel.getAdditionalNodes());
+						                                              optionsPanel);
 						d.setContentPane(panel);
 						d.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 						d.pack();

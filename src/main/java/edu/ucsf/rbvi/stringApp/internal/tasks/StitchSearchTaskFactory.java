@@ -212,8 +212,10 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 					JDialog d = new JDialog();
 					d.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 					d.setTitle("Resolve Ambiguous Terms");
-					GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, Databases.STITCH.getAPIName(), 
-					                                        getSpecies(), false, getConfidence(), getAdditionalNodes());
+					// GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, Databases.STITCH.getAPIName(), 
+					//                                         getSpecies(), false, getConfidence(), getAdditionalNodes());
+					GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, 
+					                                        Databases.STITCH.getAPIName(), false, optionsPanel);
 					panel.createResolutionPanel();
 					d.setContentPane(panel);
 					d.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

@@ -175,10 +175,19 @@ public class SearchOptionsPanel extends JPanel {
 		return useSmartDelimiters.isSelected();
 	}
 
+	public void setUseSmartDelimiters(boolean selected) {
+		useSmartDelimiters.setSelected(selected);
+	}
+
 	public boolean getLoadEnrichment() {
 		if (!loadEnrichment.isEnabled())
 			return false;
 		return loadEnrichment.isSelected();
+	}
+
+	public void setLoadEnrichment(boolean selected) {
+		System.out.println("Setting loadEnrichment to "+selected);
+		loadEnrichment.setSelected(selected);
 	}
 
 	public void enableLoadEnrichment(boolean enable) {

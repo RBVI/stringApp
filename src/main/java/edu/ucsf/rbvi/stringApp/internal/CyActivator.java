@@ -287,6 +287,11 @@ public class CyActivator extends AbstractCyActivator {
 			SettingsTaskFactory settingsFactory = 
 							new SettingsTaskFactory(manager);
 			Properties props = new Properties();
+			props.setProperty(PREFERRED_MENU, "Apps.STRING");
+			props.setProperty(TITLE, "Settings");
+			props.setProperty(MENU_GRAVITY, "100.0");
+			props.setProperty(IN_MENU_BAR, "true");
+			props.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "settings");
 			props.setProperty(COMMAND_DESCRIPTION, 

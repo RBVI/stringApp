@@ -82,6 +82,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private boolean showImage = true;
 	private boolean showEnhancedLabels = true;
 	private boolean showGlassBallEffect = true;
+	private CyProperty<Properties> sessionProperties;
+	private CyProperty<Properties> configProps;
 
 	private boolean ignore = false;
 
@@ -97,7 +99,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			showEnhancedLabels = false;
 
 		// Get our default settings
-		CyProperty<Properties> configProps = ModelUtils.getPropertyService(this, SavePolicy.CONFIG_DIR);
+		configProps = ModelUtils.getPropertyService(this, SavePolicy.CONFIG_DIR);
 		if (ModelUtils.hasProperty(configProps, "overlapCutoff")) {
 			setOverlapCutoff(null, ModelUtils.getDoubleProperty(configProps,"overlapCutoff"));
 		}
@@ -124,6 +126,9 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 				addStringNetwork(stringNet, network);
 			}
 		}
+
+		// Get a session property file for the current session
+		sessionProperties = ModelUtils.getPropertyService(this, SavePolicy.SESSION_FILE);
 
 	}
 
@@ -206,21 +211,21 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	public void setShowImage(boolean set) { 
 		showImage = set; 
-		ModelUtils.setStringProperty(this, ModelUtils.showStructureImagesFlag, new Boolean(set), SavePolicy.SESSION_FILE);
+		ModelUtils.setStringProperty(sessionProperties, ModelUtils.showStructureImagesFlag, new Boolean(set));
 	}
 
 	public boolean showEnhancedLabels() { return showEnhancedLabels; }
 	
 	public void setShowEnhancedLabels(boolean set) { 
 		showEnhancedLabels = set; 
-		ModelUtils.setStringProperty(this, ModelUtils.showEnhancedLabelsFlag, new Boolean(set), SavePolicy.SESSION_FILE);
+		ModelUtils.setStringProperty(sessionProperties, ModelUtils.showEnhancedLabelsFlag, new Boolean(set));
 	}
 
 	public boolean showGlassBallEffect() { return showGlassBallEffect; }
 	
 	public void setshowGlassBallEffect(boolean set) { 
 		showGlassBallEffect = set; 
-		ModelUtils.setStringProperty(this, ModelUtils.showGlassBallEffectFlag, new Boolean(set), SavePolicy.SESSION_FILE);
+		ModelUtils.setStringProperty(sessionProperties, ModelUtils.showGlassBallEffectFlag, new Boolean(set));
 	}
 
 	
@@ -253,8 +258,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	}
 
 	private String getDataAPIURL() {
-		String alternativeAPI = (String) ModelUtils.getStringProperty(this,
-				alternativeAPIProperty, SavePolicy.CONFIG_DIR);
+		String alternativeAPI = (String) ModelUtils.getStringProperty(configProps,
+				alternativeAPIProperty);
 		if (alternativeAPI != null && alternativeAPI.length() > 0) return alternativeAPI;
 		return URI;
 	}
@@ -309,7 +314,6 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	}
 
 	public void updateSettings() {
-		CyProperty<Properties> configProps = ModelUtils.getPropertyService(this, SavePolicy.CONFIG_DIR);
 		ModelUtils.setStringProperty(configProps, "overlapCutoff", Double.toString(overlapCutoff));
 		ModelUtils.setStringProperty(configProps,"topTerms", Integer.toString(topTerms));
 		ModelUtils.setStringProperty(configProps,"chartType", chartType.name());
@@ -340,6 +344,9 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	}
 
 	public void handleEvent(SessionLoadedEvent arg0) {
+		// Get any properties we stored in the session
+		sessionProperties = ModelUtils.getPropertyService(this, SavePolicy.SESSION_FILE);
+
 		// Create string networks for any networks loaded by string
 		Set<CyNetwork> networks = arg0.getLoadedSession().getNetworks();
 		for (CyNetwork network: networks) {
@@ -367,42 +374,42 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		
 		// check if enhanced labels should be shown or not
 		if (labelsTaskFactory != null) {
-			String sessionValueLabels = ModelUtils.getStringProperty(this,
-					ModelUtils.showEnhancedLabelsFlag, SavePolicy.SESSION_FILE);
+			String sessionValueLabels = ModelUtils.getStringProperty(sessionProperties,
+					ModelUtils.showEnhancedLabelsFlag);
 			// System.out.println("show labels: " + sessionValueLabels);
 			if (sessionValueLabels != null) {
 				showEnhancedLabels = Boolean.parseBoolean(sessionValueLabels);
 			} else {
-				ModelUtils.setStringProperty(this, ModelUtils.showEnhancedLabelsFlag,
-						new Boolean(showEnhancedLabels), SavePolicy.SESSION_FILE);
+				ModelUtils.setStringProperty(sessionProperties, ModelUtils.showEnhancedLabelsFlag,
+						new Boolean(showEnhancedLabels));
 			}
 			labelsTaskFactory.reregister();
 		}
 		
 		// check if glass ball effect should be shown or not
 		if (glassBallTaskFactory != null) {
-			String sessionValueLabels = ModelUtils.getStringProperty(this,
-					ModelUtils.showGlassBallEffectFlag, SavePolicy.SESSION_FILE);
+			String sessionValueLabels = ModelUtils.getStringProperty(sessionProperties,
+					ModelUtils.showGlassBallEffectFlag);
 			// System.out.println("show labels: " + sessionValueLabels);
 			if (sessionValueLabels != null) {
 				showGlassBallEffect = Boolean.parseBoolean(sessionValueLabels);
 			} else {
-				ModelUtils.setStringProperty(this, ModelUtils.showGlassBallEffectFlag,
-						new Boolean(showGlassBallEffect), SavePolicy.SESSION_FILE);
+				ModelUtils.setStringProperty(sessionProperties, ModelUtils.showGlassBallEffectFlag,
+						new Boolean(showGlassBallEffect));
 			}
 			glassBallTaskFactory.reregister();
 		}
 
 		// check if structure images should be shown or not
 		if (imagesTaskFactory != null) {
-			String sessionValueImage = ModelUtils.getStringProperty(this,
-					ModelUtils.showStructureImagesFlag, SavePolicy.SESSION_FILE);
+			String sessionValueImage = ModelUtils.getStringProperty(sessionProperties,
+					ModelUtils.showStructureImagesFlag);
 			// System.out.println("show image: " + sessionValueImage);
 			if (sessionValueImage != null) {
 				showImage = Boolean.parseBoolean(sessionValueImage);
 			} else {
-				ModelUtils.setStringProperty(this, ModelUtils.showStructureImagesFlag,
-						new Boolean(showImage), SavePolicy.SESSION_FILE);
+				ModelUtils.setStringProperty(sessionProperties, ModelUtils.showStructureImagesFlag,
+						new Boolean(showImage));
 			}
 			imagesTaskFactory.reregister();
 		}
@@ -557,5 +564,9 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			removeOverlap = remove; 
 		} else
 			stringNetworkMap.get(network).setRemoveOverlap(remove);
+	}
+
+	public CyProperty<Properties> getConfigProperties() {
+		return configProps;
 	}
 }

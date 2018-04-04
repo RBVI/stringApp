@@ -80,7 +80,7 @@ public class DiseaseSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 						d.setTitle("Resolve Ambiguous Terms");
 						d.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 						// DiseaseQueryPanel panel = new DiseaseQueryPanel(manager, stringNetwork, terms);
-						DiseaseQueryPanel panel = new DiseaseQueryPanel(manager, stringNetwork, terms, optionsPanel.getConfidence(), optionsPanel.getAdditionalNodes());
+						DiseaseQueryPanel panel = new DiseaseQueryPanel(manager, stringNetwork, terms, optionsPanel);
 						panel.doImport();
 						d.setContentPane(panel);
 						d.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

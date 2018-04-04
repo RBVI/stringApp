@@ -203,8 +203,10 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 					JDialog d = new JDialog();
 					d.setTitle("Resolve Ambiguous Terms");
 					d.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-					GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, Databases.STRING.getAPIName(), 
-					                                        getSpecies(), false, getConfidence(), getAdditionalNodes());
+					// GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, Databases.STRING.getAPIName(), 
+					//                                         getSpecies(), false, getConfidence(), getAdditionalNodes());
+					GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, 
+					                                        Databases.STITCH.getAPIName(), false, optionsPanel);
 					panel.createResolutionPanel();
 					d.setContentPane(panel);
 					d.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

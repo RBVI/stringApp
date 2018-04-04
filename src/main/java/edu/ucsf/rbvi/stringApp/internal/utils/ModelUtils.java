@@ -1251,26 +1251,10 @@ public class ModelUtils {
 	}
 
 
-	public static void setStringProperty(StringManager manager,
-			String propertyKey, Object propertyValue, SavePolicy savePolicy) {
-		CyProperty<Properties> sessionProperties = getPropertyService(manager, savePolicy);
-		Properties p = sessionProperties.getProperties();
-		p.setProperty(propertyKey, propertyValue.toString());
-	}
-
-	public static void setStringProperty(CyProperty<Properties> properties, String propertyKey, Object propertyValue) {
+	public static void setStringProperty(CyProperty<Properties> properties, 
+	                                     String propertyKey, Object propertyValue) {
 		Properties p = properties.getProperties();
 		p.setProperty(propertyKey, propertyValue.toString());
-	}
-
-	public static String getStringProperty(StringManager manager,
-			String propertyKey, SavePolicy savePolicy) {
-		CyProperty<Properties> sessionProperties = getPropertyService(manager,
-				savePolicy);
-		Properties p = sessionProperties.getProperties();
-		if (p.getProperty(propertyKey) != null) 
-			return p.getProperty(propertyKey);
-		return null;
 	}
 
 	public static boolean hasProperty(CyProperty<Properties> properties, String propertyKey) {
@@ -1286,22 +1270,10 @@ public class ModelUtils {
 		return null;
 	}
 
-	public static Double getDoubleProperty(StringManager manager, String propertyKey, SavePolicy policy) {
-		String value = ModelUtils.getStringProperty(manager, propertyKey, policy);
-		if (value == null) return null;
-		return Double.valueOf(value);
-	}
-
 	public static Double getDoubleProperty(CyProperty<Properties> properties, String propertyKey) {
 		String value = ModelUtils.getStringProperty(properties, propertyKey);
 		if (value == null) return null;
 		return Double.valueOf(value);
-	}
-
-	public static Integer getIntegerProperty(StringManager manager, String propertyKey, SavePolicy policy) {
-		String value = ModelUtils.getStringProperty(manager, propertyKey, policy);
-		if (value == null) return null;
-		return Integer.valueOf(value);
 	}
 
 	public static Integer getIntegerProperty(CyProperty<Properties> properties, String propertyKey) {

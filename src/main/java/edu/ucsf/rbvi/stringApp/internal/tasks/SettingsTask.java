@@ -89,8 +89,8 @@ public class SettingsTask extends AbstractTask implements ActionListener {
 			manager.setChartType(network,chartType.getSelectedValue());
 		}
 		// TODO: maybe this is a way to automatically apply settings?
-		TaskManager<?, ?> tm = manager.getService(TaskManager.class);
-		tm.execute(new ShowChartsTaskFactory(manager).createTaskIterator());
+		// TaskManager<?, ?> tm = manager.getService(TaskManager.class);
+		// tm.execute(new ShowChartsTaskFactory(manager).createTaskIterator());
 	}
 
 	public void actionPerformed(ActionEvent e) {
