@@ -10,21 +10,21 @@
 3218	core	Physcomitrella patens	Physcomitrella patens		#93B4AF
 3694	core	Populus trichocarpa	Populus trichocarpa		#93B4AF
 3702	core	Arabidopsis thaliana	Arabidopsis thaliana	10840,12104,138950,10298,10641,12305,12167,37128,12216,220340	#93B4AF
-3711	core	Brassica rapa	Brassica rapa		#93B4AF
-3847	core	Glycine max	Glycine max		#93B4AF
-4081	core	Solanum lycopersicum	Solanum lycopersicum	10840,11613,12216	#93B4AF
-4113	core	Solanum tuberosum	Solanum tuberosum		#93B4AF
-4513	core	Hordeum vulgare	Hordeum vulgare		#93B4AF
+3711	core	Brassica rapa	Brassica rapa	12183	#93B4AF
+3847	core	Glycine max	Glycine max	12317,12321,12139,10651	#93B4AF
+4081	core	Solanum lycopersicum	Solanum lycopersicum	10840,370833,116056,49267,12321,12216,12145,11613	#93B4AF
+4113	core	Solanum tuberosum	Solanum tuberosum	10840,370833,12167,12321,37128,12216,12045,12183	#93B4AF
+4513	core	Hordeum vulgare	Hordeum vulgare	12465,12040,28375,12327,10821	#93B4AF
 4533	periphery	Oryza brachyantha	Oryza brachyantha		#93B4AF
-4538	periphery	Oryza glaberrima	Oryza glaberrima		#93B4AF
-4555	core	Setaria italica	Setaria italica		#93B4AF
-4558	periphery	Sorghum bicolor	Sorghum bicolor		#93B4AF
-4577	core	Zea mays	Zea mays	11103	#93B4AF
+4538	periphery	Oryza glaberrima	Oryza glaberrima	10821	#93B4AF
+4555	core	Setaria italica	Setaria italica	28355	#93B4AF
+4558	periphery	Sorghum bicolor	Sorghum bicolor	279896,28355	#93B4AF
+4577	core	Zea mays	Zea mays	279896,11103,12138,59749,12040,10821,137556	#93B4AF
 4641	core	Musa acuminata	Musa acuminata		#93B4AF
 4787	core	Phytophthora infestans	Phytophthora infestans		#93B4AF
 4896	core	Schizosaccharomyces pombe	Schizosaccharomyces pombe	10310	#93B4AF
 4929	periphery	Pichia guilliermondii	Pichia guilliermondii		#93B4AF
-4932	core	Saccharomyces cerevisiae	Saccharomyces cerevisiae	37296,10298,11103,32603,11320,10335,11723,12327,12216,138950,10407,10310,10359,39720,10376,12475,11676,1511862,337041,11060,11008,10710,1511908,12302,129951,10633	#93B4AF
+4932	core	Saccharomyces cerevisiae	Saccharomyces cerevisiae	37296,10298,11103,32603,11320,10407,12216,10710,11723,138950,10335,10310,10359,39720,10376,11676,12475,1511862,337041,11060,11008,12327,1511908,12302,129951,10633	#93B4AF
 4950	core	Torulaspora delbrueckii	Torulaspora delbrueckii		#93B4AF
 4952	core	Yarrowia lipolytica	Yarrowia lipolytica		#93B4AF
 4956	periphery	Zygosaccharomyces rouxii	Zygosaccharomyces rouxii		#93B4AF
@@ -42,9 +42,9 @@
 5507	periphery	Fusarium oxysporum	Fusarium oxysporum		#93B4AF
 5518	core	Gibberella zeae	Gibberella zeae		#93B4AF
 5661	periphery	Leishmania donovani	Leishmania donovani		#93B4AF
-5664	periphery	Leishmania major	Leishmania major		#93B4AF
+5664	periphery	Leishmania major	Leishmania major	58103	#93B4AF
 5691	periphery	Trypanosoma brucei	Trypanosoma brucei		#93B4AF
-5722	core	Trichomonas vaginalis	Trichomonas vaginalis		#93B4AF
+5722	core	Trichomonas vaginalis	Trichomonas vaginalis	674953	#93B4AF
 5759	periphery	Entamoeba histolytica	Entamoeba histolytica		#93B4AF
 5762	periphery	Naegleria gruberi	Naegleria gruberi		#93B4AF
 5786	core	Dictyostelium purpureum	Dictyostelium purpureum		#93B4AF
@@ -65,58 +65,58 @@
 7029	core	Acyrthosiphon pisum	Acyrthosiphon pisum		#93B4AF
 7070	periphery	Tribolium castaneum	Tribolium castaneum		#93B4AF
 7091	core	Bombyx mori	Bombyx mori		#93B4AF
-7159	periphery	Aedes aegypti	Aedes aegypti	11082	#93B4AF
+7159	periphery	Aedes aegypti	Aedes aegypti	11070,35304,11089,11053,37124,11082	#93B4AF
 7165	periphery	Anopheles gambiae	Anopheles gambiae		#93B4AF
 7176	periphery	Culex quinquefasciatus	Culex quinquefasciatus		#93B4AF
 7217	periphery	Drosophila ananassae	Drosophila ananassae		#93B4AF
 7222	periphery	Drosophila grimshawi	Drosophila grimshawi		#93B4AF
-7227	core	Drosophila melanogaster	Drosophila melanogaster	37296,10298,11320,10381,10855,10407,1511891,10760,11709,694014,186538,37128,10335,10310,10359,39720,12045,10376,10245,12104,11676,194440,11103,337042,337041,10710,1511908,10497,129951	#93B4AF
+7227	core	Drosophila melanogaster	Drosophila melanogaster	37296,10298,11320,10381,10855,10335,1511891,10760,11709,694014,186538,37128,10407,10310,10359,39720,12045,10376,10245,48981,12104,11676,194440,11103,337042,337041,10710,1511908,10497,129951	#93B4AF
 7237	periphery	Drosophila pseudoobscura	Drosophila pseudoobscura		#93B4AF
 7244	periphery	Drosophila virilis	Drosophila virilis	10298,694014	#93B4AF
 7245	periphery	Drosophila yakuba	Drosophila yakuba		#93B4AF
 7260	periphery	Drosophila willistoni	Drosophila willistoni		#93B4AF
 7425	core	Nasonia vitripennis	Nasonia vitripennis		#93B4AF
-7460	core	Apis mellifera	Apis mellifera		#93B4AF
+7460	core	Apis mellifera	Apis mellifera	92444	#93B4AF
 7668	periphery	Strongylocentrotus purpuratus	Strongylocentrotus purpuratus		#93B4AF
 7719	core	Ciona intestinalis	Ciona intestinalis		#93B4AF
 7739	core	Branchiostoma floridae	Branchiostoma floridae		#93B4AF
 7757	periphery	Petromyzon marinus	Petromyzon marinus		#93B4AF
 7897	core	Latimeria chalumnae	Latimeria chalumnae		#93B4AF
-7955	periphery	Danio rerio	Danio rerio	10376,37296,39720,10255,11709	#93B4AF
-8049	core	Gadus morhua	Gadus morhua		#93B4AF
+7955	periphery	Danio rerio	Danio rerio	39720,37296,10255,11709,10376	#93B4AF
+8049	core	Gadus morhua	Gadus morhua	55987	#93B4AF
 8083	core	Xiphophorus maculatus	Xiphophorus maculatus		#93B4AF
 8090	periphery	Oryzias latipes	Oryzias latipes		#93B4AF
 8128	core	Oreochromis niloticus	Oreochromis niloticus		#93B4AF
 8364	core	Xenopus Silurana	Xenopus (Silurana) tropicalis	10298,11103,35304,39720,694009,694014,10376,10245	#93B4AF
-9031	core	Gallus gallus	Gallus gallus	37296,11886,10298,11103,10995,10390,10497,11320,1511908,694005,11723,694014,12618,10376,11176,10255,10245	#93B4AF
-9103	periphery	Meleagris gallopavo	Meleagris gallopavo	10376	#93B4AF
+9031	core	Gallus gallus	Gallus gallus	37296,10390,11176,10255,1511908,10995,1511865,70796,10376,11320,12618,694005,11886,694014,11103,10497,11723,10298,10245	#93B4AF
+9103	periphery	Meleagris gallopavo	Meleagris gallopavo	38525,10376,1239437,10995	#93B4AF
 9258	core	Ornithorhynchus anatinus	Ornithorhynchus anatinus		#93B4AF
 9305	core	Sarcophilus harrisii	Sarcophilus harrisii		#93B4AF
 9315	periphery	Macropus eugenii	Macropus eugenii		#93B4AF
 9361	periphery	Dasypus novemcinctus	Dasypus novemcinctus	10255,11709	#93B4AF
 9371	periphery	Echinops telfairi	Echinops telfairi		#93B4AF
 9478	periphery	Tarsius syrichta	Tarsius syrichta		#93B4AF
-9483	core	Callithrix jacchus	Callithrix jacchus	37296,10273,10298,11320,11520,10407,63330,11709,694014,10335,10310,11047,694009,38804,10376,11234,10245,12104,11676,337041,11103,11250,694005,10497,10633,11631	#93B4AF
-9544	periphery	Macaca mulatta	Macaca mulatta	37296,10298,11320,11520,10255,10335,63330,10760,11709,694014,186538,10407,11047,694009,38804,10376,11234,10245,12104,11676,337041,10633,11250,694005,11103,10497,11599,11631	#93B4AF
+9483	core	Callithrix jacchus	Callithrix jacchus	37296,10273,10298,11320,11520,10407,63330,11709,694014,10335,10310,11047,10497,38804,10376,11234,10245,12104,11676,337041,11103,11250,694005,694009,10633,11631	#93B4AF
+9544	periphery	Macaca mulatta	Macaca mulatta	37296,10298,11320,11520,10633,10255,10407,63330,10760,11709,694014,186538,10335,11047,10497,38804,10376,11234,10245,12104,11676,337041,11103,11250,694005,694009,11599,11631	#93B4AF
 9593	core	Gorilla gorilla	Gorilla gorilla		#93B4AF
-9598	periphery	Pan troglodytes	Pan troglodytes	12475,11676,10407,11103,10359,11320,11709,12092,10376,11642,10245	#93B4AF
+9598	periphery	Pan troglodytes	Pan troglodytes	1330524,11676,12475,10407,11103,10359,10376,11320,11709,12092,37124,11642,10245	#93B4AF
 9601	periphery	Pongo abelii	Pongo abelii	10376	#93B4AF
-9606	core	Homo sapiens	Homo sapiens	11191,37296,10298,63330,11786,11983,337042,162145,11269,11709,186538,36772,12216,10840,138950,129951,10359,38804,11277,11676,11103,12305,10754,11137,11569,11886,195054,11034,11033,337051,12657,1511891,12092,694005,307456,348604,10335,39720,694009,11089,11082,351073,12455,190061,194440,194441,194443,74501,11591,11613,11593,11292,11599,10658,11099,40051,10258,10381,10255,10855,10991,11623,11620,694014,10623,11588,10407,10310,11976,10390,10561,10567,10279,11234,10245,11069,12104,12475,11060,337041,10710,220340,10497,36427,11631,10276,10678,10273,32603,10677,32604,11320,28875,11520,12618,10366,12110,11176,11072,334203,11070,12461,10760,11723,47740,37128,333926,35304,35305,11047,37124,11552,11041,10376,10506,10633,11161,11250,1511908	#93B4AF
-9615	core	Canis lupus	Canis lupus familiaris	11320,11176,11676,12216	#93B4AF
+9606	core	Homo sapiens	Homo sapiens	11191,37296,10497,10298,1239565,63330,11786,11053,11983,162145,11269,11709,186538,36772,12216,11069,687340,138950,129951,10359,38804,11277,11676,11103,12305,10754,11137,11569,11886,195054,11034,11033,337051,12657,1511891,10623,12092,694005,307456,348604,687369,10335,39720,147711,11089,11082,95342,351073,12455,194440,194441,194443,74501,11591,11613,11593,11292,10633,687379,10658,11099,40051,10258,10678,10381,1330524,10255,10855,10991,11623,11620,694014,190061,11588,10407,10310,11976,10390,10561,10567,32604,11234,10245,10840,12104,12475,11060,99182,337041,10710,220340,694009,36427,11631,10276,337042,10273,32603,10677,10279,11320,28875,11520,12618,10366,12110,11176,11072,334203,11070,12461,334205,10760,11723,47740,37128,333926,35304,35305,11047,37124,11552,11041,10376,10506,11599,11161,11250,1511908,1511900	#93B4AF
+9615	core	Canis lupus	Canis lupus familiaris	687385,11176,11676,12538,11320,12216,35258	#93B4AF
 9646	core	Ailuropoda melanoleuca	Ailuropoda melanoleuca		#93B4AF
 9669	core	Mustela putorius	Mustela putorius furo	11520,694014	#93B4AF
-9685	periphery	Felis catus	Felis catus	12455,11676,11103,12216,10376,10245	#93B4AF
+9685	periphery	Felis catus	Felis catus	12455,687384,11978,11676,11103,12538,12216,10376,10245	#93B4AF
 9739	core	Tursiops truncatus	Tursiops truncatus		#93B4AF
-9785	core	Loxodonta africana	Loxodonta africana		#93B4AF
-9796	periphery	Equus caballus	Equus caballus	11034,63330,10298,11676,10407,10310,11103,12657,10359,11250,337041,11320,694014,186538,10376,10255,11631,11234	#93B4AF
+9785	core	Loxodonta africana	Loxodonta africana	12110	#93B4AF
+9796	periphery	Equus caballus	Equus caballus	10298,312185,11320,10255,11034,11072,63330,694014,186538,12657,10407,10310,10359,11277,10376,11234,11676,337041,11103,11250,11631,333919	#93B4AF
 9813	periphery	Procavia capensis	Procavia capensis		#93B4AF
-9823	periphery	Sus scrofa	Sus scrofa	12110,10276,12104,1511908,10298,11676,10407,337041,11103,10335,11099,11250,11047,10497,11320,28875,37296,10376,694009,11234,10245	#93B4AF
-9913	periphery	Bos taurus	Bos taurus	37296,337051,10298,10677,11099,40051,11320,28875,11520,12618,11983,10255,12110,11599,11176,11072,10407,63330,12461,10760,11723,694014,186538,74501,10623,11588,12216,138950,10335,10310,10359,11047,694009,10561,11277,10376,11082,11234,10245,12455,39720,12104,12475,11676,194440,11103,337042,38804,11250,12305,337041,1511908,194441,10497,10633	#93B4AF
-9986	periphery	Oryctolagus cuniculus	Oryctolagus cuniculus	37296,10273,10298,39720,11099,11320,28875,11520,10255,162145,10407,63330,12461,10760,11709,694014,186538,194441,12216,138950,10335,10359,11976,11047,694009,38804,10376,11234,10245,12455,10390,12104,12475,11676,337041,10633,337042,11250,12305,1511908,11103,10497,129951,11599	#93B4AF
+9823	periphery	Sus scrofa	Sus scrofa	37296,10276,10298,11099,11320,28875,12110,11072,12288,10407,35612,10335,11047,10497,11552,10376,1218488,11234,10245,687386,12104,11676,337041,11103,11250,11277,1511908,118140,694009	#93B4AF
+9913	periphery	Bos taurus	Bos taurus	37296,38804,10298,10677,11099,40051,11320,28875,11520,10633,12618,11983,11303,10255,12110,1511873,11176,11072,337051,63330,12461,10760,11723,694014,186538,10623,11588,12216,138950,1511908,696856,10407,10310,10359,39720,10497,10561,11277,40537,10376,11082,11234,10335,10245,12455,11047,12104,11676,12475,194440,11103,337042,74501,11250,12305,337041,11593,194441,694009,11599	#93B4AF
+9986	periphery	Oryctolagus cuniculus	Oryctolagus cuniculus	37296,10273,10298,10271,11099,11320,28875,11520,10633,10255,162145,10407,63330,12461,10760,11709,694014,186538,12216,138950,129951,11976,10359,10390,10497,38804,10376,11234,10335,10245,12455,39720,12104,11676,12475,337041,11103,337042,11250,12305,11047,1511908,194441,694009,11599	#93B4AF
 10020	periphery	Dipodomys ordii	Dipodomys ordii		#93B4AF
-10090	core	Mus musculus	Mus musculus	11191,10276,337051,10273,10298,39720,11099,40051,11320,28875,11520,10381,12618,11983,10366,10255,10658,12110,162145,11034,11176,10407,63330,12461,10991,11623,10760,11709,37296,186538,129951,694005,10623,11588,11723,12455,138950,694014,10335,10310,10359,10390,694009,38804,10567,12475,10376,11082,11234,10245,11757,11047,12104,12216,11676,194440,11103,337042,11786,11250,12305,337041,10710,1511908,194441,10497,11599,307456,10633,11631	#93B4AF
-10116	periphery	Rattus norvegicus	Rattus norvegicus	11191,37296,10298,11320,11886,12618,11983,10255,12110,129951,10760,694014,186538,11588,138950,10407,10359,11047,38804,10376,11234,10245,12455,11676,1511862,194440,11103,337042,11250,12305,337041,694005,194441,10497,10633	#93B4AF
-10141	periphery	Cavia porcellus	Cavia porcellus	337041,11234,11320,10255,694014	#93B4AF
+10090	core	Mus musculus	Mus musculus	37296,10276,337051,10273,10658,11099,40051,11320,28875,11520,10633,10381,12618,11983,10366,10255,11709,10298,12110,162145,11034,11176,10335,63330,12461,10991,11623,10760,12216,694014,186538,10710,10623,11588,307456,11757,138950,10407,10310,10359,39720,694009,38804,11191,10567,10376,11082,11234,10245,12455,11047,12104,10390,11676,12475,337041,194441,337042,11786,11250,12305,194440,694005,1511908,11103,10497,11723,129951,11599,11631	#93B4AF
+10116	periphery	Rattus norvegicus	Rattus norvegicus	11191,37296,10298,11320,11886,12618,11983,10255,12110,10407,10760,694014,186538,11588,138950,129951,10359,11047,38804,10376,11234,10245,12455,11676,1511862,337041,11103,337042,11250,12305,194440,694005,194441,10497,10633	#93B4AF
+10141	periphery	Cavia porcellus	Cavia porcellus	337041,10255,11320,11234,694014	#93B4AF
 10228	core	Trichoplax adhaerens	Trichoplax adhaerens		#93B4AF
 12957	core	Atta cephalotes	Atta cephalotes		#93B4AF
 13037	core	Danaus plexippus	Danaus plexippus		#93B4AF
@@ -125,7 +125,7 @@
 13735	core	Pelodiscus sinensis	Pelodiscus sinensis	10376	#93B4AF
 15368	periphery	Brachypodium distachyon	Brachypodium distachyon		#93B4AF
 28377	periphery	Anolis carolinensis	Anolis carolinensis	10376	#93B4AF
-29760	periphery	Vitis vinifera	Vitis vinifera		#93B4AF
+29760	periphery	Vitis vinifera	Vitis vinifera	103722	#93B4AF
 29850	core	Gaeumannomyces graminis	Gaeumannomyces graminis		#93B4AF
 29875	core	Hypocrea virens	Hypocrea virens		#93B4AF
 30608	periphery	Microcebus murinus	Microcebus murinus		#93B4AF
@@ -325,7 +325,7 @@
 214092	core	Yersinia pestis CO92	Yersinia pestis CO92	10760	#93B4AF
 214684	periphery	Cryptococcus neoformans JEC21	Cryptococcus neoformans var. neoformans JEC21		#93B4AF
 216432	core	Croceibacter atlanticus	Croceibacter atlanticus HTCC2559		#93B4AF
-216591	periphery	Burkholderia cenocepacia	Burkholderia cenocepacia J2315		#93B4AF
+216591	periphery	Burkholderia cenocepacia	Burkholderia cenocepacia J2315	264729	#93B4AF
 216594	periphery	Mycobacterium marinum	Mycobacterium marinum M		#93B4AF
 216595	periphery	Pseudomonas fluorescens SBW25	Pseudomonas fluorescens SBW25		#93B4AF
 216596	core	Rhizobium leguminosarum viciae	Rhizobium leguminosarum bv. viciae 3841		#93B4AF
@@ -631,7 +631,7 @@
 316278	periphery	Synechococcus sp. RCC307	Synechococcus sp. RCC307		#93B4AF
 316279	periphery	Synechococcus sp. CC9902	Synechococcus sp. CC9902		#93B4AF
 316385	periphery	Escherichia coli K12 DH10B	Escherichia coli str. K-12 substr. DH10B	10376	#93B4AF
-316407	periphery	Escherichia coli K12 W3110	Escherichia coli str. K-12 substr. W3110	10376,10760,10679,10710,348604	#93B4AF
+316407	periphery	Escherichia coli K12 W3110	Escherichia coli str. K-12 substr. W3110	10376,348604,10679,10710,10760	#93B4AF
 317025	core	Thiomicrospira crunogena	Thiomicrospira crunogena XCL-2		#93B4AF
 317655	core	Sphingopyxis alaskensis	Sphingopyxis alaskensis RB2256		#93B4AF
 318161	periphery	Shewanella denitrificans	Shewanella denitrificans OS217		#93B4AF
@@ -2030,180 +2030,242 @@
 1129369	core	Mycoplasma hyorhinis	Mycoplasma hyorhinis GDL-1		#93B4AF
 1133850	periphery	Streptomyces hygroscopicus	Streptomyces hygroscopicus subsp. jinggangensis 5008		#93B4AF
 1142511	periphery	Wigglesworthia glossinidia Gm	Wigglesworthia glossinidia endosymbiont of Glossina morsitans morsitans (Yale colony)		#93B4AF
-10245	Vaccinia virus (strain Western Reserve)	Vaccinia virus	Vaccinia	9986,10090,8364,9606,7227,9913,10116,9031,9598,9823,9483,9544,9685	#BA6561
-10255	Variola virus (isolate Human/India/Ind3/1967)	Variola virus	Smallpox	10141,9913,10090,9606,9361,9986,7955,9031,9796,10116,9544,511145	#BA6561
-10258	Orf virus (strain Goat/Texas/SA00/2000)	Orf virus	Orf virus	9606	#BA6561
-10261	Fowlpox virus (strain NVSL)	Fowlpox virus	FPV		#BA6561
-10271	Rabbit fibroma virus (strain Kasza)	Rabbit fibroma virus	Rabbit fibroma		#BA6561
-10273	Myxoma virus (strain Lausanne)	Myxoma virus	MYXV	9483,9986,10090,9606	#BA6561
-10276	Swinepox virus (strain Swine/Nebraska/17077-99/1999)	Swinepox virus	SWPV	10090,9823,9606	#BA6561
-10279	Molluscum contagiosum virus subtype 1	Molluscum contagiosum virus	MCVI	9606	#BA6561
-10298	Human herpesvirus 1 (strain 17)	Human herpesvirus 1	HSV-1	37296,4932,7244,8364,10335,10116,7227,10090,9913,10376,9606,9031,9796,9823,3702,9544,9483,9986	#BA6561
-10310	Human herpesvirus 2 (strain HG52)	Human herpesvirus 2	HSV-2	9913,10090,9606,4932,4896,9796,7227,9483	#BA6561
-10335	Varicella-zoster virus (strain Dumas)	Varicella-zoster virus	VZV	4932,10090,10298,9606,7227,9913,9986,9823,9483,9544	#BA6561
-10359	Human cytomegalovirus (strain Merlin)	Human cytomegalovirus	HCMV	4932,10090,9606,9913,10116,9796,7227,9986,9598	#BA6561
-10366	Murid herpesvirus 1 (strain Smith)	Murid herpesvirus 1	Mouse cytomegalovirus	10090,9606	#BA6561
-10376	Epstein-Barr virus (strain B95-8)	Epstein-Barr virus	EBV	37296,10298,9103,316407,10116,13735,9031,9598,7227,8364,9913,28377,9606,511145,258594,9544,9685,9601,748671,9823,9483,375286,155864,4932,10090,316385,7955,6239,9796,9986	#BA6561
-10381	Saimiriine herpesvirus 2 (strain 11)	Saimiriine herpesvirus 2	Saimiri	10090,7227,9606	#BA6561
-10390	Gallid herpesvirus 2 (strain Chicken/Md5/ATCC VR-987)	Gallid herpesvirus 2	Gallid herpes	194440,9986,10090,9031,9606	#BA6561
-10407	Hepatitis B virus genotype C subtype ayr (isolate Human/Japan/Okamoto/-)	Hepatitis B virus	HBV-C	4932,10090,9823,9606,10116,9913,37347,9986,9796,7227,9483,9544,9598	#BA6561
-10497	African swine fever virus (strain Badajoz 1971 Vero-adapted)	African swine fever virus	ASFV	9913,10090,9823,9606,10116,9986,9031,7227,9483,9544	#BA6561
-10506	Paramecium bursaria Chlorella virus 1	Paramecium bursaria Chlorella virus 1	PBCV-1	9606	#BA6561
+10245	Vaccinia virus (strain Western Reserve)	Vaccinia virus	Vaccinia	9986,10090,8364,9606,7227,9913,9483,9031,9598,9823,10116,9544,9685,10245	#BA6561
+10255	Variola virus (isolate Human/India/Ind3/1967)	Variola virus (Smallpox)	Smallpox	10141,9913,10090,9606,511145,10116,7955,9031,9796,9986,9544,9361,10255	#BA6561
+10258	Orf virus (strain Goat/Texas/SA00/2000)	Orf virus	Orf virus	10258,9606	#BA6561
+10261	Fowlpox virus (strain NVSL)	Fowlpox virus (FPV)	FPV	10261	#BA6561
+10271	Rabbit fibroma virus (strain Kasza)	Rabbit fibroma virus	Rabbit fibroma	9986,10271	#BA6561
+10273	Myxoma virus (strain Lausanne)	Myxoma virus (MYXV)	MYXV	9483,9986,10090,10273,9606	#BA6561
+10276	Swinepox virus (strain Swine/Nebraska/17077-99/1999)	Swinepox virus (SWPV)	SWPV	10276,10090,9823,9606	#BA6561
+10279	Molluscum contagiosum virus subtype 1	Molluscum contagiosum virus (MCVI)	MCVI	10279,9606	#BA6561
+10298	Human herpesvirus 1 (strain 17)	Human herpesvirus 1 (HSV-1)	HSV-1	37296,9913,7244,3702,8364,10335,10116,7227,9606,4932,10090,9483,9031,9796,9823,10376,9544,9986,10298	#BA6561
+10310	Human herpesvirus 2 (strain HG52)	Human herpesvirus 2 (HSV-2)	HSV-2	9913,10090,9606,10310,4896,9796,7227,9483,4932	#BA6561
+10335	Varicella-zoster virus (strain Dumas)	Varicella-zoster virus (VZV)	VZV	4932,10090,10298,10335,9606,9913,9986,7227,9483,9544,9823	#BA6561
+10359	Human cytomegalovirus (strain Merlin)	Human cytomegalovirus (HCMV)	HCMV	4932,10090,9606,10359,10116,9598,7227,9986,9913,9796	#BA6561
+10366	Murid herpesvirus 1 (strain Smith)	Murid herpesvirus 1 (MCMV)	MCMV	10090,10366,9606	#BA6561
+103722	Grapevine fleck virus (isolate Italy/MT48)	Grapevine fleck virus (GFkV)	GFkV	29760	#BA6561
+10376	Epstein-Barr virus (strain B95-8)	Epstein-Barr virus (EBV)	EBV	37296,10298,748671,9103,375286,10376,13735,9031,9598,7227,8364,9913,28377,10116,511145,258594,9544,9685,9601,9606,9823,9986,316407,9483,155864,4932,10090,316385,7955,6239,9796	#BA6561
+10381	Saimiriine herpesvirus 2 (strain 11)	Saimiriine herpesvirus 2	Saimiri	10090,10381,7227,9606	#BA6561
+10390	Gallid herpesvirus 2 (strain Chicken/Md5/ATCC VR-987)	Gallid herpesvirus 2	Gallid herpes	10090,9606,194440,10390,9031,9986	#BA6561
+10407	Hepatitis B virus genotype C subtype ayr (isolate Human/Japan/Okamoto/-)	Hepatitis B virus (HBV-C)	HBV-C	4932,10090,9823,10407,10116,9606,9913,37347,9483,9598,7227,9986,9544,9796	#BA6561
+10493	Frog virus 3 (isolate Goorha)	Frog virus 3 (FV-3)	FV-3	10493	#BA6561
+10497	African swine fever virus (strain Badajoz 1971 Vero-adapted)	African swine fever virus (ASFV)	ASFV	9913,10090,9823,9606,10116,9986,9031,7227,10497,9544,9483	#BA6561
+10506	Paramecium bursaria Chlorella virus 1	Paramecium bursaria Chlorella virus 1 (PBCV-1)	PBCV-1	10506,9606	#BA6561
 10561	Bovine papillomavirus type 3	Bovine papillomavirus type 3	Bovine papillomavirus 3	9913,9606	#BA6561
-10567	Mastomys natalensis papillomavirus (isolate African multimammate rat)	Mastomys natalensis papillomavirus	MnPV	10090,9606	#BA6561
-10623	Cottontail rabbit papillomavirus (strain Kansas)	Cottontail rabbit papillomavirus	CRPV	9913,10090,9606	#BA6561
-10633	Simian virus 40	Simian virus 40	SV40	4932,10090,9606,10116,9913,9986,9483,9544	#BA6561
-10641	Cauliflower mosaic virus (strain Strasbourg)	Cauliflower mosaic virus	CaMV	3702	#BA6561
-10653	Commelina yellow mottle virus	Commelina yellow mottle virus	CoYMV		#BA6561
-10658	Enterobacteria phage PRD1	Enterobacteria phage PRD1	PRD1	10090,9606	#BA6561
-10661	Pseudoalteromonas phage PM2	Pseudoalteromonas phage PM2	PM2		#BA6561
-10677	Enterobacteria phage Mu	Enterobacteria phage Mu	Mu	9913,511145,9606	#BA6561
-10678	Enterobacteria phage P1	Enterobacteria phage P1	P1	9606,511145	#BA6561
-10679	Enterobacteria phage P2	Enterobacteria phage P2	P2	316407	#BA6561
-10710	Enterobacteria phage lambda	Enterobacteria phage lambda	Lambda	316407,4932,10090,208964,9606,511145,469008,7227,1031711,224308	#BA6561
-10719	Streptomyces phage phiC31	Streptomyces phage phiC31	phi-C31		#BA6561
+10567	Mastomys natalensis papillomavirus (isolate African multimammate rat)	Mastomys natalensis papillomavirus (MnPV)	MnPV	10090,9606	#BA6561
+10623	Cottontail rabbit papillomavirus (strain Kansas)	Cottontail rabbit papillomavirus (CRPV)	CRPV	10623,9913,10090,9606	#BA6561
+10633	Simian virus 40	Simian virus 40 (SV40)	SV40	9986,10090,9606,9913,10116,9483,9544,10633,4932	#BA6561
+10641	Cauliflower mosaic virus (strain Strasbourg)	Cauliflower mosaic virus (CaMV)	CaMV	3702,10641	#BA6561
+10651	Soybean chlorotic mottle virus	Soybean chlorotic mottle virus	Soybean chlorotic mottle virus	3847	#BA6561
+10658	Enterobacteria phage PRD1	Enterobacteria phage PRD1	PRD1	10090,10658,9606	#BA6561
+10661	Pseudoalteromonas phage PM2	Pseudoalteromonas phage PM2	PM2	10661	#BA6561
+10677	Enterobacteria phage Mu	Enterobacteria phage Mu	Mu	9913,511145,10677,9606	#BA6561
+10678	Enterobacteria phage P1	Enterobacteria phage P1	P1	511145,10678,9606	#BA6561
+10679	Enterobacteria phage P2	Enterobacteria phage P2	P2	10679,316407	#BA6561
+10710	Enterobacteria phage lambda	Enterobacteria phage lambda	Lambda	511145,4932,469008,9606,316407,10090,10710,7227,1031711,208964,224308	#BA6561
+10719	Streptomyces phage phiC31	Streptomyces phage phiC31 (phi-C31)	phi-C31	10719	#BA6561
 10726	Escherichia phage T5	Escherichia phage T5	T5	511145	#BA6561
-10752	Enterobacteria phage N4	Enterobacteria phage N4	N4		#BA6561
-10754	Enterobacteria phage P22	Enterobacteria phage P22	P22	9606	#BA6561
-10756	Bacillus phage phi29	Bacillus phage phi29	phi-29		#BA6561
-10760	Enterobacteria phage T7	Enterobacteria phage T7	T7	9913,10090,9606,316407,10116,214092,7227,9986,9544,511145,637910	#BA6561
-10840	Beet curly top virus (strain California/Logan)	Beet curly top virus	BCTV	3702,4081,9606	#BA6561
-10854	Spiroplasma virus SpV1-R8A2 B (SpV1)	Spiroplasma virus SpV1-R8A2 B	SpV1		#BA6561
-10855	Spiroplasma virus 4	Spiroplasma virus 4	SpV4	7227,9606	#BA6561
-10870	Enterobacteria phage M13	Enterobacteria phage M13	M13		#BA6561
-10879	Pseudomonas phage phi6	Pseudomonas phage phi6	phi-6		#BA6561
-10991	Rice dwarf virus (isolate Fujian)	Rice dwarf virus	RDV	39947,10090,9606	#BA6561
-10995	Avian infectious bursal disease virus (isolate Chicken/UK/UK661/1989)	Avian infectious bursal disease virus	IBDV	9031	#BA6561
-11008	Saccharomyces cerevisiae virus L-A	Saccharomyces cerevisiae virus L-A	ScVL1	4932	#BA6561
-11033	Semliki forest virus	Semliki forest virus	SFV	9606	#BA6561
-11034	Sindbis virus	Sindbis virus	SINV	10090,9796,9606	#BA6561
-11041	Rubella virus (strain Therien)	Rubella virus	RUBV	9606	#BA6561
-11047	Equine arteritis virus (strain Bucyrus)	Equine arteritis virus	EAV	9986,10090,9606,9913,10116,9823,9483,9544	#BA6561
-11060	Dengue virus type 2 (strain Jamaica/1409/1983)	Dengue virus type 2	DENV-2	4932,9606	#BA6561
-11069	Dengue virus type 3 (strain Philippines/H87/1956)	Dengue virus type 3	DENV-3	9606	#BA6561
-11070	Dengue virus type 4 (strain Dominica/814669/1981)	Dengue virus type 4	DENV-4	9606	#BA6561
-11072	Japanese encephalitis virus (strain SA(v))	Japanese encephalitis virus	JEV	9913,9606	#BA6561
-11082	West Nile virus	West Nile virus	WNV	9913,10090,7159,9606	#BA6561
-11089	Yellow fever virus (strain 17D vaccine)	Yellow fever virus	YFV	9606	#BA6561
-11099	Bovine viral diarrhea virus (isolate NADL)	Bovine viral diarrhea virus	BVDV	9986,9913,10090,9823,9606	#BA6561
-11103	Hepatitis C virus genotype 1a (isolate H)	Hepatitis C virus	HCV	4932,10090,8364,9606,10116,132908,7227,9913,9986,9031,9796,9823,4577,9483,9544,9685,9598	#BA6561
-11137	Human coronavirus 229E	Human coronavirus 229E	HCoV-229E	9606	#BA6561
-11161	Mumps virus (strain Miyahara vaccine)	Mumps virus	MuV	9606	#BA6561
-11176	Newcastle disease virus (strain Chicken/United States/B1/48)	Newcastle disease virus	NDV	10090,9913,9615,9031,9606	#BA6561
-11191	Sendai virus (strain Ohita)	Sendai virus	SeV	10116,10090,9606	#BA6561
-11234	Measles virus (strain Ichinose-B95a)	Measles virus	MeV	10141,9913,10090,9606,9483,9796,9823,10116,9544,9986	#BA6561
-11250	Human respiratory syncytial virus B (strain B1)	Human respiratory syncytial virus B	RSV	9913,10090,9606,10116,9986,9796,9823,9483,9544	#BA6561
-11269	Marburg virus (strain Kenya/Musoke/1980)	Lake Victoria marburgvirus	MARV	9606	#BA6561
-11277	Vesicular stomatitis Indiana virus (strain San Juan)	Vesicular stomatitis Indiana virus	VSIV	9913,9606	#BA6561
-11290	Infectious hematopoietic necrosis virus (strain WRAC)	Infectious hematopoietic necrosis virus	IHNV		#BA6561
-11292	Rabies virus (strain Pasteur vaccins / PV)	Rabies virus	RABV	9606	#BA6561
-11303	Bovine ephemeral fever virus (strain BB7721)	Bovine ephemeral fever virus	BEFV		#BA6561
-11320	Influenza A virus (strain A/Puerto Rico/8/1934 H1N1)	Influenza A virus	Influenza A	10141,4932,9615,9823,9606,10116,10090,9913,9986,9031,9796,7227,9483,9544,9598	#BA6561
-11520	Influenza B virus (strain B/Lee/1940)	Influenza B virus	Influenza B	9913,10090,9606,9483,9986,9544,9669	#BA6561
-11552	Influenza C virus (strain C/Ann Arbor/1/1950)	Influenza C virus	Influenza C	9606	#BA6561
+10752	Enterobacteria phage N4	Enterobacteria phage N4	N4	10752	#BA6561
+10754	Enterobacteria phage P22	Enterobacteria phage P22	P22	10754,9606	#BA6561
+10756	Bacillus phage phi29	Bacillus phage phi29 (phi-29)	phi-29	10756	#BA6561
+10760	Enterobacteria phage T7	Enterobacteria phage T7	T7	9913,10090,9606,10116,316407,10760,214092,7227,9986,9544,511145,637910	#BA6561
+10821	Maize streak virus genotype A (isolate South Africa)	Maize streak virus (MSV)	MSV	4513,4538,4577	#BA6561
+10840	Beet curly top virus (strain California/Logan)	Beet curly top virus (BCTV)	BCTV	3702,4081,4113,9606	#BA6561
+10854	Spiroplasma virus SpV1-R8A2 B (SpV1)	Spiroplasma virus SpV1-R8A2 B (SpV1)	SpV1	10854	#BA6561
+10855	Spiroplasma virus 4	Spiroplasma virus 4 (SpV4)	SpV4	10855,7227,9606	#BA6561
+10870	Enterobacteria phage M13	Enterobacteria phage M13 (M13)	M13	10870	#BA6561
+10879	Pseudomonas phage phi6	Pseudomonas phage phi6 (phi-6)	phi-6	10879	#BA6561
+1094373	Drosophila melanogaster sigma virus (isolate Drosophila/USA/AP30/2005)	Drosophila melanogaster sigma virus (DMelSV)	DMelSV	1094373	#BA6561
+10991	Rice dwarf virus (isolate Fujian)	Rice dwarf virus (RDV)	RDV	10991,10090,9606,39947	#BA6561
+10995	Avian infectious bursal disease virus (isolate Chicken/UK/UK661/1989)	Avian infectious bursal disease virus (IBDV)	IBDV	9031,9103	#BA6561
+11008	Saccharomyces cerevisiae virus L-A	Saccharomyces cerevisiae virus L-A (ScVL1)	ScVL1	4932	#BA6561
+11033	Semliki forest virus	Semliki forest virus (SFV)	SFV	11033,9606	#BA6561
+11034	Sindbis virus	Sindbis virus (SINV)	SINV	11034,10090,9796,9606	#BA6561
+11041	Rubella virus (strain Therien)	Rubella virus (RUBV)	RUBV	9606	#BA6561
+11047	Equine arteritis virus (strain Bucyrus)	Equine arteritis virus (EAV)	EAV	9986,10090,9606,9913,11047,9483,9823,10116,9544	#BA6561
+11053	Dengue virus type 1 (strain Nauru/West Pac/1974)	Dengue virus type 1 (DENV-1)	DENV-1	11053,7159,9606	#BA6561
+11060	Dengue virus type 2 (strain Jamaica/1409/1983)	Dengue virus type 2 (DENV-2)	DENV-2	11060,4932,9606	#BA6561
+11069	Dengue virus type 3 (strain Philippines/H87/1956)	Dengue virus type 3 (DENV-3)	DENV-3	11069,9606	#BA6561
+11070	Dengue virus type 4 (strain Dominica/814669/1981)	Dengue virus type 4 (DENV-4)	DENV-4	11070,7159,9606	#BA6561
+11072	Japanese encephalitis virus (strain SA(v))	Japanese encephalitis virus (JEV)	JEV	11072,9913,9796,9823,9606	#BA6561
+11082	West Nile virus	West Nile virus (WNV)	WNV	11082,9913,10090,7159,9606	#BA6561
+11089	Yellow fever virus (strain 17D vaccine)	Yellow fever virus (YFV)	YFV	11089,7159,9606	#BA6561
+11099	Bovine viral diarrhea virus (isolate NADL)	Bovine viral diarrhea virus (BVDV)	BVDV	9913,10090,9606,11099,9823,9986	#BA6561
+11103	Hepatitis C virus genotype 1a (isolate H)	Hepatitis C virus (HCV)	HCV	9913,10090,8364,9606,10116,11103,7227,4932,9483,9031,9598,9796,9823,4577,9986,9544,9685,132908	#BA6561
+11137	Human coronavirus 229E	Human coronavirus 229E (HCoV-229E)	HCoV-229E	11137,9606	#BA6561
+11161	Mumps virus (strain Miyahara vaccine)	Mumps virus (MuV)	MuV	11161,9606	#BA6561
+11176	Newcastle disease virus (strain Chicken/United States/B1/48)	Newcastle disease virus (NDV)	NDV	9913,10090,11176,9606,9615,9031	#BA6561
+11191	Sendai virus (strain Ohita)	Sendai virus (SeV)	SeV	11191,10116,10090,9606	#BA6561
+11234	Measles virus (strain Ichinose-B95a)	Measles virus (MeV)	MeV	10141,9913,10090,9606,10116,9796,9823,9483,9544,11234,9986	#BA6561
+11250	Human respiratory syncytial virus B (strain B1)	Human respiratory syncytial virus B (RSV)	RSV	9986,10090,9606,9913,11250,9483,9796,9823,10116,9544	#BA6561
+11269	Marburg virus (strain Kenya/Musoke/1980)	Lake Victoria marburgvirus (MARV)	MARV	11269,9606	#BA6561
+11277	Vesicular stomatitis Indiana virus (strain San Juan)	Vesicular stomatitis Indiana virus (VSIV)	VSIV	9913,11277,9796,9823,9606	#BA6561
+11290	Infectious hematopoietic necrosis virus (strain WRAC)	Infectious hematopoietic necrosis virus (IHNV)	IHNV	11290	#BA6561
+11292	Rabies virus (strain Pasteur vaccins / PV)	Rabies virus (RABV)	RABV	11292,9606	#BA6561
+11303	Bovine ephemeral fever virus (strain BB7721)	Bovine ephemeral fever virus (BEFV)	BEFV	9913,11303	#BA6561
+11320	Influenza A virus (strain A/Puerto Rico/8/1934 H1N1)	Influenza A virus	Influenza A	10141,4932,10090,9823,9606,9615,9913,10116,11320,9031,9598,7227,9986,9544,9483,9796	#BA6561
+113370	Spodoptera frugiperda ascovirus 1a (SfAV-1a)	Spodoptera frugiperda ascovirus 1a (SfAV-1a)	SfAV-1a	113370	#BA6561
+11520	Influenza B virus (strain B/Lee/1940)	Influenza B virus	Influenza B	9913,10090,9606,9986,11520,9483,9544,9669	#BA6561
+11552	Influenza C virus (strain C/Ann Arbor/1/1950)	Influenza C virus	Influenza C	11552,9823,9606	#BA6561
 11569	Thogoto virus (isolate SiAr 126)	Thogoto virus	Tho	9606	#BA6561
-11588	Rift valley fever virus (strain ZH-548 M12)	Rift valley fever virus	RVFV	10116,9913,10090,9606	#BA6561
+11588	Rift valley fever virus (strain ZH-548 M12)	Rift valley fever virus (RVFV)	RVFV	10116,9913,10090,11588,9606	#BA6561
 11591	Uukuniemi virus (strain S23)	Uukuniemi virus	Uuk	9606	#BA6561
-11593	Crimean-Congo hemorrhagic fever virus (strain Nigeria/IbAr10200/1970)	Crimean-Congo hemorrhagic fever virus	CCHFV	9606	#BA6561
-11599	Hantaan virus (strain 76-118)	Hantaan virus	Hantaan	9986,9544,10090,9913,9606	#BA6561
-11613	Tomato spotted wilt virus (strain Brazilian Br-01)	Tomato spotted wilt virus	TSWV	4081,9606	#BA6561
-11620	Lassa virus (strain Mouse/Sierra Leone/Josiah/1976)	Lassa virus	LASV	9606	#BA6561
-11623	Lymphocytic choriomeningitis virus (strain Armstrong)	Lymphocytic choriomeningitis virus	LCMV	10090,9606	#BA6561
-11631	Tacaribe virus (strain Franze-Fernandez)	Tacaribe virus	TCRV	9483,9544,10090,9796,9606	#BA6561
-11642	Simian foamy virus (isolate chimpanzee)	Simian foamy virus	SFVcpz	9598	#BA6561
-11676	Human immunodeficiency virus type 1 group M subtype B (isolate HXB2)	Human immunodeficiency virus type 1	HIV-1	243277,4932,9615,7227,9606,10116,223926,9913,9986,10090,9598,9823,9483,312309,9685,9544,9796	#BA6561
-11709	Human immunodeficiency virus type 2 subtype A (isolate BEN)	Human immunodeficiency virus type 2	HIV-2	10090,9606,9361,9483,7955,9598,7227,9986,9544	#BA6561
-11723	Simian immunodeficiency virus (isolate Mm142-83)	Simian immunodeficiency virus	SIV	10090,4932,9031,9913,9606	#BA6561
-11757	Mouse mammary tumor virus (strain C3H)	Mouse mammary tumor virus	MMTV	10090	#BA6561
-11786	Moloney murine leukemia virus (isolate Shinnick)	Moloney murine leukemia virus	MoMLV	10090,9606	#BA6561
-118140	Porcine teschovirus 1 (isolate Pig/United Kingdom/F65/1967)	Porcine teschovirus 1	Tescho		#BA6561
-11886	Avian leukosis virus RSA	Avian leukosis virus RSA	RSV-SRA	10116,9031,9606	#BA6561
-11976	Rabbit hemorrhagic disease virus (strain Rabbit/Germany/FRG/1989)	Rabbit hemorrhagic disease virus	RHDV-FRG	9986,9606	#BA6561
-11978	Feline calicivirus (strain Cat/United States/Urbana/1960)	Feline calicivirus	FCV		#BA6561
-11983	Norwalk virus (strain GI/Human/United States/Norwalk/1968)	Norwalk virus	Norwalk	10116,9913,10090,9606	#BA6561
-12045	Potato leafroll virus (strain Potato/Scotland/strain 1/1984)	Potato leafroll virus	PLrV	7227	#BA6561
-12092	Human hepatitis A virus genotype IB (isolate HM175)	Human hepatitis A virus	HAV	9598,9606	#BA6561
-12104	Encephalomyocarditis virus (strain Rueckert)	Encephalomyocarditis virus	EMCV	9986,10090,9823,9606,9913,9483,7227,3702,9544	#BA6561
-12110	Foot-and-mouth disease virus (isolate Swine/Taiwan/OTai/1997 serotype O)	Foot-and-mouth disease virus	FMDV	10116,9913,10090,9823,9606	#BA6561
-12161	Beet yellows virus (isolate Ukraine)	Beet yellows virus	BYV		#BA6561
-12167	Potato virus M (strain Russian)	Potato virus M	PVM	3702	#BA6561
-12183	Potato virus X (strain X3)	Potato virus X	PVX		#BA6561
-12216	Potato virus Y (strain N)	Potato virus Y	PVY	4081,4932,9615,9606,9913,3702,10090,9986,9685	#BA6561
-12242	Tobacco mosaic virus (strain vulgare)	Tobacco mosaic virus	TMV		#BA6561
-12280	Tomato ringspot virus (isolate raspberry)	Tomato ringspot virus	ToRSV		#BA6561
-12302	Brome mosaic virus	Brome mosaic virus	BMV	4932	#BA6561
-12305	Cucumber mosaic virus (strain FNY)	Cucumber mosaic virus	CMV	9913,10090,9606,10116,3702,9986	#BA6561
-12321	Alfalfa mosaic virus (strain 425 / isolate Leiden)	Alfalfa mosaic virus	Alfalfa mosaic		#BA6561
-12327	Barley stripe mosaic virus	Barley stripe mosaic virus	BSMV	4932	#BA6561
-12331	Rice stripe virus (isolate T)	Rice stripe virus	RSV		#BA6561
-12455	Borna disease virus (strain V)	Borna disease virus	BDV	9913,10090,9606,9986,10116,9685	#BA6561
-12461	Hepatitis E virus genotype 1 (isolate Human/China/HeBei/1987)	Hepatitis E virus	HEV	9986,9913,10090,9606	#BA6561
-12475	Hepatitis delta virus genotype I (isolate D380)	Hepatitis delta virus	HDV	4932,10090,9606,9913,9598,9986	#BA6561
-12618	Chicken anemia virus (isolate Germany Cuxhaven-1)	Chicken anemia virus	CAV	10116,9913,9031,10090,9606	#BA6561
-12657	Equine herpesvirus 2 (strain 86/87)	Equine herpesvirus 2	EHV-2	9796,9606	#BA6561
-12777	Parsnip yellow fleck virus (isolate P-121)	Parsnip yellow fleck virus	PYFV		#BA6561
-129951	Human adenovirus C serotype 2	Human adenovirus C	HAdV-C	4932,10090,9606,10116,6239,7227,9986	#BA6561
-1335626	Human coronavirus EMC (isolate United Kingdom/H123990006/2012)	Human coronavirus EMC	HCoV-EMC		#BA6561
-133704	Porcine circovirus 1 (isolate China)	Porcine circovirus 1	PCV1		#BA6561
-138950	Poliovirus type 1 (strain Mahoney)	Poliovirus type 1	Polio	9913,10090,9606,10116,4932,3702,9986	#BA6561
-1511862	Aleutian mink disease parvovirus (strain G)	Aleutian mink disease parvovirus	ADV	10116,4932	#BA6561
-1511891	Adeno-associated virus 2 (isolate Srivastava/1982)	Adeno-associated virus 2	AAV-2	7227,9606	#BA6561
-1511908	Murine minute virus (strain MVM prototype)	Murine minute virus	MMV	4932,10090,9823,9606,9913,9031,7227,9986	#BA6561
-162145	Human metapneumovirus (strain CAN97-83)	Human metapneumovirus	HMPV	9986,10090,9606	#BA6561
-176652	Invertebrate iridescent virus 6 (IIV-6)	Invertebrate iridescent virus 6	Chilo iridescent virus		#BA6561
-181082	Emiliania huxleyi virus 86 (isolate United Kingdom/English Channel/1999)	Emiliania huxleyi virus 86	EhV-86		#BA6561
-186538	Zaire ebolavirus (strain Mayinga-76)	Zaire ebolavirus	Ebola	9913,10090,9606,511145,9986,9796,7227,10116,9544	#BA6561
-190061	Fowl adenovirus A serotype 1 (strain CELO / Phelps)	Fowl adenovirus A type 1	FAdV-1	9606	#BA6561
-194440	Human T-cell leukemia virus 1 (isolate Caribbea HS-35 subtype A)	Human T-cell leukemia virus 1	HTLV-1	9913,10090,9606,10390,7227,10116	#BA6561
-194441	Human T-cell leukemia virus 2	Human T-cell leukemia virus 2	HTLV-2	9986,10116,9913,10090,9606	#BA6561
-194443	Human T-cell leukemia virus 3 (strain 2026ND)	Human T-cell leukemia virus 3	HTLV-3	9606	#BA6561
-194699	Bordetella phage BPP-1	Bordetella phage BPP-1	BPP-1	257310	#BA6561
-195054	Human parechovirus 2 (strain Williamson)	Human parechovirus 2	HPeV-2	9606	#BA6561
-212035	Acanthamoeba polyphaga mimivirus	Acanthamoeba polyphaga mimivirus	APMV		#BA6561
-220340	Bean golden yellow mosaic virus (isolate Puerto Rico-Japan)	Bean golden yellow mosaic virus	BGYMV	3702,9606	#BA6561
-279896	Maize mosaic virus (isolate Maize/United States/Reed/2005)	Maize mosaic virus	MMV		#BA6561
-28289	Cydia pomonella granulosis virus (isolate Mexico/1963)	Cydia pomonella granulosis virus	CpGV		#BA6561
-28355	Peanut clump virus (isolate 87/TGTA2)	Peanut clump virus	PCV		#BA6561
-28875	Rotavirus A (isolate Monkey/South Africa/SA11-H96/1958 G3-P5B[2]-I2-R2-C5-M5-A5-N5-T5-E2-H5) (RV-A)	Rotavirus A	Rotavirus	9986,9913,10090,9823,9606	#BA6561
-307456	Rachiplusia ou multiple nucleopolyhedrovirus (strain R1)	Rachiplusia ou multiple nucleopolyhedrovirus	RoMNPV	10090,9606	#BA6561
-31537	Lactococcus phage c2	Lactococcus phage c2	Lactococcus phage c2		#BA6561
-32603	Human herpesvirus 6A (strain Uganda-1102)	Human herpesvirus 6A	HHV-6A	4932,9606	#BA6561
-32604	Human herpesvirus 6B (strain Z29)	Human herpesvirus 6B	HHV-6B	9606	#BA6561
-32625	Mushroom bacilliform virus (isolate Australia/AUS LF-1)	Mushroom bacilliform virus	MBV		#BA6561
-329852	Enterobacteria phage MS2	Enterobacteria phage MS2	Bacteriophage MS2	481805,511145	#BA6561
-333919	Equus caballus papillomavirus 1 (strain Olson)	Equus caballus papillomavirus 1	EcPV-1		#BA6561
-333926	Human papillomavirus type 4	Human papillomavirus type 4	HPV 4	9606	#BA6561
-334203	Human papillomavirus type 1a	Human papillomavirus type 1a	HPV 1a	9606	#BA6561
-337041	Human papillomavirus type 16	Human papillomavirus type 16	HPV 16	10141,4932,10090,7227,9606,9913,10116,9796,9823,9483,9544,9986	#BA6561
-337042	Human papillomavirus type 18	Human papillomavirus type 18	HPV 18	9913,10090,9606,10116,7227,9986	#BA6561
-337051	Human papillomavirus type 5	Human papillomavirus type 5	HPV 5	9913,10090,9606	#BA6561
-33773	Olive latent virus 2 (isolate Italy)	Olive latent virus 2	OLV-2		#BA6561
-342409	White spot syndrome virus (isolate Shrimp/China/Tongan/1996)	White spot syndrome virus	WSSV		#BA6561
-348604	Enterobacteria phage T4	Enterobacteria phage T4	T4	316407,208964,9606	#BA6561
-351073	Reovirus type 1 (strain Lang)	Reovirus type 1	Reovirus type 1	9606	#BA6561
-35252	Alcelaphine herpesvirus 1 (strain C500)	Alcelaphine herpesvirus 1	AlHV-1		#BA6561
-35304	Bunyamwera virus	Bunyamwera virus	BUNV	8364,9606	#BA6561
-35305	Bunyavirus La Crosse (isolate Human/United States/L78/1978)	Bunyavirus La Crosse		9606	#BA6561
-35350	Apple stem pitting virus (isolate PA66)	Apple stem pitting virus	ASPV		#BA6561
-36427	Rotavirus C (isolate Human/United Kingdom/Bristol/1989)	Rotavirus C	RV-C	9606	#BA6561
-36772	Subterranean clover stunt virus (strain F)	Subterranean clover stunt virus	SCSV	9606	#BA6561
-37124	Chikungunya virus (strain S27-African prototype)	Chikungunya virus	CHIKV	9606	#BA6561
-37128	Potato mop-top virus (isolate Potato/Sweden/Sw)	Potato mop-top virus	PMTV	3702,7227,9606	#BA6561
-37206	Helicoverpa armigera stunt virus	Helicoverpa armigera stunt virus	HaSV		#BA6561
-37296	Human herpesvirus 8 type P (isolate GK18)	Human herpesvirus 8 type P	HHV-8	4932,10090,10298,9606,10116,7227,9913,9483,7955,9031,9823,10376,9544,9986	#BA6561
-374840	Enterobacteria phage phiX174 (Isolate Sanger)	Enterobacteria phage phiX174	phi-X174		#BA6561
-37665	Ectocarpus siliculosus virus 1 (isolate New Zealand/Kaikoura/1988)	Ectocarpus siliculosus virus 1	EsV-1		#BA6561
-38804	Yaba monkey tumor virus (strain VR587)	Yaba monkey tumor virus	YMTV	9913,10090,9606,10116,9986,9483,9544	#BA6561
-39720	Walleye dermal sarcoma virus	Walleye dermal sarcoma virus	WDSV	4932,10090,8364,9606,9913,7955,7227,9986	#BA6561
-40051	Bluetongue virus 10 (isolate USA)	Bluetongue virus 10	BTV 10	9913,10090,9606	#BA6561
-40279	Panicum mosaic virus (strain United States/Kansas 109S)	Panicum mosaic virus	PMV		#BA6561
-46839	Colorado tick fever virus (strain USA/Florio N-7180)	Colorado tick fever virus	CTFV		#BA6561
-47740	Groundnut rosette virus (strain MC1)	Groundnut rosette virus	GRV	9606	#BA6561
-49267	Tomato pseudo-curly top virus	Tomato pseudo-curly top virus	TPCTV		#BA6561
-50294	Psittacid herpesvirus 1 (isolate Amazon parrot/-/97-0001/1997)	Psittacid herpesvirus 1	PsHV-1		#BA6561
-63330	Hendra virus (isolate Horse/Autralia/Hendra/1994)	Hendra virus	Hendra	9913,10090,9606,9986,9796,9483,9544	#BA6561
-66797	Bacillus phage SPbeta	Bacillus phage SPbeta	SP-beta		#BA6561
-694005	Murine coronavirus (strain A59)	Murine coronavirus	MHV	10090,9606,10116,9031,9483,9544	#BA6561
-694009	Human SARS coronavirus	Human SARS coronavirus	SARS-CoV	9913,10090,8364,9606,9986,9823,9483,9544	#BA6561
-694014	Avian infectious bronchitis virus (strain Beaudette)	Avian infectious bronchitis virus	IBV	10141,9913,7244,8364,9606,10090,9986,9031,9796,7227,10116,9544,9483,9669	#BA6561
-74501	Breda virus 1	Breda virus 1	BRV-1	9913,9606	#BA6561
+11593	Crimean-Congo hemorrhagic fever virus (strain Nigeria/IbAr10200/1970)	Crimean-Congo hemorrhagic fever virus (CCHFV)	CCHFV	9913,9606	#BA6561
+11599	Hantaan virus (strain 76-118)	Hantaan virus	Hantaan	9913,10090,9606,9986,9544,11599	#BA6561
+116056	Pelargonium zonate spot virus (isolate Tomato/Italy/1982)	Pelargonium zonate spot virus (PZSV)	PZSV	4081,116056	#BA6561
+11613	Tomato spotted wilt virus (strain Brazilian Br-01)	Tomato spotted wilt virus (TSWV)	TSWV	4081,11613,9606	#BA6561
+11620	Lassa virus (strain Mouse/Sierra Leone/Josiah/1976)	Lassa virus (LASV)	LASV	11620,9606	#BA6561
+11623	Lymphocytic choriomeningitis virus (strain Armstrong)	Lymphocytic choriomeningitis virus (LCMV)	LCMV	11623,10090,9606	#BA6561
+11631	Tacaribe virus (strain Franze-Fernandez)	Tacaribe virus (TCRV)	TCRV	9483,9544,10090,9796,9606	#BA6561
+11642	Simian foamy virus (isolate chimpanzee)	Simian foamy virus (SFVcpz)	SFVcpz	11642,9598	#BA6561
+11676	Human immunodeficiency virus type 1 group M subtype B (isolate HXB2)	Human immunodeficiency virus type 1 (HIV-1)	HIV-1	243277,4932,10090,9823,11676,9606,10116,223926,9913,9483,9615,9598,7227,9986,312309,9685,9544,9796	#BA6561
+11709	Human immunodeficiency virus type 2 subtype A (isolate BEN)	Human immunodeficiency virus type 2 (HIV-2)	HIV-2	10090,9606,9361,9986,7955,11709,7227,9483,9544,9598	#BA6561
+11723	Simian immunodeficiency virus (isolate Mm142-83)	Simian immunodeficiency virus (SIV)	SIV	4932,10090,9606,9913,9031,11723	#BA6561
+11757	Mouse mammary tumor virus (strain C3H)	Mouse mammary tumor virus (MMTV)	MMTV	11757,10090	#BA6561
+11786	Moloney murine leukemia virus (isolate Shinnick)	Moloney murine leukemia virus (MoMLV)	MoMLV	11786,10090,9606	#BA6561
+118140	Porcine teschovirus 1 (isolate Pig/United Kingdom/F65/1967)	Porcine teschovirus 1 (Tescho)	Tescho	118140,9823	#BA6561
+11886	Avian leukosis virus RSA	Avian leukosis virus RSA (RSV-SRA)	RSV-SRA	10116,9031,11886,9606	#BA6561
+11976	Rabbit hemorrhagic disease virus (strain Rabbit/Germany/FRG/1989)	Rabbit hemorrhagic disease virus (RHDV-FRG)	RHDV-FRG	9986,11976,9606	#BA6561
+11978	Feline calicivirus (strain Cat/United States/Urbana/1960)	Feline calicivirus (FCV)	FCV	11978,9685	#BA6561
+11983	Norwalk virus (strain GI/Human/United States/Norwalk/1968)	Norwalk virus	Norwalk	10116,11983,9913,10090,9606	#BA6561
+12040	Barley yellow dwarf virus (isolate PAV)	Barley yellow dwarf virus (BYDV)	BYDV	4513,4577	#BA6561
+12045	Potato leafroll virus (strain Potato/Scotland/strain 1/1984)	Potato leafroll virus (PLrV)	PLrV	4113,7227	#BA6561
+12092	Human hepatitis A virus genotype IB (isolate HM175)	Human hepatitis A virus (HAV)	HAV	9606,9598,12092	#BA6561
+12104	Encephalomyocarditis virus (strain Rueckert)	Encephalomyocarditis virus (EMCV)	EMCV	9913,12104,9823,9606,9986,10090,7227,3702,9544,9483	#BA6561
+12110	Foot-and-mouth disease virus (isolate Swine/Taiwan/OTai/1997 serotype O)	Foot-and-mouth disease virus (FMDV)	FMDV	12110,9913,10090,9606,9785,9823,10116	#BA6561
+12138	Maize chlorotic mottle virus (isolate United States/Kansas/1987)	Maize chlorotic mottle virus (MCMV)	MCMV	4577	#BA6561
+12139	Southern bean mosaic virus (isolate Bean/United States/Arkansas)	Southern bean mosaic virus (SBMV)	SBMV	3847	#BA6561
+12145	Tomato bushy stunt virus (strain Cherry)	Tomato bushy stunt virus (TBSV)	TBSV	4081	#BA6561
+12161	Beet yellows virus (isolate Ukraine)	Beet yellows virus (BYV)	BYV	12161	#BA6561
+12167	Potato virus M (strain Russian)	Potato virus M (PVM)	PVM	3702,4113	#BA6561
+12183	Potato virus X (strain X3)	Potato virus X (PVX)	PVX	12183,3711,4113	#BA6561
+1218488	Torque teno sus virus k2 (isolate Pig/New Zealand/38E05/2007)	Torque teno sus virus k2 (TTSuVk2)	TTSuVk2	9823	#BA6561
+12216	Potato virus Y (strain N)	Potato virus Y (PVY)	PVY	4081,4932,10090,9606,9913,9986,9615,12216,3702,9685,4113	#BA6561
+12242	Tobacco mosaic virus (strain vulgare)	Tobacco mosaic virus (TMV)	TMV	12242	#BA6561
+12264	Cowpea mosaic virus (strain SB)	Cowpea mosaic virus (CPMV)	CPMV	12264	#BA6561
+12280	Tomato ringspot virus (isolate raspberry)	Tomato ringspot virus (ToRSV)	ToRSV	12280	#BA6561
+12288	Nodamura virus (strain Mag115)	Nodamura virus	Nodamura virus	9823	#BA6561
+12302	Brome mosaic virus	Brome mosaic virus (BMV)	BMV	4932,12302	#BA6561
+12305	Cucumber mosaic virus (strain FNY)	Cucumber mosaic virus (CMV)	CMV	9913,10090,3702,9606,12305,10116,9986	#BA6561
+12317	Tobacco streak virus (strain WC)	Tobacco streak virus (TSV)	TSV	12317,3847	#BA6561
+12321	Alfalfa mosaic virus (strain 425 / isolate Leiden)	Alfalfa mosaic virus	Alfalfa mosaic	4081,12321,4113,3847	#BA6561
+12327	Barley stripe mosaic virus	Barley stripe mosaic virus (BSMV)	BSMV	4513,4932,12327	#BA6561
+12331	Rice stripe virus (isolate T)	Rice stripe virus (RSV)	RSV	12331	#BA6561
+12355	Enterobacteria phage T1	Enterobacteria phage T1 (T1)	T1	12355	#BA6561
+1239437	Turkey astrovirus 1	Turkey astrovirus 1 (TAstV-1)	TAstV-1	9103	#BA6561
+1239565	Human astrovirus-1	Human astrovirus-1 (HAstV-1)	HAstV-1	9606	#BA6561
+12455	Borna disease virus (strain V)	Borna disease virus (BDV)	BDV	12455,9913,10090,9606,10116,9986,9685	#BA6561
+12461	Hepatitis E virus genotype 1 (isolate Human/China/HeBei/1987)	Hepatitis E virus (HEV)	HEV	9986,9913,10090,12461,9606	#BA6561
+12465	Barley yellow mosaic virus (isolate China/Yancheng/1998)	Barley yellow mosaic virus (BaYMV)	BaYMV	4513	#BA6561
+12475	Hepatitis delta virus genotype I (isolate D380)	Hepatitis delta virus (HDV)	HDV	4932,10090,12475,9606,9913,9598,9986	#BA6561
+12538	Mokola virus (MOKV)	Mokola virus (MOKV)	MOKV	9615,9685,12538	#BA6561
+12618	Chicken anemia virus (isolate Germany Cuxhaven-1)	Chicken anemia virus (CAV)	CAV	10116,9913,10090,9031,9606	#BA6561
+12657	Equine herpesvirus 2 (strain 86/87)	Equine herpesvirus 2 (EHV-2)	EHV-2	12657,9796,9606	#BA6561
+12777	Parsnip yellow fleck virus (isolate P-121)	Parsnip yellow fleck virus (PYFV)	PYFV	12777	#BA6561
+1285595	Musca hytrovirus(isolate Musca domestica/United States/Boucias/-)	Musca hytrovirus (MHV)	MHV	1285595	#BA6561
+1285600	Nile crocodilepox virus (isolate Crocodylus niloticus/Zimbabwe/Ume/2001)	Nile crocodilepox virus (CRV)	CRV	1285600	#BA6561
+1297662	Thrush coronavirus HKU12 (isolate Grey-backed thrush/Hong Kong/HKU12-600/2007)	Thrush coronavirus(ThCoV)	ThCoV-HKU12	1297662	#BA6561
+129951	Human adenovirus C serotype 2	Human adenovirus C (HAdV-C)	HAdV-C	4932,10090,129951,9606,10116,6239,7227,9986	#BA6561
+1330524	Salivirus A (isolate Human/Nigeria/NG-J1/2007)	Salivirus A (SV-A)	SV-A	1330524,9598,9606	#BA6561
+1335626	Human coronavirus EMC (isolate United Kingdom/H123990006/2012)	Human coronavirus EMC (HCoV-EMC)	HCoV-EMC	1335626	#BA6561
+133704	Porcine circovirus 1 (isolate China)	Porcine circovirus 1 (PCV1)	PCV1	133704	#BA6561
+137556	Maize necrotic streak virus	Maize necrotic streak virus (MNeSV)	MNeSV	4577	#BA6561
+138950	Poliovirus type 1 (strain Mahoney)	Poliovirus type 1	Polio	4932,10090,138950,9606,9913,10116,3702,9986	#BA6561
+147711	Human rhinovirus A serotype 89 (strain 41467-Gallo)	Human rhinovirus A (HRV-89)	HRV-89	147711,9606	#BA6561
+1511779	Mischivirus A (isolate Miniopterus schreibersii/China/MsPV-1/2010)	Mischivirus A (MscPV1)	MscPV1	1511779	#BA6561
+1511862	Aleutian mink disease parvovirus (strain G)	Aleutian mink disease parvovirus (ADV)	ADV	10116,4932	#BA6561
+1511865	Galliform aveparvovirus 1 (isolate Chicken/Hungary/ABU-P1/-/-)	Galliform aveparvovirus 1 (ChPV)	ChPV	9031	#BA6561
+1511873	Bovine parvovirus (isolate pAT153/1986)	Bovine parvovirus (BPV)	BPV	9913	#BA6561
+1511891	Adeno-associated virus 2 (isolate Srivastava/1982)	Adeno-associated virus 2 (AAV-2)	AAV-2	7227,9606	#BA6561
+1511900	Human parvovirus B19 (strain HV)	Human parvovirus B19 (HPV B19)	HPV B19	1511900,9606	#BA6561
+1511908	Murine minute virus (strain MVM prototype)	Murine minute virus (MMV)	MMV	4932,10090,7227,9606,1511908,9913,9031,9823,9986	#BA6561
+1513235	Cafeteria roenbergensis virus (strain BV-PW1)	Cafeteria roenbergensis virus (CroV)	CroV	1513235	#BA6561
+162145	Human metapneumovirus (strain CAN97-83)	Human metapneumovirus (HMPV)	HMPV	9986,162145,10090,9606	#BA6561
+176652	Invertebrate iridescent virus 6 (IIV-6)	Invertebrate iridescent virus 6	Chilo iridescent virus	176652	#BA6561
+180170	Infectious spleen and kidney necrosis virus (isolate Mandarin fish/China/Nanhai/1998)	Infectious spleen and kidney necrosis virus (ISKNV)	ISKNV	180170	#BA6561
+181082	Emiliania huxleyi virus 86 (isolate United Kingdom/English Channel/1999)	Emiliania huxleyi virus 86 (EhV-86)	EhV-86	181082	#BA6561
+186538	Zaire ebolavirus (strain Mayinga-76)	Zaire ebolavirus	Ebola	9913,10090,9606,511145,9986,9796,7227,186538,10116,9544	#BA6561
+190061	Fowl adenovirus A serotype 1 (strain CELO / Phelps)	Fowl adenovirus A type 1 (FAdV-1)	FAdV-1	9606,190061	#BA6561
+194440	Human T-cell leukemia virus 1 (isolate Caribbea HS-35 subtype A)	Human T-cell leukemia virus 1 (HTLV-1)	HTLV-1	9913,10090,9606,194440,10390,7227,10116	#BA6561
+194441	Human T-cell leukemia virus 2	Human T-cell leukemia virus 2 (HTLV-2)	HTLV-2	10116,9986,9913,10090,9606	#BA6561
+194443	Human T-cell leukemia virus 3 (strain 2026ND)	Human T-cell leukemia virus 3 (HTLV-3)	HTLV-3	9606	#BA6561
+194699	Bordetella phage BPP-1	Bordetella phage BPP-1 (BPP-1)	BPP-1	257310,194699	#BA6561
+195054	Human parechovirus 2 (strain Williamson)	Human parechovirus 2 (HPeV-2)	HPeV-2	195054,9606	#BA6561
+202566	Cherry rasp leaf virus (isolate Potato/United States	Cherry rasp leaf virus (CRLV)	CRLV	202566	#BA6561
+212035	Acanthamoeba polyphaga mimivirus	Acanthamoeba polyphaga mimivirus (APMV)	APMV	212035	#BA6561
+220340	Bean golden yellow mosaic virus (isolate Puerto Rico-Japan)	Bean golden yellow mosaic virus (BGYMV)	BGYMV	3702,220340,9606	#BA6561
+264729	Burkholderia phage BcepMu (isolate -/United States/Summer/2002)	Burkholderia phage BcepMu (BcepMu)	BcepMu	216591	#BA6561
+279896	Maize mosaic virus (isolate Maize/United States/Reed/2005)	Maize mosaic virus (MMV)	MMV	279896,4558,4577	#BA6561
+28289	Cydia pomonella granulosis virus (isolate Mexico/1963)	Cydia pomonella granulosis virus (CpGV)	CpGV	28289	#BA6561
+28321	Amsacta moorei entomopoxvirus	Amsacta moorei entomopoxvirus (AmEPV)	AmEPV	28321	#BA6561
+28355	Peanut clump virus (isolate 87/TGTA2)	Peanut clump virus (PCV)	PCV	4555,4558	#BA6561
+28375	Soil-borne wheat mosaic virus (strain United States/Nebraska/1981)	Soil-borne wheat mosaic virus (SBWMV)	SBWMV	4513	#BA6561
+28875	Rotavirus A (isolate Monkey/South Africa/SA11-H96/1958 G3-P5B[2]-I2-R2-C5-M5-A5-N5-T5-E2-H5) (RV-A)	Rotavirus A	Rotavirus	9913,10090,9606,28875,9823,9986	#BA6561
+305674	Deerpox virus (strain Mule deer/United States/W-848-83/1983)	Deerpox virus (DPV)	DPV	305674	#BA6561
+307456	Rachiplusia ou multiple nucleopolyhedrovirus (strain R1)	Rachiplusia ou multiple nucleopolyhedrovirus (RoMNPV)	RoMNPV	10090,9606,307456	#BA6561
+312185	Equine rhinitis B virus 1 (strain Equine/Switzerland/P1436/71/1971)	Equine rhinitis B virus 1 (ERBV-1)	ERBV-1	312185,9796	#BA6561
+318558	Tupaia virus (isolate Tupaia/Thailand/-/1986)	Tupaia virus (TUPV)	TUPV	318558	#BA6561
+318844	Tibrogargan virus (strain CS132)	Tibrogargan virus (TIBV)	TIBV	318844	#BA6561
+32603	Human herpesvirus 6A (strain Uganda-1102)	Human herpesvirus 6A (HHV-6A)	HHV-6A	32603,4932,9606	#BA6561
+32604	Human herpesvirus 6B (strain Z29)	Human herpesvirus 6B (HHV-6B)	HHV-6B	32604,9606	#BA6561
+329852	Enterobacteria phage MS2	Enterobacteria phage MS2 (Bacteriophage MS2)	MS2	481805,511145	#BA6561
+333919	Equus caballus papillomavirus 1 (strain Olson)	Equus caballus papillomavirus 1 (EcPV-1)	EcPV-1	9796	#BA6561
+333926	Human papillomavirus type 4	Human papillomavirus type 4 (HPV 4)	HPV 4	9606	#BA6561
+334203	Human papillomavirus type 1a	Human papillomavirus type 1a (HPV 1a)	HPV 1a	9606	#BA6561
+334205	Human papillomavirus type 41	Human papillomavirus type 41 (HPV 41)	HPV 41	9606	#BA6561
+337041	Human papillomavirus type 16	Human papillomavirus type 16 (HPV 16)	HPV 16	10141,9913,10090,7227,9606,337041,4932,10116,9796,9823,9986,9544,9483	#BA6561
+337042	Human papillomavirus type 18	Human papillomavirus type 18 (HPV 18)	HPV 18	9913,10090,9606,337042,10116,7227,9986	#BA6561
+337051	Human papillomavirus type 5	Human papillomavirus type 5 (HPV 5)	HPV 5	9913,10090,337051,9606	#BA6561
+33773	Olive latent virus 2 (isolate Italy)	Olive latent virus 2 (OLV-2)	OLV-2	33773	#BA6561
+342409	White spot syndrome virus (isolate Shrimp/China/Tongan/1996)	White spot syndrome virus (WSSV)	WSSV	342409	#BA6561
+345201	Invertebrate iridescent virus 3	Invertebrate iridescent virus 3 (IIV-3)	IIV-3	345201	#BA6561
+348604	Enterobacteria phage T4	Enterobacteria phage T4 (T4)	T4	348604,316407,208964,9606	#BA6561
+351073	Reovirus type 1 (strain Lang)	Reovirus type 1 (Reovirus type 1)	Reovirus	351073,9606	#BA6561
+35252	Alcelaphine herpesvirus 1 (strain C500)	Alcelaphine herpesvirus 1 (AlHV-1)	AlHV-1	35252	#BA6561
+35258	Canine oral papillomavirus (strain Y62)	Canine oral papillomavirus (COPV)	COPV	9615	#BA6561
+35287	Rice tungro spherical virus (strain A)	Rice tungro spherical virus (RTSV)	RTSV	35287	#BA6561
+35304	Bunyamwera virus	Bunyamwera virus (BUNV)	BUNV	9606,35304,7159,8364	#BA6561
+35305	Bunyavirus La Crosse (isolate Human/United States/L78/1978)	Bunyavirus La Crosse	Bunyavirus	9606,35305	#BA6561
+35612	Vesicular exanthema of swine virus serotype A48 (isolate Swine/United States/A48/1948)	Vesicular exanthema of swine virus (VESV)	VESV	9823	#BA6561
+36427	Rotavirus C (isolate Human/United Kingdom/Bristol/1989)	Rotavirus C (RV-C)	RV-C	36427,9606	#BA6561
+36772	Subterranean clover stunt virus (strain F)	Subterranean clover stunt virus (SCSV)	SCSV	9606	#BA6561
+370833	Tomato torrado virus (isolate Solanum lycopersicum/Spain/PRIToTV0301/-)	Tomato torrado virus (ToTV)	ToTV	4081,4113,370833	#BA6561
+37124	Chikungunya virus (strain S27-African prototype)	Chikungunya virus (CHIKV)	CHIKV	37124,9598,7159,9606	#BA6561
+37128	Potato mop-top virus (isolate Potato/Sweden/Sw)	Potato mop-top virus (PMTV)	PMTV	3702,37128,4113,7227,9606	#BA6561
+37296	Human herpesvirus 8 type P (isolate GK18)	Human herpesvirus 8 type P (HHV-8)	HHV-8	37296,4932,10090,10298,9606,10116,9913,10376,7955,9031,7227,9483,9544,9823,9986	#BA6561
+374840	Enterobacteria phage phiX174 (Isolate Sanger)	Enterobacteria phage phiX174	phi-X174	374840	#BA6561
+38525	Avian metapneumovirus (isolate Canada goose/Minnesota/15a/2001)	Avian metapneumovirus (AMPV)	AMPV	38525,9103	#BA6561
+38804	Yaba monkey tumor virus (strain VR587)	Yaba monkey tumor virus (YMTV)	YMTV	9986,10090,9606,9913,9483,38804,10116,9544	#BA6561
+39720	Walleye dermal sarcoma virus	Walleye dermal sarcoma virus (WDSV)	WDSV	4932,10090,8364,9606,9913,7955,7227,9986	#BA6561
+40051	Bluetongue virus 10 (isolate USA)	Bluetongue virus 10 (BTV 10)	BTV 10	9913,10090,9606,40051	#BA6561
+40537	Bovine papillomavirus type 5	Bovine papillomavirus type 5	Bovine papillomavirus 5	9913	#BA6561
+40631	Enterobacteria phage N15	Enterobacteria phage N15	N15	40631	#BA6561
+47416	Satsuma dwarf virus (isolate Satsuma mandarin/Japan/S-58/1977)	Satsuma dwarf virus (SDV)	SDV	47416	#BA6561
+47740	Groundnut rosette virus (strain MC1)	Groundnut rosette virus (GRV)	GRV	9606	#BA6561
+48981	Drosophila x virus (isolate Chung/1996)	Drosophila x virus (DXV)	DXV	7227	#BA6561
+49267	Tomato pseudo-curly top virus	Tomato pseudo-curly top virus (TPCTV)	TPCTV	49267,4081	#BA6561
+50294	Psittacid herpesvirus 1 (isolate Amazon parrot/-/97-0001/1997)	Psittacid herpesvirus 1 (PsHV-1)	PsHV-1	50294	#BA6561
+50817	Broad bean wilt virus 1 (strain Spinach/United States/ATCC PV-132/1963)	Broad bean wilt virus 1 (BBWV-1)	BBWV-1	50817	#BA6561
+55987	Infectious salmon anemia virus (isolate Atlantic salmon/Norway/810/9/99)	Infectious salmon anemia virus (ISAV)	ISAV	8049	#BA6561
+57482	European bat lyssavirus 1 (strain Bat/Germany/RV9/1968)	European bat lyssavirus 1 (EBLV1)	EBLV1	57482	#BA6561
+58103	Leishmania RNA virus 1 - 1 (isolate Leishmania guyanensis)	Leishmania RNA virus 1 - 1 (LRV-1-1)	LRV-1-1	5664	#BA6561
+59749	Maize rayado fino virus (isolate Costa Rica/Guapiles)	Maize rayado fino virus (MRFV)	MRFV	4577	#BA6561
+63330	Hendra virus (isolate Horse/Autralia/Hendra/1994)	Hendra virus	Hendra	9913,10090,9606,63330,9483,9796,9986,9544	#BA6561
+674953	Trichomonas vaginalis virus 1	Trichomonas vaginalis virus 1 (TVV1)	TVV1	5722	#BA6561
+687340	Torque teno virus 1 (isolate TA278)	Torque teno virus 1	Torque teno	9606	#BA6561
+687369	Torque teno mini virus 1 (isolate TLMV-CBD279)	Torque teno mini virus 1 (TTV mini 1)	TTV mini 1	9606	#BA6561
+687379	Torque teno midi virus 1 (isolate MD1-073)	Torque teno midi virus 1 (TTV midi 1)	TTV midi 1	9606	#BA6561
+687384	Torque teno felis virus (isolate Fc-TTV4)	Torque teno felis virus (TTV felis 1)	TTV felis 1	9685	#BA6561
+687385	Torque teno canis virus (isolate Cf-TTV10)	Torque teno canis virus (TTV canis 1)	TTV canis 1	9615	#BA6561
+687386	Torque teno sus virus 1 (isolate Sd-TTV31)	Torque teno sus virus 1 (TTV sus 1)	TTV sus 1	9823	#BA6561
+693997	Feline coronavirus (strain FIPV WSU-79/1146)	Feline coronavirus (FCoV)	FCoV	693997	#BA6561
+694005	Murine coronavirus (strain A59)	Murine coronavirus (MHV)	MHV	10090,9606,9483,9031,694005,10116,9544	#BA6561
+694009	Human SARS coronavirus	Human SARS coronavirus (SARS-CoV)	SARS-CoV	9913,10090,8364,9606,694009,9986,9823,9483,9544	#BA6561
+694014	Avian infectious bronchitis virus (strain Beaudette)	Avian infectious bronchitis virus (IBV)	IBV	10141,9913,10090,694014,9606,7244,10116,9031,9796,7227,9483,9544,9986,9669,8364	#BA6561
+696856	Bovine enteric calicivirus Newbury agent-1 (isolate Bovine/UK/Newbury1/1976)	Bovine enteric calicivirus Newbury agent-1 (BEC)	BEC	9913	#BA6561
+70796	Avian encephalomyelitis virus (strain Calnek vaccine)	Avian encephalomyelitis virus (AEV)	AEV	70796,9031	#BA6561
+74501	Breda virus 1	Breda virus 1 (BRV-1)	BRV-1	9913,9606	#BA6561
+90961	Australian bat lyssavirus (isolate Bat/AUS/1996)	Australian bat lyssavirus (ABLV)	ABLV	90961	#BA6561
+92444	Acute bee paralysis virus (strain Rothamsted)	Acute bee paralysis virus (ABPV)	ABPV	7460	#BA6561
+95342	Sapporo virus (isolate GI/Human/Germany/pJG-Sap01)	Sapporo virus	Sapporo	9606	#BA6561
+99182	Xenotropic MuLV-related virus (isolate VP62)	Xenotropic MuLV-related virus (XMRV)	XMRV	9606	#BA6561
