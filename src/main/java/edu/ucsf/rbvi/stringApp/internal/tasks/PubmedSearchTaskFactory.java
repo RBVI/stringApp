@@ -123,7 +123,7 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 						d.setContentPane(panel);
 						d.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 						d.pack();
-						d.setVisible(true);
+						// d.setVisible(true);
 						panel.doImport();
 					}
 				});

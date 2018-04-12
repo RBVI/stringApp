@@ -361,15 +361,24 @@ public class SearchOptionsPanel extends JPanel {
 
 		{
 			int maxValue = 100;
-			if (isDisease)
+			int minValue = 0;
+			if (isDisease) {
 				maxValue = 2000;
-			additionalNodesSlider = new JSlider(0, maxValue, additionalNodes);
+				minValue = 1;
+			}
+			additionalNodesSlider = new JSlider(minValue, maxValue, additionalNodes);
 			Dictionary<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
 			Font valueFont = new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()-4);
 			for (int value = 0; value <= maxValue; value += maxValue/10) {
-				JLabel label = new JLabel(Integer.toString(value));
-				label.setFont(valueFont);
-				labels.put(value, label);
+				if (value == 0 && minValue == 1) {
+					JLabel label = new JLabel(Integer.toString(1));
+					label.setFont(valueFont);
+					labels.put(value, label);
+				} else {
+					JLabel label = new JLabel(Integer.toString(value));
+					label.setFont(valueFont);
+					labels.put(value, label);
+				}
 			}
 			additionalNodesSlider.setLabelTable(labels);
 			additionalNodesSlider.setPaintLabels(true);

@@ -1337,21 +1337,14 @@ public class ModelUtils {
 			SavePolicy policy) {
 			String name = "stringApp";
 			if (policy.equals(SavePolicy.SESSION_FILE)) {
+				CyProperty<Properties> service = manager.getService(CyProperty.class, "(cyPropertyName="+name+")");
 				// Do we already have a session with our properties
-				CySessionManager sessionManager = manager.getService(CySessionManager.class);
-				CySession session = sessionManager.getCurrentSession();
-				if (session != null) {
-					Set<CyProperty<?>> sessionProperties = session.getProperties();
-					for (CyProperty<?> cyProp : sessionProperties) {
-						if (cyProp.getName() != null && cyProp.getName().equals(name)) {
-							return (CyProperty<Properties>) cyProp;
-						}
-					}
-				}
+				if (service.getSavePolicy().equals(SavePolicy.SESSION_FILE))
+					return service;
+
 				// Either we have a null session or our properties aren't in this session
 				Properties props = new Properties();
-				CyProperty<Properties> service = new SimpleCyProperty(name, props, Properties.class,
-					SavePolicy.SESSION_FILE);
+				service = new SimpleCyProperty(name, props, Properties.class, SavePolicy.SESSION_FILE);
 				Properties serviceProps = new Properties();
 				serviceProps.setProperty("cyPropertyName", service.getName());
 				manager.registerAllServices(service, serviceProps);

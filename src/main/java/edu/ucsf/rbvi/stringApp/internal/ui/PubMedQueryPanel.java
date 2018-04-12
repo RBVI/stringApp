@@ -74,7 +74,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.GetStringIDsFromPubmedTask;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 // TODO: [Optional] Improve non-gui mode
-public class PubMedQueryPanel extends JPanel implements TaskObserver { 
+public class PubMedQueryPanel extends JPanel { 
 	StringNetwork stringNetwork = null;
 	StringNetwork initialStringNetwork = null;
 	final StringManager manager;
@@ -92,6 +92,8 @@ public class PubMedQueryPanel extends JPanel implements TaskObserver {
 
 	private int confidence = 40;
 	private int additionalNodes = 100;
+
+	private boolean loadEnrichment = false;
 
 	public PubMedQueryPanel(final StringManager manager) {
 		super(new GridBagLayout());
@@ -114,7 +116,7 @@ public class PubMedQueryPanel extends JPanel implements TaskObserver {
 		this(manager, stringNetwork, query, 
 		     searchOptions.getSpecies(),
 		     searchOptions.getConfidence(), searchOptions.getAdditionalNodes());
-		boolean loadEnrichment = searchOptions.getLoadEnrichment();
+		loadEnrichment = searchOptions.getLoadEnrichment();
 		optionsPanel.setLoadEnrichment(loadEnrichment);
 	}
 
@@ -244,35 +246,15 @@ public class PubMedQueryPanel extends JPanel implements TaskObserver {
 		((Window)getRootPane().getParent()).dispose();
 	}
 
-	@Override
-	public void allFinished(FinishStatus finishStatus) {
-		//
-		if (optionsPanel.getLoadEnrichment()) {
-			GetEnrichmentTaskFactory tf = new GetEnrichmentTaskFactory(manager);
-			ShowEnrichmentPanelTaskFactory showTf = manager.getShowEnrichmentPanelTaskFactory();
-			tf.setShowEnrichmentPanelFactory(showTf);
-			TunableSetter setter = manager.getService(TunableSetter.class);
-			Map<String, Object> valueMap = new HashMap<>();
-			valueMap.put("cutoff", 0.05);
-			TaskIterator newIterator = 
-							setter.createTaskIterator(tf.createTaskIterator(manager.getCurrentNetwork()), valueMap);
-			// System.out.println("stringNetwork network = "+stringNetwork.getNetwork());
-			manager.execute(newIterator);
-		}
-	}
 
-	@Override
-	public void taskFinished(ObservableTask task) {
-	}
-
-
-	class InitialAction extends AbstractAction {
+	class InitialAction extends AbstractAction implements TaskObserver {
 		public InitialAction() {
 			super("Import");
 		}
 
     @Override
     public void actionPerformed(ActionEvent e) {
+			loadEnrichment = optionsPanel.getLoadEnrichment();
 			// Start our task cascade
 			Species species = (Species)speciesCombo.getSelectedItem();
 			if (stringNetwork == null)
@@ -293,9 +275,33 @@ public class PubMedQueryPanel extends JPanel implements TaskObserver {
 
 			// Launch a task to get the annotations. 
 			manager.execute(new TaskIterator(new GetStringIDsFromPubmedTask(stringNetwork, species, 
-		                                                                  additionalNodes, confidence, query)));
-			cancel();
+		                                                                  additionalNodes, confidence, query)), this);
+			// cancel();
+			((Window)getRootPane().getParent()).dispose();
 		}
+
+		@Override
+		public void taskFinished(ObservableTask task) {
+		}
+
+		@Override
+		public void allFinished(FinishStatus finishStatus) {
+			//
+			if (loadEnrichment) {
+				GetEnrichmentTaskFactory tf = new GetEnrichmentTaskFactory(manager);
+				ShowEnrichmentPanelTaskFactory showTf = manager.getShowEnrichmentPanelTaskFactory();
+				tf.setShowEnrichmentPanelFactory(showTf);
+				TunableSetter setter = manager.getService(TunableSetter.class);
+				Map<String, Object> valueMap = new HashMap<>();
+				valueMap.put("cutoff", 0.05);
+				TaskIterator newIterator = 
+								setter.createTaskIterator(tf.createTaskIterator(manager.getCurrentNetwork()), valueMap);
+				// System.out.println("stringNetwork network = "+stringNetwork.getNetwork());
+				manager.execute(newIterator);
+				((Window)getRootPane().getParent()).dispose();
+			}
+		}
+
 
 	}
 

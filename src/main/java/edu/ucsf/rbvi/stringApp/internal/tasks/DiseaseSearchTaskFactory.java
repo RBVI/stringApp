@@ -21,6 +21,7 @@ import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.TaskObserver;
+import org.cytoscape.work.TunableSetter;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
@@ -120,8 +121,6 @@ public class DiseaseSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	public JComponent getOptionsComponent() {
 		optionsPanel = new SearchOptionsPanel(manager, false, true);
 		return optionsPanel;
-		// We don't use an options component for disease
-		// return null;
 	}
 
 	@Override

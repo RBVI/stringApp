@@ -26,6 +26,7 @@ import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskObserver;
+import org.cytoscape.work.TunableSetter;
 
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
@@ -161,6 +162,18 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 
 	@Override
 	public void allFinished(FinishStatus finishStatus) {
+    if (optionsPanel.getLoadEnrichment()) {
+      GetEnrichmentTaskFactory tf = new GetEnrichmentTaskFactory(manager);
+      ShowEnrichmentPanelTaskFactory showTf = manager.getShowEnrichmentPanelTaskFactory();
+      tf.setShowEnrichmentPanelFactory(showTf);
+      TunableSetter setter = manager.getService(TunableSetter.class);
+      Map<String, Object> valueMap = new HashMap<>();
+      valueMap.put("cutoff", 0.05);
+      TaskIterator newIterator =
+              setter.createTaskIterator(tf.createTaskIterator(manager.getCurrentNetwork()), valueMap);
+      // System.out.println("stringNetwork network = "+stringNetwork.getNetwork());
+      manager.execute(newIterator);
+    }
 	}
 
 	@Override

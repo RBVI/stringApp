@@ -102,13 +102,8 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			return;
 		} 
 		if (analyzedNodes.size() > 2000) {
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					JOptionPane.showMessageDialog(null,
-							"Task cannot be performed. Enrichment can be retrieved only for at most 2000 proteins.",
-							"Error", JOptionPane.ERROR_MESSAGE);
-				}
-			});
+			monitor.showMessage(Level.ERROR,
+					"Task cannot be performed. Enrichment can be retrieved only for at most 2000 proteins.");
 			return;
 		}
 		// System.out.println(selected);
@@ -119,15 +114,6 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		} else {
 			monitor.showMessage(Level.ERROR,
 					"Task cannot be performed. Enrichment can be retrieved only for networks that contain nodes from one species.");
-			System.out.println(
-					"Task cannot be performed. Enrichment can be retrieved only for networks that contain nodes from one species.");
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					JOptionPane.showMessageDialog(null,
-							"Task cannot be performed. Enrichment can be retrieved only for networks that contain nodes from one species.",
-							"Error", JOptionPane.ERROR_MESSAGE);
-				}
-			});
 			return;
 		}
 		// map of STRING ID to CyNodes
@@ -150,6 +136,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		getEnrichmentJSON(selected, species);
 		ppiSummary = getEnrichmentPPIJSON(selected, species);
 
+		/*
 		// retrieve enrichment
 		String[] selectedNodes = selected.split("\n");
 		if (goProcess) {
@@ -190,6 +177,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			if (getEnrichment(selectedNodes, "fat", species, category.getKey()))
 				saveEnrichmentTable(category.getTable(), category.getKey());
 		}
+		*/
 
 		// save analyzed nodes in network table
 		CyTable netTable = network.getDefaultNetworkTable();
@@ -215,10 +203,9 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 				TaskIterator ti = showFactory.createTaskIterator(true);
 				taskM.execute(ti);
 			}
-		} else {
-			// TODO: Some error message to the user
-			monitor.setStatusMessage(
-					"Enrichment retrieval returned no results, possibly due to an error.");
+		} else { 
+			monitor.showMessage(Level.WARN,
+					"Enrichment retrieval returned no results that met criteria.");
 		}
 	}
 
@@ -245,13 +232,13 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		args.put("caller_identity", StringManager.CallerIdentity);
 		JSONObject results = HttpUtils.postJSON(url, args, manager);
 		if (results == null) {
-			monitor.setStatusMessage(
+			monitor.showMessage(Level.ERROR,
 					"Enrichment retrieval returned no results, possibly due to an error.");
 			return;
 		}
 		List<EnrichmentTerm> terms = ModelUtils.getEnrichmentFromJSON(manager, results, cutoff, stringNodesMap, network);
 		if (terms == null) {
-			monitor.setStatusMessage(
+			monitor.showMessage(Level.ERROR,
 					"Enrichment retrieval returned no results, possibly due to an error.");
 			return;
 		} else if (terms.size() > 0) {
@@ -268,7 +255,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		args.put("identifiers", selected);
 		args.put("species", species);
 		if (ModelUtils.getConfidence(network) == null) {
-			monitor.setStatusMessage(
+			monitor.showMessage(Level.ERROR,
 					"PPI enrichment cannot be retrieved because of missing confidence values.");
 			return null;
 		}
@@ -284,11 +271,11 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		Map<String, String> ppiEnrichment = 
 						ModelUtils.getEnrichmentPPIFromJSON(manager, results, cutoff, stringNodesMap, network);
 		if (ppiEnrichment == null) {
-			monitor.setStatusMessage(
+			monitor.showMessage(Level.ERROR,
 					"PPI Enrichment retrieval returned no results, possibly due to an error.");
 			return null;
 		}  else if (ppiEnrichment.containsKey("ErrorMessage")) {
-			monitor.setStatusMessage(
+			monitor.showMessage(Level.ERROR,
 					"PPI Enrichment retrieval failed: "+ppiEnrichment.get("ErrorMessage"));
 			return null;
 		}
@@ -358,7 +345,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		} else {
 			enrichmentResult.put(enrichmentCategory, enrichmentTerms);
 			if (enrichmentTerms.size() == 0) {
-				monitor.setStatusMessage(
+				monitor.showMessage(Level.WARN,
 						"No significant terms for this enrichment category and cut-off.");
 			} else {
 				monitor.setStatusMessage("Retrieved " + enrichmentTerms.size()
