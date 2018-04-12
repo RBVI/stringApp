@@ -114,6 +114,7 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 	@Override
 	public JComponent getOptionsComponent() {
 		optionsPanel = new SearchOptionsPanel(manager);
+		optionsPanel.setUseSmartDelimiters(true);
 		return optionsPanel;
 	}
 

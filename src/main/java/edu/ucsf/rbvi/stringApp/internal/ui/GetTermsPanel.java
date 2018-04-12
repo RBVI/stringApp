@@ -174,6 +174,8 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		add(mainSearchPanel, c.down().expandBoth().insets(5,5,0,5));
 
 		optionsPanel = new SearchOptionsPanel(manager, false, false, false);
+		if (!useDATABASE.equals(Databases.STITCH.getAPIName()))
+			optionsPanel.setUseSmartDelimiters(true);
 		optionsPanel.setMinimumSize(new Dimension(400, 150));
 		add(optionsPanel, c.down().expandHoriz().insets(5,5,0,5));
 

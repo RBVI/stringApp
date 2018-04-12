@@ -206,6 +206,8 @@ public class CyActivator extends AbstractCyActivator {
 			Properties expandProps = new Properties();
 			expandProps.setProperty(COMMAND_NAMESPACE, "string");
 			expandProps.setProperty(COMMAND, "expand");
+			expandProps.setProperty(COMMAND_DESCRIPTION, "Expand a STRING network by more interactors");
+			expandProps.setProperty(COMMAND_LONG_DESCRIPTION, "");
 			registerService(bc, expandFactory, TaskFactory.class, expandProps);
 		}
 
@@ -334,6 +336,18 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(MENU_GRAVITY, "2.0");
 			props.setProperty(IN_MENU_BAR, "true");
 			registerService(bc, changeConfidence, NetworkTaskFactory.class, props);
+			
+			Properties props2 = new Properties();
+			props2.setProperty(COMMAND_NAMESPACE, "string");
+			props2.setProperty(COMMAND, "change confidence");
+			props2.setProperty(COMMAND_DESCRIPTION, 
+			                            "Change confidence of the network");
+			props2.setProperty(COMMAND_LONG_DESCRIPTION,
+					"Changes the confidence of the network. If increased, some edges will disapear. "
+					+ "If decreased, new edges might be added to the network.");
+			props2.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			props2.setProperty(COMMAND_EXAMPLE_JSON, "{}");
+			registerService(bc, changeConfidence, TaskFactory.class, props2);
 		}
 
 		{
@@ -500,7 +514,8 @@ public class CyActivator extends AbstractCyActivator {
 			                  "Show the structure images on the nodes");
 			props.setProperty(COMMAND_LONG_DESCRIPTION, 
 			                  "Show the structure images on the nodes");
-			props.setProperty(COMMAND_SUPPORTS_JSON, "false");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 			registerService(bc, showImagesTF, TaskFactory.class, props);
 		}
 		
@@ -514,7 +529,8 @@ public class CyActivator extends AbstractCyActivator {
 			                  "Hide the structure images on the nodes");
 			props.setProperty(COMMAND_LONG_DESCRIPTION, 
 			                  "Hide the structure images on the nodes");
-			props.setProperty(COMMAND_SUPPORTS_JSON, "false");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 			registerService(bc, showImagesTF, TaskFactory.class, props);
 		}
 
