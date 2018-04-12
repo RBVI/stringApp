@@ -207,7 +207,11 @@ public class CyActivator extends AbstractCyActivator {
 			expandProps.setProperty(COMMAND_NAMESPACE, "string");
 			expandProps.setProperty(COMMAND, "expand");
 			expandProps.setProperty(COMMAND_DESCRIPTION, "Expand a STRING network by more interactors");
-			expandProps.setProperty(COMMAND_LONG_DESCRIPTION, "");
+			expandProps.setProperty(COMMAND_LONG_DESCRIPTION, 
+					"Expand an already exisitng STRING network by more interactors such as STITCH compounds, "
+					+ "proteins of the network species as well as proteins interacting with avaialble viruses or host species proteins");
+			expandProps.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			expandProps.setProperty(COMMAND_EXAMPLE_JSON, JSON_EXAMPLE);			
 			registerService(bc, expandFactory, TaskFactory.class, expandProps);
 		}
 
@@ -240,7 +244,8 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "add nodes");
 			props.setProperty(COMMAND_DESCRIPTION, "Add query nodes to an existing STRING network");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, "");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, "Add a new set of query nodes to an existing STRING network as well as "
+					+ "their interactions with the nodes in the existing network.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
 			props.setProperty(COMMAND_EXAMPLE_JSON, JSON_EXAMPLE);
 

@@ -40,10 +40,10 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 	float currentConfidence = 0.4f;
 
 	@Tunable (description="New confidence cutoff", 
-					longDescription="Confidence score for the STRING interactions to be used for this network. Should be a value between 0.0 and 1.0", 
+					longDescription="Confidence score for the STRING interactions to be included in this network. ", 
 					exampleStringValue="0.4", 
 					gravity=1.0, params="slider=true", required=true)
-	public BoundedFloat confidence = null;
+	public BoundedFloat confidence = new BoundedFloat(0.0f, currentConfidence, 1.0f, false, false);
 
 	@Tunable(description="Network to change the confidence cutoff for", 
 	         longDescription=StringToModel.CY_NETWORK_LONG_DESCRIPTION,
@@ -56,7 +56,6 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 		if (network != null)
 			this.network = network;
 		this.netView = netView;
-		confidence = new BoundedFloat(0.0f, currentConfidence, 1.0f, false, false);
 		if (this.network != null) {
 			Double current = ModelUtils.getConfidence(network);
 			if (current == null)

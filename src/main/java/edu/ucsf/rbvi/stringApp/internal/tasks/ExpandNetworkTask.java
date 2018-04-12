@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import org.cytoscape.command.StringToModel;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
@@ -23,6 +24,7 @@ import org.cytoscape.view.model.View;
 import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.work.AbstractTask;
+import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
@@ -36,27 +38,46 @@ import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.StringResults;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
-public class ExpandNetworkTask extends AbstractTask {
+public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 	CyNetworkView netView;
 	View<CyNode> nodeView;
 	
-	@Tunable (description="Network to expand", context="nogui")
+	@Tunable(description = "Network to expand", 
+			longDescription = StringToModel.CY_NETWORK_LONG_DESCRIPTION, 
+			exampleStringValue = StringToModel.CY_NETWORK_EXAMPLE_STRING, 
+			context = "nogui")
 	public CyNetwork network;
 
-	@Tunable (description="Number of interactors to expand network by", tooltip="", gravity=1.0)
+	@Tunable (description="Number of interactors to expand network by", 
+			longDescription = "The maximum number of proteins to return in addition to the nodes in the existing network", 
+			exampleStringValue = "10", 
+			tooltip="", gravity=1.0)
 	public int additionalNodes = 10;
 
-	@Tunable (description="Type of interactors to expand network by", gravity=2.0)
+	@Tunable (description="Type of interactors to expand network by", 
+			longDescription = "Type of interactors to expand the network by, "
+					+ "including STITCH compounds, proteins of the same species as the network's one "
+					+ "or other species for which host-virus interactions are available", 
+			exampleStringValue = "STITCH compounds", 
+			gravity=2.0)
 	public ListSingleSelection<String> nodeTypes = new ListSingleSelection<String>();
 	
 	@Tunable (description="Selectivity of interactors", tooltip="<html>"
 			+ "High selectivity results in the expansion by new interactors <br />"
 			+ "that have high interaction score *only* with the node(s) in the <br />"
 			+ "network compared to all other nodes in the same organism, while <br />"
-			+ "low selectivity neglects interactions outside the current network.</html>", params="slider=true", gravity=3.0)
+			+ "low selectivity neglects interactions outside the current network.</html>", 
+			longDescription = "The selectivity score influences the choice of nodes to expand by. "
+					+ "High selectivity results in the expansion by new interactors "
+			+ "that have high interaction score *only* with the node(s) in the "
+			+ "network compared to all other nodes in the same organism, while "
+			+ "low selectivity neglects interactions outside the current network", 
+			exampleStringValue = "0.5", 
+			params="slider=true", gravity=3.0)
 	public BoundedDouble selectivityAlpha = new BoundedDouble(0.0, 0.5, 1.0, false, false);
 
 	// @Tunable (description="Layout new nodes?", gravity=4.0)
@@ -274,4 +295,16 @@ public class ExpandNetworkTask extends AbstractTask {
 	public String getTitle() {
 		return "Expand Network";
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public <R> R getResults(Class<? extends R> clzz) {
+		return StringResults.getResults(clzz, network);
+	}
+
+	@Override
+	public List<Class<?>> getResultClasses() {
+		return StringResults.getResultClasses();
+	}
+
 }
