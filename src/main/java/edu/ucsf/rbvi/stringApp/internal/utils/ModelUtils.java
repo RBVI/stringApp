@@ -950,7 +950,7 @@ public class ModelUtils {
 		List<String> species = ModelUtils.getAllNetSpecies(network);
 		Collections.sort(species);
 		String netSp = getNetSpecies(network);
-		if (!species.contains(netSp)) {
+		if (netSp != null && !species.contains(netSp)) {
 			availableTypes.add(netSp);
 		}
 		availableTypes.addAll(species);

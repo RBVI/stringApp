@@ -235,6 +235,19 @@ public class CyActivator extends AbstractCyActivator {
 
 
 		{
+			GetNetworkTaskFactory getNetwork = new GetNetworkTaskFactory(manager, "additional");
+			Properties props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "add nodes");
+			props.setProperty(COMMAND_DESCRIPTION, "Add query nodes to an existing STRING network");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, "");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			props.setProperty(COMMAND_EXAMPLE_JSON, JSON_EXAMPLE);
+
+			registerService(bc, getNetwork, TaskFactory.class, props);
+		}
+
+		{
 			VersionTaskFactory versionFactory = new VersionTaskFactory(version);
 			Properties versionProps = new Properties();
 			versionProps.setProperty(COMMAND_NAMESPACE, "string");

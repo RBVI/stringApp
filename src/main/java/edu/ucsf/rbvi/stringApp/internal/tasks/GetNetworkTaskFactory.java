@@ -17,6 +17,8 @@ public class GetNetworkTaskFactory extends AbstractTaskFactory {
 	public TaskIterator createTaskIterator() {
 		if (type.equals("protein"))
 			return new TaskIterator(new ProteinQueryTask(manager));
+		else if (type.equals("additional")) 
+			return new TaskIterator(new ProteinQueryAdditionalTask(manager));
 		else if (type.equals("disease"))
 			return new TaskIterator(new DiseaseQueryTask(manager));
 		else if (type.equals("pubmed"))
