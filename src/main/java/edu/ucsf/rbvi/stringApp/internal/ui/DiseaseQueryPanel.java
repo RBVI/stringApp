@@ -90,8 +90,8 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 
 	EntityIdentifier diseaseEntity = null;
 	List<EntityIdentifier> entityList;
-	// Species species = Species.getSpecies("Homo sapiens");
-	Species species;
+	Species species = Species.getSpecies("Homo sapiens");
+	// Species species;
 
 	private int confidence = 40;
 	private int additionalNodes = 100;
