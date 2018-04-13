@@ -26,28 +26,28 @@ public class SettingsTask extends AbstractTask {
 	private StringManager manager;
 	private CyNetwork network;
 
-	@Tunable(description="Default species", params="lookup=begin", groups={"Basic Settings"}, gravity=10.0)
+	@Tunable(description="Species", params="lookup=begin", groups={"Query Defaults"}, gravity=10.0)
 	public ListSingleSelection<Species> species;
 
-	@Tunable(description="Default confidence value", groups={"Basic Settings"}, gravity=11.0,
+	@Tunable(description="Confidence (score) cutoff", groups={"Query Defaults"}, gravity=11.0,
 	         params="slider=true")
 	public BoundedDouble defaultConfidence = new BoundedDouble(0.0, 0.4, 1.0, false, false);
 
-	@Tunable(description="Default additional proteins/compounds (for protein and compounds).", groups={"Basic Settings"}, gravity=12.0,
+	@Tunable(description="Maximum additional interactors (protein and compound query)", groups={"Query Defaults"}, gravity=12.0,
 	         params="slider=true")
 	public BoundedInteger additionalProteins = new BoundedInteger(0, 0, 100, false, false);
 
-	@Tunable(description="Default maximum proteins (for disease and PubMed).", groups={"Basic Settings"}, gravity=13.0,
+	@Tunable(description="Default maximum proteins (disease and PubMed query)", groups={"Query Defaults"}, gravity=13.0,
 	         params="slider=true")
 	public BoundedInteger maxProteins = new BoundedInteger(1, 100, 1000, false, false);
 
-	@Tunable(description="Show images by default.", groups={"View Settings"}, gravity=14.0)
+	@Tunable(description="Show structure images", groups={"View Defaults"}, gravity=14.0)
 	public boolean showImage = true;
 
-	@Tunable(description="Show enhanced labels by default.", groups={"View Settings"}, gravity=15.0)
+	@Tunable(description="Show STRING style labels", groups={"View Defaults"}, gravity=15.0)
 	public boolean showEnhancedLabels = true;
 
-	@Tunable(description="Show glass ball effect.", groups={"View Settings"}, gravity=16.0)
+	@Tunable(description="Enable STRING glass ball effect", groups={"View Defaults"}, gravity=16.0)
 	public boolean showGlassBallEffect = true;
 
 	@ContainsTunables

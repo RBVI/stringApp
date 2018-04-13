@@ -26,32 +26,32 @@ public class EnrichmentSettings implements ActionListener {
 
 	@Tunable(description = "Type of chart to draw",
 	         tooltip = "Set the desired chart type",
-					 groups = {"Enrichment Settings"},
+					 groups = {"Enrichment Defaults"},
 	         gravity = 100.0)
 	public ListSingleSelection<ChartType> chartType;
 	
 	@Tunable(description = "Number of terms to chart",
 	         tooltip = "Set the default number of terms to use for charts",
-					 groups = {"Enrichment Settings"},
+					 groups = {"Enrichment Defaults"},
 	         gravity = 101.0, params="slider=true")
 	public BoundedInteger nTerms = new BoundedInteger(1, 8, 8, false, false);
 	
 	@Tunable(description = "Default Brewer palette",
 	         tooltip = "Set the default Brewer palette for charts",
-					 groups = {"Enrichment Settings"},
+					 groups = {"Enrichment Defaults"},
 	         gravity = 102.0, context="nogui")
 	public ListSingleSelection<ColorBrewer> defaultPalette;
 
 	@Tunable(description = "Change Color Palette",
 	         tooltip = "Set the default Brewer color palette for charts",
-					 groups = {"Enrichment Settings"},
+					 groups = {"Enrichment Defaults"},
 	         gravity = 103.0, context="gui")
 	public UserAction paletteChooser = new UserAction(this);
 
 	@Tunable(description = "Overlap cutoff", 
 	         tooltip = "<html>This is the maximum Jaccard similarity that will be allowed.<br/>"+
 	                   "Values larger than this cutoff will be excluded.</html>",
-					 groups = {"Enrichment Settings"},
+					 groups = {"Enrichment Defaults"},
 	         params="slider=true", gravity = 109.0)
 	public BoundedDouble overlapCutoff = new BoundedDouble(0.0, 0.5, 1.0, false, false);
 
