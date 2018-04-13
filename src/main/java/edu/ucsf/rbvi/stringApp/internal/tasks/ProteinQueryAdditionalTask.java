@@ -36,7 +36,7 @@ public class ProteinQueryAdditionalTask extends AbstractTask implements Observab
 	@Tunable(description="Network to add nodes to", 
 	         longDescription=StringToModel.CY_NETWORK_LONG_DESCRIPTION,
 	         exampleStringValue=StringToModel.CY_NETWORK_EXAMPLE_STRING,
-	         context="nogui", required=true)
+	         context="nogui")
 	public CyNetwork network = null;
 
 	@Tunable(description = "Protein query", required = true, 
@@ -98,6 +98,9 @@ public class ProteinQueryAdditionalTask extends AbstractTask implements Observab
 			monitor.showMessage(TaskMonitor.Level.ERROR, "Unknown or missing species or NCBI taxon ID");
 			return;
 		}
+
+		if (network == null)
+			network = manager.getCurrentNetwork();
 
 		if (network == null || !ModelUtils.isStringNetwork(network)) {
 			monitor.showMessage(TaskMonitor.Level.ERROR, "Network is not a STRING network.");

@@ -23,6 +23,7 @@ import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.model.CyTableManager;
+import org.cytoscape.model.CyTableUtil;
 import org.cytoscape.model.subnetwork.CyRootNetwork;
 import org.cytoscape.property.AbstractConfigDirPropsReader;
 import org.cytoscape.property.CyProperty;
@@ -927,8 +928,11 @@ public class ModelUtils {
 	}
 
 	public static List<String> getNetworkSpeciesTaxons(CyNetwork network) {
+		List<CyNode> nodes = CyTableUtil.getNodesInState(network, CyNetwork.SELECTED, true);
+		if (nodes == null || nodes.size() == 0)
+			nodes = network.getNodeList();
 		List<String> netSpeciesNames = new ArrayList<String>();
-		for (CyNode node : network.getNodeList()) {
+		for (CyNode node : nodes) {
 			final String species = network.getRow(node).get(SPECIES, String.class);
 			if (species != null && !netSpeciesNames.contains(species)) {
 				netSpeciesNames.add(species);
