@@ -92,7 +92,11 @@ public class SearchOptionsPanel extends JPanel {
 		this.isDisease = isDisease;
 		this.isPubMed = isPubMed;
 		this.showSpecies = showSpecies;
-		if (isDisease || isPubMed) additionalNodes = 100;
+		if (isDisease || isPubMed) 
+				additionalNodes = manager.getDefaultMaxProteins();
+		else
+				additionalNodes = manager.getDefaultAdditionalProteins();
+		confidence = (int)(manager.getDefaultConfidence()*100);
 		initOptions();
 	}
 
@@ -202,7 +206,7 @@ public class SearchOptionsPanel extends JPanel {
 		speciesPanel.add(speciesLabel, c);
 		speciesCombo = new JComboBox<Species>(speciesList.toArray(new Species[1]));
 
-		if (species == null || isDisease) {
+		if (isDisease) {
 			// Set Human as the default
 			for (Species s: speciesList) {
 				if (s.toString().equals(netSpecies)) {
@@ -210,6 +214,8 @@ public class SearchOptionsPanel extends JPanel {
 					break;
 				}
 			}
+		} else if (species == null ) {
+			speciesCombo.setSelectedItem(manager.getDefaultSpecies());
 		} else {
 			speciesCombo.setSelectedItem(species);
 		}
@@ -306,7 +312,7 @@ public class SearchOptionsPanel extends JPanel {
 		{
 			confidenceValue = new JTextField(4);
 			confidenceValue.setHorizontalAlignment(JTextField.RIGHT);
-			confidenceValue.setText("0.40");
+			confidenceValue.setText(formatter.format(((double)confidence)/100.0));
 			c.right().noExpand().insets(0,5,0,5);
 			confidencePanel.add(confidenceValue, c);
 
@@ -349,7 +355,7 @@ public class SearchOptionsPanel extends JPanel {
 		{
 			c.anchor("west").noExpand().insets(0,5,0,5);
 			JLabel additionalNodesLabel;
-			if (isDisease)
+			if (isDisease || isPubMed)
 				additionalNodesLabel = new JLabel("Maximum number of proteins:");
 			else
 				additionalNodesLabel = new JLabel("Maximum additional interactors:");
@@ -362,7 +368,7 @@ public class SearchOptionsPanel extends JPanel {
 		{
 			int maxValue = 100;
 			int minValue = 0;
-			if (isDisease) {
+			if (isDisease || isPubMed) {
 				maxValue = 2000;
 				minValue = 1;
 			}
@@ -455,9 +461,9 @@ public class SearchOptionsPanel extends JPanel {
 			}
 		} else if (n.intValue() < 0) {
 			val = addNodesInputError(100);
-		} else if (n.intValue() > 100 && !isDisease ) {
+		} else if (n.intValue() > 100 && !isDisease && !isPubMed ) {
 			val = addNodesInputError(100);
-		} else if (n.intValue() > 2000 && isDisease) {
+		} else if (n.intValue() > 2000 && (isDisease || isPubMed)) {
 			val = addNodesInputError(2000);
 		} else {
 			val = n.intValue();

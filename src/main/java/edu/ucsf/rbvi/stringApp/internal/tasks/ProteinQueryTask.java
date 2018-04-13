@@ -60,6 +60,9 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 	         exampleStringValue="0.4")
 	public BoundedDouble cutoff = new BoundedDouble(0.0, 0.4, 1.0, false, false);
 
+	@Tunable(description="String network to add additional nodes to")
+	public CyNetwork network = null;
+
 	private List<Species> speciesList;
 
 	private CyNetwork loadedNetwork;
@@ -94,6 +97,10 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 
 		StringNetwork stringNetwork = new StringNetwork(manager);
 		int confidence = (int) (cutoff.getValue() * 100);
+		if (network != null) {
+			// Make sure it's a string network
+			stringNetwork.setNetwork(network);
+		}
 
 		// We want the query with newlines, so we need to convert
 		query = query.replace(",", "\n");

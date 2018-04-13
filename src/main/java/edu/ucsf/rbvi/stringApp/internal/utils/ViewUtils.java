@@ -564,10 +564,10 @@ public class ViewUtils {
 			ViewUtils.updatePieCharts(manager, vmm.getVisualStyle(netView), network, true);
 			if (ChartType.PIE.equals(type) || ChartType.SPLIT_PIE.equals(type)) {
 				ViewUtils.updateGlassBallEffect(manager, vmm.getVisualStyle(netView), network, false);
-				manager.setshowGlassBallEffect(false);
+				manager.setShowGlassBallEffect(false);
 			} else {
 				ViewUtils.updateGlassBallEffect(manager, vmm.getVisualStyle(netView), network, true);
-				manager.setshowGlassBallEffect(true);
+				manager.setShowGlassBallEffect(true);
 			}
 			manager.getShowGlassBallEffectTaskFactory().reregister();
 			netView.updateView();

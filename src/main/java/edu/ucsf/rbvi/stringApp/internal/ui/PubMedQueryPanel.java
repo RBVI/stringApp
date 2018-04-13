@@ -99,6 +99,8 @@ public class PubMedQueryPanel extends JPanel {
 		super(new GridBagLayout());
 		this.manager = manager;
 		this.species = null;
+		this.confidence = (int)(manager.getDefaultConfidence()*100);
+		this.additionalNodes = manager.getDefaultMaxProteins();
 		init();
 	}
 
@@ -108,6 +110,8 @@ public class PubMedQueryPanel extends JPanel {
 		this.stringNetwork = stringNetwork;
 		this.initialStringNetwork = stringNetwork;
 		this.species = null;
+		this.confidence = (int)(manager.getDefaultConfidence()*100);
+		this.additionalNodes = manager.getDefaultMaxProteins();
 		init();
 	}
 
@@ -202,13 +206,7 @@ public class PubMedQueryPanel extends JPanel {
 		speciesCombo = new JComboBox<Species>(speciesList.toArray(new Species[0]));
 
 		if (species == null) {
-			// Set Human as the default
-			for (Species s: speciesList) {
-				if (s.toString().equals("Homo sapiens")) {
-					speciesCombo.setSelectedItem(s);
-					break;
-				}
-			}
+			speciesCombo.setSelectedItem(manager.getDefaultSpecies());
 		} else {
 			speciesCombo.setSelectedItem(species);
 		}

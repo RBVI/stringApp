@@ -90,7 +90,8 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 
 	EntityIdentifier diseaseEntity = null;
 	List<EntityIdentifier> entityList;
-	Species species = Species.getSpecies("Homo sapiens");
+	// Species species = Species.getSpecies("Homo sapiens");
+	Species species;
 
 	private int confidence = 40;
 	private int additionalNodes = 100;
@@ -100,6 +101,9 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 	public DiseaseQueryPanel(final StringManager manager) {
 		super(new GridBagLayout());
 		this.manager = manager;
+		species = manager.getDefaultSpecies();
+		confidence = (int)(manager.getDefaultConfidence()*100);
+		additionalNodes = manager.getDefaultMaxProteins();
 		init();
 	}
 

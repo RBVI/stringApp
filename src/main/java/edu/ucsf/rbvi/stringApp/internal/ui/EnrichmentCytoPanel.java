@@ -72,7 +72,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTableTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.FilterEnrichmentTableTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
-import edu.ucsf.rbvi.stringApp.internal.tasks.SettingsTask;
+import edu.ucsf.rbvi.stringApp.internal.tasks.EnrichmentSettingsTask;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
@@ -235,7 +235,7 @@ public class EnrichmentCytoPanel extends JPanel
 			// ...
 			tm.execute(new TaskIterator(new FilterEnrichmentTableTask(manager, this)));
 		} else if (e.getSource().equals(butSettings)) {
-			tm.execute(new TaskIterator(new SettingsTask(manager)));
+			tm.execute(new TaskIterator(new EnrichmentSettingsTask(manager)));
 		} else if (e.getSource().equals(butExportTable)) {
 			if (network != null)
 				tm.execute(new TaskIterator(new ExportEnrichmentTableTask(manager, network)));

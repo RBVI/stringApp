@@ -25,9 +25,9 @@ public class ShowGlassBallEffectTask extends AbstractTask {
 		monitor.setTitle("Enable STRING glass balls effect");
 
 		if (manager.showGlassBallEffect())
-			manager.setshowGlassBallEffect(false);
+			manager.setShowGlassBallEffect(false);
 		else
-			manager.setshowGlassBallEffect(true);
+			manager.setShowGlassBallEffect(true);
 
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
 		CyNetworkViewManager netManager = manager.getService(CyNetworkViewManager.class);

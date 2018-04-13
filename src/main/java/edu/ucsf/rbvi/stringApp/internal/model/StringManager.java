@@ -72,16 +72,27 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	// the network table
 	// TODO: move all of these to StringNetwork?
 
-	// Default values.  Network specific values are stored in StringNetwork
+	// Settings default values.  Network specific values are stored in StringNetwork
+	private boolean showImage = true;
+	private boolean showEnhancedLabels = true;
+	private boolean showGlassBallEffect = true;
+	private Species species;
+	private double defaultConfidence = 0.40;
+	private int additionalProteins = 0;
+	private int maximumProteins = 100;
+
 	private int topTerms = 8;
 	private double overlapCutoff = 0.5;
 	private ColorBrewer brewerPalette = ColorBrewer.Paired;
 	private List<TermCategory> categoryFilter = TermCategory.getValues();
 	private ChartType chartType = ChartType.SPLIT;
 	private boolean removeOverlap = false;
-	private boolean showImage = true;
-	private boolean showEnhancedLabels = true;
-	private boolean showGlassBallEffect = true;
+
+	public static String ShowStructureImages = "showStructureImages";
+	public static String ShowEnhancedLabels = "showEnhancedLabels";
+	public static String ShowGlassBallEffect = "showGlassBallEffect";
+
+
 	private CyProperty<Properties> sessionProperties;
 	private CyProperty<Properties> configProps;
 
@@ -98,8 +109,41 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		if (!haveEnhancedGraphics())
 			showEnhancedLabels = false;
 
+		// Make sure we've read in our species
+		if (Species.getSpecies() == null) {
+			try {
+				Species.readSpecies(this);
+			} catch (Exception e) {
+				throw new RuntimeException("Can't read species information");
+			}
+		}
+
 		// Get our default settings
 		configProps = ModelUtils.getPropertyService(this, SavePolicy.CONFIG_DIR);
+		if (ModelUtils.hasProperty(configProps, ShowStructureImages)) {
+			setShowImage(ModelUtils.getBooleanProperty(configProps,ShowStructureImages));
+		}
+		if (ModelUtils.hasProperty(configProps, ShowEnhancedLabels)) {
+			setShowEnhancedLabels(ModelUtils.getBooleanProperty(configProps,ShowEnhancedLabels));
+		}
+		if (ModelUtils.hasProperty(configProps, ShowGlassBallEffect)) {
+			setShowGlassBallEffect(ModelUtils.getBooleanProperty(configProps,ShowGlassBallEffect));
+		}
+
+
+		if (ModelUtils.hasProperty(configProps, "species")) {
+			setDefaultSpecies(ModelUtils.getStringProperty(configProps,"species"));
+		}
+		if (ModelUtils.hasProperty(configProps, "defaultConfidence")) {
+			setDefaultConfidence(ModelUtils.getDoubleProperty(configProps,"defaultConfidence"));
+		}
+		if (ModelUtils.hasProperty(configProps, "additionalProteins")) {
+			setDefaultAdditionalProteins(ModelUtils.getIntegerProperty(configProps,"additionalProteins"));
+		}
+		if (ModelUtils.hasProperty(configProps, "maxProteins")) {
+			setDefaultMaxProteins(ModelUtils.getIntegerProperty(configProps,"maxProteins"));
+		}
+
 		if (ModelUtils.hasProperty(configProps, "overlapCutoff")) {
 			setOverlapCutoff(null, ModelUtils.getDoubleProperty(configProps,"overlapCutoff"));
 		}
@@ -211,24 +255,48 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	public void setShowImage(boolean set) { 
 		showImage = set; 
-		ModelUtils.setStringProperty(sessionProperties, ModelUtils.showStructureImagesFlag, new Boolean(set));
 	}
 
 	public boolean showEnhancedLabels() { return showEnhancedLabels; }
 	
 	public void setShowEnhancedLabels(boolean set) { 
 		showEnhancedLabels = set; 
-		ModelUtils.setStringProperty(sessionProperties, ModelUtils.showEnhancedLabelsFlag, new Boolean(set));
 	}
 
 	public boolean showGlassBallEffect() { return showGlassBallEffect; }
 	
-	public void setshowGlassBallEffect(boolean set) { 
+	public void setShowGlassBallEffect(boolean set) { 
 		showGlassBallEffect = set; 
-		ModelUtils.setStringProperty(sessionProperties, ModelUtils.showGlassBallEffectFlag, new Boolean(set));
 	}
 
-	
+	public Species getDefaultSpecies() { 
+		if (species == null) {
+			// Set Human as the default
+			for (Species s: Species.getSpecies()) {
+				if (s.toString().equals("Homo sapiens")) {
+					species = s;
+					break;
+				}
+			}
+		}
+		return species; 
+	}
+	public void setDefaultSpecies(Species defaultSpecies) {
+		species = defaultSpecies;
+	}
+	public void setDefaultSpecies(String defaultSpecies) {
+		species = Species.getSpecies(defaultSpecies);
+	}
+
+	public double getDefaultConfidence() { return defaultConfidence; }
+	public void setDefaultConfidence(double conf) { defaultConfidence = conf; }
+
+	public int getDefaultAdditionalProteins() { return additionalProteins; }
+	public void setDefaultAdditionalProteins(int ap) { additionalProteins = ap; }
+
+	public int getDefaultMaxProteins() { return maximumProteins; }
+	public void setDefaultMaxProteins(int max) { maximumProteins = max; }
+
 	public void flushEvents() {
 		cyEventHelper.flushPayloadEvents();
 	}
@@ -314,6 +382,16 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	}
 
 	public void updateSettings() {
+		ModelUtils.setStringProperty(configProps, "confidence", Double.toString(overlapCutoff));
+		ModelUtils.setStringProperty(configProps, "showImage", Boolean.toString(showImage));
+		ModelUtils.setStringProperty(configProps, "showEnhancedLabels", Boolean.toString(showEnhancedLabels));
+		ModelUtils.setStringProperty(configProps, "showGlassBallEffect", Boolean.toString(showGlassBallEffect));
+
+		ModelUtils.setStringProperty(configProps, "species", getDefaultSpecies().toString());
+		ModelUtils.setStringProperty(configProps, "defaultConfidence", Double.toString(getDefaultConfidence()));
+		ModelUtils.setStringProperty(configProps, "additionalProteins", Integer.toString(getDefaultAdditionalProteins()));
+		ModelUtils.setStringProperty(configProps, "maxProteins", Integer.toString(getDefaultMaxProteins()));
+
 		ModelUtils.setStringProperty(configProps, "overlapCutoff", Double.toString(overlapCutoff));
 		ModelUtils.setStringProperty(configProps,"topTerms", Integer.toString(topTerms));
 		ModelUtils.setStringProperty(configProps,"chartType", chartType.name());

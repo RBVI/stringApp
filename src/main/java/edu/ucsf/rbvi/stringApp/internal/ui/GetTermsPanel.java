@@ -97,7 +97,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 	NumberFormat intFormatter = new DecimalFormat("#0");
 	private boolean ignore = false;
 	private String useDATABASE = Databases.STRING.getAPIName();
-	private String netSpecies = "Homo sapiens";
+	private String netSpecies = null;
 	private boolean queryAddNodes = false;
 	private int confidence = 40;
 	private int additionalNodes = 0;
@@ -112,7 +112,8 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 
 	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, 
 	                     String useDATABASE, String aNetSpecies, boolean queryAddNodes) {
-		this(manager, stringNetwork, useDATABASE, aNetSpecies, queryAddNodes, 40, 0);
+		this(manager, stringNetwork, useDATABASE, aNetSpecies, queryAddNodes, 
+		     (int)(manager.getDefaultConfidence()*100), manager.getDefaultAdditionalProteins());
 	}
 
 	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, 
@@ -232,11 +233,14 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		speciesPanel.add(speciesLabel, c);
 		speciesCombo = new JComboBox<Species>(speciesList.toArray(new Species[1]));
 
-		// Set Human as the default
-		for (Species s: speciesList) {
-			if (s.toString().equals(netSpecies)) {
-				speciesCombo.setSelectedItem(s);
-				break;
+		if (netSpecies == null)
+			speciesCombo.setSelectedItem(manager.getDefaultSpecies());
+		else {
+			for (Species s: speciesList) {
+				if (s.toString().equals(netSpecies)) {
+					speciesCombo.setSelectedItem(s);
+					break;
+				}
 			}
 		}
 		JComboBoxDecorator.decorate(speciesCombo, true, true); 
