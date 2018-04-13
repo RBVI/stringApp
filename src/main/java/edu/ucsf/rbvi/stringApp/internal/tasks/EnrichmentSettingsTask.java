@@ -23,7 +23,7 @@ public class EnrichmentSettingsTask extends AbstractTask {
 	private CyNetwork network;
 
 	@ContainsTunables
-	EnrichmentSettings enrichmentSettings;
+	public EnrichmentSettings enrichmentSettings;
 
 	@Tunable(description = "Make these settings the default",
 	         longDescription = "Unless this is set to true, these settings only apply to the current network",

@@ -107,7 +107,7 @@ public class EnrichmentCytoPanel extends JPanel
 	final String colEnrichmentTermsPieChart = "enrichmentTermsPieChart";
 	final String colEnrichmentPieChart = "enrichmentPieChart";
 
-	final String butSettingsName = "Settings";
+	final String butSettingsName = "Enrichment Panel Settings";
 	final String butFilterName = "Filter enrichment table";
 	final String butDrawChartsName = "Draw charts using default color palette";
 	final String butResetChartsName = "Reset charts";
