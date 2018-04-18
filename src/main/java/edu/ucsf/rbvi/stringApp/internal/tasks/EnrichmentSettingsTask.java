@@ -32,6 +32,7 @@ public class EnrichmentSettingsTask extends AbstractTask {
 
 	public EnrichmentSettingsTask(StringManager manager) {
 		this.network = manager.getCurrentNetwork();
+		this.manager = manager;
 		enrichmentSettings = new EnrichmentSettings(manager, network);
 	}
 
