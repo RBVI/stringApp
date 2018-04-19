@@ -114,13 +114,13 @@ public class EnrichmentCytoPanel extends JPanel
 	final String butAnalyzedNodesName = "Select all analyzed nodes";
 	final String butExportTableDescr = "Export enrichment table";
 	
-	public EnrichmentCytoPanel(StringManager manager) {
+	public EnrichmentCytoPanel(StringManager manager, boolean noSignificant) {
 		this.manager = manager;
 		enrichmentTables = new HashMap<String, JTable>();
 		this.setLayout(new BorderLayout());
 		IconManager iconManager = manager.getService(IconManager.class);
 		iconFont = iconManager.getIconFont(22.0f);
-		initPanel();
+		initPanel(noSignificant);
 	}
 
 	public String getIdentifier() {
@@ -251,14 +251,14 @@ public class EnrichmentCytoPanel extends JPanel
 		}
 	}
 
-	public void initPanel() {
+	public void initPanel(boolean noSignificant) {
 		CyNetwork network = manager.getCurrentNetwork();
 		if (network == null)
 			return;
-		initPanel(network);
+		initPanel(network, noSignificant);
 	}
 
-	public void initPanel(CyNetwork network) {
+	public void initPanel(CyNetwork network, boolean noSignificant) {
 		this.removeAll();
 
 		Set<CyTable> currTables = ModelUtils.getEnrichmentTables(manager, network);
@@ -267,7 +267,13 @@ public class EnrichmentCytoPanel extends JPanel
 			createJTable(currTable);
 			availableTables.add(currTable.getTitle());
 		}
-		if (availableTables.size() == 0) {
+		if (noSignificant) {
+			mainPanel = new JPanel(new BorderLayout());
+			JLabel label = new JLabel("Enrichment retrieval returned no results that met the criteria.",
+					SwingConstants.CENTER);
+			mainPanel.add(label, BorderLayout.CENTER);
+			this.add(mainPanel, BorderLayout.CENTER);			
+		} else if (availableTables.size() == 0) {
 			mainPanel = new JPanel(new BorderLayout());
 			JLabel label = new JLabel("No enrichment has been retrieved for this network.",
 					SwingConstants.CENTER);
@@ -471,7 +477,7 @@ public class EnrichmentCytoPanel extends JPanel
 			}
 		}
 		if (selectedNetwork != null) {
-			initPanel(selectedNetwork);
+			initPanel(selectedNetwork, false);
 			return;
 		}
 		// experimental: clear term selection when all network nodes are unselected

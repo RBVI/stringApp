@@ -445,7 +445,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			}
 			if (show) {
 				SynchronousTaskManager<?> taskM = getService(SynchronousTaskManager.class);
-				taskM.execute(enrichmentTaskFactory.createTaskIterator(true));
+				taskM.execute(enrichmentTaskFactory.createTaskIterator(true, false));
 				enrichmentTaskFactory.reregister();
 			}
 		}

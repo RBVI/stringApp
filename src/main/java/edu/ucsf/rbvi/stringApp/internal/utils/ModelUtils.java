@@ -244,12 +244,25 @@ public class ModelUtils {
 		return nodes;
 	}
 
+	public static String getErrorMessageFromJSON(StringManager manager,
+			JSONObject object) {
+		JSONObject errorMsg = getResultsFromJSON(object, JSONObject.class);
+		if (errorMsg.containsKey("Error")) {
+			System.out.println("An error occured while retrieving ppi enrichment: " + errorMsg.get("Error"));
+		}
+		if (errorMsg.containsKey("ErrorMessage")) {
+			return (String) errorMsg.get("ErrorMessage");
+		}
+		return "";
+	}
+	
 	public static List<EnrichmentTerm> getEnrichmentFromJSON(StringManager manager,
 			JSONObject object, double enrichmentCutoff, Map<String, Long> stringNodesMap,
 			CyNetwork network) {
 		JSONArray enrichmentArray = getResultsFromJSON(object, JSONArray.class);
-		if (enrichmentArray == null)
+		if (enrichmentArray == null) {
 			return null;
+		}
 
 		List<EnrichmentTerm> results = new ArrayList<>();
 		// {"p_value":0.01,"number_of_genes":"3","description":"single organism signaling","ncbiTaxonId":"9606",
@@ -296,17 +309,6 @@ public class ModelUtils {
 				}
 				currTerm.setGenes(currGeneList);
 				currTerm.setNodesSUID(currNodeList);
-			}
-			if (enr.containsKey("error")) {
-				System.out.println("error");
-				return null;
-			}
-			if (enr.containsKey("Error")) {
-				System.out.println("An error occured while retrieving ppi enrichment.");
-			}
-			if (enr.containsKey("ErrorMessage")) {
-				System.out.println(enr.get("ErrorMessage"));
-				return null;
 			}
 			// save only if above cutoff
 			if (currTerm.getFDRPValue() <= enrichmentCutoff)

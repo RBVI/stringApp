@@ -26,17 +26,18 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 public class ShowEnrichmentPanelTaskFactory extends AbstractTaskFactory {
 	final StringManager manager;
 	boolean show = false;
+	boolean noSignificant = false;
 
 	public ShowEnrichmentPanelTaskFactory(final StringManager manager) {
 		this.manager = manager;
 	}
 
 	public TaskIterator createTaskIterator() {
-		return new TaskIterator(new ShowEnrichmentPanelTask(manager, this, show));
+		return new TaskIterator(new ShowEnrichmentPanelTask(manager, this, show, noSignificant));
 	}
 
-	public TaskIterator createTaskIterator(boolean show) {
-		return new TaskIterator(new ShowEnrichmentPanelTask(manager, this, show));
+	public TaskIterator createTaskIterator(boolean show, boolean noSignificant) {
+		return new TaskIterator(new ShowEnrichmentPanelTask(manager, this, show, noSignificant));
 	}
 
 	public void reregister() {

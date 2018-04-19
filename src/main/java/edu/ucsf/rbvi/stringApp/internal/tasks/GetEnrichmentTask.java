@@ -33,6 +33,7 @@ import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.TaskMonitor.Level;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.json.JSONResult;
+import org.cytoscape.work.util.ListSingleSelection;
 import org.json.simple.JSONObject;
 
 import edu.ucsf.rbvi.stringApp.internal.io.EnrichmentSAXHandler;
@@ -40,6 +41,7 @@ import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
+import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
@@ -47,11 +49,12 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 	final CyNetwork network;
 	final CyNetworkView netView;
-	final Map<String, List<EnrichmentTerm>> enrichmentResult;
+	Map<String, List<EnrichmentTerm>> enrichmentResult;
 	final Map<String, Long> stringNodesMap;
 	final ShowEnrichmentPanelTaskFactory showFactory;
 	private Map<String, String> ppiSummary;
 	List<CyNode> analyzedNodes;
+	String selected;
 	TaskMonitor monitor;
 	// boolean guiMode;
 
@@ -61,6 +64,12 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 					 gravity = 1.0)
 	public double cutoff = 0.05;
 
+	@Tunable(description = "Retrieve for selected nodes only", context = "gui", gravity = 2.0)
+	public boolean forSelectedNodesOnly = false;
+	
+	@Tunable(description = "Retrieve for species", gravity = 3.0)
+	public ListSingleSelection<String> allNetSpecies = new ListSingleSelection<String>();
+	
 	//@Tunable(description = "GO Biological Process", gravity = 2.0)
 	public boolean goProcess = false;
 
@@ -90,18 +99,25 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		enrichmentResult = new HashMap<>();
 		stringNodesMap = new HashMap<>();
 		monitor = null;
+		// Get list of (selected) nodes
+		selected = getSelected(network).trim();
+		if (selected.length() != 0) {
+			forSelectedNodesOnly = true;
+		}
+		allNetSpecies = new ListSingleSelection<String>(ModelUtils.getAllNetSpecies(network));
 	}
 
 	public void run(TaskMonitor monitor) throws Exception {
 		this.monitor = monitor;
 		monitor.setTitle(this.getTitle());
 
-		// Get list of (selected) nodes
-		String selected = getSelected(network).trim();
-		if (selected.length() == 0) {
+		if (selected.length() == 0 && !forSelectedNodesOnly) {
 			selected = getExisting(network).trim();
 		}
+		
 		if (selected.length() == 0) {
+			monitor.showMessage(Level.ERROR,
+					"Task cannot be performed. No nodes selected for enrichment.");
 			return;
 		} 
 		if (analyzedNodes.size() > 2000) {
@@ -110,15 +126,16 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			return;
 		}
 		// System.out.println(selected);
-		List<String> netSpecies = ModelUtils.getNetworkSpeciesTaxons(network);
-		String species = null;
-		if (netSpecies.size() == 1) {
-			species = netSpecies.get(0);
-		} else {
-			monitor.showMessage(Level.ERROR,
-					"Task cannot be performed. Enrichment can be retrieved only for networks that contain nodes from one species.");
-			return;
-		}
+		// List<String> netSpecies = ModelUtils.getNetworkSpeciesTaxons(network);
+		String species = String.valueOf(Species.getSpeciesTaxId(allNetSpecies.getSelectedValue()));
+		//if (netSpecies.size() == 1) {
+		//	species = netSpecies.get(0);
+		//} else {
+		//	monitor.showMessage(Level.ERROR,
+		//			"Task cannot be performed. Enrichment can be retrieved for networks that contain nodes from one species only.");
+		//	return;
+		// }
+
 		// map of STRING ID to CyNodes
 		// TODO: Remove specific nodes from selected?
 		CyTable nodeTable = network.getDefaultNodeTable();
@@ -192,25 +209,30 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ANALYZED_NODES, analyzedNodesSUID);
 
 		// save ppi enrichment in network table
-		writeDouble(netTable, ppiSummary, ModelUtils.NET_PPI_ENRICHMENT);
-		writeInteger(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_NODES);
-		writeInteger(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_EXPECTED_EDGES);
-		writeInteger(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_EDGES);
-		writeDouble(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_CLSTR);
-		writeDouble(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_DEGREE);
-
-		// show enrichment results
-		if (enrichmentResult.size() > 0) {
-			if (showFactory != null) {
-				SynchronousTaskManager<?> taskM = manager.getService(SynchronousTaskManager.class);
-				TaskIterator ti = showFactory.createTaskIterator(true);
-				taskM.execute(ti);
-			}
-		} else { 
-			monitor.showMessage(Level.WARN,
-					"Enrichment retrieval returned no results that met criteria.");
+		if (ppiSummary != null) {
+			writeDouble(netTable, ppiSummary, ModelUtils.NET_PPI_ENRICHMENT);
+			writeInteger(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_NODES);
+			writeInteger(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_EXPECTED_EDGES);
+			writeInteger(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_EDGES);
+			writeDouble(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_CLSTR);
+			writeDouble(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_DEGREE);
 		}
-	}
+		
+		// show enrichment results
+		boolean noSig = false;
+		if (enrichmentResult == null) {
+			return;
+		} else if (enrichmentResult.size() == 0) {
+			noSig = true;
+			monitor.showMessage(Level.WARN,
+					"Enrichment retrieval returned no results that met the criteria.");
+		}
+		if (showFactory != null) {
+			SynchronousTaskManager<?> taskM = manager.getService(SynchronousTaskManager.class);
+			TaskIterator ti = showFactory.createTaskIterator(true, noSig);
+			taskM.execute(ti);
+		}
+}
 
 	private void writeDouble(CyTable table, Map<String, String> data, String column) {
 		ModelUtils.createColumnIfNeeded(table, Double.class, column);
@@ -237,12 +259,15 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		if (results == null) {
 			monitor.showMessage(Level.ERROR,
 					"Enrichment retrieval returned no results, possibly due to an error.");
+			enrichmentResult = null;
 			return;
 		}
 		List<EnrichmentTerm> terms = ModelUtils.getEnrichmentFromJSON(manager, results, cutoff, stringNodesMap, network);
 		if (terms == null) {
+			String errorMsg = ModelUtils.getErrorMessageFromJSON(manager, results);
 			monitor.showMessage(Level.ERROR,
-					"Enrichment retrieval returned no results, possibly due to an error.");
+					"Enrichment retrieval returned no results, possibly due to an error. " + errorMsg);
+			enrichmentResult = null;
 			return;
 		} else if (terms.size() > 0) {
 			Collections.sort(terms);
