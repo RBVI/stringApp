@@ -64,8 +64,13 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 					 gravity = 1.0)
 	public double cutoff = 0.05;
 
-	@Tunable(description = "Retrieve for selected nodes only", context = "gui", gravity = 2.0)
-	public boolean forSelectedNodesOnly = false;
+	@Tunable(description = "Retrieve for selected nodes only",
+	         longDescription = "Setting this to ```true``` and selecting a subset of the nodes will retrieve enrichment "+
+	                           "only for the selected nodes.  If this is ```false``` enrichment will be retrieved for "+
+	                           "all nodes in the network",
+					 exampleStringValue = "false",
+					 gravity = 2.0)
+	public boolean selectedNodesOnly = true;
 	
 	@Tunable(description = "Retrieve for species", gravity = 3.0)
 	public ListSingleSelection<String> allNetSpecies = new ListSingleSelection<String>();
@@ -101,9 +106,9 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		monitor = null;
 		// Get list of (selected) nodes
 		selected = getSelected(network).trim();
-		if (selected.length() != 0) {
-			forSelectedNodesOnly = true;
-		}
+		// if (selected.length() != 0) {
+		// 	selectedNodesOnly = true;
+		// }
 		allNetSpecies = new ListSingleSelection<String>(ModelUtils.getAllNetSpecies(network));
 	}
 
@@ -111,9 +116,13 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		this.monitor = monitor;
 		monitor.setTitle(this.getTitle());
 
-		if (selected.length() == 0 && !forSelectedNodesOnly) {
+		if (selected.length() == 0 || !selectedNodesOnly)
+			selected = getExisting(network).trim();
+		/*
+		if (selected.length() == 0 && !selectedNodesOnly) {
 			selected = getExisting(network).trim();
 		}
+		*/
 		
 		if (selected.length() == 0) {
 			monitor.showMessage(Level.ERROR,
