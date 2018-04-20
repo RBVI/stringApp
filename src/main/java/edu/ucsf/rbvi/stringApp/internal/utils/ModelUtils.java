@@ -518,6 +518,20 @@ public class ModelUtils {
 		return species;
 	}
 
+	public static List<String> getEnrichmentNetSpecies(CyNetwork net) {
+		List<String> species = new ArrayList<String>();
+		for (CyNode node : net.getNodeList()) {
+			String nSpecies = net.getRow(node).get(SPECIES, String.class);
+			if (nSpecies != null && !nSpecies.equals("") && !species.contains(nSpecies)) {
+				Species theSpecies = Species.getSpecies(nSpecies);
+				System.out.println(theSpecies.getType());
+				if (theSpecies != null && (theSpecies.getType().equals("core") || theSpecies.getType().equals("periphery")))
+					species.add(nSpecies);
+			}
+		}
+		return species;
+	}
+
 	private static List<CyNode> getJSON(StringManager manager, Species species, CyNetwork network,
 			JSONArray tmResults) {
 		List<CyNode> newNodes = new ArrayList<>();
@@ -984,9 +998,11 @@ public class ModelUtils {
 			if (netTable.getColumn(ModelUtils.NET_ANALYZED_NODES) != null) {
 				List<Long> nodesSUID = (List<Long>) netTable.getRow(net.getSUID())
 						.get(ModelUtils.NET_ANALYZED_NODES, List.class);
-				for (CyNode netNode : net.getNodeList()) {
-					if (nodesSUID.contains(netNode.getSUID())) {
-						analyzedNodes.add(netNode);
+				if (nodesSUID != null) {
+					for (CyNode netNode : net.getNodeList()) {
+						if (nodesSUID.contains(netNode.getSUID())) {
+							analyzedNodes.add(netNode);
+						}
 					}
 				}
 			}
