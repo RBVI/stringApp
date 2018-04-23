@@ -22,6 +22,7 @@ import org.cytoscape.view.model.View;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.TaskMonitor.Level;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.TunableSetter;
 
@@ -60,6 +61,7 @@ public class LoadTermsTask extends AbstractTask {
 	}
 
 	public void run(TaskMonitor monitor) {
+		monitor.setTitle("Adding Terms to Network");
 		StringManager manager = stringNet.getManager();
 		CyNetwork network = stringNet.getNetwork();
 
@@ -107,7 +109,19 @@ public class LoadTermsTask extends AbstractTask {
 		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges,
 		                                                          results, queryTermMap, useDATABASE);
 
-		monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
+		if (newEdges.size() > 0 || newNodes.size() > 0) {
+			monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
+		} else {
+			monitor.showMessage(Level.WARN, "Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
+			// SwingUtilities.invokeLater(new Runnable() {
+			// public void run() {
+			// JOptionPane.showMessageDialog(null,
+			// "This query will not add any new nodes or edges to the existing network.",
+			// "Warning", JOptionPane.WARNING_MESSAGE);
+			// }
+			// });
+			// return;
+		}
 
 		// Set our confidence score
 		ModelUtils.setConfidence(network, ((double)confidence)/100.0);

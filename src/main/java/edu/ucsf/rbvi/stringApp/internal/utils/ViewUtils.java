@@ -83,7 +83,8 @@ public class ViewUtils {
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
 		VisualStyle style = vmm.getVisualStyle(view);
 		for (CyNode node: nodes) {
-			style.apply(view.getModel().getRow(node), view.getNodeView(node));
+			if (view.getNodeView(node) != null)
+				style.apply(view.getModel().getRow(node), view.getNodeView(node));
 		}
 		// style.apply(view);
 	}
@@ -93,6 +94,7 @@ public class ViewUtils {
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
 		VisualStyle style = vmm.getVisualStyle(view);
 		for (CyEdge edge: edges) {
+			if (view.getEdgeView(edge) != null)
 			style.apply(view.getModel().getRow(edge), view.getEdgeView(edge));
 		}
 		// style.apply(view);

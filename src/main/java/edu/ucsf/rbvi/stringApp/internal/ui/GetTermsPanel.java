@@ -359,7 +359,10 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 	}
 
 	public void createResolutionPanel() {
-		speciesCombo.setEnabled(false);
+		if (!queryAddNodes) 
+			speciesCombo.setEnabled(false);
+		else
+			speciesPartnerCombo.setEditable(false);
 		wholeOrgBox.setEnabled(false);
 		mainSearchPanel.removeAll();
 		mainSearchPanel.revalidate();
@@ -550,7 +553,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 				return;
 			}
 
-			manager.info("Getting annotations for "+speciesName+"terms: "+terms);
+			manager.info("Getting annotations for "+speciesName+" terms: "+terms);
 
 			// Launch a task to get the annotations. 
 			manager.execute(new TaskIterator(new GetAnnotationsTask(stringNetwork, taxon, terms, useDATABASE)),this);
@@ -581,7 +584,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 			if (noAmbiguity) {
 				int additionalNodes = optionsPanel.getAdditionalNodes();
 				// This mimics the String web site behavior
-				if (stringNetwork.getResolvedTerms() == 1 && additionalNodes == 0) {
+				if (stringNetwork.getResolvedTerms() == 1 && additionalNodes == 0 && !queryAddNodes) {
 					additionalNodes = 10;
 					logger.warn("STRING: Only one protein or compound was selected -- additional interactions set to 10");
 				}
@@ -607,11 +610,15 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-			Species species = (Species)speciesCombo.getSelectedItem();
-
+			int taxon = 0;
+			if (!queryAddNodes) 
+				taxon = ((Species)speciesCombo.getSelectedItem()).getTaxId();
+			else
+				taxon = Species.getSpeciesTaxId((String)speciesPartnerCombo.getSelectedItem());
+			
 			int additionalNodes = optionsPanel.getAdditionalNodes();
 
-			if (stringNetwork.getResolvedTerms() == 1 && additionalNodes == 0) {
+			if (stringNetwork.getResolvedTerms() == 1 && additionalNodes == 0 && !queryAddNodes) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						JOptionPane.showMessageDialog(null, 
@@ -634,7 +641,6 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 				});
 			}
 
-			int taxon = species.getTaxId();
 			importNetwork(taxon, optionsPanel.getConfidence(), additionalNodes, wholeOrgBox.isSelected());
 		}
 	}

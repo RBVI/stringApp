@@ -28,6 +28,7 @@ public class AddTermsTask extends AbstractTask {
 	}
 
 	public void run(TaskMonitor monitor) {
+		monitor.setTitle("Query for additional nodes");
 		StringNetwork stringNetwork = manager.getStringNetwork(network);
 		JFrame parent = manager.getService(CySwingApplication.class).getJFrame();
 		// Get AddTerms dialog
