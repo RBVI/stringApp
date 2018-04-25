@@ -741,7 +741,10 @@ public class ModelUtils {
 		row.set(NAMESPACE, namespace);
 		row.set(STYLE, "string:"); // We may overwrite this, if we get an image
 
-		String type = getType(id);
+	
+		String type = (String) nodeObj.get("node type");
+		if (type == null)
+			type = getType(id);
 		row.set(TYPE, type);
 
 		// TODO: Check if this is ok for handling multiple species as well as stitch molecules
