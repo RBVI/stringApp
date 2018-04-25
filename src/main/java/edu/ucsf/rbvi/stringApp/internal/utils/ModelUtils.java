@@ -524,7 +524,7 @@ public class ModelUtils {
 			String nSpecies = net.getRow(node).get(SPECIES, String.class);
 			if (nSpecies != null && !nSpecies.equals("") && !species.contains(nSpecies)) {
 				Species theSpecies = Species.getSpecies(nSpecies);
-				System.out.println(theSpecies.getType());
+				// TODO: This is kind of a hack for now and will be updated once we get the kingdom data from the server 
 				if (theSpecies != null && (theSpecies.getType().equals("core") || theSpecies.getType().equals("periphery")))
 					species.add(nSpecies);
 			}

@@ -24,10 +24,10 @@ public class GetEnrichmentTaskFactory extends AbstractNetworkTaskFactory
 
 	public boolean isReady(CyNetwork network) {
 		if (ModelUtils.isStringNetwork(network)) {
-			//List<String> netSpecies = ModelUtils.getNetworkSpeciesTaxons(network);
-			//if (netSpecies.size() == 1) {
-			return true;
-			// }
+			List<String> netSpecies = ModelUtils.getEnrichmentNetSpecies(network);
+			if (netSpecies.size() > 0) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -38,10 +38,10 @@ public class GetEnrichmentTaskFactory extends AbstractNetworkTaskFactory
 
 	public boolean isReady(CyNetworkView netView) {
 		if (ModelUtils.isStringNetwork(netView.getModel())) {
-			//List<String> netSpecies = ModelUtils.getNetworkSpeciesTaxons(netView.getModel());
-			//if (netSpecies.size() == 1) {
-			return true;
-			//}
+			List<String> netSpecies = ModelUtils.getEnrichmentNetSpecies(netView.getModel());
+			if (netSpecies.size() > 0) {
+				return true;
+			}
 		}
 		return false;
 	}
