@@ -269,7 +269,8 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			monitor.showMessage(Level.ERROR,
 					"Enrichment retrieval returned no results, possibly due to an error.");
 			enrichmentResult = null;
-			return;
+			// return;
+			throw new RuntimeException("Enrichment retrieval returned no results, possibly due to an error.");
 		}
 		List<EnrichmentTerm> terms = ModelUtils.getEnrichmentFromJSON(manager, results, cutoff, stringNodesMap, network);
 		if (terms == null) {
@@ -277,7 +278,8 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			monitor.showMessage(Level.ERROR,
 					"Enrichment retrieval returned no results, possibly due to an error. " + errorMsg);
 			enrichmentResult = null;
-			return;
+			//return;
+			throw new RuntimeException("Enrichment retrieval returned no results, possibly due to an error. " + errorMsg);
 		} else if (terms.size() > 0) {
 			Collections.sort(terms);
 			TermCategory category = TermCategory.ALL;
@@ -303,18 +305,21 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		if (results == null) {
 			monitor.setStatusMessage(
 					"PPI enrichment retrieval returned no results, possibly due to an error.");
-			return null;
+			throw new RuntimeException("PPI enrichment retrieval returned no results, possibly due to an error.");
+			// return null;
 		}
 		Map<String, String> ppiEnrichment = 
 						ModelUtils.getEnrichmentPPIFromJSON(manager, results, cutoff, stringNodesMap, network);
 		if (ppiEnrichment == null) {
 			monitor.showMessage(Level.ERROR,
 					"PPI Enrichment retrieval returned no results, possibly due to an error.");
-			return null;
+			throw new RuntimeException("PPI enrichment retrieval returned no results, possibly due to an error.");
+			// return null;
 		}  else if (ppiEnrichment.containsKey("ErrorMessage")) {
 			monitor.showMessage(Level.ERROR,
 					"PPI Enrichment retrieval failed: "+ppiEnrichment.get("ErrorMessage"));
-			return null;
+			throw new RuntimeException("PPI Enrichment retrieval failed: "+ppiEnrichment.get("ErrorMessage"));
+			// return null;
 		}
 		return ppiEnrichment;
 	}
@@ -357,14 +362,14 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			// myHandler.getStatusCode());
 			// return false;
 			if (myHandler.getMessage().equals("No genes found in the XML")) {
-				throw new Exception(
+				throw new RuntimeException(
 						"Task cannot be performed. Current node identifiers were not recognized by the enrichment service.");
 			}
 			else if (myHandler.getStatusCode() != null)
-				throw new Exception(
+				throw new RuntimeException(
 						"Task cannot be performed. Error returned by enrichment webservice: " + myHandler.getMessage());
 			else
-				throw new Exception(
+				throw new RuntimeException(
 						"Task cannot be performed. Uknown error while receiving or parsing output from the enrichment service.");
 		} else if (myHandler.getWarning() != null) {
 			monitor.showMessage(Level.WARN,
@@ -376,7 +381,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		if (enrichmentTerms == null) {
 			// monitor.showMessage(Level.ERROR,
 			// "No terms retrieved from the enrichment webservice for this category.");
-			throw new Exception(
+			throw new RuntimeException(
 					"No terms retrieved from the enrichment webservice for this category.");
 			// return false;
 		} else {
