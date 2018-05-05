@@ -112,7 +112,8 @@ public class LoadTermsTask extends AbstractTask {
 		if (newEdges.size() > 0 || newNodes.size() > 0) {
 			monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
 		} else {
-			monitor.showMessage(Level.WARN, "Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
+			// monitor.showMessage(Level.WARN, "Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
+			throw new RuntimeException("This query will not add any new nodes or edges to the existing network.");
 			// SwingUtilities.invokeLater(new Runnable() {
 			// public void run() {
 			// JOptionPane.showMessageDialog(null,

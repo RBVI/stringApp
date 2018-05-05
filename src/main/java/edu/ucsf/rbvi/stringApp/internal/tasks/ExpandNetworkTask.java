@@ -49,7 +49,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 	@Tunable(description = "Network to expand", 
 			longDescription = StringToModel.CY_NETWORK_LONG_DESCRIPTION, 
 			exampleStringValue = StringToModel.CY_NETWORK_EXAMPLE_STRING, 
-			context = "nogui")
+			context = "nogui", required=true)
 	public CyNetwork network;
 
 	@Tunable (description="Number of interactors to expand network by", 
@@ -61,21 +61,26 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 	@Tunable (description="Type of interactors to expand network by", 
 			longDescription = "Type of interactors to expand the network by, "
 					+ "including STITCH compounds, proteins of the same species as the network's one "
-					+ "or other species for which host-virus interactions are available", 
+					+ "or other species for which host-virus interactions are available. Proteins "
+					+ "are specified by the species name, for example, \"Homo Sapiens\".", 
 			exampleStringValue = "STITCH compounds", 
 			gravity=2.0)
 	public ListSingleSelection<String> nodeTypes = new ListSingleSelection<String>();
 	
 	@Tunable (description="Selectivity of interactors", tooltip="<html>"
-			+ "High selectivity results in the expansion by new interactors <br />"
-			+ "that have high interaction score *only* with the node(s) in the <br />"
-			+ "network compared to all other nodes in the same organism, while <br />"
-			+ "low selectivity neglects interactions outside the current network.</html>", 
-			longDescription = "The selectivity score influences the choice of nodes to expand by. "
-					+ "High selectivity results in the expansion by new interactors "
-			+ "that have high interaction score *only* with the node(s) in the "
-			+ "network compared to all other nodes in the same organism, while "
-			+ "low selectivity neglects interactions outside the current network", 
+			+ "The selectivity parameter provides a tradeoff between the specificity and <br />"
+			+ "the confidence of new interactors. Low selectivity will retrieve more hub <br />"
+			+ "proteins, which may have many high-confidence interactions to the current <br />"
+			+ "network but also many other interactions. High selectivity will retrieve <br />"
+			+ "proteins that primarily interact with the current network but with lower <br />"
+			+ "confidence, since the higher-confidence hubs have been filtered out." 
+			+ "</html>", 
+			longDescription = "The selectivity parameter provides a tradeoff between the specificity "
+					+ "and the confidence of new interactors. Low selectivity will retrieve more hub "
+					+ "proteins, which may have many high-confidence interactions to the current "
+					+ "network but also many other interactions. High selectivity will retrieve proteins "
+					+ "that primarily interact with the current network but with lower confidence, "
+					+ "since the higher-confidence hubs have been filtered out.", 
 			exampleStringValue = "0.5", 
 			params="slider=true", gravity=3.0)
 	public BoundedDouble selectivityAlpha = new BoundedDouble(0.0, 0.5, 1.0, false, false);
@@ -198,14 +203,15 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, useDatabase);
 
 		if (newNodes.size() == 0 && newEdges.size() == 0) {
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					JOptionPane.showMessageDialog(null, 
-											"This query will not add any new nodes or edges to the existing network.",
-								       "Warning", JOptionPane.WARNING_MESSAGE); 
-				}
-			});
-			return;
+			throw new RuntimeException("This query will not add any new nodes or edges to the existing network.");
+			// SwingUtilities.invokeLater(new Runnable() {
+			// public void run() {
+			// JOptionPane.showMessageDialog(null,
+			// "This query will not add any new nodes or edges to the existing network.",
+			// "Warning", JOptionPane.WARNING_MESSAGE);
+			// }
+			// });
+			// return;
 		}
 		monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
 
