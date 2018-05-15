@@ -44,7 +44,7 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 	public String species = null;
 
 	@Tunable (description="Taxon ID",
-	          longDescription="The species taxonomy ID.  See the NCBI taxonomy home page for IDs",
+	          longDescription="The species taxonomy ID.  See the NCBI taxonomy home page for IDs. If both species and taxonID are set to a different species, the taxonID has priority.",
 						exampleStringValue="9606")
 	public int taxonID = -1;
 
@@ -82,12 +82,17 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 	public void run(TaskMonitor monitor) {
 		monitor.setTitle("STRING Protein Query");
 		boolean found;
-		Species sp = null;
-		for (Species s : speciesList) {
-			if (s.toString().equalsIgnoreCase(species) || s.getTaxId() == taxonID) {
-				found = true;
-				sp = s;
-				break;
+		Species sp = Species.getSpecies(species);
+		if (taxonID != -1) {
+			for (Species s : speciesList) {
+				if (s.getTaxId() == taxonID) {
+					if (s.toString().equals(species)) {
+						monitor.showMessage(TaskMonitor.Level.WARN, "Unknown or missing species or NCBI taxon ID");
+					}
+					found = true;
+					sp = s;
+					break;
+				}
 			}
 		}
 		if (sp == null) {

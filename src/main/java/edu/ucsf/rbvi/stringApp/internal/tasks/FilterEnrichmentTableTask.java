@@ -2,21 +2,24 @@ package edu.ucsf.rbvi.stringApp.internal.tasks;
 
 import java.util.Arrays;
 import java.util.List;
+
 import javax.swing.SwingUtilities;
 
+import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.application.swing.CytoPanel;
+import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
-import org.cytoscape.work.Tunable;
 import org.cytoscape.work.json.JSONResult;
 import org.cytoscape.work.util.BoundedDouble;
 import org.cytoscape.work.util.ListMultipleSelection;
 
-import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
+import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentTableModel;
 
@@ -51,17 +54,24 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 
 	@Tunable(description = "Select categories", 
 	         tooltip = "Select the enrichment categories to show in the table",
+	         longDescription = "Select the enrichment categories to show in the table",
+	         exampleStringValue = "GO Process",
 	         gravity = 1.0)
 	public ListMultipleSelection<TermCategory> categories = new ListMultipleSelection<>(TermCategory.getValues());
 
 	@Tunable(description = "Remove redundant terms", 
 	         tooltip = "Removes terms whose enriched genes significantly overlap with already selected terms",
+	         longDescription = "Removes terms whose enriched genes significantly overlap with already selected terms",
+	         exampleStringValue = "true",
 	         gravity = 8.0)
 	public boolean removeOverlapping = false;
 
 	@Tunable(description = "Redundancy cutoff", 
 	         tooltip = "<html>This is the maximum Jaccard similarity that will be allowed.<br/>"+
 	                   "Values larger than this cutoff will be excluded.</html>",
+	         longDescription = "This is the maximum Jaccard similarity that will be allowed. "
+	         		+ "Values larger than this cutoff will be excluded.",
+	         exampleStringValue="0.5",
 	         params="slider=true", dependsOn="removeOverlapping=true", gravity = 9.0)
 	public BoundedDouble overlapCutoff = new BoundedDouble(0.0, 0.5, 1.0, false, false);
 	
@@ -80,6 +90,13 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 		// Filter the current list
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
+				// when using commands, we need to get the enrichment panel again
+				if (enrichmentPanel == null) { 
+					CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
+					CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.SOUTH);
+					enrichmentPanel = (EnrichmentCytoPanel) cytoPanel.getComponentAt(
+							cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment"));
+				}
 				EnrichmentTableModel tableModel = enrichmentPanel.getTableModel();
 				tableModel.filter(categoryList, removeOverlapping, overlapCutoff.getValue());
 				manager.setRemoveOverlap(network,removeOverlapping);

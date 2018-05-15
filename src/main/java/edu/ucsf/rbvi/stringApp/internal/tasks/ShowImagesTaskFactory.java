@@ -52,7 +52,7 @@ public class ShowImagesTaskFactory extends AbstractNetworkViewTaskFactory implem
 	}
 
 	public TaskIterator createTaskIterator() {
-		return new TaskIterator(new ShowImagesTask(manager, show));
+		return new TaskIterator(new ShowImagesTask(manager, show, this));
 	}
 
 	public void reregister() {

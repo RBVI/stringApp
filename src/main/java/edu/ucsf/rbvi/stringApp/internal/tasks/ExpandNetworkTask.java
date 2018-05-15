@@ -60,10 +60,11 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 
 	@Tunable (description="Type of interactors to expand network by", 
 			longDescription = "Type of interactors to expand the network by, "
-					+ "including STITCH compounds, proteins of the same species as the network's one "
-					+ "or other species for which host-virus interactions are available. Proteins "
-					+ "are specified by the species name, for example, \"Homo Sapiens\".", 
-			exampleStringValue = "STITCH compounds", 
+					+ "including STITCH compounds (default choice), proteins of the same species "
+					+ "as the network's one or other species for which host-virus interactions are "
+					+ "available. Proteins are specified by the species name, for example, "
+					+ "'Homo Sapiens' for human proteins or 'Influenza A virus' for influenza A proteins.", 
+			exampleStringValue = "Homo Sapiens", 
 			gravity=2.0)
 	public ListSingleSelection<String> nodeTypes = new ListSingleSelection<String>();
 	
