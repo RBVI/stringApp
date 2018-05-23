@@ -46,6 +46,7 @@
 package org.jcolorbrewer.ui;
 
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -95,7 +96,6 @@ public class QualitativeColorPalettePanel extends ColorBlindAwareColorChooserPan
 		setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 
 		//ButtonGroup boxOfPalettes = new ButtonGroup();
-
 		for (ColorBrewer palette: ColorBrewer.getQualitativeColorPalettes(isShowColorBlindSave())) {
 			if ( isShowColorBlindSave() ){
 				if (!  palette.isColorBlindSave()) {
@@ -152,8 +152,25 @@ public class QualitativeColorPalettePanel extends ColorBlindAwareColorChooserPan
 	public void setSelectedPalette(String palette) {
 		ColorSelectionModel model = getColorSelectionModel();
 		for (ColorBrewer plt: ColorBrewer.getQualitativeColorPalettes(isShowColorBlindSave())) {
-			if (plt.name().equals(selectedPalette)) {
+			if (plt.name().equals(palette)) {
+				selectedPalette = palette;
 				((ColorPanelSelectionModel) model).setColorBrewer(plt);
+				for (Container ctn: currentButtons) {
+					String command;
+					if (ctn instanceof JToggleButton)
+						command = ((JToggleButton)ctn).getActionCommand();
+					else
+						continue;
+					String btnPalette = command.split(":")[0];
+					if (selectedPalette.equals(btnPalette)) {
+						if (selectedButton != null)
+							selectedButton.setBorder(normalBorder);
+
+						selectedButton = (JToggleButton)ctn;
+						selectedButton.setBorder(selectedBorder);
+						break;
+					}
+				}
 				break;
 			}
 		}

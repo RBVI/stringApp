@@ -70,10 +70,11 @@ public class EnrichmentSettings implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		ColorPaletteChooserDialog dialog = new ColorPaletteChooserDialog(null, PALETTE_TYPE.QUALITATIVE);
+		if (defaultPalette.getSelectedValue() != null)
+			dialog.setColorBrewer(defaultPalette.getSelectedValue());
 		boolean okPressed = dialog.showDialog();
-		if (okPressed)
+		if (okPressed) {
 			defaultPalette.setSelectedValue(dialog.getColorPalette());
-
-		// System.out.println("Default panel is: "+defaultPalette.getSelectedValue());
+		}
 	}
 }

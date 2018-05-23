@@ -101,6 +101,11 @@ public class ColorPaletteChooserDialog
 	protected JColorChooser colorChooser = null;
 
 	/**
+	 * Get a handle on our dialog
+	 */
+	protected JDialog colorDialog = null;
+
+	/**
 	 * Starting color, set by setColor, and the color we return
 	 * to on a reset.
 	 */
@@ -154,6 +159,7 @@ public class ColorPaletteChooserDialog
 		this.parent = null;
 
 		this.initialize( );
+		this.colorDialog = this;
 	}
 
 	/**
@@ -168,6 +174,7 @@ public class ColorPaletteChooserDialog
 		this.parent = parent;
 
 		this.initialize( );
+		this.colorDialog = this;
 	}
 
 	/**
@@ -182,6 +189,7 @@ public class ColorPaletteChooserDialog
 		this.parent = parent;
 
 		this.initialize( );
+		this.colorDialog = this;
 	}
 
 	/**
@@ -199,6 +207,7 @@ public class ColorPaletteChooserDialog
 			panels = new ColorBlindAwareColorChooserPanel[1];
 
 		this.initialize( );
+		this.colorDialog = this;
 	}
 
 
@@ -268,7 +277,6 @@ public class ColorPaletteChooserDialog
 		colorChooser.setPreviewPanel(new JPanel()); 
 		colorsTab.add( this.colorChooser, BorderLayout.CENTER );
 
-
 		// color blind friendly checkbox
 		final JPanel cbFriendlyPanel = new JPanel( );
 		cbFriendlyPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -278,7 +286,6 @@ public class ColorPaletteChooserDialog
 		final JPanel cbFriendlyGridPanel = new JPanel( );
 
 		cbFriendlyPanel.add(cbFriendlyGridPanel);
-
 
 		final JCheckBox colorBlindOnly = new JCheckBox("show only colorblind-friendly");
 		colorBlindOnly.addActionListener(new ActionListener() {
@@ -290,7 +297,8 @@ public class ColorPaletteChooserDialog
 
 					cbccp.updateChooser();
 
-					colorChooser.repaint();
+					colorDialog.pack( );
+					colorDialog.validate( );
 
 				}
 			}
@@ -510,6 +518,13 @@ public class ColorPaletteChooserDialog
 	{
 		ColorPanelSelectionModel model = (ColorPanelSelectionModel)colorChooser.getSelectionModel();
 		model.setColorBrewer(brewer);
+		for (ColorBlindAwareColorChooserPanel cbccp : panels) {
+			cbccp.setSelectedPalette(brewer.name());
+			cbccp.updateChooser();
+			cbccp.repaint();
+		}
+		this.pack();
+		this.validate();
 	}
 	
 	public static void main(String[] args){
