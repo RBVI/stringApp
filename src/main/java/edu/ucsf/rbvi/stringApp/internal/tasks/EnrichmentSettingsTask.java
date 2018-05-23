@@ -11,6 +11,7 @@ import org.cytoscape.model.CyNetwork;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ContainsTunables;
 import org.cytoscape.work.ProvidesTitle;
+import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 
@@ -51,8 +52,8 @@ public class EnrichmentSettingsTask extends AbstractTask {
 			manager.setChartType(network,enrichmentSettings.chartType.getSelectedValue());
 		}
 		// TODO: maybe this is a way to automatically apply settings?
-		// TaskManager<?, ?> tm = manager.getService(TaskManager.class);
-		// tm.execute(new ShowChartsTaskFactory(manager).createTaskIterator());
+		TaskManager<?, ?> tm = (TaskManager<?, ?>) manager.getService(TaskManager.class);
+		tm.execute(new ShowChartsTaskFactory(manager).createTaskIterator());
 	}
 
 	@ProvidesTitle
