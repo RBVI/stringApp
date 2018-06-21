@@ -495,7 +495,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 	public void allFinished(FinishStatus finishStatus) {
 		//
 		if (optionsPanel.getLoadEnrichment()) {
-			GetEnrichmentTaskFactory tf = new GetEnrichmentTaskFactory(manager);
+			GetEnrichmentTaskFactory tf = new GetEnrichmentTaskFactory(manager, true);
 			ShowEnrichmentPanelTaskFactory showTf = manager.getShowEnrichmentPanelTaskFactory();
 			tf.setShowEnrichmentPanelFactory(showTf);
 			TunableSetter setter = manager.getService(TunableSetter.class);

@@ -16,10 +16,12 @@ public class GetEnrichmentTaskFactory extends AbstractNetworkTaskFactory
 	final StringManager manager;
 	ShowEnrichmentPanelTaskFactory showFactory;
 	public static String EXAMPLE_JSON = GetEnrichmentTask.EXAMPLE_JSON;
+	boolean hasGUI = false;
 
-	public GetEnrichmentTaskFactory(final StringManager manager) {
+	public GetEnrichmentTaskFactory(final StringManager manager, boolean hasGUI) {
 		this.manager = manager;
 		showFactory = null;
+		this.hasGUI = hasGUI;
 	}
 
 	public boolean isReady(CyNetwork network) {
@@ -33,7 +35,11 @@ public class GetEnrichmentTaskFactory extends AbstractNetworkTaskFactory
 	}
 
 	public TaskIterator createTaskIterator(CyNetwork network) {
-		return new TaskIterator(new GetEnrichmentTask(manager, network, null, showFactory));
+		if (hasGUI) {
+			return new TaskIterator(new GetEnrichmentTaskSwing(manager, network, null, showFactory));
+		} else {
+			return new TaskIterator(new GetEnrichmentTask(manager, network, null, showFactory));
+		}
 	}
 
 	public boolean isReady(CyNetworkView netView) {
@@ -47,8 +53,11 @@ public class GetEnrichmentTaskFactory extends AbstractNetworkTaskFactory
 	}
 
 	public TaskIterator createTaskIterator(CyNetworkView netView) {
-		return new TaskIterator(
-				new GetEnrichmentTask(manager, netView.getModel(), netView, showFactory));
+		if (hasGUI) {
+			return new TaskIterator(new GetEnrichmentTaskSwing(manager, netView.getModel(), netView, showFactory));
+		} else {
+			return new TaskIterator(new GetEnrichmentTask(manager, netView.getModel(), netView, showFactory));
+		}
 	}
 
 	public void setShowEnrichmentPanelFactory(ShowEnrichmentPanelTaskFactory showFactory) {

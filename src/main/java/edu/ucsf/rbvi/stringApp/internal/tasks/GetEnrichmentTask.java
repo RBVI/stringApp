@@ -21,6 +21,7 @@ import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.model.CyTableFactory;
 import org.cytoscape.model.CyTableManager;
+import org.cytoscape.model.CyTableUtil;
 import org.cytoscape.model.SavePolicy;
 import org.cytoscape.task.analyze.AnalyzeNetworkCollectionTaskFactory;
 import org.cytoscape.view.model.CyNetworkView;
@@ -127,11 +128,24 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		if (selected.length() == 0) {
 			monitor.showMessage(Level.ERROR,
 					"Task cannot be performed. No nodes selected for enrichment.");
+			showError("Task cannot be performed. No nodes selected for enrichment.");
 			return;
 		} 
 		if (analyzedNodes.size() > 2000) {
-			monitor.showMessage(Level.ERROR,
-					"Task cannot be performed. Enrichment can be retrieved only for at most 2000 proteins.");
+			// Two ways to report errors.  If the user hasn't selected any nodes, then
+			// suggest that the user selects some.  If they have selected some nodes,
+			// then tell them that they need to select fewer.
+			if (CyTableUtil.getNodesInState(network, CyNetwork.SELECTED, true).size() > 0) {
+				monitor.showMessage(Level.ERROR,
+						"Selection has too many nodes.  Enrichment can be retrieved only for at most 2000 proteins.");
+				showError(
+						"Selection has too many nodes.  Enrichment can be retrieved only for at most 2000 proteins.");
+			} else {
+				monitor.showMessage(Level.ERROR,
+						"Enrichment can be retrieved only for at most 2000 proteins.  Please select fewer nodes.");
+				showError(
+						"Enrichment can be retrieved only for at most 2000 proteins.  Please select fewer nodes.");
+			}
 			return;
 		}
 		// System.out.println(selected);
@@ -269,8 +283,8 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			monitor.showMessage(Level.ERROR,
 					"Enrichment retrieval returned no results, possibly due to an error.");
 			enrichmentResult = null;
-			// return;
-			throw new RuntimeException("Enrichment retrieval returned no results, possibly due to an error.");
+			return;
+			// throw new RuntimeException("Enrichment retrieval returned no results, possibly due to an error.");
 		}
 		List<EnrichmentTerm> terms = ModelUtils.getEnrichmentFromJSON(manager, results, cutoff, stringNodesMap, network);
 		if (terms == null) {
@@ -278,8 +292,8 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			monitor.showMessage(Level.ERROR,
 					"Enrichment retrieval returned no results, possibly due to an error. " + errorMsg);
 			enrichmentResult = null;
-			//return;
-			throw new RuntimeException("Enrichment retrieval returned no results, possibly due to an error. " + errorMsg);
+			return;
+			// throw new RuntimeException("Enrichment retrieval returned no results, possibly due to an error. " + errorMsg);
 		} else if (terms.size() > 0) {
 			Collections.sort(terms);
 			TermCategory category = TermCategory.ALL;
@@ -303,23 +317,23 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		args.put("caller_identity", StringManager.CallerIdentity);
 		JSONObject results = HttpUtils.postJSON(url, args, manager);
 		if (results == null) {
-			monitor.setStatusMessage(
+			monitor.showMessage(Level.ERROR,
 					"PPI enrichment retrieval returned no results, possibly due to an error.");
-			throw new RuntimeException("PPI enrichment retrieval returned no results, possibly due to an error.");
-			// return null;
+			// throw new RuntimeException("PPI enrichment retrieval returned no results, possibly due to an error.");
+			return null;
 		}
 		Map<String, String> ppiEnrichment = 
 						ModelUtils.getEnrichmentPPIFromJSON(manager, results, cutoff, stringNodesMap, network);
 		if (ppiEnrichment == null) {
 			monitor.showMessage(Level.ERROR,
 					"PPI Enrichment retrieval returned no results, possibly due to an error.");
-			throw new RuntimeException("PPI enrichment retrieval returned no results, possibly due to an error.");
-			// return null;
+			// throw new RuntimeException("PPI enrichment retrieval returned no results, possibly due to an error.");
+			return null;
 		}  else if (ppiEnrichment.containsKey("ErrorMessage")) {
 			monitor.showMessage(Level.ERROR,
 					"PPI Enrichment retrieval failed: "+ppiEnrichment.get("ErrorMessage"));
-			throw new RuntimeException("PPI Enrichment retrieval failed: "+ppiEnrichment.get("ErrorMessage"));
-			// return null;
+			// throw new RuntimeException("PPI Enrichment retrieval failed: "+ppiEnrichment.get("ErrorMessage"));
+			return null;
 		}
 		return ppiEnrichment;
 	}
@@ -466,6 +480,9 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		return;
 	}
 
+	protected void showError(String msg) {
+	}
+
 	private void deleteOldTables() {
 		CyTableManager tableManager = manager.getService(CyTableManager.class);
 		Set<CyTable> oldTables = ModelUtils.getEnrichmentTables(manager, network);
@@ -505,21 +522,6 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			}
 		}
 		return selectedStr.toString();
-	}
-
-	private void showStatusReport() {
-		StringBuilder sb = new StringBuilder();
-		for (String enrCat : enrichmentResult.keySet()) {
-			sb.append(enrCat);
-			sb.append("\t");
-			sb.append(enrichmentResult.get(enrCat).size());
-			sb.append("\n");
-		}
-		System.out.println(sb.toString());
-		CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
-		CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.SOUTH);
-		JOptionPane.showMessageDialog(cytoPanel.getSelectedComponent(), sb.toString(),
-				"Retrieve functional enrichment status", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	@ProvidesTitle

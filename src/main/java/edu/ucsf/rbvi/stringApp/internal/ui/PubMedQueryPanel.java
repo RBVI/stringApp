@@ -286,7 +286,7 @@ public class PubMedQueryPanel extends JPanel {
 		public void allFinished(FinishStatus finishStatus) {
 			//
 			if (loadEnrichment) {
-				GetEnrichmentTaskFactory tf = new GetEnrichmentTaskFactory(manager);
+				GetEnrichmentTaskFactory tf = new GetEnrichmentTaskFactory(manager, true);
 				ShowEnrichmentPanelTaskFactory showTf = manager.getShowEnrichmentPanelTaskFactory();
 				tf.setShowEnrichmentPanelFactory(showTf);
 				TunableSetter setter = manager.getService(TunableSetter.class);

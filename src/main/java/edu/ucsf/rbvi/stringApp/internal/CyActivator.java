@@ -425,7 +425,7 @@ public class CyActivator extends AbstractCyActivator {
 			registerService(bc, exportEnrichment, NetworkTaskFactory.class, props2);
 		}
 
-		GetEnrichmentTaskFactory getEnrichment = new GetEnrichmentTaskFactory(manager);
+		GetEnrichmentTaskFactory getEnrichment = new GetEnrichmentTaskFactory(manager, haveGUI);
 		{
 			Properties propsEnrichment = new Properties();
 			propsEnrichment.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
