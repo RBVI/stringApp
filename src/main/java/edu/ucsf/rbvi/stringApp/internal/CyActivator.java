@@ -425,13 +425,30 @@ public class CyActivator extends AbstractCyActivator {
 			registerService(bc, exportEnrichment, NetworkTaskFactory.class, props2);
 		}
 
-		GetEnrichmentTaskFactory getEnrichment = new GetEnrichmentTaskFactory(manager, haveGUI);
+		if (haveGUI) {
+			GetEnrichmentTaskFactory getEnrichment = new GetEnrichmentTaskFactory(manager, true);
+			{
+				Properties propsEnrichment = new Properties();
+				propsEnrichment.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
+				propsEnrichment.setProperty(TITLE, "Retrieve functional enrichment");
+				propsEnrichment.setProperty(MENU_GRAVITY, "1.0");
+				propsEnrichment.setProperty(IN_MENU_BAR, "true");
+				// propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
+				registerService(bc, getEnrichment, NetworkTaskFactory.class, propsEnrichment);
+
+				ShowEnrichmentPanelTaskFactory showEnrichment = new ShowEnrichmentPanelTaskFactory(manager);
+				showEnrichment.reregister();
+				getEnrichment.setShowEnrichmentPanelFactory(showEnrichment);
+				manager.setShowEnrichmentPanelTaskFactory(showEnrichment);
+
+				ShowResultsPanelTaskFactory showResults = new ShowResultsPanelTaskFactory(manager);
+				showResults.reregister();
+			}
+		}
+		
+		GetEnrichmentTaskFactory getCommandEnrichment = new GetEnrichmentTaskFactory(manager, false);
 		{
 			Properties propsEnrichment = new Properties();
-			propsEnrichment.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
-			propsEnrichment.setProperty(TITLE, "Retrieve functional enrichment");
-			propsEnrichment.setProperty(MENU_GRAVITY, "1.0");
-			propsEnrichment.setProperty(IN_MENU_BAR, "true");
 			propsEnrichment.setProperty(COMMAND_NAMESPACE, "string");
 			propsEnrichment.setProperty(COMMAND, "retrieve enrichment");
 			propsEnrichment.setProperty(COMMAND_DESCRIPTION, 
@@ -443,7 +460,7 @@ public class CyActivator extends AbstractCyActivator {
 			propsEnrichment.setProperty(COMMAND_SUPPORTS_JSON, "true");
     	propsEnrichment.setProperty(COMMAND_EXAMPLE_JSON, GetEnrichmentTaskFactory.EXAMPLE_JSON);
 			// propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
-			registerService(bc, getEnrichment, NetworkTaskFactory.class, propsEnrichment);
+			registerService(bc, getCommandEnrichment, NetworkTaskFactory.class, propsEnrichment);
 		}
 
 		GetSpeciesTaskFactory getSpecies = new GetSpeciesTaskFactory(manager);
@@ -461,36 +478,6 @@ public class CyActivator extends AbstractCyActivator {
 			registerService(bc, getSpecies, TaskFactory.class, props);
 		}
 
-		if (haveGUI) {
-			ShowEnrichmentPanelTaskFactory showEnrichment = new ShowEnrichmentPanelTaskFactory(manager);
-			showEnrichment.reregister();
-			getEnrichment.setShowEnrichmentPanelFactory(showEnrichment);
-			manager.setShowEnrichmentPanelTaskFactory(showEnrichment);
-
-			ShowResultsPanelTaskFactory showResults = new ShowResultsPanelTaskFactory(manager);
-			showResults.reregister();
-
-			
-			/*
-			Properties props = new Properties();
-			props.setProperty(PREFERRED_MENU, "Apps.String");
-			props.setProperty(TITLE, "Show results panel");
-			props.setProperty(MENU_GRAVITY, "4.0");
-			props.setProperty(IN_MENU_BAR, "true");
-			registerService(bc, showResults, TaskFactory.class, props);
-			*/
-
-			/*
-			ShowResultsPanelTaskFactory hideResults = new ShowResultsPanelTaskFactory(manager, false);
-			Properties hideProps = new Properties();
-			hideProps.setProperty(PREFERRED_MENU, "Apps.String");
-			hideProps.setProperty(TITLE, "Show results panel");
-			hideProps.setProperty(MENU_GRAVITY, "4.0");
-			hideProps.setProperty(IN_MENU_BAR, "true");
-			registerService(bc, hideResults, TaskFactory.class, hideProps);
-			*/
-		}
-		
 		/*
 		{
 			OpenEvidenceTaskFactory openEvidence = new OpenEvidenceTaskFactory(manager);
