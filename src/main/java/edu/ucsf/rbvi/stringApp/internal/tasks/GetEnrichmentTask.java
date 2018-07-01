@@ -179,49 +179,6 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		getEnrichmentJSON(selected, species);
 		ppiSummary = getEnrichmentPPIJSON(selected, species);
 
-		/*
-		// retrieve enrichment
-		String[] selectedNodes = selected.split("\n");
-		if (goProcess) {
-			monitor.setStatusMessage("Retrieving functional enrichment for GO Biological Process.");
-			TermCategory category = TermCategory.GOPROCESS;
-			if (getEnrichment(selectedNodes, "fat", species, category.getKey()))
-				saveEnrichmentTable(category.getTable(), category.getKey());
-		}
-		if (goCompartment) {
-			monitor.setStatusMessage(
-					"Retrieving functional enrichment for GO Cellular Compartment.");
-			TermCategory category = TermCategory.GOCOMPONENT;
-			if (getEnrichment(selectedNodes, "fat", species, category.getKey()))
-				saveEnrichmentTable(category.getTable(), category.getKey());
-		}
-		if (goFunction) {
-			monitor.setStatusMessage("Retrieving functional enrichment for GO Molecular Function.");
-			TermCategory category = TermCategory.GOFUNCTION;
-			if (getEnrichment(selectedNodes, "fat", species, category.getKey()))
-				saveEnrichmentTable(category.getTable(), category.getKey());
-		}
-		if (interPro) {
-			monitor.setStatusMessage(
-					"Retrieving functional enrichment for INTERPRO Protein Domains and Features.");
-			TermCategory category = TermCategory.INTERPRO;
-			if (getEnrichment(selectedNodes, "fat", species, category.getKey()))
-				saveEnrichmentTable(category.getTable(), category.getKey());
-		}
-		if (kegg) {
-			monitor.setStatusMessage("Retrieving functional enrichment for KEGG Pathways.");
-			TermCategory category = TermCategory.KEGG;
-			if (getEnrichment(selectedNodes, "fat", species, category.getKey()))
-				saveEnrichmentTable(category.getTable(), category.getKey());
-		}
-		if (pfam) {
-			monitor.setStatusMessage("Retrieving functional enrichment for PFAM Protein Domains.");
-			TermCategory category = TermCategory.PFAM;
-			if (getEnrichment(selectedNodes, "fat", species, category.getKey()))
-				saveEnrichmentTable(category.getTable(), category.getKey());
-		}
-		*/
-
 		// save analyzed nodes in network table
 		CyTable netTable = network.getDefaultNetworkTable();
 		ModelUtils.createListColumnIfNeeded(netTable, Long.class, ModelUtils.NET_ANALYZED_NODES);
@@ -544,6 +501,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		if (clzz.equals(CyTable.class)) {
 			return (R) enrichmentTable;
 		} else if (clzz.equals(String.class)) {
+			if (ppiSummary == null) return (R)"No results";
 			String result = "Enrichment results summary:";
 			result = addStringResult(result, ModelUtils.NET_PPI_ENRICHMENT);
 			result = addStringResult(result, ModelUtils.NET_ENRICHMENT_NODES);
@@ -553,10 +511,11 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			result = addStringResult(result, ModelUtils.NET_ENRICHMENT_DEGREE);
 			return (R)result;
 		} else if (clzz.equals(Long.class)) {
+			if (ppiSummary == null) return null; 
 			return (R) enrichmentTable.getSUID();
 		} else if (clzz.equals(JSONResult.class)) {
 			JSONResult res = () -> {
-				if (enrichmentTable == null) return "{}";
+				if (enrichmentTable == null || ppiSummary == null) return "{}";
         String result = "{\"EnrichmentTable\": "+enrichmentTable.getSUID();
 
 				result = addResult(result, ModelUtils.NET_PPI_ENRICHMENT);
