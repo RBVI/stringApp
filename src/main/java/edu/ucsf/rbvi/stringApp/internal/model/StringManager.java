@@ -81,7 +81,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private int additionalProteins = 0;
 	private int maximumProteins = 100;
 
-	private int topTerms = 8;
+	private int topTerms = 5;
 	private double overlapCutoff = 0.5;
 	private ColorBrewer brewerPalette = ColorBrewer.Paired;
 	private List<TermCategory> categoryFilter = TermCategory.getValues();
@@ -497,8 +497,16 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		imagesTaskFactory = factory;		
 	}
 	
+	public ShowImagesTaskFactory getShowImagesTaskFactory() {
+		return imagesTaskFactory;		
+	}
+	
 	public void setShowEnhancedLabelsTaskFactory(ShowEnhancedLabelsTaskFactory factory) {
 		labelsTaskFactory = factory;		
+	}
+
+	public ShowEnhancedLabelsTaskFactory getShowEnhancedLabelsTaskFactory() {
+		return labelsTaskFactory;		
 	}
 
 	public void setShowGlassBallEffectTaskFactory(ShowGlassBallEffectTaskFactory factory) {

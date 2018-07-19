@@ -8,10 +8,12 @@ import java.util.List;
 import javax.swing.SwingUtilities;
 
 import org.cytoscape.model.CyNetwork;
+import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ContainsTunables;
 import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.ProvidesTitle;
+import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.json.JSONResult;
@@ -31,29 +33,29 @@ public class SettingsTask extends AbstractTask implements ObservableTask {
 	@Tunable(description="Species", 
 			longDescription="Default species",
 			exampleStringValue = "Homo Sapiens",
-			params="lookup=begin", groups={"Query Defaults"}, gravity=10.0)
+			params="lookup=begin", groups={"Query Defaults (take effect after restarting Cytoscape)"}, gravity=10.0)
 	public ListSingleSelection<Species> species;
 
 	@Tunable(description="Confidence (score) cutoff", 
 			longDescription="Default confidence (score) cutoff",
 			exampleStringValue = "0.4",
-			groups={"Query Defaults"}, gravity=11.0,
+			groups={"Query Defaults (take effect after restarting Cytoscape)"}, gravity=11.0,
 	         params="slider=true")
 	public BoundedDouble defaultConfidence = new BoundedDouble(0.0, 0.4, 1.0, false, false);
 
 	@Tunable(description="Maximum additional interactors (protein and compound query)", 
 			longDescription="Default number of additional interactors for the protein and compound query",
 			exampleStringValue = "0",
-			groups={"Query Defaults"}, gravity=12.0,
+			groups={"Query Defaults (take effect after restarting Cytoscape)"}, gravity=12.0,
 	         params="slider=true")
 	public BoundedInteger additionalProteins = new BoundedInteger(0, 0, 100, false, false);
 
 	@Tunable(description="Maximum proteins (disease and PubMed query)",
 			longDescription="Default number of proteins for the disease and PubMed query",
 			exampleStringValue = "100",
-			groups={"Query Defaults"}, gravity=13.0,
+			groups={"Query Defaults (take effect after restarting Cytoscape)"}, gravity=13.0,
 	         params="slider=true")
-	public BoundedInteger maxProteins = new BoundedInteger(1, 100, 1000, false, false);
+	public BoundedInteger maxProteins = new BoundedInteger(1, 100, 2000, false, false);
 
 	@Tunable(description="Show structure images",
 			longDescription="Show structure images by default",
@@ -93,12 +95,31 @@ public class SettingsTask extends AbstractTask implements ObservableTask {
 	@Override
 	public void run(TaskMonitor arg0) throws Exception {
 		// manager.setDefaultSpecies(species.getSelectedValue());
-		System.out.println(species.getSelectedValue());
-		System.out.println(defaultConfidence);
+		// System.out.println(species.getSelectedValue());
+		// System.out.println(defaultConfidence.getValue());
+
+		TaskManager<?, ?> tm = (TaskManager<?, ?>) manager.getService(TaskManager.class);
+		CyNetworkView currentView = manager.getCurrentNetworkView();
+
+		if (manager.showEnhancedLabels() != showEnhancedLabels) {
+			if (currentView != null)
+				tm.execute(manager.getShowEnhancedLabelsTaskFactory().createTaskIterator(currentView));
+			else
+				manager.setShowEnhancedLabels(showEnhancedLabels);
+		}
+		if (manager.showImage() != showImage) {
+			if (currentView != null)
+				tm.execute(manager.getShowImagesTaskFactory().createTaskIterator(currentView));
+			else
+				manager.setShowImage(showImage);
+		}
 		
-		manager.setShowEnhancedLabels(showEnhancedLabels);
-		manager.setShowImage(showImage);
-		manager.setShowGlassBallEffect(showGlassBallEffect);
+		if (manager.showGlassBallEffect() != showGlassBallEffect) {
+			if (currentView != null)
+				tm.execute(manager.getShowGlassBallEffectTaskFactory().createTaskIterator(currentView));
+			else
+				manager.setShowGlassBallEffect(showGlassBallEffect);
+		}
 
 		manager.setDefaultSpecies(species.getSelectedValue());
 		manager.setDefaultConfidence(defaultConfidence.getValue());
@@ -110,6 +131,7 @@ public class SettingsTask extends AbstractTask implements ObservableTask {
 		manager.setBrewerPalette(null,enrichmentSettings.defaultPalette.getSelectedValue());
 		manager.setChartType(null,enrichmentSettings.chartType.getSelectedValue());
 		manager.updateSettings();
+		
 	}
 
 	@ProvidesTitle

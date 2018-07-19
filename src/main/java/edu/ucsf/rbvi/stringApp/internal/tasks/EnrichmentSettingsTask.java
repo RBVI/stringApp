@@ -50,10 +50,11 @@ public class EnrichmentSettingsTask extends AbstractTask {
 			manager.setOverlapCutoff(network,enrichmentSettings.overlapCutoff.getValue());
 			manager.setBrewerPalette(network,enrichmentSettings.defaultPalette.getSelectedValue());
 			manager.setChartType(network,enrichmentSettings.chartType.getSelectedValue());
+
+			// TODO: maybe this is a way to automatically apply settings?
+			TaskManager<?, ?> tm = (TaskManager<?, ?>) manager.getService(TaskManager.class);
+			tm.execute(new ShowChartsTaskFactory(manager).createTaskIterator());
 		}
-		// TODO: maybe this is a way to automatically apply settings?
-		TaskManager<?, ?> tm = (TaskManager<?, ?>) manager.getService(TaskManager.class);
-		tm.execute(new ShowChartsTaskFactory(manager).createTaskIterator());
 	}
 
 	@ProvidesTitle

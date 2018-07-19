@@ -35,10 +35,10 @@ public class EnrichmentSettings implements ActionListener {
 	@Tunable(description = "Number of terms to chart",
 	         tooltip = "Set the default number of terms to use for charts",
 	         longDescription = "Set the default number of terms to use for charts",
-	         exampleStringValue = "4",
+	         exampleStringValue = "5",
 					 groups = {"Enrichment Defaults"},
 	         gravity = 101.0, params="slider=true")
-	public BoundedInteger nTerms = new BoundedInteger(1, 8, 8, false, false);
+	public BoundedInteger nTerms = new BoundedInteger(1, 5, 8, false, false);
 	
 	@Tunable(description = "Default Brewer palette",
 	         longDescription = "Set the default Brewer palette for charts",

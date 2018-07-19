@@ -190,7 +190,7 @@ public class SearchOptionsPanel extends JPanel {
 	}
 
 	public void setLoadEnrichment(boolean selected) {
-		System.out.println("Setting loadEnrichment to "+selected);
+		// System.out.println("Setting loadEnrichment to "+selected);
 		loadEnrichment.setSelected(selected);
 	}
 
