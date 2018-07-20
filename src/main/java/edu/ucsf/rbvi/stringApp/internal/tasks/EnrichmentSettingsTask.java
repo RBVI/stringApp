@@ -45,20 +45,20 @@ public class EnrichmentSettingsTask extends AbstractTask {
 			manager.setBrewerPalette(null,enrichmentSettings.defaultPalette.getSelectedValue());
 			manager.setChartType(null,enrichmentSettings.chartType.getSelectedValue());
 			manager.updateSettings();
-		} else {
-			manager.setTopTerms(network,enrichmentSettings.nTerms.getValue());
-			manager.setOverlapCutoff(network,enrichmentSettings.overlapCutoff.getValue());
-			manager.setBrewerPalette(network,enrichmentSettings.defaultPalette.getSelectedValue());
-			manager.setChartType(network,enrichmentSettings.chartType.getSelectedValue());
-
-			// TODO: maybe this is a way to automatically apply settings?
-			TaskManager<?, ?> tm = (TaskManager<?, ?>) manager.getService(TaskManager.class);
-			tm.execute(new ShowChartsTaskFactory(manager).createTaskIterator());
 		}
+
+		manager.setTopTerms(network,enrichmentSettings.nTerms.getValue());
+		manager.setOverlapCutoff(network,enrichmentSettings.overlapCutoff.getValue());
+		manager.setBrewerPalette(network,enrichmentSettings.defaultPalette.getSelectedValue());
+		manager.setChartType(network,enrichmentSettings.chartType.getSelectedValue());
+
+		// TODO: maybe this is a way to automatically apply settings?
+		TaskManager<?, ?> tm = (TaskManager<?, ?>) manager.getService(TaskManager.class);
+		tm.execute(new ShowChartsTaskFactory(manager).createTaskIterator());
 	}
 
 	@ProvidesTitle
 	public String getTitle() {
-		return "Settings for STRING Enrichment table";
+		return "Network-specific settings for STRING Enrichment table";
 	}	
 }
