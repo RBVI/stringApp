@@ -204,6 +204,10 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 	}
 
 	void replaceSearchPanel() {
+		if (!queryAddNodes) {
+			speciesCombo.setEnabled(true);
+			wholeOrgBox.setEnabled(true);
+		}
 		mainSearchPanel.removeAll();
 		mainSearchPanel.revalidate();
 		mainSearchPanel.repaint();
