@@ -59,8 +59,8 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	TaskMonitor monitor;
 	// boolean guiMode;
 
-	@Tunable(description = "Enrichment p-value cutoff", 
-	         longDescription = "Sets the false discovery rate (FDR) p-value cutoff a term must reach in order to be included",
+	@Tunable(description = "Enrichment FDR value cutoff", 
+	         longDescription = "Sets the false discovery rate (FDR) value cutoff a term must reach in order to be included",
 					 exampleStringValue = "0.05",
 					 gravity = 1.0)
 	public double cutoff = 0.05;
