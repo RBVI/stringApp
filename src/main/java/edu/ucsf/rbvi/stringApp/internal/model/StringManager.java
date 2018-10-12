@@ -443,11 +443,15 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 					break;
 				}
 			}
+			TaskIterator taskIt = null;
 			if (show) {
-				SynchronousTaskManager<?> taskM = getService(SynchronousTaskManager.class);
-				taskM.execute(enrichmentTaskFactory.createTaskIterator(true, false));
-				enrichmentTaskFactory.reregister();
+				taskIt = enrichmentTaskFactory.createTaskIterator(true, false);
+			} else {
+				taskIt = enrichmentTaskFactory.createTaskIterator(false, false);
 			}
+			SynchronousTaskManager<?> taskM = getService(SynchronousTaskManager.class);
+			taskM.execute(taskIt);
+			enrichmentTaskFactory.reregister();
 		}
 		
 		// check if enhanced labels should be shown or not

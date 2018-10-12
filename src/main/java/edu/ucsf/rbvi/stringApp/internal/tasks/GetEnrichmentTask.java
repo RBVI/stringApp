@@ -76,24 +76,6 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	@Tunable(description = "Retrieve for species", gravity = 3.0)
 	public ListSingleSelection<String> allNetSpecies = new ListSingleSelection<String>();
 	
-	//@Tunable(description = "GO Biological Process", gravity = 2.0)
-	public boolean goProcess = false;
-
-	//@Tunable(description = "GO Molecular Function", gravity = 3.0)
-	public boolean goFunction = false;
-
-	//@Tunable(description = "GO Cellular Compartment", gravity = 4.0)
-	public boolean goCompartment = false;
-
-	//@Tunable(description = "KEGG Pathways", gravity = 5.0)
-	public boolean kegg = false;
-
-	//@Tunable(description = "Pfam domains", gravity = 6.0)
-	public boolean pfam = false;
-
-	//@Tunable(description = "InterPro domains", gravity = 7.0)
-	public boolean interPro = false;
-
 	public CyTable enrichmentTable = null;
 
 	public GetEnrichmentTask(StringManager manager, CyNetwork network, CyNetworkView netView,
@@ -131,22 +113,20 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			showError("Task cannot be performed. No nodes selected for enrichment.");
 			return;
 		} 
+		boolean isLargeNetwork = false;
 		if (analyzedNodes.size() > 2000) {
+			isLargeNetwork = true;
 			// Two ways to report errors.  If the user hasn't selected any nodes, then
 			// suggest that the user selects some.  If they have selected some nodes,
 			// then tell them that they need to select fewer.
-			if (CyTableUtil.getNodesInState(network, CyNetwork.SELECTED, true).size() > 0) {
-				monitor.showMessage(Level.ERROR,
-						"Selection has too many nodes.  Enrichment can be retrieved only for at most 2000 proteins.");
-				showError(
-						"Selection has too many nodes.  Enrichment can be retrieved only for at most 2000 proteins.");
+			/*if (CyTableUtil.getNodesInState(network, CyNetwork.SELECTED, true).size() > 0) {
+				monitor.showMessage(Level.ERROR, "Selection has too many nodes. Enrichment can be retrieved only for at most 2000 proteins.");
+				showError("Selection has too many nodes. Enrichment can be retrieved only for at most 2000 proteins.");
 			} else {
-				monitor.showMessage(Level.ERROR,
-						"Enrichment can be retrieved only for at most 2000 proteins.  Please select fewer nodes.");
-				showError(
-						"Enrichment can be retrieved only for at most 2000 proteins.  Please select fewer nodes.");
+				monitor.showMessage(Level.ERROR, "Enrichment can be retrieved only for at most 2000 proteins. Please select fewer nodes.");
+				showError("Enrichment can be retrieved only for at most 2000 proteins. Please select fewer nodes.");
 			}
-			return;
+			return;*/
 		}
 		// System.out.println(selected);
 		// List<String> netSpecies = ModelUtils.getNetworkSpeciesTaxons(network);
@@ -177,7 +157,10 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 
 		// retrieve enrichment (new API)
 		getEnrichmentJSON(selected, species);
-		ppiSummary = getEnrichmentPPIJSON(selected, species);
+		if (!isLargeNetwork) 
+			ppiSummary = getEnrichmentPPIJSON(selected, species);
+		else
+			ppiSummary = null;
 
 		// save analyzed nodes in network table
 		CyTable netTable = network.getDefaultNetworkTable();
@@ -196,6 +179,13 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			writeInteger(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_EDGES);
 			writeDouble(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_CLSTR);
 			writeDouble(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_DEGREE);
+		} else {
+			ModelUtils.deleteColumnIfExisting(netTable, ModelUtils.NET_PPI_ENRICHMENT);
+			ModelUtils.deleteColumnIfExisting(netTable, ModelUtils.NET_ENRICHMENT_NODES);
+			ModelUtils.deleteColumnIfExisting(netTable, ModelUtils.NET_ENRICHMENT_EXPECTED_EDGES);
+			ModelUtils.deleteColumnIfExisting(netTable, ModelUtils.NET_ENRICHMENT_EDGES);
+			ModelUtils.deleteColumnIfExisting(netTable, ModelUtils.NET_ENRICHMENT_CLSTR);
+			ModelUtils.deleteColumnIfExisting(netTable, ModelUtils.NET_ENRICHMENT_DEGREE);
 		}
 		
 		// show enrichment results

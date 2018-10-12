@@ -932,6 +932,11 @@ public class ModelUtils {
 		table.createListColumn(columnName, clazz, false);
 	}
 
+	public static void deleteColumnIfExisting(CyTable table, String columnName) {
+		if (table.getColumn(columnName) != null)
+			table.deleteColumn(columnName);		
+	}
+	
 	public static String getName(CyNetwork network, CyIdentifiable ident) {
 		return getString(network, ident, CyNetwork.NAME);
 	}
