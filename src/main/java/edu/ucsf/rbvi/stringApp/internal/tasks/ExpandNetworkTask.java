@@ -230,7 +230,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			monitor.setStatusMessage("Updating layout");
 			// layoutAll();
 			// experimental, layout only the new nodes
-			layoutSelectedOnly(newNodes);
+			shiftAndLayoutGridSelectedOnly(newNodes);
 		}
 	}
 
@@ -264,6 +264,41 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		setter.applyTunables(context, layoutArgs);
 		insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, "score"));
 	}
+
+	private void shiftAndLayoutGridSelectedOnly(List<CyNode> nodesToLayout) {
+		final VisualProperty<Double> xLoc = BasicVisualLexicon.NODE_X_LOCATION;
+		final VisualProperty<Double> yLoc = BasicVisualLexicon.NODE_Y_LOCATION;
+		Set<Double> xPos = new HashSet<Double>();
+		Set<Double> yPos = new HashSet<Double>();
+		Set<View<CyNode>> nodeViews = new HashSet<>();
+		for (View<CyNode> nodeView : netView.getNodeViews()) {
+			if (nodesToLayout.contains(nodeView.getModel())) {
+				nodeViews.add(nodeView);
+			} else {
+				xPos.add(nodeView.getVisualProperty(xLoc));
+				yPos.add(nodeView.getVisualProperty(yLoc));
+			}
+		}
+		double xMin = Collections.min(xPos);
+		double xMax = Collections.max(xPos);
+		double xSpan = xMax - xMin; 
+		double scaling = netView.getNodeViews().size()/(double)nodeViews.size();
+		for (View<CyNode> nodeView2 : nodeViews) {
+			nodeView2.setVisualProperty(xLoc, xMax + xSpan/scaling);
+			network.getRow(nodeView2.getModel()).set(CyNetwork.SELECTED, true);
+		}
+
+		// get layout and set attributes
+		CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("grid");
+		Object context = alg.createLayoutContext();
+		TunableSetter setter = manager.getService(TunableSetter.class);
+		Map<String, Object> layoutArgs = new HashMap<>();
+		layoutArgs.put("selectedOnly", true);
+		setter.applyTunables(context, layoutArgs);
+		insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, "score"));
+	}
+
+
 
 	private void layoutSelectedCircular(List<CyNode> nodesToLayout) {
 		final VisualProperty<Double> xLoc = BasicVisualLexicon.NODE_X_LOCATION;
