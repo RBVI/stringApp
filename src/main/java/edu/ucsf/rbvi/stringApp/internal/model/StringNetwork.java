@@ -133,11 +133,11 @@ public class StringNetwork {
 		// return new HashMap<String, List<Annotation>>();
 		// }
 
-		// Split the terms up into groups of 2000
+		// Split the terms up into groups of 5000
 		String[] termsArray = encTerms.split("\n");
 		annotations = new HashMap<>();
-		for (int i = 0; i < termsArray.length; i = i+2000) {
-			String termsBatch = getTerms(termsArray, i, i+2000, termsArray.length);
+		for (int i = 0; i < termsArray.length; i = i + 5000) {
+			String termsBatch = getTerms(termsArray, i, i + 5000, termsArray.length);
 			annotations = getAnnotationBatch(taxon, termsBatch, useDATABASE);
 		}
 		return annotations;
