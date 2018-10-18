@@ -380,6 +380,8 @@ public class ModelUtils {
 			if (species == null)
 				species = net.getRow(node).get(SPECIES, String.class);
 			String stringId = net.getRow(node).get(STRINGID, String.class);
+			if (stringId == null) 
+				continue; // Could be merged from another network
 			String name = net.getRow(node).get(CyNetwork.NAME, String.class);
 			nodeMap.put(stringId, node);
 			nodeNameMap.put(stringId, name);
