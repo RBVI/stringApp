@@ -66,7 +66,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String APIVERSION = "String-api-version";
 	public static String RESULT = "QueryResult";
 	
+	public static String STRINGDevelopmentURI = "http://string-gamma.org/api/";
+	
 	public static boolean enableViruses = true;
+	public static boolean useSTRINGDevelopmentVersion = false; 
 
 	// These are various default values that are saved and restored from
 	// the network table
@@ -353,7 +356,9 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			return STITCHResolveURI;
 		else if (useDATABASE.equals(Databases.VIRUSES.getAPIName()))
 			return VIRUSESResolveURI;
-
+		else if (useSTRINGDevelopmentVersion)
+			return STRINGDevelopmentURI;
+		
 		return STRINGResolveURI;
 	}
 

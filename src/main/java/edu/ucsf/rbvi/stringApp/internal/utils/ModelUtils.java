@@ -658,13 +658,22 @@ public class ModelUtils {
 		List<String> jsonKeysSorted = new ArrayList<String>(jsonKeysClass.keySet());
 		Collections.sort(jsonKeysSorted);
 		for (String jsonKey : jsonKeysSorted) {
+			String formattedJsonKey = formatForColumnNamespace(jsonKey);
 			if (listKeys.contains(jsonKey)) {
-				createListColumnIfNeeded(table, jsonKeysClass.get(jsonKey), jsonKey);
+				createListColumnIfNeeded(table, jsonKeysClass.get(jsonKey), formattedJsonKey);
 			} else {
-				createColumnIfNeeded(table, jsonKeysClass.get(jsonKey), jsonKey);
+				createColumnIfNeeded(table, jsonKeysClass.get(jsonKey), formattedJsonKey);
 			}
 		}
 
+	}
+	
+	public static String formatForColumnNamespace(String columnName) {
+		String formattedColumnName = columnName;
+		if (columnName.startsWith("compartment::") || columnName.startsWith("tissue::") || columnName.startsWith("score::")) {
+			formattedColumnName = columnName.replaceFirst("::", " ");
+		}
+		return formattedColumnName;
 	}
 	
 	public static boolean isMergedStringNetwork(CyNetwork network) {
@@ -783,7 +792,8 @@ public class ModelUtils {
 				// It's not one of our "standard" attributes, create a column for it (if necessary)
 				// and then add it
 				Object value = nodeObj.get(key);
-				row.set(key, value);
+				String formattedKey = formatForColumnNamespace(key);
+				row.set(formattedKey, value);
 				// if (value instanceof JSONArray) {
 				// JSONArray list = (JSONArray) value;
 				// if (!columnMap.contains(key)) {
@@ -897,9 +907,10 @@ public class ModelUtils {
 		double scoreProduct = 1.0;
 		for (Object key : scores.keySet()) {
 			String score = (String) key;
-			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, score);
+			String scoreFormatted = formatForColumnNamespace(score);
+			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, scoreFormatted);
 			Double v = (Double) scores.get(key);
-			network.getRow(edge).set(score, v);
+			network.getRow(edge).set(scoreFormatted, v);
 			scoreProduct *= (1 - v);
 		}
 		double totalScore = -(scoreProduct - 1.0);
