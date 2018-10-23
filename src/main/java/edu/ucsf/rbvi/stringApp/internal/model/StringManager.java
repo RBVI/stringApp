@@ -30,6 +30,7 @@ import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskObserver;
 
+import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
@@ -38,6 +39,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 import org.jcolorbrewer.ColorBrewer;
+import org.json.simple.JSONObject;
 
 public class StringManager implements NetworkAddedListener, SessionLoadedListener {
 	final CyServiceRegistrar registrar;
@@ -56,6 +58,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	private Map<CyNetwork, StringNetwork> stringNetworkMap;
 
+	public static String CONFIGURI = "http://jensenlab.org/assets/stringapp/";
+	
 	public static String STRINGResolveURI = "https://string-db.org/api/";
 	public static String STITCHResolveURI = "http://stitch.embl.de/api/";
 	public static String VIRUSESResolveURI = "http://viruses.string-db.org/cgi/webservice_handler.pl";
@@ -177,6 +181,26 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		// Get a session property file for the current session
 		sessionProperties = ModelUtils.getPropertyService(this, SavePolicy.SESSION_FILE);
 
+	}
+
+	public void updateURIsFromConfig() {
+		// Update urls with those from the sever
+		System.out.println("get config file from server");
+		Map<String, String> args = new HashMap<>();
+		String url = CONFIGURI +CallerIdentity+ ".json";
+		System.out.println(url);
+		JSONObject uris = ModelUtils.getResultsFromJSON(HttpUtils.getJSON(url, args, this), JSONObject.class);
+		if (uris != null) {
+			if (uris.containsKey("URI")) {
+				System.out.println(uris.get("URI"));
+			} else if (uris.containsKey("STRINGResolveURI")) {
+				System.out.println(uris.get("STRINGResolveURI"));
+			} else if (uris.containsKey("STITCHResolveURI")) {
+				System.out.println(uris.get("STITCHResolveURI"));
+			} else if (uris.containsKey("VIRUSESResolveURI")) {
+				System.out.println(uris.get("VIRUSESResolveURI"));
+			}
+		}
 	}
 
 	public CyNetwork createNetwork(String name) {

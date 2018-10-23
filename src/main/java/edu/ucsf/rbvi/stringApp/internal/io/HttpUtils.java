@@ -44,9 +44,16 @@ public class HttpUtils {
 		// Set up our connection
 		CloseableHttpClient client = HttpClients.custom().setDefaultRequestConfig(globalConfig)
 				.build();
-		String args = HttpUtils.getStringArguments(queryMap);
-		HttpGet request = new HttpGet(url + "?" + args);
-		manager.info("URL: " + url + "?" + args);
+		HttpGet request = null;
+		if (queryMap.size() > 0) {
+			String args = HttpUtils.getStringArguments(queryMap);
+			request = new HttpGet(url + "?" + args);
+			manager.info("URL: " + url + "?" + args);
+		} else {
+			request = new HttpGet(url);
+			manager.info("URL: " + url);
+		}
+		
 		// List<NameValuePair> nvps = HttpUtils.getArguments(queryMap);
 		JSONObject jsonObject = new JSONObject();
 
