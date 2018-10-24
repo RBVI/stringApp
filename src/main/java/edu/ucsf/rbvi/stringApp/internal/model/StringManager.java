@@ -63,7 +63,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String messageUserWarning = "";
 	public static String messageUserInfo = "";
 	
-	public static String STRINGResolveURI = "https://string11.string-db.org/api/";
+	public static String STRINGResolveURI = "https://string-db.org/api/";
 	public static String STITCHResolveURI = "http://stitch.embl.de/api/";
 	public static String VIRUSESResolveURI = "http://viruses.string-db.org/cgi/webservice_handler.pl";
 	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
