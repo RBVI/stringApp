@@ -59,8 +59,11 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private Map<CyNetwork, StringNetwork> stringNetworkMap;
 
 	public static String CONFIGURI = "http://jensenlab.org/assets/stringapp/";
+	public static String messageUserError = "";
+	public static String messageUserWarning = "";
+	public static String messageUserInfo = "";
 	
-	public static String STRINGResolveURI = "https://string-db.org/api/";
+	public static String STRINGResolveURI = "https://string11.string-db.org/api/";
 	public static String STITCHResolveURI = "http://stitch.embl.de/api/";
 	public static String VIRUSESResolveURI = "http://viruses.string-db.org/cgi/webservice_handler.pl";
 	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
@@ -188,17 +191,34 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		System.out.println("get config file from server");
 		Map<String, String> args = new HashMap<>();
 		String url = CONFIGURI +CallerIdentity+ ".json";
-		System.out.println(url);
 		JSONObject uris = ModelUtils.getResultsFromJSON(HttpUtils.getJSON(url, args, this), JSONObject.class);
 		if (uris != null) {
 			if (uris.containsKey("URI")) {
-				System.out.println(uris.get("URI"));
-			} else if (uris.containsKey("STRINGResolveURI")) {
-				System.out.println(uris.get("STRINGResolveURI"));
-			} else if (uris.containsKey("STITCHResolveURI")) {
-				System.out.println(uris.get("STITCHResolveURI"));
-			} else if (uris.containsKey("VIRUSESResolveURI")) {
-				System.out.println(uris.get("VIRUSESResolveURI"));
+				URI = uris.get("URI").toString();
+			}
+			if (uris.containsKey("STRINGResolveURI")) {
+				STRINGResolveURI = uris.get("STRINGResolveURI").toString();
+			} 
+			if (uris.containsKey("STITCHResolveURI")) {
+				STITCHResolveURI = uris.get("STITCHResolveURI").toString();
+			} 
+			if (uris.containsKey("VIRUSESResolveURI")) {
+				VIRUSESResolveURI = uris.get("VIRUSESResolveURI").toString();
+			}
+			if (uris.containsKey("messageUserError")) {
+				messageUserError = uris.get("messageUserError").toString();
+				if (!messageUserError.equals(""))
+					error(messageUserError);
+			}
+			if (uris.containsKey("messageUserWarning")) {
+				messageUserWarning = uris.get("messageUserWarning").toString();
+				if (!messageUserWarning.equals("")) 
+					warn(messageUserWarning);
+			}
+			if (uris.containsKey("messageUserInfo")) {
+				messageUserInfo = uris.get("messageUserInfo").toString();
+				if (!messageUserInfo.equals(""))
+					info(messageUserInfo);
 			}
 		}
 	}

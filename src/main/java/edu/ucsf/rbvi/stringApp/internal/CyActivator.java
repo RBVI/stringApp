@@ -87,8 +87,10 @@ public class CyActivator extends AbstractCyActivator {
 		// Get our version number
 		String version = bc.getBundle().getVersion().toString();
 		manager.setVersion(version);
+		
+		// Get configuration and messages for user from server 
 		manager.updateURIsFromConfig();
-
+		
 		{
 			// Register our network added listener and session loaded listener
 			registerService(bc, manager, NetworkAddedListener.class, new Properties());
