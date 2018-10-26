@@ -670,7 +670,7 @@ public class ModelUtils {
 	
 	public static String formatForColumnNamespace(String columnName) {
 		String formattedColumnName = columnName;
-		if (columnName.startsWith("compartment::") || columnName.startsWith("tissue::") || columnName.startsWith("score::")) {
+		if (columnName.contains("::")) {
 			formattedColumnName = columnName.replaceFirst("::", " ");
 		}
 		return formattedColumnName;
