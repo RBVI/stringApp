@@ -188,7 +188,6 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	public void updateURIsFromConfig() {
 		// Update urls with those from the sever
-		System.out.println("get config file from server");
 		Map<String, String> args = new HashMap<>();
 		String url = CONFIGURI +CallerIdentity+ ".json";
 		JSONObject uris = ModelUtils.getResultsFromJSON(HttpUtils.getJSON(url, args, this), JSONObject.class);

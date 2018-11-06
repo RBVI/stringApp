@@ -81,15 +81,13 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 
 	public void run(TaskMonitor monitor) {
 		monitor.setTitle("STRING Protein Query");
-		boolean found;
 		Species sp = Species.getSpecies(species);
 		if (taxonID != -1) {
 			for (Species s : speciesList) {
 				if (s.getTaxId() == taxonID) {
-					if (s.toString().equals(species)) {
-						monitor.showMessage(TaskMonitor.Level.WARN, "Unknown or missing species or NCBI taxon ID");
+					if (!s.toString().equals(species)) {
+						monitor.showMessage(TaskMonitor.Level.WARN, "Species name and NCBI taxon ID do not match, taxon ID will be used.");
 					}
-					found = true;
 					sp = s;
 					break;
 				}
