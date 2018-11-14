@@ -623,6 +623,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 			int additionalNodes = optionsPanel.getAdditionalNodes();
 
 			if (stringNetwork.getResolvedTerms() == 1 && additionalNodes == 0 && !queryAddNodes) {
+				/*
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						JOptionPane.showMessageDialog(null, 
@@ -630,6 +631,10 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 									       "Hint", JOptionPane.WARNING_MESSAGE); 
 					}
 				});
+				*/
+				additionalNodes = 10;
+				logger.warn("STRING: Only one protein or compound was selected -- additional interactions set to 10");
+
 			}
 
 			// if (stringNetwork.getResolvedTerms() == 1)
