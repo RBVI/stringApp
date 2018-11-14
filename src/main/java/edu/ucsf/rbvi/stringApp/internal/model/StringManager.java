@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.CyUserLog;
 import org.cytoscape.command.AvailableCommands;
+import org.cytoscape.command.CommandExecutorTaskFactory;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
@@ -47,6 +48,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	final Logger logger = Logger.getLogger(CyUserLog.NAME);
 	final TaskManager<?,?> dialogTaskManager;
 	final SynchronousTaskManager<?> synchronousTaskManager;
+	final CommandExecutorTaskFactory commandExecutorTaskFactory;
 	final AvailableCommands availableCommands;
 
 	private ShowImagesTaskFactory imagesTaskFactory;
@@ -55,6 +57,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private ShowGlassBallEffectTaskFactory glassBallTaskFactory;
 
 	private Boolean haveChemViz = null;
+	private Boolean haveCyBrowser = null;
 
 	private Map<CyNetwork, StringNetwork> stringNetworkMap;
 
@@ -114,6 +117,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		dialogTaskManager = registrar.getService(TaskManager.class);
 		synchronousTaskManager = registrar.getService(SynchronousTaskManager.class);
 		availableCommands = registrar.getService(AvailableCommands.class);
+		commandExecutorTaskFactory = registrar.getService(CommandExecutorTaskFactory.class);
 		cyEventHelper = registrar.getService(CyEventHelper.class);
 		stringNetworkMap = new HashMap<>();
 		if (!haveEnhancedGraphics())
@@ -371,6 +375,12 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		}
 	}
 
+	public void executeCommand(String namespace, String command, 
+	                           Map<String, Object> args, TaskObserver observer) {
+		TaskIterator ti = commandExecutorTaskFactory.createTaskIterator(namespace, command, args, observer);
+		execute(ti, true);
+	}
+
 	private String getDataAPIURL() {
 		String alternativeAPI = (String) ModelUtils.getStringProperty(configProps,
 				alternativeAPIProperty);
@@ -610,6 +620,13 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		if (haveChemViz == null)
 			haveChemViz = availableCommands.getNamespaces().contains("chemviz");
 		return haveChemViz;
+	}
+
+	public boolean haveCyBrowser() {
+		if (haveCyBrowser == null)
+			haveCyBrowser = availableCommands.getNamespaces().contains("cybrowser");
+		System.out.println("haveCyBrowser = "+haveCyBrowser);
+		return haveCyBrowser;
 	}
 
 	// Getters and Setters for defaults

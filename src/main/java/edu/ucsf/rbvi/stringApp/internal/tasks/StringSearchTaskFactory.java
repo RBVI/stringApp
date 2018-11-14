@@ -223,7 +223,7 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 					// GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, Databases.STRING.getAPIName(), 
 					//                                         getSpecies(), false, getConfidence(), getAdditionalNodes());
 					GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, 
-					                                        Databases.STITCH.getAPIName(), false, optionsPanel);
+					                                        Databases.STRING.getAPIName(), false, optionsPanel);
 					panel.createResolutionPanel();
 					d.setContentPane(panel);
 					d.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

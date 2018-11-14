@@ -24,6 +24,7 @@ import org.cytoscape.util.swing.OpenBrowser;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNode;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.OpenCyBrowser;
 
 /**
  * Displays string information
@@ -128,7 +129,11 @@ public class StringPanel extends JPanel
 	class MyHLinkListener implements HyperlinkListener {
 		public void hyperlinkUpdate(HyperlinkEvent e) {
 			if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-				openBrowser.openURL(e.getURL().toString());
+				if (stringNetwork.getManager().haveCyBrowser()) {
+					OpenCyBrowser.openURL(stringNetwork.getManager(), "StringApp", e.getURL().toString());
+				} else {
+					openBrowser.openURL(e.getURL().toString());
+				}
 			}
 		}
 	}
