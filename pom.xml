@@ -34,6 +34,9 @@
 						<Embed-Dependency>*;scope=!provided|!test</Embed-Dependency>
 						<Embed-Transitive>true</Embed-Transitive>
 						<Import-Package>*;resolution:=optional</Import-Package>
+						<Cytoscape-App-Dependencies>
+										enhancedGraphics;1.2.0
+						</Cytoscape-App-Dependencies>
 					</instructions>
 				</configuration>
 			</plugin>
