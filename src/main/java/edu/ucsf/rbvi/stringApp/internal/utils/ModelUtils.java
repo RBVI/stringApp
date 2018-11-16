@@ -120,7 +120,8 @@ public class ModelUtils {
 	// Other stuff
 	public static String COMPOUND = "STITCH compounds";
 	public static String EMPTYLINE = "--------";
-
+	public static String STRINGDB_NAMESPACE = "stringdb";
+	
 	public static boolean ifString(CyNetwork network) {
 		CyRow netRow = network.getRow(network);
 		if (netRow.isSet(CONFIDENCE) && netRow.isSet(NET_SPECIES))
@@ -671,7 +672,10 @@ public class ModelUtils {
 	public static String formatForColumnNamespace(String columnName) {
 		String formattedColumnName = columnName;
 		if (columnName.contains("::")) {
-			formattedColumnName = columnName.replaceFirst("::", " ");
+			if (columnName.startsWith(STRINGDB_NAMESPACE))
+				formattedColumnName = columnName.substring(STRINGDB_NAMESPACE.length() + 2);
+			else
+				formattedColumnName = columnName.replaceFirst("::", " ");
 		}
 		return formattedColumnName;
 	}
@@ -785,7 +789,7 @@ public class ModelUtils {
 			} else if (key.equals("image")) {
 				row.set(STYLE, "string:" + nodeObj.get("image"));
 			} else if (key.equals("smiles")) {
-				if (manager.haveChemViz() || nodeObj.get("image").equals("image:"))
+				if (manager.haveChemViz() || (nodeObj.containsKey("image") && nodeObj.get("image").equals("image:")))
 					row.set(CV_STYLE, "chemviz:" + nodeObj.get("smiles"));
 				row.set(key, nodeObj.get("smiles"));
 			} else {
@@ -1175,6 +1179,17 @@ public class ModelUtils {
 		return null;
 	}
 
+	
+	public static void deleteEnrichmentTables(CyNetwork network, StringManager manager) {
+		CyTableManager tableManager = manager.getService(CyTableManager.class);
+		Set<CyTable> oldTables = ModelUtils.getEnrichmentTables(manager, network);
+		for (CyTable table : oldTables) {
+			tableManager.deleteTable(table.getSUID());
+			manager.flushEvents();
+		}
+	}
+
+	
 	public static List<EnrichmentTerm> parseXMLDOM(Object results, double cutoff, String enrichmentCategory, CyNetwork network,
 			Map<String, Long> stringNodesMap, StringManager manager) {
 		if (!(results instanceof Document)) {

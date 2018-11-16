@@ -153,7 +153,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		}
 
 		// clear old results
-		deleteOldTables();
+		ModelUtils.deleteEnrichmentTables(network, manager);
 
 		// retrieve enrichment (new API)
 		getEnrichmentJSON(selected, species);
@@ -428,15 +428,6 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	}
 
 	protected void showError(String msg) {
-	}
-
-	private void deleteOldTables() {
-		CyTableManager tableManager = manager.getService(CyTableManager.class);
-		Set<CyTable> oldTables = ModelUtils.getEnrichmentTables(manager, network);
-		for (CyTable table : oldTables) {
-			tableManager.deleteTable(table.getSUID());
-			manager.flushEvents();
-		}
 	}
 
 	private String getExisting(CyNetwork network) {

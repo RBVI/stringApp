@@ -16,6 +16,7 @@ import java.util.Properties;
 
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.search.NetworkSearchTaskFactory;
+import org.cytoscape.model.events.NetworkAboutToBeDestroyedListener;
 import org.cytoscape.model.events.NetworkAddedListener;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.service.util.CyServiceRegistrar;
@@ -95,6 +96,7 @@ public class CyActivator extends AbstractCyActivator {
 			// Register our network added listener and session loaded listener
 			registerService(bc, manager, NetworkAddedListener.class, new Properties());
 			registerService(bc, manager, SessionLoadedListener.class, new Properties());
+			registerService(bc, manager, NetworkAboutToBeDestroyedListener.class, new Properties());
 		}
 
 		{

@@ -7,9 +7,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
 import org.apache.log4j.Logger;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.CyUserLog;
+import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.command.AvailableCommands;
 import org.cytoscape.command.CommandExecutorTaskFactory;
 import org.cytoscape.event.CyEventHelper;
@@ -17,8 +21,14 @@ import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.CyNode;
+import org.cytoscape.model.CyTable;
+import org.cytoscape.model.CyTableManager;
+import org.cytoscape.model.events.NetworkAboutToBeDestroyedEvent;
+import org.cytoscape.model.events.NetworkAboutToBeDestroyedListener;
 import org.cytoscape.model.events.NetworkAddedEvent;
 import org.cytoscape.model.events.NetworkAddedListener;
+import org.cytoscape.model.events.NetworkDestroyedEvent;
+import org.cytoscape.model.events.NetworkDestroyedListener;
 import org.cytoscape.property.CyProperty;
 import org.cytoscape.property.CyProperty.SavePolicy;
 import org.cytoscape.service.util.CyServiceRegistrar;
@@ -42,7 +52,7 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import org.jcolorbrewer.ColorBrewer;
 import org.json.simple.JSONObject;
 
-public class StringManager implements NetworkAddedListener, SessionLoadedListener {
+public class StringManager implements NetworkAddedListener, SessionLoadedListener, NetworkAboutToBeDestroyedListener {
 	final CyServiceRegistrar registrar;
 	final CyEventHelper cyEventHelper;
 	final Logger logger = Logger.getLogger(CyUserLog.NAME);
@@ -62,9 +72,6 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private Map<CyNetwork, StringNetwork> stringNetworkMap;
 
 	public static String CONFIGURI = "http://jensenlab.org/assets/stringapp/";
-	public static String messageUserError = "";
-	public static String messageUserWarning = "";
-	public static String messageUserInfo = "";
 	
 	public static String STRINGResolveURI = "https://string-db.org/api/";
 	public static String STITCHResolveURI = "http://stitch.embl.de/api/";
@@ -209,19 +216,16 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 				VIRUSESResolveURI = uris.get("VIRUSESResolveURI").toString();
 			}
 			if (uris.containsKey("messageUserError")) {
-				messageUserError = uris.get("messageUserError").toString();
-				if (!messageUserError.equals(""))
-					error(messageUserError);
+				error(uris.get("messageUserError").toString());
+			}
+			if (uris.containsKey("messageUserCriticalError")) {
+				critical(uris.get("messageUserCriticalError").toString());
 			}
 			if (uris.containsKey("messageUserWarning")) {
-				messageUserWarning = uris.get("messageUserWarning").toString();
-				if (!messageUserWarning.equals("")) 
-					warn(messageUserWarning);
+				warn(uris.get("messageUserWarning").toString());
 			}
 			if (uris.containsKey("messageUserInfo")) {
-				messageUserInfo = uris.get("messageUserInfo").toString();
-				if (!messageUserInfo.equals(""))
-					info(messageUserInfo);
+				info(uris.get("messageUserInfo").toString());
 			}
 		}
 	}
@@ -423,12 +427,23 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		logger.info(info);
 	}
 
+	public void warn(String warn) {
+		logger.warn(warn);
+	}
+
 	public void error(String error) {
 		logger.error(error);
 	}
 
-	public void warn(String warn) {
-		logger.warn(warn);
+	public void critical(String criticalError) {
+		logger.error(criticalError);
+		SwingUtilities.invokeLater(
+				new Runnable() {
+					public void run() {
+						JOptionPane.showMessageDialog(null, "<html><p style=\"width:200px;\">" + criticalError + "</p></html>", "Critical stringApp error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			);
 	}
 
 	public void ignoreAdd() {
@@ -493,24 +508,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		}
 
 		// load enrichment
-		if (enrichmentTaskFactory != null) {
-			boolean show = false;
-			for (CyNetwork network : networks) {
-				if (ModelUtils.getEnrichmentNodes(network).size() > 0) {
-					show = true;
-					break;
-				}
-			}
-			TaskIterator taskIt = null;
-			if (show) {
-				taskIt = enrichmentTaskFactory.createTaskIterator(true, false);
-			} else {
-				taskIt = enrichmentTaskFactory.createTaskIterator(false, false);
-			}
-			SynchronousTaskManager<?> taskM = getService(SynchronousTaskManager.class);
-			taskM.execute(taskIt);
-			enrichmentTaskFactory.reregister();
-		}
+		reloadEnrichmentPanel(networks);
 		
 		// check if enhanced labels should be shown or not
 		if (labelsTaskFactory != null) {
@@ -555,6 +553,35 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		}
 	}
 
+	public void handleEvent(NetworkAboutToBeDestroyedEvent e) {
+		CyNetwork network = e.getNetwork();
+		ModelUtils.deleteEnrichmentTables(network, this);
+		CyNetworkManager netManager = this.getService(CyNetworkManager.class);
+		Set<CyNetwork> networks = netManager.getNetworkSet();
+		reloadEnrichmentPanel(networks);
+	}
+
+	private void reloadEnrichmentPanel(Set<CyNetwork> networks) {
+		if (enrichmentTaskFactory != null) {
+			boolean show = false;
+			for (CyNetwork net : networks) {
+				if (ModelUtils.getEnrichmentNodes(net).size() > 0) {
+					show = true;
+					break;
+				}
+			}
+			TaskIterator taskIt = null;
+			if (show) {
+				taskIt = enrichmentTaskFactory.createTaskIterator(true, false);
+			} else {
+				taskIt = enrichmentTaskFactory.createTaskIterator(false, false);
+			}
+			SynchronousTaskManager<?> taskM = getService(SynchronousTaskManager.class);
+			taskM.execute(taskIt);
+			enrichmentTaskFactory.reregister();
+		}
+	}
+	
 	public void setShowImagesTaskFactory(ShowImagesTaskFactory factory) {
 		imagesTaskFactory = factory;		
 	}
