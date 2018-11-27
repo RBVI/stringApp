@@ -908,17 +908,18 @@ public class ModelUtils {
 
 		// Update the score information
 		JSONObject scores = (JSONObject) edgeObj.get("scores");
-		double scoreProduct = 1.0;
+		// NOTE: we should not compute this score but get it from the database!!!
+		// double scoreProduct = 1.0;
 		for (Object key : scores.keySet()) {
 			String score = (String) key;
 			String scoreFormatted = formatForColumnNamespace(score);
 			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, scoreFormatted);
 			Double v = (Double) scores.get(key);
 			network.getRow(edge).set(scoreFormatted, v);
-			scoreProduct *= (1 - v);
+			// scoreProduct *= (1 - v);
 		}
-		double totalScore = -(scoreProduct - 1.0);
-		network.getRow(edge).set(SCORE, totalScore);
+		// double totalScore = -(scoreProduct - 1.0);
+		// network.getRow(edge).set(SCORE, totalScore);
 	}
 
 	public static void createColumnIfNeeded(CyTable table, Class<?> clazz, String columnName) {
