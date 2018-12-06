@@ -48,4 +48,8 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 		return new TaskIterator(new LoadTermsTask(stringNet, species, taxon, confidence,
 		                                          additionalNodes, stringIds, queryTermMap, useDATABASE));
 	}
+
+	public boolean isReady() {
+		return stringNet.getManager().haveURIs();
+	}
 }

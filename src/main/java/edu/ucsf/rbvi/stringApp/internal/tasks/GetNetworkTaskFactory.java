@@ -27,5 +27,9 @@ public class GetNetworkTaskFactory extends AbstractTaskFactory {
 			return new TaskIterator(new CompoundQueryTask(manager));
 		return null;
 	}
+
+	public boolean isReady() {
+		return manager.haveURIs();
+	}
 }
 

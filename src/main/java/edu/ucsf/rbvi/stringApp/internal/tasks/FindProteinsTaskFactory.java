@@ -15,5 +15,9 @@ public class FindProteinsTaskFactory extends AbstractTaskFactory {
 	public TaskIterator createTaskIterator() {
 		return new TaskIterator(new FindProteinsTask(manager));
 	}
+
+	public boolean isReady() {
+		return manager.haveURIs();
+	}
 }
 

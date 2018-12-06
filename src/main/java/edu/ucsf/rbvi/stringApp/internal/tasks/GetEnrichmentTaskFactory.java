@@ -25,7 +25,7 @@ public class GetEnrichmentTaskFactory extends AbstractNetworkTaskFactory
 	}
 
 	public boolean isReady(CyNetwork network) {
-		if (ModelUtils.isStringNetwork(network)) {
+		if (manager.haveURIs() && ModelUtils.isStringNetwork(network)) {
 			List<String> netSpecies = ModelUtils.getEnrichmentNetSpecies(network);
 			if (netSpecies.size() > 0) {
 				return true;
@@ -43,7 +43,7 @@ public class GetEnrichmentTaskFactory extends AbstractNetworkTaskFactory
 	}
 
 	public boolean isReady(CyNetworkView netView) {
-		if (ModelUtils.isStringNetwork(netView.getModel())) {
+		if (manager.haveURIs() && ModelUtils.isStringNetwork(netView.getModel())) {
 			List<String> netSpecies = ModelUtils.getEnrichmentNetSpecies(netView.getModel());
 			if (netSpecies.size() > 0) {
 				return true;

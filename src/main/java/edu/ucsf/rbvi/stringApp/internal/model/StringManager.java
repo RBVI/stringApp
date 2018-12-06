@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Executors;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -68,6 +69,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	private Boolean haveChemViz = null;
 	private Boolean haveCyBrowser = null;
+	private boolean haveURIs = false;
 
 	private Map<CyNetwork, StringNetwork> stringNetworkMap;
 
@@ -201,33 +203,42 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		// Update urls with those from the sever
 		Map<String, String> args = new HashMap<>();
 		String url = CONFIGURI +CallerIdentity+ ".json";
-		JSONObject uris = ModelUtils.getResultsFromJSON(HttpUtils.getJSON(url, args, this), JSONObject.class);
-		if (uris != null) {
-			if (uris.containsKey("URI")) {
-				URI = uris.get("URI").toString();
-			}
-			if (uris.containsKey("STRINGResolveURI")) {
-				STRINGResolveURI = uris.get("STRINGResolveURI").toString();
-			} 
-			if (uris.containsKey("STITCHResolveURI")) {
-				STITCHResolveURI = uris.get("STITCHResolveURI").toString();
-			} 
-			if (uris.containsKey("VIRUSESResolveURI")) {
-				VIRUSESResolveURI = uris.get("VIRUSESResolveURI").toString();
-			}
-			if (uris.containsKey("messageUserError")) {
-				error(uris.get("messageUserError").toString());
-			}
-			if (uris.containsKey("messageUserCriticalError")) {
-				critical(uris.get("messageUserCriticalError").toString());
-			}
-			if (uris.containsKey("messageUserWarning")) {
-				warn(uris.get("messageUserWarning").toString());
-			}
-			if (uris.containsKey("messageUserInfo")) {
-				info(uris.get("messageUserInfo").toString());
-			}
-		}
+		StringManager manager = this;
+
+		// Run this in the background in case we have a timeout
+		Executors.newCachedThreadPool().execute(new Runnable() {
+			@Override
+			public void run() {
+				JSONObject uris = ModelUtils.getResultsFromJSON(HttpUtils.getJSON(url, args, manager), JSONObject.class);
+				if (uris != null) {
+					if (uris.containsKey("URI")) {
+						URI = uris.get("URI").toString();
+					}
+					if (uris.containsKey("STRINGResolveURI")) {
+						STRINGResolveURI = uris.get("STRINGResolveURI").toString();
+					} 
+					if (uris.containsKey("STITCHResolveURI")) {
+						STITCHResolveURI = uris.get("STITCHResolveURI").toString();
+					} 
+					if (uris.containsKey("VIRUSESResolveURI")) {
+						VIRUSESResolveURI = uris.get("VIRUSESResolveURI").toString();
+					}
+					if (uris.containsKey("messageUserError")) {
+						error(uris.get("messageUserError").toString());
+					}
+					if (uris.containsKey("messageUserCriticalError")) {
+						critical(uris.get("messageUserCriticalError").toString());
+					}
+					if (uris.containsKey("messageUserWarning")) {
+						warn(uris.get("messageUserWarning").toString());
+					}
+					if (uris.containsKey("messageUserInfo")) {
+						info(uris.get("messageUserInfo").toString());
+					}
+				}
+				haveURIs = true;
+   		 }
+		});
 	}
 
 	public CyNetwork createNetwork(String name) {
@@ -641,6 +652,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	public boolean haveEnhancedGraphics() {
 		return availableCommands.getNamespaces().contains("enhancedGraphics");
+	}
+
+	public boolean haveURIs() {
+		return haveURIs;
 	}
 
 	public boolean haveChemViz() {

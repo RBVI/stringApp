@@ -13,7 +13,7 @@ public class GetSpeciesTaskFactory extends AbstractTaskFactory {
 	}
 
 	public boolean isReady() {
-		return true;
+		return manager.haveURIs() && true;
 	}
 
 	public TaskIterator createTaskIterator() {

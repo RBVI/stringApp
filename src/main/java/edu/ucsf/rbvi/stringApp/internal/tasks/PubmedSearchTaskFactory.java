@@ -93,7 +93,7 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	}
 
 	public boolean isReady() { 
-		if (queryComponent.getText() != null && queryComponent.getText().length() > 0)
+		if (manager.haveURIs() && queryComponent.getText() != null && queryComponent.getText().length() > 0)
 			return true; 
 		return false;
 	}

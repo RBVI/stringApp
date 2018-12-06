@@ -63,6 +63,7 @@ public class DiseaseSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	}
 
 	public boolean isReady() { 
+		if (!manager.haveURIs()) return false;
 		if (getQuery() != null && getQuery().length() > 0)
 			return true; 
 		return false;

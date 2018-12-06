@@ -72,7 +72,8 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 	}
 
 	public boolean isReady() { 
-		if (queryComponent.getQueryText() != null && queryComponent.getQueryText().length() > 0 && getTaxId() != -1)
+		if (manager.haveURIs() && 
+        queryComponent.getQueryText() != null && queryComponent.getQueryText().length() > 0 && getTaxId() != -1)
 			return true; 
 		return false;
 	}
