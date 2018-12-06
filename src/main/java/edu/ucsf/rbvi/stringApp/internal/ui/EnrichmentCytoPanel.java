@@ -562,7 +562,7 @@ public class EnrichmentCytoPanel extends JPanel
 		// remove colors from table?
 		CyTable currTable = ModelUtils.getEnrichmentTable(manager, network,
 		                                                  TermCategory.ALL.getTable());
-		if (currTable.getRowCount() == 0) {
+		if (currTable == null || currTable.getRowCount() == 0) {
 			return;
 		}
 		for (CyRow row : currTable.getAllRows()) {
@@ -600,7 +600,7 @@ public class EnrichmentCytoPanel extends JPanel
 		CyTable currTable = ModelUtils.getEnrichmentTable(manager, network,
 		                                                  TermCategory.ALL.getTable());
 		// currTable.getColumn(EnrichmentTerm.colShowChart) == null || 
-		if (currTable.getRowCount() == 0) {
+		if (currTable == null || currTable.getRowCount() == 0) {
 			return selectedTerms;
 		}
 		for (CyRow row : currTable.getAllRows()) {
@@ -632,7 +632,7 @@ public class EnrichmentCytoPanel extends JPanel
 
 		CyTable currTable = ModelUtils.getEnrichmentTable(manager, network,
 		                                                  TermCategory.ALL.getTable());
-		if (currTable.getRowCount() == 0) {
+		if (currTable == null || currTable.getRowCount() == 0) {
 			return selectedTerms;
 		}
 		
