@@ -14,6 +14,7 @@ import javax.swing.SwingUtilities;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelName;
+import org.cytoscape.command.StringToModel;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
@@ -59,6 +60,12 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	TaskMonitor monitor;
 	// boolean guiMode;
 
+	@Tunable(description="Network view to set enhanced labels on",
+	         // longDescription = StringToModel.CY_NETWORK_VIEW_LONG_DESCRIPTION,
+	         // exampleStringValue = StringToModel.CY_NETWORK_VIEW_EXAMPLE_STRING,
+	         context = "nogui")
+  public CyNetworkView view = null;
+
 	@Tunable(description = "Enrichment FDR value cutoff", 
 	         longDescription = "Sets the false discovery rate (FDR) value cutoff a term must reach in order to be included",
 					 exampleStringValue = "0.05",
@@ -81,8 +88,13 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	public GetEnrichmentTask(StringManager manager, CyNetwork network, CyNetworkView netView,
 			ShowEnrichmentPanelTaskFactory showFactory) {
 		this.manager = manager;
-		this.network = network;
-		this.netView = netView;
+		if (view != null) {
+			this.netView = view;
+			this.network = view.getModel();
+		} else {
+			this.network = network;
+			this.netView = netView;
+		}
 		this.showFactory = showFactory;
 		enrichmentResult = new HashMap<>();
 		stringNodesMap = new HashMap<>();

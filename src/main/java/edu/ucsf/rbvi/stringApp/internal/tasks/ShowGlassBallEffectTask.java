@@ -1,10 +1,12 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
+import org.cytoscape.command.StringToModel;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.Tunable;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
@@ -14,10 +16,19 @@ public class ShowGlassBallEffectTask extends AbstractTask {
 	CyNetworkView netView;
 	final ShowGlassBallEffectTaskFactory factory;
 
+	@Tunable(description="Network view to set enhanced labels on",
+	         // longDescription = StringToModel.CY_NETWORK_VIEW_LONG_DESCRIPTION,
+	         // exampleStringValue = StringToModel.CY_NETWORK_VIEW_EXAMPLE_STRING,
+	         context = "nogui")
+  public CyNetworkView view = null;
+
 	public ShowGlassBallEffectTask(final StringManager manager, final CyNetworkView netView,
 			final ShowGlassBallEffectTaskFactory factory) {
 		this.manager = manager;
-		this.netView = netView;
+		if (view != null) 
+			this.netView = view;
+		else
+			this.netView = netView;
 		this.factory = factory;
 	}
 

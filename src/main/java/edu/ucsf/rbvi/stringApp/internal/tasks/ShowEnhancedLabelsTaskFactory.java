@@ -45,8 +45,24 @@ public class ShowEnhancedLabelsTaskFactory extends AbstractNetworkViewTaskFactor
 		props.setProperty(PREFERRED_MENU, "Apps.STRING");
 		if (manager.showEnhancedLabels() && manager.haveEnhancedGraphics()) {
 			props.setProperty(TITLE, "Don't show STRING style labels");
-		} else {
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "hide labels");
+			props.setProperty(COMMAND_DESCRIPTION, 
+			                  "Hide the STRING style labels on the nodes");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+			                  "Hide the STRING style labels on the nodes");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
+		} else if (manager.haveEnhancedGraphics()) {
 			props.setProperty(TITLE, "Show STRING style labels");
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "show labels");
+			props.setProperty(COMMAND_DESCRIPTION, 
+			                  "Show the STRING style labels on the nodes");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+			                  "Show the STRING style labels on the nodes");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 		}
 		props.setProperty(MENU_GRAVITY, "8.0");
 		props.setProperty(IN_MENU_BAR, "true");
