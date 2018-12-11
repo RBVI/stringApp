@@ -25,7 +25,7 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 		INTERPRO("InterPro", "InterPro", "STRING Enrichment: InterPro"),
 		KEGG("KEGG", "KEGG Pathways", "STRING Enrichment: KEGG"),
 		PFAM("PFAM", "PFAM", "STRING Enrichment: Pfam"),
-		PMID("PMID", "PMID", "STRING Enrichment: PMID"),
+		PMID("PMID", "Reference publications", "STRING Enrichment: PMID"),
 		SMART("SMART", "SMART", "STRING Enrichment: SMART"),
 		UniProt("Keyword", "UniProt Keywords", "STRING Enrichment: UniProt Keywords"),
 		ALL("All", "All", "STRING Enrichment: All");
