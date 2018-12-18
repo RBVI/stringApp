@@ -515,7 +515,7 @@ public class EnrichmentCytoPanel extends JPanel
 		JTable currentTable = enrichmentTables.get(showTable);
 		// currentRow = currentTable.getSelectedRow();
 		CyNetwork network = manager.getCurrentNetwork();
-		if (network == null)
+		if (network == null || tableModel == null)
 			return;
 		CyTable enrichmentTable = ModelUtils.getEnrichmentTable(manager, network,
                 TermCategory.ALL.getTable());
@@ -547,7 +547,7 @@ public class EnrichmentCytoPanel extends JPanel
 	
 	public void resetCharts() {
 		CyNetwork network = manager.getCurrentNetwork();
-		if (network == null)
+		if (network == null || tableModel == null)
 			return;
 
 		CyTable nodeTable = network.getDefaultNodeTable();
@@ -627,7 +627,7 @@ public class EnrichmentCytoPanel extends JPanel
 	private Map<EnrichmentTerm, String> getAutoSelectedTopTerms(int termNumber) {
 		Map<EnrichmentTerm, String> selectedTerms = new LinkedHashMap<EnrichmentTerm, String>();
 		CyNetwork network = manager.getCurrentNetwork();
-		if (network == null)
+		if (network == null || tableModel == null)
 			return selectedTerms;
 
 		CyTable currTable = ModelUtils.getEnrichmentTable(manager, network,

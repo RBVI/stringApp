@@ -115,8 +115,8 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 				query, Databases.STRING.getAPIName());
 		if (annotations == null || annotations.size() == 0) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,
-					"Query '" + query + "' returned no results");
-			throw new RuntimeException("Query '"+query+"' returned no results");
+					"Query '" + trunc(query) + "' returned no results");
+			throw new RuntimeException("Query '"+trunc(query)+"' returned no results");
 		}
 
 		boolean resolved = stringNetwork.resolveAnnotations();
@@ -137,6 +137,12 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 		if (loadedNetwork == null) {
 			throw new RuntimeException("Query '"+query+"' returned no results");
 		}
+	}
+
+	private String trunc(String str) {
+		if (str.length() > 1000)
+			return str.substring(0,1000)+"...";
+		return str;
 	}
 
 	@Override

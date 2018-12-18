@@ -24,7 +24,9 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONObject;
@@ -110,15 +112,19 @@ public class HttpUtils {
 
 	public static JSONObject postJSON(String url, Map<String, String> queryMap,
 			StringManager manager) {
+		// Force https
+		//if (url.startsWith("http:"))
+		//	url = url.replace("http:","https:");
 		// Set up our connection
-		CloseableHttpClient client = HttpClients.createDefault();
+		CloseableHttpClient client = 
+					HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy()).build();
 		HttpPost request = new HttpPost(url);
 		List<NameValuePair> nvps = HttpUtils.getArguments(queryMap);
 		JSONObject jsonObject = new JSONObject();
 
 		String args = HttpUtils.getStringArguments(queryMap);
-		manager.info("URL: " + url + "?" + args);
-		System.out.println("URL: " + url + "?" + args);
+		manager.info("URL: " + url + "?" + truncate(args));
+		System.out.println("URL: " + url + "?" + truncate(args));
 
 		// The underlying HTTP connection is still held by the response object
 		// to allow the response content to be streamed directly from the network socket.
@@ -137,19 +143,40 @@ public class HttpUtils {
 			if (entity1.getContentLength() == 0)
 				return null;
 			BufferedReader reader = new BufferedReader(new InputStreamReader(entityStream));
+
+			reader.mark(2097152); // Set a mark so that if we get a parse failure, we can recover the error
+
 			/*
 			 * String lin; while ((lin=reader.readLine()) != null) { System.out.println(lin); }
 			 */
 			JSONParser parser = new JSONParser();
-			Object obj = parser.parse(reader);
-			jsonObject.put(StringManager.RESULT, obj);
+			try {
+				Object obj = parser.parse(reader);
+				jsonObject.put(StringManager.RESULT, obj);
+			/*
+			} catch (ParseException parseFailure) {
+				manager.error("Error reading STRING results: "+ parseFailure.getMessage());
+				return null;
+			*/
+			} catch (Exception parseFailure) {
+				// Get back to the start of the error
+				reader.reset();
+				StringBuilder errorString = new StringBuilder();
+				int maxLines = 5000;
+				String line;
+				try {
+					while ((line = reader.readLine()) != null) {
+						// System.out.println(line);
+						errorString.append(line);
+					}
+				} catch (Exception ioe) {}
+				manager.error("Exception reading JSON from string: "+ parseFailure.getMessage());
+				System.out.println("Exception reading JSON from string: "+ parseFailure.getMessage()+"\n Text: "+errorString);
+				return null;
+			}
 
 			// and ensure it is fully consumed
 			EntityUtils.consume(entity1);
-		} catch (ParseException pex) {
-			pex.printStackTrace();
-			manager.error("Unable to parse JSON from server.");
-			return null;
 	 	} catch (Exception e) {
 			e.printStackTrace();
 			manager.error("Unexpected error when parsing JSON from server: " + e.getMessage());
@@ -345,6 +372,12 @@ public class HttpUtils {
 				object.put(StringManager.APIVERSION, Integer.parseInt(api));
 			}
 		}
+	}
+
+	private static String truncate(String str) {
+		if (str.length() > 1000)
+			return str.substring(0,1000)+"...";
+		return str;
 	}
 
 }
