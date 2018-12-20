@@ -125,7 +125,8 @@ public class StringNetwork {
 
 	public Map<String, List<Annotation>> getAnnotations() { return annotations; }
 
-	public Map<String, List<Annotation>> getAnnotations(int taxon, final String terms, final String useDATABASE) {
+	public Map<String, List<Annotation>> getAnnotations(int taxon, final String terms, 
+	                                                    final String useDATABASE, boolean includeViruses) {
 		String encTerms = terms.trim();
 		// try {
 		// encTerms = URLEncoder.encode(terms.trim(), "UTF-8");
@@ -138,12 +139,13 @@ public class StringNetwork {
 		annotations = new HashMap<>();
 		for (int i = 0; i < termsArray.length; i = i + 5000) {
 			String termsBatch = getTerms(termsArray, i, i + 5000, termsArray.length);
-			annotations = getAnnotationBatch(taxon, termsBatch, useDATABASE);
+			annotations = getAnnotationBatch(taxon, termsBatch, useDATABASE, includeViruses);
 		}
 		return annotations;
 	}
 
-	private Map<String, List<Annotation>> getAnnotationBatch(int taxon, final String encTerms, String useDATABASE) {
+	private Map<String, List<Annotation>> getAnnotationBatch(int taxon, final String encTerms, 
+	                                                         String useDATABASE, boolean includeViruses) {
 		// always call the string API first to resolve all potential protein IDs
 		// new API 
 		String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/get_string_ids";
@@ -155,7 +157,9 @@ public class StringNetwork {
 		args.put("caller_identity", StringManager.CallerIdentity);
 		manager.info("URL: "+url+"?species="+Integer.toString(taxon)+"&caller_identity="+StringManager.CallerIdentity+"&identifiers="+encTerms);
 		// Get the results
+		System.out.println("Getting STRING term resolution");
 		JSONObject results = HttpUtils.postJSON(url, args, manager);
+		// System.out.println("Results: "+results);
 
 		if (results != null) {
 			// System.out.println("Got results");
@@ -172,8 +176,9 @@ public class StringNetwork {
 			args.put("species", "CIDm");
 			args.put("identifiers", encTerms);
 			args.put("caller_identity", StringManager.CallerIdentity);
-			manager.info("URL: "+url+"?species="+Integer.toString(taxon)+"&caller_identity="+StringManager.CallerIdentity+"&identifiers="+encTerms);
+			manager.info("URL: "+url+"?species="+Integer.toString(taxon)+"&caller_identity="+StringManager.CallerIdentity+"&identifiers="+HttpUtils.truncate(encTerms));
 			// Get the results
+			System.out.println("Getting STITCH term resolution");
 			results = HttpUtils.postJSON(url, args, manager);
 
 			if (results != null) {
@@ -183,7 +188,7 @@ public class StringNetwork {
 		} 
 		
 		// also call the viruses API
-		if (manager.isVirusesEnabled() && annotations.size() == 0) {
+		if (manager.isVirusesEnabled() && annotations.size() == 0 && includeViruses) {
 			// http://viruses.string-db.org/cgi/webservice_handler.pl?species=11320&identifiers=NS1_I34A1
 			// &caller_identity=string_app_v1_1_1&output=json&request=resolveList
 			url = manager.getResolveURL(Databases.VIRUSES.getAPIName());
@@ -194,8 +199,9 @@ public class StringNetwork {
 			args.put("output", "json");
 			args.put("request", "resolveList");
 			manager.info("URL:" + url + "?species=" + Integer.toString(taxon) + "&caller_identity="
-					+ StringManager.CallerIdentity + "&identifiers=" + encTerms);
+					+ StringManager.CallerIdentity + "&identifiers=" + HttpUtils.truncate(encTerms));
 			// Get the results
+			System.out.println("Getting VIRUSES term resolution");
 			results = HttpUtils.postJSON(url, args, manager);
 
 			if (results != null) {

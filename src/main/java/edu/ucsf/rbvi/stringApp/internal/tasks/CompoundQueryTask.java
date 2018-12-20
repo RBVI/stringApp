@@ -65,6 +65,9 @@ public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 	         exampleStringValue="0.4")
 	public BoundedDouble cutoff = new BoundedDouble(0.0, 0.4, 1.0, false, false);
 
+	@Tunable(description = "Query includes virus protein identifiers")
+	public boolean includesViruses = true;
+
 	private List<Species> speciesList;
 
 	private CyNetwork loadedNetwork;
@@ -107,7 +110,7 @@ public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 
 		// Get the annotations
 		Map<String, List<Annotation>> annotations = stringNetwork.getAnnotations(sp.getTaxId(),
-				query, Databases.STITCH.getAPIName());
+				query, Databases.STITCH.getAPIName(), includesViruses);
 		if (annotations == null || annotations.size() == 0) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,
 					"Query '" + query + "' returned no results");

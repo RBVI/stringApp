@@ -16,6 +16,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
@@ -115,16 +116,18 @@ public class HttpUtils {
 		// Force https
 		//if (url.startsWith("http:"))
 		//	url = url.replace("http:","https:");
+
 		// Set up our connection
+		// CloseableHttpClient client = 
+		// 			HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy()).build();
 		CloseableHttpClient client = 
-					HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy()).build();
-		HttpPost request = new HttpPost(url);
+					HttpClientBuilder.create().build();
 		List<NameValuePair> nvps = HttpUtils.getArguments(queryMap);
 		JSONObject jsonObject = new JSONObject();
 
-		String args = HttpUtils.getStringArguments(queryMap);
-		manager.info("URL: " + url + "?" + truncate(args));
-		System.out.println("URL: " + url + "?" + truncate(args));
+		// String args = HttpUtils.getStringArguments(queryMap);
+		// manager.info("URL: " + url + "?" + truncate(args));
+		// System.out.println("URL: " + url + "?" + truncate(args));
 
 		// The underlying HTTP connection is still held by the response object
 		// to allow the response content to be streamed directly from the network socket.
@@ -135,8 +138,10 @@ public class HttpUtils {
 		// by the connection manager.
 		CloseableHttpResponse response1 = null;
 		try {
-			request.setEntity(new UrlEncodedFormEntity(nvps));
-			response1 = client.execute(request);
+			response1 = executeWithRedirect(client, url, nvps);
+			// request.setEntity(new UrlEncodedFormEntity(nvps));
+			// response1 = client.execute(request);
+			// int statusCode = response1.getStatusLine().getStatusCode();
 			addVersion(response1, jsonObject);
 			HttpEntity entity1 = response1.getEntity();
 			InputStream entityStream = entity1.getContent();
@@ -374,10 +379,32 @@ public class HttpUtils {
 		}
 	}
 
-	private static String truncate(String str) {
+	public static String truncate(String str) {
 		if (str.length() > 1000)
 			return str.substring(0,1000)+"...";
 		return str;
+	}
+
+	// We need to use this method to handle redirects of HTTP POSTs since we need to re-encode
+	// the data we're sending
+	private static CloseableHttpResponse executeWithRedirect(CloseableHttpClient client, String url, 
+	                                                         List<NameValuePair> nvps) throws Exception {
+		HttpPost request = new HttpPost(url);
+		request.setEntity(new UrlEncodedFormEntity(nvps));
+		CloseableHttpResponse response1 = client.execute(request);
+		int statusCode = response1.getStatusLine().getStatusCode();
+		switch (statusCode) {
+			case 301:
+			case 302:
+			case 307:
+			case 308:
+				// Got a redirect.
+				// Get the new location
+				Header httpHeader = response1.getLastHeader(HttpHeaders.LOCATION);
+				return executeWithRedirect(client, httpHeader.getValue(), nvps);
+			default: 
+				return response1;
+		}
 	}
 
 }

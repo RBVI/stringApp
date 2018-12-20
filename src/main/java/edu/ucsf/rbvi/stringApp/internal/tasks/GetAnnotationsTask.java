@@ -28,7 +28,7 @@ public class GetAnnotationsTask extends AbstractTask implements ObservableTask {
 	@Override
 	public void run(TaskMonitor monitor) {
 		monitor.setTitle("Getting annotations");
-		annotations = stringNetwork.getAnnotations(taxon, terms, useDATABASE);
+		annotations = stringNetwork.getAnnotations(taxon, terms, useDATABASE, true);
 		if (annotations == null || annotations.size() == 0) {
 			monitor.showMessage(TaskMonitor.Level.ERROR, "Query returned no terms");
 		}

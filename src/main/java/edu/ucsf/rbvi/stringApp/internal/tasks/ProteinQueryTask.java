@@ -63,6 +63,9 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 	@Tunable(description="String network to add additional nodes to")
 	public CyNetwork network = null;
 
+	@Tunable(description = "Query includes virus protein identifiers")
+	public boolean includesViruses = true;
+
 	private List<Species> speciesList;
 
 	private CyNetwork loadedNetwork;
@@ -112,7 +115,7 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 
 		// Get the annotations
 		Map<String, List<Annotation>> annotations = stringNetwork.getAnnotations(sp.getTaxId(),
-				query, Databases.STRING.getAPIName());
+				query, Databases.STRING.getAPIName(), includesViruses);
 		if (annotations == null || annotations.size() == 0) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,
 					"Query '" + trunc(query) + "' returned no results");
