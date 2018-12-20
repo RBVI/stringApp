@@ -67,7 +67,11 @@ public class ProteinQueryAdditionalTask extends AbstractTask implements Observab
 	         exampleStringValue="0.4")
 	public BoundedDouble cutoff = new BoundedDouble(0.0, 0.4, 1.0, false, false);
 
-	@Tunable(description = "Query includes virus protein identifiers")
+	@Tunable(description = "Query includes virus protein identifiers",
+	         longDescription="By default, a query will search for identifiers in both the protein and virus "+
+	                         "databases.  By changing this to 'false', only the protein database will be"+
+	                         "searched",
+	         exampleStringValue="false")
 	public boolean includesViruses = true;
 
 	private List<Species> speciesList;

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.command.StringToModel;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ObservableTask;
@@ -60,10 +61,16 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 	         exampleStringValue="0.4")
 	public BoundedDouble cutoff = new BoundedDouble(0.0, 0.4, 1.0, false, false);
 
-	@Tunable(description="String network to add additional nodes to")
+	@Tunable(description="String network to add additional nodes to",
+	         longDescription=StringToModel.CY_NETWORK_LONG_DESCRIPTION,
+					 exampleStringValue="current")
 	public CyNetwork network = null;
 
-	@Tunable(description = "Query includes virus protein identifiers")
+	@Tunable(description = "Query includes virus protein identifiers",
+	         longDescription="By default, a query will search for identifiers in both the protein and virus "+
+	                         "databases.  By changing this to 'false', only the protein database will be"+
+	                         "searched",
+	         exampleStringValue="false")
 	public boolean includesViruses = true;
 
 	private List<Species> speciesList;
