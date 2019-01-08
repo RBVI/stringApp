@@ -36,7 +36,7 @@ public class ShowEnhancedLabelsTask extends AbstractTask {
 	}
 
 	public void run(TaskMonitor monitor) {
-		monitor.setTitle("Show STRING style labels");
+		monitor.setTitle("Show/hide STRING style labels");
 
 		if (manager.showEnhancedLabels())
 			manager.setShowEnhancedLabels(false);

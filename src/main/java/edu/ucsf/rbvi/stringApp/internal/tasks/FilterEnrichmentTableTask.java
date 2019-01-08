@@ -85,7 +85,9 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 	}
 
 	@Override
-	public void run(TaskMonitor arg0) throws Exception {
+	public void run(TaskMonitor monitor) throws Exception {
+		monitor.setTitle("Filter STRING Enrichment table");
+	
 		List<TermCategory> categoryList = categories.getSelectedValues();
 		// Filter the current list
 		SwingUtilities.invokeLater(new Runnable() {

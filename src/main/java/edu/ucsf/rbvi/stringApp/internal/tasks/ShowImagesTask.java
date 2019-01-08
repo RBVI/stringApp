@@ -51,7 +51,7 @@ public class ShowImagesTask extends AbstractTask implements ObservableTask {
 	}
 
 	public void run(TaskMonitor monitor) {
-		monitor.setTitle("Show images");
+		monitor.setTitle("Show/hide structure images");
 
 		if (netView == null) {
 			// Command version
