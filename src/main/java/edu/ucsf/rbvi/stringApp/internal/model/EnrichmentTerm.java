@@ -22,11 +22,12 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 		GOPROCESS("Process", "GO Process", "STRING Enrichment: GO Biological Process"),
 		GOCOMPONENT("Component", "GO Component", "STRING Enrichment: GO Cellular Component"),
 		GOFUNCTION("Function", "GO Function", "STRING Enrichment: GO Molecular Function"),
-		INTERPRO("InterPro", "InterPro", "STRING Enrichment: InterPro"),
-		KEGG("KEGG", "KEGG Pathways", "STRING Enrichment: KEGG"),
-		PFAM("PFAM", "PFAM", "STRING Enrichment: Pfam"),
+		INTERPRO("InterPro", "InterPro Domains", "STRING Enrichment: InterPro Protein Domains"),
+		KEGG("KEGG", "KEGG Pathways", "STRING Enrichment: KEGG Pathways"),
+		PFAM("PFAM", "PFAM Domains", "STRING Enrichment: Pfam Protein Domains"),
+		REACTOME("RCTM", "Reactome Pathways", "STRING Enrichment: Reactome Pathways"),
 		PMID("PMID", "Reference publications", "STRING Enrichment: PMID"),
-		SMART("SMART", "SMART", "STRING Enrichment: SMART"),
+		SMART("SMART", "SMART Domains", "STRING Enrichment: SMART Protein Domains"),
 		UniProt("Keyword", "UniProt Keywords", "STRING Enrichment: UniProt Keywords"),
 		ALL("All", "All", "STRING Enrichment: All");
 

@@ -89,9 +89,9 @@ public class Species implements Comparable<Species> {
 
 		InputStream stream = null;
 		try {
-			URL resource = Species.class.getResource("/species.txt");
+			URL resource = Species.class.getResource("/species_string11.txt");
 			if (manager.isVirusesEnabled())
-				resource = Species.class.getResource("/species_viruses.txt");				
+				resource = Species.class.getResource("/species_viruses_string11.txt");				
 			stream = resource.openConnection().getInputStream();
 		} catch (Exception e) {
 			e.printStackTrace();

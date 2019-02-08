@@ -75,11 +75,11 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	public static String CONFIGURI = "https://jensenlab.org/assets/stringapp/";
 	
-	public static String STRINGResolveURI = "https://string-db.org/api/";
+	public static String STRINGResolveURI = "http://version11.string-db.org/api/";
 	public static String STITCHResolveURI = "http://stitch.embl.de/api/";
 	public static String VIRUSESResolveURI = "http://viruses.string-db.org/cgi/webservice_handler.pl";
 	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
-	public static String URI = "https://api.jensenlab.org/";
+	public static String URI = "https://api11.jensenlab.org/";
 	public static String alternativeAPIProperty = "alternativeAPI";
 	public static String CallerIdentity = "string_app";
 	public static String APIVERSION = "String-api-version";
