@@ -81,6 +81,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
 	public static String URI = "https://api11.jensenlab.org/";
 	public static String alternativeAPIProperty = "alternativeAPI";
+	public static String alternativeCONFIGURIProperty = "alternativeCONFIGURI";
+	public static String alternativeCONFIGURI = "";
 	public static String CallerIdentity = "string_app";
 	public static String APIVERSION = "String-api-version";
 	public static String RESULT = "QueryResult";
@@ -143,6 +145,16 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 		// Get our default settings
 		configProps = ModelUtils.getPropertyService(this, SavePolicy.CONFIG_DIR);
+
+		// check for an alternative config URI
+		if (ModelUtils.hasProperty(configProps, alternativeCONFIGURIProperty)) {
+			alternativeCONFIGURI = (String) ModelUtils.getStringProperty(configProps,
+					alternativeCONFIGURIProperty);
+		} else {
+			ModelUtils.setStringProperty(configProps, alternativeCONFIGURIProperty, alternativeCONFIGURI);
+		}
+
+		// set all stringApp default proerties
 		if (ModelUtils.hasProperty(configProps, ShowStructureImages)) {
 			setShowImage(ModelUtils.getBooleanProperty(configProps,ShowStructureImages));
 		}
@@ -209,7 +221,17 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		Executors.newCachedThreadPool().execute(new Runnable() {
 			@Override
 			public void run() {
-				JSONObject uris = ModelUtils.getResultsFromJSON(HttpUtils.getJSON(url, args, manager), JSONObject.class);
+				JSONObject uris = null;
+				// use alternative config URI if available and otherwise retrieve the default one
+				// based on the app version
+				if (alternativeCONFIGURI != null && alternativeCONFIGURI.length() > 0) {
+					uris = ModelUtils.getResultsFromJSON(
+							HttpUtils.getJSON(alternativeCONFIGURI, args, manager),
+							JSONObject.class);
+				} else {
+					uris = ModelUtils.getResultsFromJSON(HttpUtils.getJSON(url, args, manager),
+							JSONObject.class);
+				}
 				if (uris != null) {
 					if (uris.containsKey("URI")) {
 						URI = uris.get("URI").toString();
