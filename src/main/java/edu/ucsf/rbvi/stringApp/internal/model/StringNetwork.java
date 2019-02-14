@@ -157,7 +157,7 @@ public class StringNetwork {
 		args.put("caller_identity", StringManager.CallerIdentity);
 		manager.info("URL: "+url+"?species="+Integer.toString(taxon)+"&caller_identity="+StringManager.CallerIdentity+"&identifiers="+encTerms);
 		// Get the results
-		System.out.println("Getting STRING term resolution");
+		// System.out.println("Getting STRING term resolution");
 		JSONObject results = HttpUtils.postJSON(url, args, manager);
 		// System.out.println("Results: "+results);
 
