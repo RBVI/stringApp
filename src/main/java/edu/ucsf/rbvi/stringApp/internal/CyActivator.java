@@ -53,6 +53,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.StitchSearchTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.StringifyTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.StringSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.VersionTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.ui.DiseaseNetworkWebServiceClient;
@@ -411,6 +412,26 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
     	props.setProperty(COMMAND_EXAMPLE_JSON, "{\"network\": 123}");
 			registerService(bc, setConfidence, NetworkTaskFactory.class, props);
+		}
+
+		{
+			StringifyTaskFactory stringify = new StringifyTaskFactory(manager);
+			Properties props = new Properties();
+			props.setProperty(PREFERRED_MENU, "Apps.STRING");
+			props.setProperty(TITLE, "STRINGify network");
+			props.setProperty(MENU_GRAVITY, "7.0");
+			props.setProperty(IN_MENU_BAR, "true");
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "stringify");
+			props.setProperty(COMMAND_DESCRIPTION, 
+			                            "Create a new STRING network from the current network");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+			                            "Creates a new network from the nodes and edges of the specified network,"+
+			                            "by querying STRING for all of the nodes and then copying over the edges "+
+			                            "from the original network.");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+    	props.setProperty(COMMAND_EXAMPLE_JSON, "{\"network\": 123}");
+			registerService(bc, stringify, NetworkTaskFactory.class, props);
 		}
 
 		{

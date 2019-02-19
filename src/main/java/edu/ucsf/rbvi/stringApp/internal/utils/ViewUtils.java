@@ -535,6 +535,13 @@ public class ViewUtils {
 		} else {
 			stringStyle
 					.removeVisualMappingFunction(lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_4"));
+
+			// Restore the glass ball, if appropriate
+			if (manager.showGlassBallEffect()) {
+				CyNetworkView netView = manager.getCurrentNetworkView();
+				VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
+				ViewUtils.updateGlassBallEffect(manager, vmm.getVisualStyle(netView), net, true);
+			}
 		}
 	}
 	
@@ -564,14 +571,18 @@ public class ViewUtils {
 		CyNetworkView netView = manager.getCurrentNetworkView();
 		if (netView != null) {
 			ViewUtils.updatePieCharts(manager, vmm.getVisualStyle(netView), network, true);
-			if (ChartType.PIE.equals(type) || ChartType.SPLIT_PIE.equals(type)) {
-				ViewUtils.updateGlassBallEffect(manager, vmm.getVisualStyle(netView), network, false);
-				manager.setShowGlassBallEffect(false);
-			} else {
-				ViewUtils.updateGlassBallEffect(manager, vmm.getVisualStyle(netView), network, true);
-				manager.setShowGlassBallEffect(true);
+
+			// Don't override the user if they have specifically disabled the glass ball effect
+			if (manager.showGlassBallEffect()) {
+				if (ChartType.PIE.equals(type) || ChartType.SPLIT_PIE.equals(type)) {
+					ViewUtils.updateGlassBallEffect(manager, vmm.getVisualStyle(netView), network, false);
+					// manager.setShowGlassBallEffect(false);
+				} else {
+					ViewUtils.updateGlassBallEffect(manager, vmm.getVisualStyle(netView), network, true);
+					// manager.setShowGlassBallEffect(true);
+				}
+				// manager.getShowGlassBallEffectTaskFactory().reregister();
 			}
-			manager.getShowGlassBallEffectTaskFactory().reregister();
 			netView.updateView();
 		}		
 		// save in network table
