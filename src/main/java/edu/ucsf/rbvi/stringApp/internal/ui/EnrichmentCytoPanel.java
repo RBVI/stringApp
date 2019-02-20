@@ -410,7 +410,7 @@ public class EnrichmentCytoPanel extends JPanel
 		jTable.setFillsViewportHeight(true);
 		jTable.setAutoCreateRowSorter(true);
 		jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		jTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		jTable.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		jTable.getSelectionModel().addListSelectionListener(this);
 		jTable.getModel().addTableModelListener(this);
 		jTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
