@@ -63,6 +63,7 @@ import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskObserver;
 import org.cytoscape.work.TunableSetter;
 
+import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
@@ -99,44 +100,64 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 	private String useDATABASE = Databases.STRING.getAPIName();
 	private String netSpecies = null;
 	private boolean queryAddNodes = false;
-	private int confidence = 40;
-	private int additionalNodes = 0;
 
 	public GetTermsPanel(final StringManager manager, final String useDATABASE, boolean queryAddNodes) {
 		super(new GridBagLayout());
+		// System.out.println("Simple terms panel");
 		this.manager = manager;
 		this.useDATABASE = useDATABASE;
 		this.queryAddNodes = queryAddNodes;
+		optionsPanel = new SearchOptionsPanel(manager, false, false, false);
+		optionsPanel.setConfidence((int)manager.getDefaultConfidence()*100);
+		optionsPanel.setAdditionalNodes(manager.getDefaultAdditionalProteins());
+		if (!useDATABASE.equals(Databases.STITCH.getAPIName()))
+			optionsPanel.setUseSmartDelimiters(true);
 		init();
 	}
 
 	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, 
 	                     String useDATABASE, String aNetSpecies, boolean queryAddNodes) {
-		this(manager, stringNetwork, useDATABASE, aNetSpecies, queryAddNodes, 
-		     (int)(manager.getDefaultConfidence()*100), manager.getDefaultAdditionalProteins());
+		this(manager, stringNetwork, useDATABASE, queryAddNodes, null);
+		// System.out.println("Simple terms panel 2");
+		if (aNetSpecies != null) {
+			this.netSpecies = aNetSpecies;
+			optionsPanel.setSpeciesText(aNetSpecies);
+		}
 	}
 
-	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, 
-	                     String useDATABASE, boolean queryAddNodes, SearchOptionsPanel panel) {
-		this(manager, stringNetwork, useDATABASE, panel.getSpeciesText(), 
-		     queryAddNodes, panel.getConfidence(), panel.getAdditionalNodes());
-		optionsPanel.setLoadEnrichment(panel.getLoadEnrichment());
-	}
-
+	/*
 	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, 
 	                     String useDATABASE, String aNetSpecies, boolean queryAddNodes,
 											 int confidence, int additionalNodes) {
+		optionsPanel = new SearchOptionsPanel(manager, false, false, false);
+		optionsPanel.setConfidence(confidence);
+		optionsPanel.setAdditionalNodes(additionalNodes);
+		optionsPanel.setSpecies(aNetSpecies);
+		this(manager, stringNetwork, useDATABASE, queryAddNodes, optionsPanel);
+	}
+	*/
+
+	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, 
+	                     String useDATABASE, boolean queryAddNodes, SearchOptionsPanel panel) {
 		super(new GridBagLayout());
+		// System.out.println("Terms panel");
 		this.manager = manager;
 		this.stringNetwork = stringNetwork;
 		this.initialStringNetwork = stringNetwork;
-		this.confidence = confidence;
-		this.additionalNodes = additionalNodes;
 		this.useDATABASE = useDATABASE;
-		if (aNetSpecies != null) {
-			this.netSpecies = aNetSpecies;
+		if (panel == null) {
+			// System.out.println("panel = null");
+			panel = new SearchOptionsPanel(manager, false, false, false);
+			panel.setConfidence((int)manager.getDefaultConfidence()*100);
+			panel.setAdditionalNodes(manager.getDefaultAdditionalProteins());
+			if (!useDATABASE.equals(Databases.STITCH.getAPIName()))
+				panel.setUseSmartDelimiters(true);
+		}
+		if (panel.getSpeciesText() != null) {
+			this.netSpecies = panel.getSpeciesText();
 		}
 		this.queryAddNodes = queryAddNodes;
+		optionsPanel = panel;
 		init();
 	}
 
@@ -174,9 +195,9 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		mainSearchPanel = createSearchPanel();
 		add(mainSearchPanel, c.down().expandBoth().insets(5,5,0,5));
 
-		optionsPanel = new SearchOptionsPanel(manager, false, false, false);
-		if (!useDATABASE.equals(Databases.STITCH.getAPIName()))
-			optionsPanel.setUseSmartDelimiters(true);
+		// optionsPanel = new SearchOptionsPanel(manager, false, false, false);
+		// if (!useDATABASE.equals(Databases.STITCH.getAPIName()))
+		// 	optionsPanel.setUseSmartDelimiters(true);
 		optionsPanel.setMinimumSize(new Dimension(400, 150));
 		add(optionsPanel, c.down().expandHoriz().insets(5,5,0,5));
 
@@ -408,7 +429,8 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 			selectPanel.add(selectAllTermButton);
 			selectPanel.add(clearAllTermButton);
 
-			Object[] terms = stringNetwork.getAnnotations().keySet().toArray();
+			// Object[] terms = stringNetwork.getAnnotations().keySet().toArray();
+			Object[] terms = getTermList();
 			final JList termList = new JList(terms);
 			termList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			termList.addListSelectionListener(new ListSelectionListener() {
@@ -495,6 +517,16 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		((Window)getRootPane().getParent()).dispose();
 	}
 
+	public Object[] getTermList() {
+			List<String> unresolvedTerms = new ArrayList<>();
+			Map<String, List<Annotation>> map = stringNetwork.getAnnotations();
+			for (String key: map.keySet()) {
+				if (map.get(key).size() > 1)
+					unresolvedTerms.add(key);
+			}
+			return unresolvedTerms.toArray();
+	}
+
 	@Override
 	public void allFinished(FinishStatus finishStatus) {
 		//
@@ -572,6 +604,8 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 			if (!(task instanceof GetAnnotationsTask)) {
 				return;
 			}
+
+			System.out.println("taskFinished");
 			GetAnnotationsTask annTask = (GetAnnotationsTask)task;
 
 			final int taxon = annTask.getTaxon();

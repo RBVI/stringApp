@@ -18,6 +18,10 @@ public class TextUtils {
 		if (terms.indexOf(';') > 0)
 			return quotedDelimit(terms, ';');
 
+		// Check for spaces
+		if (terms.indexOf(' ') > 0)
+			return quotedDelimit(terms, ' ');
+
 		return terms;
 	}
 
