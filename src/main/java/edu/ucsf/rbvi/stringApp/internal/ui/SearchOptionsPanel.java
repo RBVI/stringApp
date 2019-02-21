@@ -239,6 +239,10 @@ public class SearchOptionsPanel extends JPanel {
 		speciesCombo.setSelectedItem(Species.getSpecies(speciesText));
 	}
 
+	public void setSpecies(Species species) {
+		speciesCombo.setSelectedItem(species);
+	}
+
 	JPanel createControlButtons(boolean optionsPanel) {
 		JPanel buttonPanel = new JPanel();
 		BoxLayout layout = new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS);

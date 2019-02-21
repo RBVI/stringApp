@@ -58,6 +58,7 @@ import org.cytoscape.application.CyUserLog;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.work.FinishStatus;
 import org.cytoscape.work.ObservableTask;
+import org.cytoscape.work.Task;
 import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskObserver;
@@ -100,6 +101,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 	private String useDATABASE = Databases.STRING.getAPIName();
 	private String netSpecies = null;
 	private boolean queryAddNodes = false;
+	Task additionalTask = null;
 
 	public GetTermsPanel(final StringManager manager, final String useDATABASE, boolean queryAddNodes) {
 		super(new GridBagLayout());
@@ -139,6 +141,12 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 
 	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, 
 	                     String useDATABASE, boolean queryAddNodes, SearchOptionsPanel panel) {
+		this(manager, stringNetwork, useDATABASE, queryAddNodes, panel, null);
+	}
+
+	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, 
+	                     String useDATABASE, boolean queryAddNodes, SearchOptionsPanel panel,
+	                     Task additionalTask) {
 		super(new GridBagLayout());
 		// System.out.println("Terms panel");
 		this.manager = manager;
@@ -158,6 +166,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		}
 		this.queryAddNodes = queryAddNodes;
 		optionsPanel = panel;
+		this.additionalTask = additionalTask;
 		init();
 	}
 
@@ -377,10 +386,14 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 			                                       queryTermMap, useDATABASE);
 		}
 		cancel();
+		TaskIterator ti = factory.createTaskIterator();
+		if (additionalTask != null)
+			ti.append(additionalTask);
+
 		if (optionsPanel.getLoadEnrichment())
-			manager.execute(factory.createTaskIterator(), this);
+			manager.execute(ti, this);
 		else
-			manager.execute(factory.createTaskIterator());
+			manager.execute(ti);
 	}
 
 	public void createResolutionPanel() {

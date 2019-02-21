@@ -57,7 +57,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	private CyNetwork loadedNetwork = null;
 	private SearchOptionsPanel optionsPanel = null;
 	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
-	private Map<String, CyNode> nodeMap;
+	private final Map<String, CyNode> nodeMap;
 
 	@Tunable(description="Network to set as a STRING network", 
 	         longDescription=StringToModel.CY_NETWORK_LONG_DESCRIPTION,
@@ -134,10 +134,16 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 
 		// Are we command or GUI based?
 		if (tableColumn != null) {
+			// System.out.println("GUI stringify");
 			optionsPanel = new SearchOptionsPanel(manager);
+			optionsPanel.setConfidence(100);
+			optionsPanel.setAdditionalNodes(0);
+			optionsPanel.setSpecies(species.getSelectedValue());
+
 			// GUI based
 			TaskIterator ti = 
-						new TaskIterator(new GetAnnotationsTask(stringNetwork, taxon, terms, Databases.STRING.getAPIName()));
+						new TaskIterator(new GetAnnotationsTask(stringNetwork, taxon, terms, 
+			                                              Databases.STRING.getAPIName()));
 			manager.execute(ti, this);
 			return;
 		}
@@ -172,116 +178,13 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		}
 
 		// Get all of the nodes in the network
-		createNodeMap();
+		ModelUtils.createNodeMap(net, nodeMap, column);
 
-		copyEdges();
-		copyNodeAttributes();
+		ModelUtils.copyEdges(net, loadedNetwork, nodeMap, column);
 
-		copyNodePositions(net, loadedNetwork);
-	}
+		ModelUtils.copyNodeAttributes(net, loadedNetwork, nodeMap, column);
 
-	private void copyEdges() {
-		System.out.println("copyEdges");
-		createColumns(net.getDefaultEdgeTable(), loadedNetwork.getDefaultEdgeTable());
-		List<CyEdge> edgeList = net.getEdgeList();
-		for (CyEdge edge: edgeList) {
-			CyNode sourceNode = edge.getSource();
-			CyNode targetNode = edge.getTarget();
-			boolean isDirected = edge.isDirected();
-
-			String source = net.getRow(sourceNode).get(column, String.class);
-			String target = net.getRow(targetNode).get(column, String.class);
-
-			CyNode newSource = nodeMap.get(source);
-			CyNode newTarget = nodeMap.get(target);
-
-			CyEdge newEdge = loadedNetwork.addEdge(newSource, newTarget, isDirected);
-			copyRow(net.getDefaultEdgeTable(), loadedNetwork.getDefaultEdgeTable(), edge, newEdge);
-		}
-	}
-
-	private void copyNodeAttributes() {
-		System.out.println("copyNodeAttributes");
-		createColumns(net.getDefaultNodeTable(), loadedNetwork.getDefaultNodeTable());
-		for (CyNode node: net.getNodeList()) {
-			String nodeKey = net.getRow(node).get(column, String.class);
-			CyNode newNode = nodeMap.get(nodeKey);
-			copyRow(net.getDefaultNodeTable(), loadedNetwork.getDefaultNodeTable(), node, newNode);
-		}
-	}
-
-	private void copyNodePositions(CyNetwork from, CyNetwork to) {
-		CyNetworkView fromView = getNetworkView(from);
-		CyNetworkView toView = getNetworkView(to);
-		for (View<CyNode> nodeView: fromView.getNodeViews()) {
-			// Get the to node
-			String nodeKey = from.getRow(nodeView.getModel()).get(column, String.class);
-			View<CyNode> toNodeView = toView.getNodeView(nodeMap.get(nodeKey));
-			// Copy over the positions
-			Double x = nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION);
-			Double y = nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION);
-			Double z = nodeView.getVisualProperty(BasicVisualLexicon.NODE_Z_LOCATION);
-			toNodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, x);
-			toNodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, y);
-			if (z != null && z != 0.0)
-				toNodeView.setVisualProperty(BasicVisualLexicon.NODE_Z_LOCATION, z);
-		}
-	}
-
-	private CyNetworkView getNetworkView(CyNetwork network) {
-		Collection<CyNetworkView> views = manager.getService(CyNetworkViewManager.class).getNetworkViews(network);
-
-		// At some point, figure out a better way to do this
-		for (CyNetworkView view: views) {
-			return view;
-		}
-		return null;
-	}
-
-	private void createColumns(CyTable fromTable, CyTable toTable) {
-		for (CyColumn col: fromTable.getColumns()) {
-			String fqn = col.getName();
-			// Does that column already exist in our target?
-			if (toTable.getColumn(fqn) == null) {
-				// No, create it.
-				if (col.getType().equals(List.class)) {
-					// There is no easy way to handle this, unfortunately...
-					// toTable.createListColumn(fqn, col.getListElementType(), col.isImmutable(), (List<?>)col.getDefaultValue());
-					if (col.getListElementType().equals(String.class))
-						toTable.createListColumn(fqn, String.class, col.isImmutable(), (List<String>)col.getDefaultValue());
-					else if (col.getListElementType().equals(Long.class))
-						toTable.createListColumn(fqn, Long.class, col.isImmutable(), (List<Long>)col.getDefaultValue());
-					else if (col.getListElementType().equals(Double.class))
-						toTable.createListColumn(fqn, Double.class, col.isImmutable(), (List<Double>)col.getDefaultValue());
-					else if (col.getListElementType().equals(Integer.class))
-						toTable.createListColumn(fqn, Integer.class, col.isImmutable(), (List<Integer>)col.getDefaultValue());
-					else if (col.getListElementType().equals(Boolean.class))
-						toTable.createListColumn(fqn, Boolean.class, col.isImmutable(), (List<Boolean>)col.getDefaultValue());
-				} else {
-					toTable.createColumn(fqn, col.getType(), col.isImmutable(), col.getDefaultValue());
-				}
-			}
-		}
-	}
-
-	private void copyRow(CyTable fromTable, CyTable toTable, CyIdentifiable from, CyIdentifiable to) {
-		for (CyColumn col: fromTable.getColumns()) {
-			if (col.getName().equals(CyNetwork.SUID)) 
-				continue;
-			if (col.getName().equals(CyNetwork.NAME)) 
-				continue;
-			if (col.getName().equals(CyNetwork.SELECTED)) 
-				continue;
-			if (col.getName().equals(CyRootNetwork.SHARED_NAME)) 
-				continue;
-			if (from.getClass().equals(CyEdge.class) && col.getName().equals(CyRootNetwork.SHARED_INTERACTION)) 
-				continue;
-			if (from.getClass().equals(CyEdge.class) && col.getName().equals(CyEdge.INTERACTION)) 
-				continue;
-
-			Object v = fromTable.getRow(from.getSUID()).getRaw(col.getName());
-			toTable.getRow(to.getSUID()).set(col.getName(), v);
-		}
+		ModelUtils.copyNodePositions(manager, net, loadedNetwork, nodeMap, column);
 	}
 
 	private String trunc(String str) {
@@ -290,17 +193,9 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		return str;
 	}
 
-	private void createNodeMap() {
-		// Get all of the nodes in the network
-		for (CyNode node: loadedNetwork.getNodeList()) {
-			String key = loadedNetwork.getRow(node).get("query term", String.class);
-			nodeMap.put(key, node);
-		}
-	}
-
 	@Override
 	public void taskFinished(ObservableTask task) {
-		System.out.println("Task: "+task);
+		// System.out.println("Task: "+task);
 		if (!(task instanceof GetAnnotationsTask)) {
 			return;
 		}
@@ -323,7 +218,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 
 			final int addNodes = additionalNodes;
 
-			System.out.println("Calling importNetwork");
+			// System.out.println("Calling importNetwork");
 			importNetwork(taxon, 100, 0);
 		} else {
 			SwingUtilities.invokeLater(new Runnable() {
@@ -333,8 +228,10 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 					d.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 					// GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, Databases.STRING.getAPIName(), 
 					//                                         getSpecies(), false, getConfidence(), getAdditionalNodes());
+					CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork);
 					GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, 
-					                                        Databases.STRING.getAPIName(), false, optionsPanel);
+					                                        Databases.STRING.getAPIName(), false, 
+					                                        optionsPanel, copyTask);
 					panel.createResolutionPanel();
 					d.setContentPane(panel);
 					d.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -344,6 +241,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 			});
 		}
 
+		/*
 		System.out.println("Creating the node map");
 		createNodeMap();
 
@@ -351,6 +249,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		copyNodeAttributes();
 
 		copyNodePositions(net, loadedNetwork);
+		*/
 	}
 
 	public String getSpecies() {
@@ -406,6 +305,34 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	@Override
 	public List<Class<?>> getResultClasses() {
 		return Arrays.asList(JSONResult.class, String.class, Long.class, CyNetwork.class);
+	}
+
+	private class CopyTask extends AbstractTask {
+		String column;
+		CyNetwork network;
+		StringNetwork stringNetwork;
+		StringManager manager;
+
+		CopyTask(StringManager manager, String col, CyNetwork network, StringNetwork stringNetwork) {
+			this.manager = manager;
+			this.column = col;
+			this.network = network;
+			this.stringNetwork = stringNetwork;
+		}
+
+		public void run(TaskMonitor monitor) {
+			CyNetwork loadedNetwork = stringNetwork.getNetwork();
+
+			// Get all of the nodes in the network
+			ModelUtils.createNodeMap(loadedNetwork, nodeMap, "query term");
+
+			ModelUtils.copyEdges(network, loadedNetwork, nodeMap, column);
+
+			ModelUtils.copyNodeAttributes(network, loadedNetwork, nodeMap, column);
+
+			ModelUtils.copyNodePositions(manager, network, loadedNetwork, nodeMap, column);
+		}
+
 	}
 
 }

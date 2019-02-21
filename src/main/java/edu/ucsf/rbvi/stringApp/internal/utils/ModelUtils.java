@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,6 +17,7 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyIdentifiable;
 import org.cytoscape.model.CyNetwork;
@@ -31,7 +33,10 @@ import org.cytoscape.property.CyProperty.SavePolicy;
 import org.cytoscape.property.SimpleCyProperty;
 import org.cytoscape.session.CySession;
 import org.cytoscape.session.CySessionManager;
+import org.cytoscape.view.model.CyNetworkView;
+import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.model.View;
+import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.work.util.ListSingleSelection;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -1457,6 +1462,126 @@ public class ModelUtils {
 		// Strip off any blank lines
 		terms = terms.replaceAll("(?m)^\\s*", "");
 		return terms;
+	}
+
+	public static void copyRow(CyTable fromTable, CyTable toTable, CyIdentifiable from, CyIdentifiable to) {
+		for (CyColumn col: fromTable.getColumns()) {
+			if (col.getName().equals(CyNetwork.SUID)) 
+				continue;
+			if (col.getName().equals(CyNetwork.NAME)) 
+				continue;
+			if (col.getName().equals(CyNetwork.SELECTED)) 
+				continue;
+			if (col.getName().equals(CyRootNetwork.SHARED_NAME)) 
+				continue;
+			if (from.getClass().equals(CyEdge.class) && col.getName().equals(CyRootNetwork.SHARED_INTERACTION)) 
+				continue;
+			if (from.getClass().equals(CyEdge.class) && col.getName().equals(CyEdge.INTERACTION)) 
+				continue;
+
+			Object v = fromTable.getRow(from.getSUID()).getRaw(col.getName());
+			toTable.getRow(to.getSUID()).set(col.getName(), v);
+		}
+	}
+
+	public static void createNodeMap(CyNetwork network, Map<String, CyNode> nodeMap, String column) {
+		// Get all of the nodes in the network
+		for (CyNode node: network.getNodeList()) {
+			String key = network.getRow(node).get(column, String.class);
+			nodeMap.put(key, node);
+		}
+	}
+
+	public static void copyColumns(CyTable fromTable, CyTable toTable) {
+		for (CyColumn col: fromTable.getColumns()) {
+			String fqn = col.getName();
+			// Does that column already exist in our target?
+			if (toTable.getColumn(fqn) == null) {
+				// No, create it.
+				if (col.getType().equals(List.class)) {
+					// There is no easy way to handle this, unfortunately...
+					// toTable.createListColumn(fqn, col.getListElementType(), col.isImmutable(), (List<?>)col.getDefaultValue());
+					if (col.getListElementType().equals(String.class))
+						toTable.createListColumn(fqn, String.class, col.isImmutable(), 
+						                         (List<String>)col.getDefaultValue());
+					else if (col.getListElementType().equals(Long.class))
+						toTable.createListColumn(fqn, Long.class, col.isImmutable(), 
+						                         (List<Long>)col.getDefaultValue());
+					else if (col.getListElementType().equals(Double.class))
+						toTable.createListColumn(fqn, Double.class, col.isImmutable(), 
+						                         (List<Double>)col.getDefaultValue());
+					else if (col.getListElementType().equals(Integer.class))
+						toTable.createListColumn(fqn, Integer.class, col.isImmutable(), 
+						                         (List<Integer>)col.getDefaultValue());
+					else if (col.getListElementType().equals(Boolean.class))
+						toTable.createListColumn(fqn, Boolean.class, col.isImmutable(), 
+						                         (List<Boolean>)col.getDefaultValue());
+				} else {
+					toTable.createColumn(fqn, col.getType(), col.isImmutable(), col.getDefaultValue());
+				}
+			}
+		}
+	}
+
+	public static void copyNodePositions(StringManager manager, CyNetwork from, CyNetwork to, 
+	                                     Map<String, CyNode> nodeMap, String column) {
+		CyNetworkView fromView = getNetworkView(manager, from);
+		CyNetworkView toView = getNetworkView(manager, to);
+		for (View<CyNode> nodeView: fromView.getNodeViews()) {
+			// Get the to node
+			String nodeKey = from.getRow(nodeView.getModel()).get(column, String.class);
+			View<CyNode> toNodeView = toView.getNodeView(nodeMap.get(nodeKey));
+			// Copy over the positions
+			Double x = nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION);
+			Double y = nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION);
+			Double z = nodeView.getVisualProperty(BasicVisualLexicon.NODE_Z_LOCATION);
+			toNodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, x);
+			toNodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, y);
+			if (z != null && z != 0.0)
+				toNodeView.setVisualProperty(BasicVisualLexicon.NODE_Z_LOCATION, z);
+		}
+	}
+
+	public static void copyEdges(CyNetwork fromNetwork, CyNetwork toNetwork, 
+	                             Map<String, CyNode> nodeMap, String column) {
+		copyColumns(fromNetwork.getDefaultEdgeTable(), toNetwork.getDefaultEdgeTable());
+		List<CyEdge> edgeList = fromNetwork.getEdgeList();
+		for (CyEdge edge: edgeList) {
+			CyNode sourceNode = edge.getSource();
+			CyNode targetNode = edge.getTarget();
+			boolean isDirected = edge.isDirected();
+
+			String source = fromNetwork.getRow(sourceNode).get(column, String.class);
+			String target = fromNetwork.getRow(targetNode).get(column, String.class);
+
+			CyNode newSource = nodeMap.get(source);
+			CyNode newTarget = nodeMap.get(target);
+
+			CyEdge newEdge = toNetwork.addEdge(newSource, newTarget, isDirected);
+			copyRow(fromNetwork.getDefaultEdgeTable(), toNetwork.getDefaultEdgeTable(), edge, newEdge);
+		}
+	}
+
+	public static CyNetworkView getNetworkView(StringManager manager, CyNetwork network) {
+		Collection<CyNetworkView> views = 
+						manager.getService(CyNetworkViewManager.class).getNetworkViews(network);
+
+		// At some point, figure out a better way to do this
+		for (CyNetworkView view: views) {
+			return view;
+		}
+		return null;
+	}
+
+	public static void copyNodeAttributes(CyNetwork from, CyNetwork to, 
+	                                      Map<String, CyNode> nodeMap, String column) {
+		// System.out.println("copyNodeAttributes");
+		copyColumns(from.getDefaultNodeTable(), to.getDefaultNodeTable());
+		for (CyNode node: from.getNodeList()) {
+			String nodeKey = from.getRow(node).get(column, String.class);
+			CyNode newNode = nodeMap.get(nodeKey);
+			copyRow(from.getDefaultNodeTable(), to.getDefaultNodeTable(), node, newNode);
+		}
 	}
 
 }
