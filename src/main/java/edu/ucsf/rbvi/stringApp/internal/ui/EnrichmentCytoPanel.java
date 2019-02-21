@@ -154,18 +154,22 @@ public class EnrichmentCytoPanel extends JPanel
 		CyNetwork network = manager.getCurrentNetwork();
 		if (network == null)
 			return;
-		clearNetworkSelection(network);
 		// TODO: clear table selection when switching
 		JTable table = enrichmentTables.get(showTable);
 		if (table.getSelectedColumnCount() == 1 && table.getSelectedRow() > -1) {
 			if (table.getSelectedColumn() != EnrichmentTerm.chartColumnCol) {
-				Object cellContent = table.getModel().getValueAt(
-						table.convertRowIndexToModel(table.getSelectedRow()),
-						EnrichmentTerm.nodeSUIDColumn);
-				if (cellContent instanceof List) {
-					List<Long> nodeIDs = (List<Long>) cellContent;
-					for (Long nodeID : nodeIDs) {
-						network.getDefaultNodeTable().getRow(nodeID).set(CyNetwork.SELECTED, true);
+				// Only clear the network selection if it's our first selected row
+				if (table.getSelectedRowCount() == 1)
+					clearNetworkSelection(network);
+				for (int row: table.getSelectedRows()) {
+					Object cellContent = 
+									table.getModel().getValueAt(table.convertRowIndexToModel(row), 
+					                                    EnrichmentTerm.nodeSUIDColumn);
+					if (cellContent instanceof List) {
+						List<Long> nodeIDs = (List<Long>) cellContent;
+						for (Long nodeID : nodeIDs) {
+							network.getDefaultNodeTable().getRow(nodeID).set(CyNetwork.SELECTED, true);
+						}
 					}
 				}
 			}
