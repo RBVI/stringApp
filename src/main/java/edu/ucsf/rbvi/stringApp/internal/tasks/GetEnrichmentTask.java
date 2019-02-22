@@ -66,11 +66,12 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	         context = "nogui")
   public CyNetworkView view = null;
 
-	@Tunable(description = "Enrichment FDR value cutoff", 
-	         longDescription = "Sets the false discovery rate (FDR) value cutoff a term must reach in order to be included",
-					 exampleStringValue = "0.05",
-					 gravity = 1.0)
-	public double cutoff = 0.05;
+	// not needed since the API returns only values with fdr < 0.05
+	// @Tunable(description = "Enrichment FDR value cutoff", 
+	//         longDescription = "Sets the false discovery rate (FDR) value cutoff a term must reach in order to be included",
+	//				 exampleStringValue = "0.05",
+	//				 gravity = 1.0)
+	// public double cutoff = 0.05;
 
 	@Tunable(description = "Retrieve for selected nodes only",
 	         longDescription = "Setting this to ```true``` and selecting a subset of the nodes will retrieve enrichment "+
@@ -245,7 +246,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			return;
 			// throw new RuntimeException("Enrichment retrieval returned no results, possibly due to an error.");
 		}
-		List<EnrichmentTerm> terms = ModelUtils.getEnrichmentFromJSON(manager, results, cutoff, stringNodesMap, network);
+		List<EnrichmentTerm> terms = ModelUtils.getEnrichmentFromJSON(manager, results, stringNodesMap, network);
 		if (terms == null) {
 			String errorMsg = ModelUtils.getErrorMessageFromJSON(manager, results);
 			monitor.showMessage(Level.ERROR,
@@ -282,7 +283,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			return null;
 		}
 		Map<String, String> ppiEnrichment = 
-						ModelUtils.getEnrichmentPPIFromJSON(manager, results, cutoff, stringNodesMap, network);
+						ModelUtils.getEnrichmentPPIFromJSON(manager, results, stringNodesMap, network);
 		if (ppiEnrichment == null) {
 			monitor.showMessage(Level.ERROR,
 					"PPI Enrichment retrieval returned no results, possibly due to an error.");
@@ -327,7 +328,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		// 1000 + " seconds.");
 		// time = System.currentTimeMillis();
 		// parse using SAX
-		EnrichmentSAXHandler myHandler = new EnrichmentSAXHandler(network, stringNodesMap, cutoff, enrichmentCategory);
+		EnrichmentSAXHandler myHandler = new EnrichmentSAXHandler(network, stringNodesMap, enrichmentCategory);
 		// TODO: change for release
 		HttpUtils.postXMLSAX(EnrichmentTerm.enrichmentURL, queryMap, manager, myHandler);
 		if (!myHandler.isStatusOK()) {

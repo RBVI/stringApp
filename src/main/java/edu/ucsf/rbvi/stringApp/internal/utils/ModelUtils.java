@@ -92,8 +92,10 @@ public class ModelUtils {
 	// "http://diseases.jensenlab.org/Entity?type1=9606&type2=-26";
 
 	// Edge information
-	public static String SCORE = "score";
-	public static String INTERSPECIES = "interspecies";
+	public static String STRINGDB_NAMESPACE = "stringdb";
+	public static String NAMESPACE_SEPARATOR = "::";
+	public static String SCORE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "score";
+	public static String INTERSPECIES = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "interspecies";
 
 	// Network information
 	public static String CONFIDENCE = "confidence score";
@@ -125,7 +127,6 @@ public class ModelUtils {
 	// Other stuff
 	public static String COMPOUND = "STITCH compounds";
 	public static String EMPTYLINE = "--------";
-	public static String STRINGDB_NAMESPACE = "stringdb";
 	
 	public static boolean ifString(CyNetwork network) {
 		CyRow netRow = network.getRow(network);
@@ -263,7 +264,7 @@ public class ModelUtils {
 	}
 	
 	public static List<EnrichmentTerm> getEnrichmentFromJSON(StringManager manager,
-			JSONObject object, double enrichmentCutoff, Map<String, Long> stringNodesMap,
+			JSONObject object, Map<String, Long> stringNodesMap,
 			CyNetwork network) {
 		JSONArray enrichmentArray = getResultsFromJSON(object, JSONArray.class);
 		if (enrichmentArray == null) {
@@ -317,15 +318,15 @@ public class ModelUtils {
 				currTerm.setNodesSUID(currNodeList);
 			}
 			// save only if above cutoff
-			if (currTerm.getFDRPValue() <= enrichmentCutoff)
-				results.add(currTerm);
+			// if (currTerm.getFDRPValue() <= enrichmentCutoff)
+			// save always since enrichment API returns fdr values < 0.05 
+			results.add(currTerm);
 		}
 		return results;
 	}
 
 	public static Map<String, String> getEnrichmentPPIFromJSON(StringManager manager, 
 	                                                           JSONObject object,
-	                                                           double enrichmentCutoff, 
 	                                                           Map<String, Long> stringNodesMap, 
 	                                                           CyNetwork network) {
 		Map<String, String> values = new HashMap<>();
@@ -664,11 +665,11 @@ public class ModelUtils {
 		List<String> jsonKeysSorted = new ArrayList<String>(jsonKeysClass.keySet());
 		Collections.sort(jsonKeysSorted);
 		for (String jsonKey : jsonKeysSorted) {
-			String formattedJsonKey = formatForColumnNamespace(jsonKey);
+			// String formattedJsonKey = formatForColumnNamespace(jsonKey);
 			if (listKeys.contains(jsonKey)) {
-				createListColumnIfNeeded(table, jsonKeysClass.get(jsonKey), formattedJsonKey);
+				createListColumnIfNeeded(table, jsonKeysClass.get(jsonKey), jsonKey);
 			} else {
-				createColumnIfNeeded(table, jsonKeysClass.get(jsonKey), formattedJsonKey);
+				createColumnIfNeeded(table, jsonKeysClass.get(jsonKey), jsonKey);
 			}
 		}
 
@@ -801,8 +802,8 @@ public class ModelUtils {
 				// It's not one of our "standard" attributes, create a column for it (if necessary)
 				// and then add it
 				Object value = nodeObj.get(key);
-				String formattedKey = formatForColumnNamespace(key);
-				row.set(formattedKey, value);
+				// String formattedKey = formatForColumnNamespace(key);
+				row.set(key, value);
 				// if (value instanceof JSONArray) {
 				// JSONArray list = (JSONArray) value;
 				// if (!columnMap.contains(key)) {
@@ -917,10 +918,10 @@ public class ModelUtils {
 		// double scoreProduct = 1.0;
 		for (Object key : scores.keySet()) {
 			String score = (String) key;
-			String scoreFormatted = formatForColumnNamespace(score);
-			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, scoreFormatted);
+			// String scoreFormatted = formatForColumnNamespace(score);
+			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, score);
 			Double v = (Double) scores.get(key);
-			network.getRow(edge).set(scoreFormatted, v);
+			network.getRow(edge).set(score, v);
 			// scoreProduct *= (1 - v);
 		}
 		// double totalScore = -(scoreProduct - 1.0);

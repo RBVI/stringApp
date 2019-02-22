@@ -17,7 +17,7 @@ public class EnrichmentSAXHandler extends DefaultHandler {
 
 	private CyNetwork network;
 	private Map<String, Long> stringNodesMap;
-	private double enrichmentCutoff;
+	// private double enrichmentCutoff;
 	private String enrichmentCategory;
 
 	private List<EnrichmentTerm> enrichmentTerms;
@@ -73,10 +73,9 @@ public class EnrichmentSAXHandler extends DefaultHandler {
 	// </term>
 
 	public EnrichmentSAXHandler(CyNetwork network, Map<String, Long> stringNodesMap,
-			double enrichmentCutoff, String enrichmentCategory) {
+			String enrichmentCategory) {
 		this.network = network;
 		this.stringNodesMap = stringNodesMap;
-		this.enrichmentCutoff = enrichmentCutoff;
 		this.enrichmentCategory = enrichmentCategory;
 		status = null;
 		warning = null;
@@ -154,8 +153,8 @@ public class EnrichmentSAXHandler extends DefaultHandler {
 			in_message = false;
 		} else if (key.equals(tag_term)) {
 			in_term = false;
-			if (currTerm.getFDRPValue() <= enrichmentCutoff)
-				enrichmentTerms.add(currTerm);
+			// if (currTerm.getFDRPValue() <= enrichmentCutoff)
+			enrichmentTerms.add(currTerm);
 		} else if (key.equals(tag_name)) {
 			in_name = false;
 			if (in_term)
