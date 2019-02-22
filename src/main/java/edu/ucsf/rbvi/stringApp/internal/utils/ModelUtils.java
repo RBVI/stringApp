@@ -94,8 +94,11 @@ public class ModelUtils {
 	// Edge information
 	public static String STRINGDB_NAMESPACE = "stringdb";
 	public static String NAMESPACE_SEPARATOR = "::";
-	public static String SCORE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "score";
-	public static String INTERSPECIES = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "interspecies";
+	// TODO: enable when we switched to namespaces syntax server-side 
+	// public static String SCORE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "score";
+	// public static String INTERSPECIES = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "interspecies";
+	public static String SCORE = "score";
+	public static String INTERSPECIES = "interspecies";
 
 	// Network information
 	public static String CONFIDENCE = "confidence score";
