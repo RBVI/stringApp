@@ -11,6 +11,7 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	double pvalue;
 	double bonfPValue;
 	double fdrPValue;
+	int genesBG;
 	List<String> genes;
 	List<Long> nodes;
 
@@ -87,6 +88,7 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	public static final String colPvalue = "p-value";
 	public static final String colBonferroni = "bonferroni value";
 	public static final String colFDR = "FDR value";
+	public static final String colGenesBG = "# genes in set";
 	public static final String colGenes = "enriched genes";
 	public static final String colGenesSUID = "nodes.SUID";
 	public static final String colGenesCount = "# enriched genes";
@@ -100,8 +102,8 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 
 	
 	public static final String[] swingColumns = new String[] { colCategory, colChartColor, colName, colDescription, colFDR,
-			colGenesCount, colGenes, colGenesSUID };
-	public static final int nodeSUIDColumn = 7;
+			colGenesCount, colGenesBG, colGenes, colGenesSUID };
+	public static final int nodeSUIDColumn = 8;
 	public static final int fdrColumn = 4;
 	// public static final int chartColumnSel = 1;
 	public static final int chartColumnCol = 1;
@@ -114,6 +116,7 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 		this.pvalue = -1.0;
 		this.bonfPValue = -1.0;
 		this.fdrPValue = -1.0;
+		this.genesBG = 0;
 		this.genes = new ArrayList<String>();
 		this.nodes = new ArrayList<Long>();
 
@@ -126,19 +129,21 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 		this.pvalue = -1.0;
 		this.bonfPValue = -1.0;
 		this.fdrPValue = -1.0;
+		this.genesBG = 0;
 		this.genes = new ArrayList<String>();
 		this.nodes = new ArrayList<Long>();
 
 	}
 
 	public EnrichmentTerm(String name, String description, String category, double pvalue, double bonfPValue,
-			double fdrPValue) {
+			double fdrPValue, int genesBG) {
 		this.name = name;
 		this.description = description;
 		this.category = category;
 		this.pvalue = pvalue;
 		this.bonfPValue = bonfPValue;
 		this.fdrPValue = fdrPValue;
+		this.genesBG = genesBG;
 		this.genes = new ArrayList<String>();
 		this.nodes = new ArrayList<Long>();
 	}
@@ -189,6 +194,14 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 
 	public void setFDRPValue(double fdrPValue) {
 		this.fdrPValue = fdrPValue;
+	}
+
+	public int getGenesBG() {
+		return genesBG;
+	}
+
+	public void setGenesBG(int genesBG) {
+		this.genesBG = genesBG;
 	}
 
 	public int getNumberGenes() {

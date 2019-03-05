@@ -297,6 +297,8 @@ public class ModelUtils {
 				currTerm.setBonfPValue(((Number) enr.get("bonferroni")).doubleValue());
 			if (enr.containsKey("fdr"))
 				currTerm.setFDRPValue(((Number) enr.get("fdr")).doubleValue());
+			if (enr.containsKey("number_of_genes_in_background"))
+				currTerm.setGenesBG(((Number) enr.get("number_of_genes_in_background")).intValue());
 			if (enr.containsKey("inputGenes")) {
 				List<String> currGeneList = new ArrayList<String>();
 				List<Long> currNodeList = new ArrayList<Long>();
@@ -1266,6 +1268,12 @@ public class ModelUtils {
 								eElement.getElementsByTagName("fdr").item(0).getTextContent())
 								.doubleValue();
 					}
+					int genesbg = -1;
+					if (eElement.getElementsByTagName("number_of_genes_in_background").getLength() > 0) {
+						fdr = Integer.valueOf(
+								eElement.getElementsByTagName("number_of_genes_in_background").item(0).getTextContent())
+								.intValue();
+					}
 					String name = "";
 					if (eElement.getElementsByTagName("name").getLength() > 0) {
 						name = eElement.getElementsByTagName("name").item(0).getTextContent();
@@ -1303,7 +1311,7 @@ public class ModelUtils {
 					// System.out.println(enrGenes);
 					// }
 					if (!name.equals("") && fdr > -1 && fdr <= cutoff) {
-						EnrichmentTerm enrTerm = new EnrichmentTerm(name, descr, enrichmentCategory, pvalue, bonf, fdr);
+						EnrichmentTerm enrTerm = new EnrichmentTerm(name, descr, enrichmentCategory, pvalue, bonf, fdr, genesbg);
 						enrTerm.setGenes(enrGenes);
 						enrTerm.setNodesSUID(enrNodes);
 						enrichmentTerms.add(enrTerm);

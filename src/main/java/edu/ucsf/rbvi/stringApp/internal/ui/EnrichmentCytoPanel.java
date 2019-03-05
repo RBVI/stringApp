@@ -617,7 +617,7 @@ public class EnrichmentCytoPanel extends JPanel
 					EnrichmentTerm enrTerm = new EnrichmentTerm(selTerm,
 							row.get(EnrichmentTerm.colDescription, String.class),
 							row.get(EnrichmentTerm.colCategory, String.class), -1.0, -1.0,
-							row.get(EnrichmentTerm.colFDR, Double.class));
+							row.get(EnrichmentTerm.colFDR, Double.class), row.get(EnrichmentTerm.colGenesBG, Integer.class));
 					enrTerm.setNodesSUID(row.getList(EnrichmentTerm.colGenesSUID, Long.class));
 					selectedTerms.put(enrTerm, row.get(EnrichmentTerm.colChartColor, String.class));
 				}				
@@ -652,7 +652,7 @@ public class EnrichmentCytoPanel extends JPanel
 				EnrichmentTerm enrTerm = new EnrichmentTerm(selTerm,
 						row.get(EnrichmentTerm.colDescription, String.class),
 						row.get(EnrichmentTerm.colCategory, String.class), -1.0, -1.0,
-						row.get(EnrichmentTerm.colFDR, Double.class));
+						row.get(EnrichmentTerm.colFDR, Double.class), row.get(EnrichmentTerm.colGenesBG, Integer.class));
 				enrTerm.setNodesSUID(row.getList(EnrichmentTerm.colGenesSUID, Long.class));
 				String color = String.format("#%02x%02x%02x", colors[i].getRed(), colors[i].getGreen(),
 						colors[i].getBlue());

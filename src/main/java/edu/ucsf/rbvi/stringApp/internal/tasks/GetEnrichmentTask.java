@@ -398,6 +398,9 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		if (enrichmentTable.getColumn(EnrichmentTerm.colFDR) == null) {
 			enrichmentTable.createColumn(EnrichmentTerm.colFDR, Double.class, false);
 		}
+		if (enrichmentTable.getColumn(EnrichmentTerm.colGenesBG) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colGenesBG, Integer.class, false);
+		}
 		if (enrichmentTable.getColumn(EnrichmentTerm.colGenesCount) == null) {
 			enrichmentTable.createColumn(EnrichmentTerm.colGenesCount, Integer.class, false);
 		}
@@ -430,6 +433,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			row.set(EnrichmentTerm.colDescription, term.getDescription());
 			row.set(EnrichmentTerm.colCategory, term.getCategory());
 			row.set(EnrichmentTerm.colFDR, term.getFDRPValue());
+			row.set(EnrichmentTerm.colGenesBG, term.getGenesBG());
 			row.set(EnrichmentTerm.colGenesCount, term.getGenes().size());
 			row.set(EnrichmentTerm.colGenes, term.getGenes());
 			row.set(EnrichmentTerm.colGenesSUID, term.getNodesSUID());
