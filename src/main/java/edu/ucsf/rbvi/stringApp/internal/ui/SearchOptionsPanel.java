@@ -228,19 +228,25 @@ public class SearchOptionsPanel extends JPanel {
 	}
 
 	public Species getSpecies() {
-		return (Species)speciesCombo.getSelectedItem();
+		if (speciesCombo != null)
+			return (Species)speciesCombo.getSelectedItem();
+		return null;
 	}
 
 	public String getSpeciesText() {
-		return speciesCombo.getSelectedItem().toString();
+		if (speciesCombo != null)
+			return speciesCombo.getSelectedItem().toString();
+		return null;
 	}
 
 	public void setSpeciesText(String speciesText) {
-		speciesCombo.setSelectedItem(Species.getSpecies(speciesText));
+		if (speciesCombo != null)
+			speciesCombo.setSelectedItem(Species.getSpecies(speciesText));
 	}
 
 	public void setSpecies(Species species) {
-		speciesCombo.setSelectedItem(species);
+		if (speciesCombo != null)
+			speciesCombo.setSelectedItem(species);
 	}
 
 	JPanel createControlButtons(boolean optionsPanel) {

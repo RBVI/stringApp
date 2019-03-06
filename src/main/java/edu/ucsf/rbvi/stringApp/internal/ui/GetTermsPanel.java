@@ -123,7 +123,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		// System.out.println("Simple terms panel 2");
 		if (aNetSpecies != null) {
 			this.netSpecies = aNetSpecies;
-			optionsPanel.setSpeciesText(aNetSpecies);
+			// optionsPanel.setSpeciesText(aNetSpecies);
 		}
 	}
 
