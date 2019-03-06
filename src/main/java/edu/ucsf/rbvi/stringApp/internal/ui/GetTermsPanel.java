@@ -110,7 +110,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		this.useDATABASE = useDATABASE;
 		this.queryAddNodes = queryAddNodes;
 		optionsPanel = new SearchOptionsPanel(manager, false, false, false);
-		optionsPanel.setConfidence((int)manager.getDefaultConfidence()*100);
+		optionsPanel.setConfidence((int)(manager.getDefaultConfidence()*100));
 		optionsPanel.setAdditionalNodes(manager.getDefaultAdditionalProteins());
 		if (!useDATABASE.equals(Databases.STITCH.getAPIName()))
 			optionsPanel.setUseSmartDelimiters(true);
@@ -156,7 +156,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		if (panel == null) {
 			// System.out.println("panel = null");
 			panel = new SearchOptionsPanel(manager, false, false, false);
-			panel.setConfidence((int)manager.getDefaultConfidence()*100);
+			panel.setConfidence((int)(manager.getDefaultConfidence()*100));
 			panel.setAdditionalNodes(manager.getDefaultAdditionalProteins());
 			if (!useDATABASE.equals(Databases.STITCH.getAPIName()))
 				panel.setUseSmartDelimiters(true);

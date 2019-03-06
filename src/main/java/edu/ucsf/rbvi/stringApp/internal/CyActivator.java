@@ -145,8 +145,7 @@ public class CyActivator extends AbstractCyActivator {
 										 		"STRING quantitatively integrates "+
 												"interaction data from these sources for a large number "+
 												"of organisms, and transfers information between these "+
-												"organisms where applicable. The database currently covers "+
-												"9,643,763 proteins from 2,031 organisms.");
+												"organisms where applicable.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
     	props.setProperty(COMMAND_EXAMPLE_JSON, JSON_EXAMPLE);
 
