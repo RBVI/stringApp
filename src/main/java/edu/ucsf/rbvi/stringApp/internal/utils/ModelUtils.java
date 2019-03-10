@@ -56,27 +56,32 @@ import edu.ucsf.rbvi.stringApp.internal.model.TextMiningResult;
 
 public class ModelUtils {
 
+	// Namespaces
+	public static String STRINGDB_NAMESPACE = "stringdb";
+	public static String NAMESPACE_SEPARATOR = "::";
+	
 	// Node information
-	public static String CANONICAL = "canonical name";
+	public static String CANONICAL = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "canonical name";
 	public static String DISPLAY = "display name";
-	public static String FULLNAME = "full name";
-	public static String CV_STYLE = "chemViz Passthrough";
-	public static String ELABEL_STYLE = "enhancedLabel Passthrough";
+	public static String FULLNAME = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "full name";
+	public static String CV_STYLE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "chemViz Passthrough";
+	public static String ELABEL_STYLE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "enhancedLabel Passthrough";
 	public static String ID = "@id";
-	public static String DESCRIPTION = "description";
-	public static String DISEASE_SCORE = "disease score";
-	public static String NAMESPACE = "namespace";
+	public static String DESCRIPTION = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "description";
+	public static String DISEASE_SCORE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "disease score";
+	public static String NAMESPACE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "namespace";
 	public static String QUERYTERM = "query term";
-	public static String SEQUENCE = "sequence";
-	public static String SMILES = "smiles";
-	public static String SPECIES = "species";
-	public static String STRINGID = "database identifier";
-	public static String STYLE = "STRING style";
-	public static String TYPE = "node type";
-	public static String TM_FOREGROUND = "textmining foreground";
-	public static String TM_BACKGROUND = "textmining background";
-	public static String TM_SCORE = "textmining score";
+	public static String SEQUENCE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "sequence";
+	public static String SMILES = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "smiles";
+	public static String SPECIES = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "species";
+	public static String STRINGID = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "database identifier";
+	public static String STYLE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "STRING style";
+	public static String TYPE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "node type";
+	public static String TM_FOREGROUND = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "textmining foreground";
+	public static String TM_BACKGROUND = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "textmining background";
+	public static String TM_SCORE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "textmining score";
 	// public static String TM_LINKOUT = "TextMining Linkout";
+	public static List<String> ignoreKeys = new ArrayList<String>(Arrays.asList("image", "canonical", "@id", "description"));
 
 	public static int NDOCUMENTS = 50;
 	public static int NEXPERIMENTS = 50;
@@ -92,13 +97,9 @@ public class ModelUtils {
 	// "http://diseases.jensenlab.org/Entity?type1=9606&type2=-26";
 
 	// Edge information
-	public static String STRINGDB_NAMESPACE = "stringdb";
-	public static String NAMESPACE_SEPARATOR = "::";
-	// TODO: enable when we switched to namespaces syntax server-side 
-	// public static String SCORE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "score";
-	// public static String INTERSPECIES = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "interspecies";
-	public static String SCORE = "score";
-	public static String INTERSPECIES = "interspecies";
+	public static String SCORE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "score";
+	public static String SCORE_NO_NAMESPACE = "score";
+	public static String INTERSPECIES = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "interspecies";
 
 	// Network information
 	public static String CONFIDENCE = "confidence score";
@@ -671,6 +672,8 @@ public class ModelUtils {
 		Collections.sort(jsonKeysSorted);
 		for (String jsonKey : jsonKeysSorted) {
 			// String formattedJsonKey = formatForColumnNamespace(jsonKey);
+			if (ignoreKeys.contains(jsonKey))
+				continue;
 			if (listKeys.contains(jsonKey)) {
 				createListColumnIfNeeded(table, jsonKeysClass.get(jsonKey), jsonKey);
 			} else {
@@ -695,14 +698,13 @@ public class ModelUtils {
 		CyTable nodeTable = network.getDefaultNodeTable();
 		if (nodeTable.getColumn(ID) == null)
 			return false;
-		if (nodeTable.getColumn(SPECIES) == null)
-			return false;
-		if (nodeTable.getColumn(CANONICAL) == null)
-			return false;
-		if (nodeTable.getColumn(SPECIES) == null)
-			return false;
+		// TODO: decide for which columns to check for isStringNetwork
+		//if (nodeTable.getColumn(SPECIES) == null)
+		//	return false;
+		//if (nodeTable.getColumn(CANONICAL) == null)
+		//	return false;
 		CyTable edgeTable = network.getDefaultEdgeTable();
-		if (edgeTable.getColumn(SCORE) == null)
+		if (edgeTable.getColumn(SCORE) == null && edgeTable.getColumn(SCORE_NO_NAMESPACE) == null)
 			return false;
 		return true;
 	}
@@ -791,18 +793,20 @@ public class ModelUtils {
 			// Look for our "special" columns
 			if (key.equals("name")) {
 				continue;
+			} else if (key.equals("@id")) {
+				// just skip thought this one
 			} else if (key.equals("description")) {
 				row.set(DESCRIPTION, (String) nodeObj.get("description"));
 			} else if (key.equals("canonical")) {
 				row.set(CANONICAL, (String) nodeObj.get("canonical"));
-			} else if (key.equals("sequence")) {
-				network.getRow(newNode).set(SEQUENCE, (String) nodeObj.get("sequence"));
+			} else if (key.equals(SEQUENCE)) {
+				network.getRow(newNode).set(SEQUENCE, (String) nodeObj.get(SEQUENCE));
 			} else if (key.equals("image")) {
 				row.set(STYLE, "string:" + nodeObj.get("image"));
-			} else if (key.equals("smiles")) {
+			} else if (key.equals(SMILES)) {
 				if (manager.haveChemViz() || (nodeObj.containsKey("image") && nodeObj.get("image").equals("image:")))
-					row.set(CV_STYLE, "chemviz:" + nodeObj.get("smiles"));
-				row.set(key, nodeObj.get("smiles"));
+					row.set(CV_STYLE, "chemviz:" + nodeObj.get(SMILES));
+				row.set(key, nodeObj.get(SMILES));
 			} else {
 				// It's not one of our "standard" attributes, create a column for it (if necessary)
 				// and then add it

@@ -36,8 +36,8 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.ChartType;
 
 public class ViewUtils {
-	public static String STYLE_NAME = "STRING style";
-	public static String STYLE_NAME_ORG = "Organism STRING style";
+	public static String STYLE_NAME = "STRING style v1.5";
+	public static String STYLE_NAME_ORG = "Organism STRING style v1.5";
 	public static String STYLE_ORG = "Organism ";
 
 	// Our chart strings
