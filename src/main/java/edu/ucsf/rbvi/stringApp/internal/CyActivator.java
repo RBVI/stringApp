@@ -420,6 +420,9 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(TITLE, "STRINGify network");
 			props.setProperty(MENU_GRAVITY, "7.0");
 			props.setProperty(IN_MENU_BAR, "true");
+			registerService(bc, stringify, NetworkTaskFactory.class, props);
+
+			props = new Properties();
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "stringify");
 			props.setProperty(COMMAND_DESCRIPTION, 
@@ -430,7 +433,7 @@ public class CyActivator extends AbstractCyActivator {
 			                            "from the original network.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
     	props.setProperty(COMMAND_EXAMPLE_JSON, "{\"network\": 123}");
-			registerService(bc, stringify, NetworkTaskFactory.class, props);
+			registerService(bc, stringify, TaskFactory.class, props);
 		}
 
 		{

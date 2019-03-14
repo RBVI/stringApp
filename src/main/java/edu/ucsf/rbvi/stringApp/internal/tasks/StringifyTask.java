@@ -58,6 +58,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	private SearchOptionsPanel optionsPanel = null;
 	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
 	private final Map<String, CyNode> nodeMap;
+	private TaskMonitor monitor;
 
 	@Tunable(description="Network to set as a STRING network", 
 	         longDescription=StringToModel.CY_NETWORK_LONG_DESCRIPTION,
@@ -99,12 +100,25 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	}
 
 	public void run(TaskMonitor monitor) {
+		this.monitor = monitor;
 		monitor.setTitle("Stringify network");
 
-		if (network != null)
+		if (network != null) {
 			net = network;
-		else if (net == null) {
+			tableColumn = null;
+		} else if (net == null) {
 			net = manager.getService(CyApplicationManager.class).getCurrentNetwork();
+		}
+
+		// Do a little sanity checking
+		if (net == null) {
+			monitor.showMessage(TaskMonitor.Level.ERROR, "No network specified");
+			return;
+		}
+
+		if (ModelUtils.isStringNetwork(net))  {
+			monitor.showMessage(TaskMonitor.Level.ERROR, "Network '"+net+"' is already a STRING network");
+			return;
 		}
 
 		CyColumn col = null;
@@ -134,7 +148,6 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 
 		// Are we command or GUI based?
 		if (tableColumn != null) {
-			// System.out.println("GUI stringify");
 			optionsPanel = new SearchOptionsPanel(manager);
 			optionsPanel.setConfidence(100);
 			optionsPanel.setAdditionalNodes(0);
@@ -177,14 +190,8 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 			throw new RuntimeException("Query '"+terms+"' returned no results");
 		}
 
-		// Get all of the nodes in the network
-		ModelUtils.createNodeMap(net, nodeMap, column);
-
-		ModelUtils.copyEdges(net, loadedNetwork, nodeMap, column);
-
-		ModelUtils.copyNodeAttributes(net, loadedNetwork, nodeMap, column);
-
-		ModelUtils.copyNodePositions(manager, net, loadedNetwork, nodeMap, column);
+		CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork);
+		copyTask.run(monitor);
 	}
 
 	private String trunc(String str) {
@@ -195,7 +202,6 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 
 	@Override
 	public void taskFinished(ObservableTask task) {
-		// System.out.println("Task: "+task);
 		if (!(task instanceof GetAnnotationsTask)) {
 			return;
 		}
@@ -220,6 +226,10 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 
 			// System.out.println("Calling importNetwork");
 			importNetwork(taxon, 100, 0);
+
+			// Creating the copyTask
+			CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork);
+			copyTask.run(monitor);
 		} else {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
@@ -241,15 +251,6 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 			});
 		}
 
-		/*
-		System.out.println("Creating the node map");
-		createNodeMap();
-
-		copyEdges();
-		copyNodeAttributes();
-
-		copyNodePositions(net, loadedNetwork);
-		*/
 	}
 
 	public String getSpecies() {
@@ -324,7 +325,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 			CyNetwork loadedNetwork = stringNetwork.getNetwork();
 
 			// Get all of the nodes in the network
-			ModelUtils.createNodeMap(loadedNetwork, nodeMap, "query term");
+			ModelUtils.createNodeMap(loadedNetwork, nodeMap, ModelUtils.QUERYTERM);
 
 			ModelUtils.copyEdges(network, loadedNetwork, nodeMap, column);
 
