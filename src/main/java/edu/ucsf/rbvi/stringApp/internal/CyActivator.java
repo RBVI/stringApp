@@ -16,6 +16,7 @@ import java.util.Properties;
 
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.search.NetworkSearchTaskFactory;
+import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.events.NetworkAboutToBeDestroyedListener;
 import org.cytoscape.model.events.NetworkAddedListener;
 import org.cytoscape.service.util.AbstractCyActivator;
@@ -60,6 +61,7 @@ import edu.ucsf.rbvi.stringApp.internal.ui.DiseaseNetworkWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.ui.StitchWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.ui.StringWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.ui.TextMiningWebServiceClient;
+import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.view.StringCustomGraphicsFactory;
 import edu.ucsf.rbvi.stringApp.internal.view.StringLayer;
 
@@ -471,6 +473,14 @@ public class CyActivator extends AbstractCyActivator {
 
 				ShowResultsPanelTaskFactory showResults = new ShowResultsPanelTaskFactory(manager);
 				showResults.reregister();
+
+				// Now bring up the side panel if the current network is a STRING network
+				CyNetwork current = manager.getCurrentNetwork();
+				if (ModelUtils.ifString(current)) {
+					System.out.println("Current network is string");
+					// It's the current network.  Bring up the results panel
+					manager.execute(showResults.createTaskIterator(), true);
+				}
 			}
 		}
 		

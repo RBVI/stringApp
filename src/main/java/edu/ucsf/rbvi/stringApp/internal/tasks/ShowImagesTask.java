@@ -75,6 +75,7 @@ public class ShowImagesTask extends AbstractTask implements ObservableTask {
 			manager.setShowImage(true);
 		netView.updateView();
 		factory.reregister();
+		manager.updateControls();
 	}
 
 	@Override

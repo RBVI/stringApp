@@ -39,8 +39,8 @@ public class CollapsablePanel extends JPanel {
 		JLabel label;
 		boolean expanded = false;
 
-		public HeaderPanel(Font iconFont, String text, boolean collapsed) {
-			font = new Font("sans-serif", Font.BOLD, 14);
+		public HeaderPanel(Font iconFont, String text, boolean collapsed, int fontSize) {
+			font = new Font("sans-serif", Font.BOLD, fontSize);
 
 			this.setLayout(new GridBagLayout());
 			this.expanded = !collapsed;
@@ -82,10 +82,14 @@ public class CollapsablePanel extends JPanel {
 	}
 
 	public CollapsablePanel(Font iconFont, String text, JPanel panel, boolean collapsed) {
+		this(iconFont, text, panel, collapsed, 14);
+	}
+
+	public CollapsablePanel(Font iconFont, String text, JPanel panel, boolean collapsed, int fontSize) {
 		super();
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-		headerPanel_ = new HeaderPanel(iconFont, text, collapsed);
+		headerPanel_ = new HeaderPanel(iconFont, text, collapsed, fontSize);
 
 		setBackground(new Color(200, 200, 220));
 		contentPanel_ = panel;

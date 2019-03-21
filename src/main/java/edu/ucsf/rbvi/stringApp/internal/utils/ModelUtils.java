@@ -80,6 +80,9 @@ public class ModelUtils {
 	public static String TM_FOREGROUND = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "textmining foreground";
 	public static String TM_BACKGROUND = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "textmining background";
 	public static String TM_SCORE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "textmining score";
+
+	public static String TISSUE_NAMESPACE = "tissue";
+	public static String COMPARTMENT_NAMESPACE = "compartment";
 	// public static String TM_LINKOUT = "TextMining Linkout";
 	public static List<String> ignoreKeys = new ArrayList<String>(Arrays.asList("image", "canonical", "@id", "description"));
 
@@ -137,6 +140,43 @@ public class ModelUtils {
 		if (netRow.isSet(CONFIDENCE) && netRow.isSet(NET_SPECIES))
 			return true;
 		return false;
+	}
+
+	public static boolean haveQueryTerms(CyNetwork network) {
+		for (CyNode node: network.getNodeList()) {
+			if (network.getRow(node).get(QUERYTERM, String.class) != null)
+				return true;
+		}
+		return false;
+	}
+
+	public static void selectQueryTerms(CyNetwork network) {
+		for (CyNode node: network.getNodeList()) {
+			if (network.getRow(node).get(QUERYTERM, String.class) != null)
+				network.getRow(node).set(CyNetwork.SELECTED, true);
+			else
+				network.getRow(node).set(CyNetwork.SELECTED, false);
+		}
+	}
+
+	public static List<String> getCompartmentList(CyNetwork network) {
+		Collection<CyColumn> columns = network.getDefaultNodeTable().getColumns(COMPARTMENT_NAMESPACE);
+		List<String> compartments = new ArrayList<>();
+		if (columns == null || columns.size() == 0) return compartments;
+		for (CyColumn col: columns) {
+			compartments.add(col.getNameOnly());
+		}
+		return compartments;
+	}
+
+	public static List<String> getTissueList(CyNetwork network) {
+		Collection<CyColumn> columns = network.getDefaultNodeTable().getColumns(TISSUE_NAMESPACE);
+		List<String> tissues = new ArrayList<>();
+		if (columns == null || columns.size() == 0) return tissues;
+		for (CyColumn col: columns) {
+			tissues.add(col.getNameOnly());
+		}
+		return tissues;
 	}
 	
 	public static List<EntityIdentifier> getEntityIdsFromJSON(StringManager manager,

@@ -48,6 +48,8 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.ui.StringCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 import org.jcolorbrewer.ColorBrewer;
@@ -72,6 +74,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private boolean haveURIs = false;
 
 	private Map<CyNetwork, StringNetwork> stringNetworkMap;
+
+	private StringCytoPanel cytoPanel = null;
 
 	public static String CONFIGURI = "https://jensenlab.org/assets/stringapp/";
 	
@@ -355,6 +359,19 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public void setShowGlassBallEffect(boolean set) { 
 		showGlassBallEffect = set; 
 	}
+
+	public void setCytoPanel(StringCytoPanel panel) {
+		this.cytoPanel = panel;
+	}
+
+	public void updateControls() {
+		if (cytoPanel != null)
+			cytoPanel.updateControls();
+	}
+
+	public ShowImagesTaskFactory getImagesTaskFactory() { return imagesTaskFactory; }
+	public ShowEnhancedLabelsTaskFactory getEnhancedLabelsTaskFactory() { return labelsTaskFactory; }
+	public ShowGlassBallEffectTaskFactory getGlassBallTaskFactory() { return glassBallTaskFactory; }
 
 	public Species getDefaultSpecies() { 
 		if (species == null) {

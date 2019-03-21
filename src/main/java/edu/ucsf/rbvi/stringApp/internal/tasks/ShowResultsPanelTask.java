@@ -45,7 +45,7 @@ public class ShowResultsPanelTask extends AbstractTask {
 
 			// Register it
 			manager.registerService(panel, CytoPanelComponent.class, new Properties());
-			manager.registerService(panel, RowsSetListener.class, new Properties());
+			// manager.registerService(panel, RowsSetListener.class, new Properties());
 
 			if (cytoPanel.getState() == CytoPanelState.HIDE)
 				cytoPanel.setState(CytoPanelState.DOCK);
@@ -57,7 +57,7 @@ public class ShowResultsPanelTask extends AbstractTask {
 			if (panel instanceof CytoPanelComponent2) {
 				// Unregister it
 				manager.unregisterService(panel, CytoPanelComponent.class);
-				manager.unregisterService(panel, RowsSetListener.class);
+				// manager.unregisterService(panel, RowsSetListener.class);
 			}
 		}
 
