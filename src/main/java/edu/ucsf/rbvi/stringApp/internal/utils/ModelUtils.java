@@ -136,6 +136,7 @@ public class ModelUtils {
 	public static String EMPTYLINE = "--------";
 	
 	public static boolean ifString(CyNetwork network) {
+		if (network == null) return false;
 		CyRow netRow = network.getRow(network);
 		if (netRow.isSet(CONFIDENCE) && netRow.isSet(NET_SPECIES))
 			return true;
