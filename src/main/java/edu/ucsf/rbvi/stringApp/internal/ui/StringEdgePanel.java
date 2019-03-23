@@ -210,6 +210,11 @@ public class StringEdgePanel extends AbstractStringPanel {
 	}
 
 	public void networkChanged(CyNetwork newNetwork) {
+		this.currentNetwork = newNetwork;
+		if (!filters.containsKey(currentNetwork)) {
+			filters.put(currentNetwork, new HashMap<>());
+			filters.get(currentNetwork).put("score", new HashMap<>());
+		}
 	}
 
 	public void selectedEdges(Collection<CyEdge> edges) {
