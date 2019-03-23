@@ -45,19 +45,17 @@ public class ShowResultsPanelTask extends AbstractTask {
 
 			// Register it
 			manager.registerService(panel, CytoPanelComponent.class, new Properties());
-			// manager.registerService(panel, RowsSetListener.class, new Properties());
 
 			if (cytoPanel.getState() == CytoPanelState.HIDE)
 				cytoPanel.setState(CytoPanelState.DOCK);
 
-			// manager.registerService(panel, SetCurrentNetworkListener.class, new Properties());
 		} else if (!show && cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.String") >= 0) {
 			int compIndex = cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.String");
 			Component panel = cytoPanel.getComponentAt(compIndex);
 			if (panel instanceof CytoPanelComponent2) {
 				// Unregister it
 				manager.unregisterService(panel, CytoPanelComponent.class);
-				// manager.unregisterService(panel, RowsSetListener.class);
+				manager.setCytoPanel(null);
 			}
 		}
 

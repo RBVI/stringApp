@@ -473,6 +473,7 @@ public class CyActivator extends AbstractCyActivator {
 
 				ShowResultsPanelTaskFactory showResults = new ShowResultsPanelTaskFactory(manager);
 				showResults.reregister();
+				manager.setShowResultsPanelTaskFactory(showResults);
 
 				// Now bring up the side panel if the current network is a STRING network
 				CyNetwork current = manager.getCurrentNetwork();

@@ -458,6 +458,7 @@ public class ModelUtils {
 				queryTermMap, ids, netName, useDATABASE);
 		stringNetwork.getManager().addStringNetwork(stringNetwork, network);
 		stringNetwork.getManager().listenToAdd();
+		stringNetwork.getManager().showResultsPanel();
 		return network;
 	}
 

@@ -68,6 +68,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private ShowEnhancedLabelsTaskFactory labelsTaskFactory;
 	private ShowEnrichmentPanelTaskFactory enrichmentTaskFactory;
 	private ShowGlassBallEffectTaskFactory glassBallTaskFactory;
+	private ShowResultsPanelTaskFactory resultsPanelTaskFactory;
 
 	private Boolean haveChemViz = null;
 	private Boolean haveCyBrowser = null;
@@ -541,6 +542,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		if (ModelUtils.isStringNetwork(network)) {
 			StringNetwork stringNet = new StringNetwork(this);
 			addStringNetwork(stringNet, network);
+			showResultsPanel();
 		}
 	}
 
@@ -601,6 +603,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			}
 			imagesTaskFactory.reregister();
 		}
+		if (ModelUtils.ifString(getCurrentNetwork()))
+			showResultsPanel();
+		else
+			hideResultsPanel();
 	}
 
 	public void handleEvent(NetworkAboutToBeDestroyedEvent e) {
@@ -609,6 +615,21 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		CyNetworkManager netManager = this.getService(CyNetworkManager.class);
 		Set<CyNetwork> networks = netManager.getNetworkSet();
 		reloadEnrichmentPanel(networks);
+	}
+
+	public void showResultsPanel() {
+		if (cytoPanel == null) {
+			execute(resultsPanelTaskFactory.createTaskIterator(), true);
+		} else {
+			// Make sure we show it
+			cytoPanel.showCytoPanel();
+		}
+	}
+
+	public void hideResultsPanel() {
+		if (cytoPanel != null) {
+			cytoPanel.hideCytoPanel();
+		}
 	}
 
 	private void reloadEnrichmentPanel(Set<CyNetwork> networks) {
@@ -662,6 +683,14 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	public ShowEnrichmentPanelTaskFactory getShowEnrichmentPanelTaskFactory() {
 		return enrichmentTaskFactory;		
+	}
+	
+	public void setShowResultsPanelTaskFactory(ShowResultsPanelTaskFactory factory) {
+		resultsPanelTaskFactory = factory;		
+	}
+
+	public ShowResultsPanelTaskFactory getShowResultsPanelTaskFactory() {
+		return resultsPanelTaskFactory;		
 	}
 
 	public <T> T getService(Class<? extends T> clazz) {
