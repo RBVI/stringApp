@@ -46,33 +46,7 @@ public class StringPanel extends JPanel
 
 		EasyGBC c = new EasyGBC();
 
-		{
-			// JEditorPane textArea = new JEditorPane("text/html", null);
-			// textArea.setBackground(getBackground());
-			// textArea.setEditable(false);
-			// String message = "<html><div style=\"margin-left: 5px; margin-right: 5px; width=100px;\">"+sNode.getDescription()+"</div></html>";
-			// JLabel label = new JLabel(message);
-			JTextArea textArea = new JTextArea(sNode.getDescription(), 2, 20);
-			textArea.setWrapStyleWord(true);
-			textArea.setLineWrap(true);
-			textArea.setEditable(false);
-			textArea.setBackground(getBackground());
-			// textArea.setText(message);
-			// textArea.setPreferredSize(new Dimension(100,100));
-			add(textArea, c.anchor("west").noExpand());
-		}
-
-		// Now add our image
-		Image img = sNode.getStructureImage();
-		if (img != null) {
-			Image scaledImage = img.getScaledInstance(200,200,Image.SCALE_SMOOTH);
-			JLabel label = new JLabel(new ImageIcon(scaledImage));
-			// label.setPreferredSize(new Dimension(100,100));
-			// label.setMinimumSize(new Dimension(100,100));
-			add(label, c.down().anchor("west").noExpand());
-		}
-
-		// Now, add all of our crosslinks
+		// Add the crosslinks
 		{
 			JEditorPane textArea = new JEditorPane("text/html", null);
 			textArea.addHyperlinkListener(new MyHLinkListener());
@@ -118,6 +92,32 @@ public class StringPanel extends JPanel
 			textArea.setText(message);
 			add(textArea, c.down().anchor("west").noExpand());
 			add(new JPanel(), c.down().anchor("west").expandVert());
+		}
+
+		{
+			// JEditorPane textArea = new JEditorPane("text/html", null);
+			// textArea.setBackground(getBackground());
+			// textArea.setEditable(false);
+			// String message = "<html><div style=\"margin-left: 5px; margin-right: 5px; width=100px;\">"+sNode.getDescription()+"</div></html>";
+			// JLabel label = new JLabel(message);
+			JTextArea textArea = new JTextArea(sNode.getDescription(), 2, 20);
+			textArea.setWrapStyleWord(true);
+			textArea.setLineWrap(true);
+			textArea.setEditable(false);
+			textArea.setBackground(getBackground());
+			// textArea.setText(message);
+			// textArea.setPreferredSize(new Dimension(100,100));
+			add(textArea, c.anchor("west").noExpand());
+		}
+
+		// Now add our image
+		Image img = sNode.getStructureImage();
+		if (img != null) {
+			Image scaledImage = img.getScaledInstance(200,200,Image.SCALE_SMOOTH);
+			JLabel label = new JLabel(new ImageIcon(scaledImage));
+			// label.setPreferredSize(new Dimension(100,100));
+			// label.setMinimumSize(new Dimension(100,100));
+			add(label, c.down().anchor("west").noExpand());
 		}
 
 	}

@@ -477,7 +477,6 @@ public class CyActivator extends AbstractCyActivator {
 				// Now bring up the side panel if the current network is a STRING network
 				CyNetwork current = manager.getCurrentNetwork();
 				if (ModelUtils.ifString(current)) {
-					System.out.println("Current network is string");
 					// It's the current network.  Bring up the results panel
 					manager.execute(showResults.createTaskIterator(), true);
 				}

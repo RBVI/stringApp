@@ -17,6 +17,7 @@ import org.cytoscape.view.model.View;
 import org.cytoscape.view.model.VisualLexicon;
 import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.presentation.RenderingEngineManager;
+import org.cytoscape.view.presentation.customgraphics.CyCustomGraphics;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
 import org.cytoscape.view.presentation.property.values.NodeShape;
@@ -602,6 +603,61 @@ public class ViewUtils {
 				EnrichmentTerm.colEnrichmentTermsIntegers);
 		ModelUtils.replaceColumnIfNeeded(nodeTable, String.class,
 				EnrichmentTerm.colEnrichmentPassthrough);
+	}
+
+	public static void highlight(StringManager manager, CyNetworkView view, CyNode node) {
+		View<CyNode> nodeView = view.getNodeView(node);
+		CyNetwork net = view.getModel();
+
+		List<CyEdge> edges = net.getAdjacentEdgeList(node, CyEdge.Type.ANY);
+		List<CyNode> nodes = net.getNeighborList(node, CyEdge.Type.ANY);
+
+		VisualLexicon lex = manager.getService(RenderingEngineManager.class).getDefaultVisualLexicon();
+		VisualProperty customGraphics1 = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_1");
+		VisualProperty customGraphics2 = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_2");
+		VisualProperty customGraphics3 = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_3");
+
+		CyCustomGraphics cg = new EmptyCustomGraphics();
+
+		// Override our current style through overrides
+		for (View<CyNode> nv: view.getNodeViews()) {
+			if (nv.getModel().equals(node) || nodes.contains(nv.getModel())) {
+				nv.setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY, 255);
+			} else {
+				nv.setLockedValue(customGraphics1, cg);
+				nv.setLockedValue(customGraphics2, cg);
+				nv.setLockedValue(customGraphics3, cg);
+				nv.setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY, 20);
+			}
+		}
+		for (View<CyEdge> ev: view.getEdgeViews()) {
+			if (edges.contains(ev.getModel())) {
+				ev.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY, 255);
+			} else {
+				ev.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY, 20);
+			}
+		}
+	}
+
+	public static void clearHighlight(StringManager manager, CyNetworkView view, CyNode node) {
+		if (node == null) return;
+		View<CyNode> nodeView = view.getNodeView(node);
+
+		VisualLexicon lex = manager.getService(RenderingEngineManager.class).getDefaultVisualLexicon();
+		VisualProperty customGraphics1 = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_1");
+		VisualProperty customGraphics2 = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_2");
+		VisualProperty customGraphics3 = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_3");
+
+		for (View<CyNode> nv: view.getNodeViews()) {
+			nv.clearValueLock(customGraphics1);
+			nv.clearValueLock(customGraphics2);
+			nv.clearValueLock(customGraphics3);
+			nv.clearValueLock(BasicVisualLexicon.NODE_TRANSPARENCY);
+		}
+
+		for (View<CyEdge> ev: view.getEdgeViews()) {
+			ev.clearValueLock(BasicVisualLexicon.EDGE_TRANSPARENCY);
+		}
 	}
 
 	private static List<String> getColorList(Map<EnrichmentTerm, String> selectedTerms) {

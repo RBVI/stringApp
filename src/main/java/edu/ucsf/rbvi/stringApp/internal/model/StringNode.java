@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.codec.binary.Base64;
+import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyTableUtil;
@@ -26,6 +27,10 @@ public class StringNode {
 
 	public String getName() {
 		return ModelUtils.getName(stringNetwork.getNetwork(), stringNode);
+	}
+
+	public String getDisplayName() {
+		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.DISPLAY);
 	}
 
 	public String getSpecies() {
@@ -64,7 +69,7 @@ public class StringNode {
 	}
 
 	public boolean haveCompartments() {
-		return haveData("compartment ", 5);
+		return haveData("compartment",null);
 	}
 
 	public String getCompartments() {
@@ -78,7 +83,7 @@ public class StringNode {
 	}
 
 	public boolean haveTissues() {
-		return haveData("tissue ", 5);
+		return haveData("tissue",null);
 	}
 
 	public String getTissues() {
@@ -109,7 +114,7 @@ public class StringNode {
 	}
 
 	public boolean haveDisease() {
-		return haveData("disease ", 4);
+		return haveData("stringdb","disease score");
 	}
 
 	public String getDisease() {
@@ -168,12 +173,19 @@ public class StringNode {
 		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.DESCRIPTION);
 	}
 
-	public boolean haveData(String columnMatch, int minimumExtra) {
+	public boolean haveData(String namespace, String columnMatch) {
 		CyNetwork net = stringNetwork.getNetwork();
 		List<String> matchingColumns = new ArrayList<>();
-		for (String column: CyTableUtil.getColumnNames(net.getDefaultNodeTable())) {
-			if (column.startsWith(columnMatch) && column.length() >= columnMatch.length()+minimumExtra)
-				matchingColumns.add(column);
+		for (CyColumn column: net.getDefaultNodeTable().getColumns()) {
+			if (namespace != null && column.getNamespace() != null && column.getNamespace().equals(namespace)) {
+				if (columnMatch != null && column.getNameOnly().equals(columnMatch)) {
+					matchingColumns.add(column.getName());
+				} else if (columnMatch == null) {
+					matchingColumns.add(column.getName());
+				}
+			} else if (namespace == null && column.getNameOnly().equals(columnMatch)) {
+				matchingColumns.add(column.getName());
+			}
 		}
 
 		if (matchingColumns == null || matchingColumns.size() == 0)

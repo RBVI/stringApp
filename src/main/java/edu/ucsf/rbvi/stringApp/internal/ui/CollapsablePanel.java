@@ -1,6 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.ui;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -64,6 +65,8 @@ public class CollapsablePanel extends JPanel {
 			this.add(label, c.right().expandHoriz());
 			this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 			// this.setBorder(BorderFactory.createEtchedBorder());
+			this.setBackground(Color.LIGHT_GRAY);
+			setPreferredSize(new Dimension(200, 20));
 		}
 
 		public void setText(String text) {
@@ -87,16 +90,18 @@ public class CollapsablePanel extends JPanel {
 
 	public CollapsablePanel(Font iconFont, String text, JPanel panel, boolean collapsed, int fontSize) {
 		super();
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		// setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		setLayout(new GridBagLayout());
+		EasyGBC c = new EasyGBC();
 
 		headerPanel_ = new HeaderPanel(iconFont, text, collapsed, fontSize);
 
 		setBackground(new Color(200, 200, 220));
 		contentPanel_ = panel;
-		panel.setBorder(BorderFactory.createEtchedBorder());
+		// panel.setBorder(BorderFactory.createEtchedBorder());
 
-		add(headerPanel_);
-		add(contentPanel_);
+		add(headerPanel_, c.anchor("northwest").down().expandHoriz());
+		add(contentPanel_, c.anchor("west").down().expandBoth());
 		contentPanel_.setVisible(!collapsed);
 	}
 

@@ -2,28 +2,39 @@ package edu.ucsf.rbvi.stringApp.internal.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSlider;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -32,13 +43,23 @@ import org.cytoscape.application.events.SetCurrentNetworkEvent;
 import org.cytoscape.application.events.SetCurrentNetworkListener;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
+import org.cytoscape.model.CyRow;
+import org.cytoscape.model.CyTableUtil;
 import org.cytoscape.model.events.SelectedNodesAndEdgesEvent;
 import org.cytoscape.model.events.SelectedNodesAndEdgesListener;
+import org.cytoscape.task.NetworkTaskFactory;
 import org.cytoscape.util.swing.IconManager;
 import org.cytoscape.util.swing.OpenBrowser;
+import org.cytoscape.view.model.CyNetworkView;
+import org.cytoscape.view.model.View;
+import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.model.StringNode;
+import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
 /**
  * Displays information about a protein taken from STRING
@@ -56,18 +77,30 @@ public class StringNodePanel extends JPanel {
 	private JCheckBox enableGlass;
 	private JCheckBox showStructure;
 	private JCheckBox stringLabels;
+	private JPanel tissuesPanel = null;
+	private JPanel compartmentsPanel = null;
+	private JPanel nodesPanel = null;
 	private JButton highlightQuery;
 	private boolean updating = false;
 	private CyNetwork currentNetwork;
+	private Map<CyNetwork, Map<String,Map<String, Long>>> filters;
+	private Color defaultBackground;
+	private CyNode highlightNode = null;
+	private JCheckBox highlightCheck = null;
 
 	public StringNodePanel(final StringManager manager) {
 		this.manager = manager;
 		this.openBrowser = manager.getService(OpenBrowser.class);
 		this.currentNetwork = manager.getCurrentNetwork();
+		this.defaultBackground = UIManager.getColor("Panel.background");
 		IconManager iconManager = manager.getService(IconManager.class);
 		iconFont = iconManager.getIconFont(17.0f);
 		labelFont = new Font("SansSerif", Font.BOLD, 10);
 		textFont = new Font("SansSerif", Font.PLAIN, 10);
+		filters = new HashMap<>();
+		filters.put(currentNetwork, new HashMap<>());
+		filters.get(currentNetwork).put("tissue", new HashMap<>());
+		filters.get(currentNetwork).put("compartment", new HashMap<>());
 		init();
 		revalidate();
 		repaint();
@@ -86,18 +119,30 @@ public class StringNodePanel extends JPanel {
 	}
 
 	private void init() {
-		setLayout(new BorderLayout());
-		setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		add(createControlPanel(), BorderLayout.NORTH);
+		setLayout(new GridBagLayout());
+
+		EasyGBC c = new EasyGBC();
+		add(new JSeparator(SwingConstants.HORIZONTAL), c.anchor("west").expandHoriz());
+
+		JPanel controlPanel = createControlPanel();
+		controlPanel.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
+		add(controlPanel, c.anchor("west").down().noExpand());
+
 		JPanel mainPanel = new JPanel();
-		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
-		mainPanel.add(createTissuesPanel());
-		mainPanel.add(createCompartmentsPanel());
-		mainPanel.add(createNodesPanel());
-		mainPanel.add(Box.createVerticalGlue());
+		{
+			mainPanel.setLayout(new GridBagLayout());
+			mainPanel.setBackground(defaultBackground);
+			EasyGBC d = new EasyGBC();
+			mainPanel.add(createTissuesPanel(), d.anchor("west").expandHoriz());
+
+			mainPanel.add(createCompartmentsPanel(), d.down().anchor("west").expandHoriz());
+			mainPanel.add(createNodesPanel(), d.down().anchor("west").expandHoriz());
+			mainPanel.add(new JLabel(""), d.down().anchor("west").expandBoth());
+		}
 		JScrollPane scrollPane = new JScrollPane(mainPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 		                                         JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		add(scrollPane, BorderLayout.CENTER);
+		scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
+		add(scrollPane, c.down().anchor("west").expandBoth());
 	}
 
 	private JPanel createControlPanel() {
@@ -151,6 +196,14 @@ public class StringNodePanel extends JPanel {
 			JButton getEnrichment = new JButton("Get Enrichment");
 			getEnrichment.setFont(labelFont);
 			controlPanel.add(getEnrichment);
+			getEnrichment.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					GetEnrichmentTaskFactory tf = new GetEnrichmentTaskFactory(manager, true);
+		      ShowEnrichmentPanelTaskFactory showTf = manager.getShowEnrichmentPanelTaskFactory();
+					tf.setShowEnrichmentPanelFactory(showTf);
+					manager.execute(tf.createTaskIterator(currentNetwork), false);
+				}
+			});
 		}
 
 		{
@@ -170,46 +223,90 @@ public class StringNodePanel extends JPanel {
 		}
 
 		updateControls();
+		controlPanel.setMaximumSize(new Dimension(300,100));
+		controlPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		return controlPanel;
 	}
 
 	private JPanel createTissuesPanel() {
-		JPanel panel = new JPanel();
-		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+		tissuesPanel = new JPanel();
+		tissuesPanel.setLayout(new GridBagLayout());
+		EasyGBC c = new EasyGBC();
+
 		List<String> tissueList = ModelUtils.getTissueList(currentNetwork);
 		for (String tissue: tissueList) {
-			panel.add(createFilterSlider(tissue));
+			tissuesPanel.add(createFilterSlider("tissue", tissue, currentNetwork), 
+			                 c.anchor("west").down().expandHoriz());
 		}
 
-		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Tissues Filters", panel, true, 10);
-		collapsablePanel.setMaximumSize(new Dimension(500, 20));
-		collapsablePanel.setBorder(BorderFactory.createEmptyBorder());
+		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Tissues Filters", tissuesPanel, true, 10);
+		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
 		return collapsablePanel;
+	}
+
+	private void updateTissuesPanel() {
+		if (tissuesPanel == null) return;
+		tissuesPanel.removeAll();
+		EasyGBC c = new EasyGBC();
+		List<String> tissueList = ModelUtils.getTissueList(currentNetwork);
+		for (String tissue: tissueList) {
+			tissuesPanel.add(createFilterSlider("tissue", tissue, currentNetwork), 
+			                 c.anchor("west").down().expandHoriz());
+		}
+		return;
 	}
 
 	private JPanel createCompartmentsPanel() {
 		JPanel panel = new JPanel();
-		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+		panel.setLayout(new GridBagLayout());
+		EasyGBC c = new EasyGBC();
 		List<String> compartmentList = ModelUtils.getCompartmentList(currentNetwork);
 		for (String compartment: compartmentList) {
-			panel.add(createFilterSlider(compartment));
+			panel.add(createFilterSlider("compartment", compartment, currentNetwork), 
+			          c.anchor("west").down().expandHoriz());
 		}
 		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Compartments Filter", panel, true, 10);
-		collapsablePanel.setMaximumSize(new Dimension(500, 20));
-		collapsablePanel.setBorder(BorderFactory.createEmptyBorder());
+		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
 		return collapsablePanel;
+	}
+
+	private void updateCompartmentsPanel() {
+		if (compartmentsPanel == null) return;
+		compartmentsPanel.removeAll();
+		EasyGBC c = new EasyGBC();
+		List<String> compartmentsList = ModelUtils.getTissueList(currentNetwork);
+		for (String compartments: compartmentsList) {
+			compartmentsPanel.add(createFilterSlider("compartment", compartments, currentNetwork), 
+			                      c.anchor("west").down().expandHoriz());
+		}
+		return;
 	}
 
 	private JPanel createNodesPanel() {
-		JPanel panel = new JPanel();
-		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Selected Nodes", panel, true, 10);
-		collapsablePanel.setMaximumSize(new Dimension(500, 20));
-		collapsablePanel.setBorder(BorderFactory.createEmptyBorder());
+		nodesPanel = new JPanel();
+		nodesPanel.setLayout(new GridBagLayout());
+		EasyGBC c = new EasyGBC();
+
+		List<CyNode> nodes = CyTableUtil.getNodesInState(currentNetwork, CyNetwork.SELECTED, true);
+		for (CyNode node: nodes) {
+			JPanel newPanel = createNodePanel(node);
+			newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
+
+			nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
+		}
+		nodesPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Selected Nodes", nodesPanel, false, 10);
+		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
 		return collapsablePanel;
 	}
 
-	private JComponent createFilterSlider(String text) {
+	private JComponent createFilterSlider(String type, String text, CyNetwork network) {
+		long value = 0;
+		if (filters.containsKey(network) && 
+		    filters.get(network).containsKey(type) && 
+		    filters.get(network).get(type).containsKey(text)) {
+			value = filters.get(network).get(type).get(text);
+		}
 		Box box = Box.createHorizontalBox();
 		JLabel label = new JLabel(text);
 		label.setFont(labelFont);
@@ -217,17 +314,18 @@ public class StringNodePanel extends JPanel {
 		box.add(Box.createRigidArea(new Dimension(10,0)));
 		box.add(label);
 		box.add(Box.createHorizontalGlue());
-		JSlider slider = new JSlider(0,5,5);
+		JSlider slider = new JSlider(0,5,(int)value);
 		slider.setPreferredSize(new Dimension(100,20));
 		box.add(slider);
 		box.add(Box.createHorizontalGlue());
-		JTextField textField = new JTextField("5",1);
+		JTextField textField = new JTextField(Long.toString(value),1);
 		textField.setFont(textFont);
 		textField.setPreferredSize(new Dimension(10,20));
 		textField.setMaximumSize(new Dimension(10,20));
 		box.add(textField);
 		// Hook it up
-		addChangeListeners("tissues", text, slider, textField);
+		addChangeListeners(type, text, slider, textField);
+		box.setAlignmentX(Component.LEFT_ALIGNMENT);
 		return box;
 	}
 
@@ -237,7 +335,8 @@ public class StringNodePanel extends JPanel {
 				JSlider sl = (JSlider)e.getSource();
 				int value = sl.getValue();
 				textField.setText(Integer.toString(value));
-				doFilter(type, label, value);
+				addFilter(type, label, value);
+				doFilter(type);
 			}
 		});
 
@@ -255,17 +354,200 @@ public class StringNodePanel extends JPanel {
 		});
 	}
 
-	private void doFilter(String type, String label, int value) {
+	private void addFilter(String type, String label, int value) {
+		Map<String,Long> filter = filters.get(currentNetwork).get(type);
+		filter.put(label, (long) value);
+
+		if (value == 0)
+			filter.remove(label);
+	}
+
+	// Hide all nodes who's values are less than "value"
+	private void doFilter(String type) {
+		Map<String, Long> filter = filters.get(currentNetwork).get(type);
+		CyNetworkView view = manager.getCurrentNetworkView();
+		for (CyNode node: currentNetwork.getNodeList()) {
+			CyRow nodeRow = currentNetwork.getRow(node);
+			boolean show = true;
+			for (String lbl: filter.keySet()) {
+				Long v = nodeRow.get(type, lbl, Long.class);
+				long nv = filter.get(lbl);
+				if ((v == null && nv > 0) || v < nv) {
+					show = false;
+					break;
+				}
+			}
+			if (show) {
+				view.getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_VISIBLE, true);
+			} else {
+				view.getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_VISIBLE, false);
+			}
+		}
+	}
+
+	private JPanel createNodePanel(CyNode node) {
+		JPanel panel = new JPanel();
+		StringNode sNode = new StringNode(manager.getStringNetwork(currentNetwork), node);
+		EasyGBC c = new EasyGBC();
+		panel.setLayout(new GridBagLayout());
+		{
+			JCheckBox highlightBox = new JCheckBox("Highlight first neighbors");
+			highlightBox.setFont(labelFont);
+			highlightBox.addItemListener(new ItemListener() {
+					public void itemStateChanged(ItemEvent e) {
+						if (e.getStateChange() == ItemEvent.SELECTED) {
+							if (highlightCheck != null)
+								highlightCheck.setSelected(false);
+							ViewUtils.clearHighlight(manager, manager.getCurrentNetworkView(), highlightNode);
+							ViewUtils.highlight(manager, manager.getCurrentNetworkView(), node);
+							highlightNode = node;
+							highlightCheck = (JCheckBox)e.getItem();
+						} else {
+							ViewUtils.clearHighlight(manager, manager.getCurrentNetworkView(), highlightNode);
+							highlightNode = null;
+							highlightCheck = null;
+						}
+					}
+			});
+			highlightBox.setAlignmentX( Component.LEFT_ALIGNMENT );
+			highlightBox.setBorder(BorderFactory.createEmptyBorder(0,0,10,0));
+			panel.add(highlightBox, c.anchor("northwest").down().expandHoriz());
+		}
+
+		{
+			JLabel lbl = new JLabel("Crosslinks");
+			lbl.setFont(labelFont);
+			lbl.setAlignmentX( Component.LEFT_ALIGNMENT );
+			lbl.setBorder(BorderFactory.createEmptyBorder(0,0,5,0));
+			panel.add(lbl, c.anchor("west").down().noExpand());
+
+			JPanel crosslinkPanel = new JPanel();
+			GridLayout layout = new GridLayout(2,4);
+			crosslinkPanel.setLayout(layout);
+			crosslinkPanel.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
+			if (sNode.haveUniprot()) {
+  			JLabel link = new SwingLink("Uniprot", sNode.getUniprotURL(), openBrowser);
+				link.setFont(textFont);
+				crosslinkPanel.add(link);
+			}
+			if (sNode.haveGeneCard()) {
+  			JLabel link = new SwingLink("Gene card", sNode.getGeneCardURL(), openBrowser);
+				link.setFont(textFont);
+				crosslinkPanel.add(link);
+			}
+			if (sNode.haveCompartments()) {
+  			JLabel link = new SwingLink("Compartments", sNode.getCompartmentsURL(), openBrowser);
+				link.setFont(textFont);
+				crosslinkPanel.add(link);
+			}
+			if (sNode.haveTissues()) {
+  			JLabel link = new SwingLink("Tissues", sNode.getTissuesURL(), openBrowser);
+				link.setFont(textFont);
+				crosslinkPanel.add(link);
+			}
+			if (sNode.haveDisease()) {
+  			JLabel link = new SwingLink("Disease", sNode.getDiseaseURL(), openBrowser);
+				link.setFont(textFont);
+				crosslinkPanel.add(link);
+			}
+			if (sNode.havePharos()) {
+  			JLabel link = new SwingLink("Pharos", sNode.getPharosURL(), openBrowser);
+				link.setFont(textFont);
+				crosslinkPanel.add(link);
+			}
+			if (sNode.havePubChem()) {
+  			JLabel link = new SwingLink("PubChem", sNode.getPubChemURL(), openBrowser);
+				link.setFont(textFont);
+				crosslinkPanel.add(link);
+			}
+
+			/*
+			 * FIXME: Need to link to get to the STRING web site for this
+			{
+  			JLabel link = new SwingLink("STRING", sNode.getStringURL(), openBrowser);
+				link.setFont(textFont);
+				link.add(crosslinkPanel);
+			}
+			*/
+			crosslinkPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+			panel.add(crosslinkPanel, c.anchor("west").down().noExpand());
+		}
+
+		{
+			JLabel lbl = new JLabel("Description");
+			lbl.setFont(labelFont);
+			lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
+			lbl.setBorder(BorderFactory.createEmptyBorder(10,0,5,0));
+			panel.add(lbl, c.anchor("west").down().expandHoriz());
+
+			JLabel description = new JLabel("<html><body style='width:250px;font-size:8px'>"+sNode.getDescription()+"</body></html>");
+			description.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
+			description.setAlignmentX(Component.LEFT_ALIGNMENT);
+			panel.add(description, c.anchor("west").down().expandBoth());
+
+		}
+
+		{
+			JLabel lbl = new JLabel("Structure");
+			lbl.setFont(labelFont);
+			lbl.setBorder(BorderFactory.createEmptyBorder(10,0,5,0));
+			panel.add(lbl, c.anchor("west").down().expandHoriz());
+
+			// Now add our image
+			Image img = sNode.getStructureImage();
+			if (img != null) {
+				Image scaledImage = img.getScaledInstance(200,200,Image.SCALE_SMOOTH);
+				JLabel label = new JLabel(new ImageIcon(scaledImage));
+				// label.setPreferredSize(new Dimension(100,100));
+				// label.setMinimumSize(new Dimension(100,100));
+				label.setAlignmentX(Component.LEFT_ALIGNMENT);
+				panel.add(label, c.anchor("west").down().expandBoth());
+			}
+		}
+
+		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, sNode.getDisplayName(), panel, false, 10);
+		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
+		return collapsablePanel;
 	}
 
 	public void networkChanged(CyNetwork newNetwork) {
 		this.currentNetwork = newNetwork;
+		if (currentNetwork == null) {
+			// Hide results panel?
+			if (tissuesPanel != null)
+				tissuesPanel.removeAll();
+			if (compartmentsPanel != null)
+				compartmentsPanel.removeAll();
+			return;
+		}
+
 		if (!ModelUtils.haveQueryTerms(currentNetwork))
 			highlightQuery.setEnabled(false);
 		else
 			highlightQuery.setEnabled(true);
+
+		if (!filters.containsKey(currentNetwork)) {
+			filters.put(currentNetwork, new HashMap<>());
+			filters.get(currentNetwork).put("tissue", new HashMap<>());
+			filters.get(currentNetwork).put("compartment", new HashMap<>());
+		}
+
+		updateTissuesPanel();
+		updateCompartmentsPanel();
 	}
 
 	public void selectedNodes(Collection<CyNode> nodes) {
+		// Clear the nodes panel
+		nodesPanel.removeAll();
+		EasyGBC c = new EasyGBC();
+
+		for (CyNode node: nodes) {
+			JPanel newPanel = createNodePanel(node);
+			newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
+
+			nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
+		}
+		revalidate();
+		repaint();
 	}
 }
