@@ -6,7 +6,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -20,8 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -35,8 +32,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 
 import org.cytoscape.application.events.SetCurrentNetworkEvent;
@@ -66,13 +61,7 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
  * @author Scooter Morris
  *
  */
-public class StringNodePanel extends JPanel {
-
-	final StringManager manager;
-	final OpenBrowser openBrowser;
-	final Font iconFont;
-	final Font labelFont;
-	final Font textFont;
+public class StringNodePanel extends AbstractStringPanel {
 
 	private JCheckBox enableGlass;
 	private JCheckBox showStructure;
@@ -82,23 +71,12 @@ public class StringNodePanel extends JPanel {
 	private JPanel nodesPanel = null;
 	private JButton highlightQuery;
 	private boolean updating = false;
-	private CyNetwork currentNetwork;
-	private Map<CyNetwork, Map<String,Map<String, Long>>> filters;
 	private Color defaultBackground;
 	private CyNode highlightNode = null;
 	private JCheckBox highlightCheck = null;
 
 	public StringNodePanel(final StringManager manager) {
-		this.manager = manager;
-		this.openBrowser = manager.getService(OpenBrowser.class);
-		this.currentNetwork = manager.getCurrentNetwork();
-		this.defaultBackground = UIManager.getColor("Panel.background");
-		IconManager iconManager = manager.getService(IconManager.class);
-		iconFont = iconManager.getIconFont(17.0f);
-		labelFont = new Font("SansSerif", Font.BOLD, 10);
-		textFont = new Font("SansSerif", Font.PLAIN, 10);
-		filters = new HashMap<>();
-		filters.put(currentNetwork, new HashMap<>());
+		super(manager);
 		filters.get(currentNetwork).put("tissue", new HashMap<>());
 		filters.get(currentNetwork).put("compartment", new HashMap<>());
 		init();
@@ -235,7 +213,7 @@ public class StringNodePanel extends JPanel {
 
 		List<String> tissueList = ModelUtils.getTissueList(currentNetwork);
 		for (String tissue: tissueList) {
-			tissuesPanel.add(createFilterSlider("tissue", tissue, currentNetwork), 
+			tissuesPanel.add(createFilterSlider("tissue", tissue, currentNetwork, true, Integer.class), 
 			                 c.anchor("west").down().expandHoriz());
 		}
 
@@ -250,7 +228,7 @@ public class StringNodePanel extends JPanel {
 		EasyGBC c = new EasyGBC();
 		List<String> tissueList = ModelUtils.getTissueList(currentNetwork);
 		for (String tissue: tissueList) {
-			tissuesPanel.add(createFilterSlider("tissue", tissue, currentNetwork), 
+			tissuesPanel.add(createFilterSlider("tissue", tissue, currentNetwork, true, Integer.class), 
 			                 c.anchor("west").down().expandHoriz());
 		}
 		return;
@@ -262,7 +240,7 @@ public class StringNodePanel extends JPanel {
 		EasyGBC c = new EasyGBC();
 		List<String> compartmentList = ModelUtils.getCompartmentList(currentNetwork);
 		for (String compartment: compartmentList) {
-			panel.add(createFilterSlider("compartment", compartment, currentNetwork), 
+			panel.add(createFilterSlider("compartment", compartment, currentNetwork, true, Integer.class), 
 			          c.anchor("west").down().expandHoriz());
 		}
 		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Compartments Filter", panel, true, 10);
@@ -276,7 +254,7 @@ public class StringNodePanel extends JPanel {
 		EasyGBC c = new EasyGBC();
 		List<String> compartmentsList = ModelUtils.getTissueList(currentNetwork);
 		for (String compartments: compartmentsList) {
-			compartmentsPanel.add(createFilterSlider("compartment", compartments, currentNetwork), 
+			compartmentsPanel.add(createFilterSlider("compartment", compartments, currentNetwork, true, Integer.class), 
 			                      c.anchor("west").down().expandHoriz());
 		}
 		return;
@@ -300,70 +278,8 @@ public class StringNodePanel extends JPanel {
 		return collapsablePanel;
 	}
 
-	private JComponent createFilterSlider(String type, String text, CyNetwork network) {
-		long value = 0;
-		if (filters.containsKey(network) && 
-		    filters.get(network).containsKey(type) && 
-		    filters.get(network).get(type).containsKey(text)) {
-			value = filters.get(network).get(type).get(text);
-		}
-		Box box = Box.createHorizontalBox();
-		JLabel label = new JLabel(text);
-		label.setFont(labelFont);
-		label.setPreferredSize(new Dimension(100,20));
-		box.add(Box.createRigidArea(new Dimension(10,0)));
-		box.add(label);
-		box.add(Box.createHorizontalGlue());
-		JSlider slider = new JSlider(0,5,(int)value);
-		slider.setPreferredSize(new Dimension(100,20));
-		box.add(slider);
-		box.add(Box.createHorizontalGlue());
-		JTextField textField = new JTextField(Long.toString(value),1);
-		textField.setFont(textFont);
-		textField.setPreferredSize(new Dimension(10,20));
-		textField.setMaximumSize(new Dimension(10,20));
-		box.add(textField);
-		// Hook it up
-		addChangeListeners(type, text, slider, textField);
-		box.setAlignmentX(Component.LEFT_ALIGNMENT);
-		return box;
-	}
-
-	private void addChangeListeners(String type, String label, JSlider slider, JTextField textField) {
-		slider.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSlider sl = (JSlider)e.getSource();
-				int value = sl.getValue();
-				textField.setText(Integer.toString(value));
-				addFilter(type, label, value);
-				doFilter(type);
-			}
-		});
-
-		textField.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JTextField field = (JTextField)e.getSource();
-				try {
-					int value = Integer.parseInt(field.getText());
-					slider.setValue(value);
-				} catch (Exception ex) {
-					// not an int?
-					field.setText(Integer.toString(slider.getValue()));
-				}
-			}
-		});
-	}
-
-	private void addFilter(String type, String label, int value) {
-		Map<String,Long> filter = filters.get(currentNetwork).get(type);
-		filter.put(label, (long) value);
-
-		if (value == 0)
-			filter.remove(label);
-	}
-
 	// Hide all nodes who's values are less than "value"
-	private void doFilter(String type) {
+	void doFilter(String type) {
 		Map<String, Long> filter = filters.get(currentNetwork).get(type);
 		CyNetworkView view = manager.getCurrentNetworkView();
 		for (CyNode node: currentNetwork.getNodeList()) {

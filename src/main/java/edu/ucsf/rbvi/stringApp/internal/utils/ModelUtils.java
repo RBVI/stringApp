@@ -170,6 +170,18 @@ public class ModelUtils {
 		return compartments;
 	}
 
+	public static List<String> getSubScoreList(CyNetwork network) {
+		Collection<CyColumn> columns = network.getDefaultEdgeTable().getColumns(STRINGDB_NAMESPACE);
+		List<String> scores = new ArrayList<>();
+		if (columns == null || columns.size() == 0) return scores;
+		for (CyColumn col: columns) {
+			if (col.getNameOnly().equals("score"))
+				continue;
+			scores.add(col.getNameOnly());
+		}
+		return scores;
+	}
+
 	public static List<String> getTissueList(CyNetwork network) {
 		Collection<CyColumn> columns = network.getDefaultNodeTable().getColumns(TISSUE_NAMESPACE);
 		List<String> tissues = new ArrayList<>();
