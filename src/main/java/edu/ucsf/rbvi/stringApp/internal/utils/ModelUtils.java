@@ -144,6 +144,7 @@ public class ModelUtils {
 	}
 
 	public static boolean haveQueryTerms(CyNetwork network) {
+		if (network == null) return false;
 		for (CyNode node: network.getNodeList()) {
 			if (network.getRow(node).get(QUERYTERM, String.class) != null)
 				return true;

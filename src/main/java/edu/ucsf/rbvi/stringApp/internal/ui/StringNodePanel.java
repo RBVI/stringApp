@@ -417,7 +417,7 @@ public class StringNodePanel extends AbstractStringPanel {
 				// label.setPreferredSize(new Dimension(100,100));
 				// label.setMinimumSize(new Dimension(100,100));
 				label.setAlignmentX(Component.LEFT_ALIGNMENT);
-				panel.add(label, c.anchor("west").down().expandBoth());
+				panel.add(label, c.anchor("west").down().noExpand());
 			}
 		}
 
