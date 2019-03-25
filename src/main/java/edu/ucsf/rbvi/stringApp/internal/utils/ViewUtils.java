@@ -660,6 +660,19 @@ public class ViewUtils {
 		}
 	}
 
+	public static void hideSingletons(CyNetworkView view, boolean show) {
+		CyNetwork net = view.getModel();
+		for (View<CyNode> nv: view.getNodeViews()) {
+			CyNode node = nv.getModel();
+			List<CyEdge> edges = net.getAdjacentEdgeList(node, CyEdge.Type.ANY);
+			if (edges != null && edges.size() > 0) continue;
+			if (!show)
+				nv.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, false);
+			else
+				nv.clearValueLock(BasicVisualLexicon.NODE_VISIBLE);
+		}
+	}
+
 	private static List<String> getColorList(Map<EnrichmentTerm, String> selectedTerms) {
 		List<String> colorList = new ArrayList<String>();
 		for (EnrichmentTerm term : selectedTerms.keySet()) {

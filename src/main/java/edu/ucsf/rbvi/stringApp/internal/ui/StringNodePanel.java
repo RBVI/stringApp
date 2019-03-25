@@ -66,6 +66,7 @@ public class StringNodePanel extends AbstractStringPanel {
 	private JCheckBox enableGlass;
 	private JCheckBox showStructure;
 	private JCheckBox stringLabels;
+	private JCheckBox showSingletons;
 	private JPanel tissuesPanel = null;
 	private JPanel compartmentsPanel = null;
 	private JPanel nodesPanel = null;
@@ -167,8 +168,19 @@ public class StringNodePanel extends AbstractStringPanel {
 			});
 			controlPanel.add(stringLabels);
 		}
-
-		controlPanel.add(new JLabel(""));
+		
+		{
+			showSingletons = new JCheckBox("Show singletons");
+			showSingletons.setFont(labelFont);
+			showSingletons.setSelected(true);
+			showSingletons.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					if (updating) return;
+					ViewUtils.hideSingletons(manager.getCurrentNetworkView(), showSingletons.isSelected());
+				}
+			});
+			controlPanel.add(showSingletons);
+		}
 
 		{
 			JButton getEnrichment = new JButton("Get Enrichment");
