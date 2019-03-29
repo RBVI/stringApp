@@ -320,6 +320,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		return null;
 	}
 
+	public List<StringNetwork> getStringNetworks() {
+		return new ArrayList<>(stringNetworkMap.values());
+	}
+
 	public String getNetworkName(CyNetwork net) {
 		return net.getRow(net).get(CyNetwork.NAME, String.class);
 	}

@@ -45,6 +45,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
@@ -53,6 +54,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	final CyNetworkView netView;
 	Map<String, List<EnrichmentTerm>> enrichmentResult;
 	final Map<String, Long> stringNodesMap;
+	final Map<String, CyNetwork> stringNetworkMap;
 	final ShowEnrichmentPanelTaskFactory showFactory;
 	private Map<String, String> ppiSummary;
 	List<CyNode> analyzedNodes;
@@ -72,6 +74,12 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	//				 exampleStringValue = "0.05",
 	//				 gravity = 1.0)
 	// public double cutoff = 0.05;
+
+	@Tunable(description="Background"
+		// longDescription = StringToModel.CY_NETWORK_VIEW_LONG_DESCRIPTION,
+		// exampleStringValue = StringToModel.CY_NETWORK_VIEW_EXAMPLE_STRING,
+	        )
+	public ListSingleSelection<String> background = null;
 
 	@Tunable(description = "Retrieve for selected nodes only",
 	         longDescription = "Setting this to ```true``` and selecting a subset of the nodes will retrieve enrichment "+
@@ -106,6 +114,22 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		 	selectedNodesOnly = false;
 		}
 		allNetSpecies = new ListSingleSelection<String>(ModelUtils.getEnrichmentNetSpecies(network));
+
+		stringNetworkMap = new HashMap<>();
+
+		List<String> netList = new ArrayList<>();
+		netList.add("genome");
+		for (StringNetwork sn: manager.getStringNetworks()) {
+			CyNetwork net = sn.getNetwork();
+			String name = ModelUtils.getName(net, net);
+			netList.add(name);
+			stringNetworkMap.put(name, net);
+		}
+
+		background = new ListSingleSelection(netList);
+		// genome is always the default
+		background.setSelectedValue("genome");
+
 	}
 
 	public void run(TaskMonitor monitor) throws Exception {
@@ -169,9 +193,9 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		ModelUtils.deleteEnrichmentTables(network, manager);
 
 		// retrieve enrichment (new API)
-		getEnrichmentJSON(selected, species);
+		getEnrichmentJSON(selected, species, background.getSelectedValue());
 		if (!isLargeNetwork) 
-			ppiSummary = getEnrichmentPPIJSON(selected, species);
+			ppiSummary = getEnrichmentPPIJSON(selected, species, background.getSelectedValue());
 		else
 			ppiSummary = null;
 
@@ -232,12 +256,16 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		}
 	}
 
-	private void getEnrichmentJSON(String selected, String species) {
+	private void getEnrichmentJSON(String selected, String species, String backgroundNetwork) {
 		Map<String, String> args = new HashMap<String, String>();
 		String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/enrichment";
 		args.put("identifiers", selected);
 		args.put("species", species);
 		args.put("caller_identity", StringManager.CallerIdentity);
+		if (!backgroundNetwork.equals("genome")) {
+			String bg = getExisting(stringNetworkMap.get(backgroundNetwork));
+			args.put("background_string_identifiers", bg);
+		}
 		JSONObject results = HttpUtils.postJSON(url, args, manager);
 		if (results == null) {
 			monitor.showMessage(Level.ERROR,
@@ -262,7 +290,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		}
 	}
 
-	private Map<String, String> getEnrichmentPPIJSON(String selected, String species) {
+	private Map<String, String> getEnrichmentPPIJSON(String selected, String species, String backgroundNetwork) {
 		Map<String, String> args = new HashMap<String, String>();
 		String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/ppi_enrichment";
 		args.put("identifiers", selected);
@@ -275,6 +303,11 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		Double confidence = ModelUtils.getConfidence(network)*1000;
 		args.put("required_score", confidence.toString());
 		args.put("caller_identity", StringManager.CallerIdentity);
+		if (!backgroundNetwork.equals("genome")) {
+			String bg = getExisting(stringNetworkMap.get(backgroundNetwork));
+			args.put("background_string_identifiers", bg);
+		}
+
 		JSONObject results = HttpUtils.postJSON(url, args, manager);
 		if (results == null) {
 			monitor.showMessage(Level.ERROR,
