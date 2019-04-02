@@ -36,6 +36,7 @@ import javax.swing.UIManager;
 
 import org.cytoscape.application.events.SetCurrentNetworkEvent;
 import org.cytoscape.application.events.SetCurrentNetworkListener;
+import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyRow;
@@ -294,6 +295,7 @@ public class StringNodePanel extends AbstractStringPanel {
 	void doFilter(String type) {
 		Map<String, Long> filter = filters.get(currentNetwork).get(type);
 		CyNetworkView view = manager.getCurrentNetworkView();
+		CyNetwork net = view.getModel();
 		for (CyNode node: currentNetwork.getNodeList()) {
 			CyRow nodeRow = currentNetwork.getRow(node);
 			boolean show = true;
@@ -305,10 +307,24 @@ public class StringNodePanel extends AbstractStringPanel {
 					break;
 				}
 			}
+			View<CyNode> nv = view.getNodeView(node);
+			if (nv == null) continue;
 			if (show) {
-				view.getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_VISIBLE, true);
+				nv.clearValueLock(BasicVisualLexicon.NODE_VISIBLE);
+				for (CyEdge e: net.getAdjacentEdgeList(node, CyEdge.Type.ANY)) {
+					final View<CyEdge> ev = view.getEdgeView(e);
+					if (ev == null) continue;
+					ev.clearValueLock(BasicVisualLexicon.EDGE_VISIBLE);
+				}
 			} else {
-				view.getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_VISIBLE, false);
+				nv.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, false);
+				net.getRow(node).set(CyNetwork.SELECTED, false);
+				for (CyEdge e: net.getAdjacentEdgeList(node, CyEdge.Type.ANY)) {
+					final View<CyEdge> ev = view.getEdgeView(e);
+					if (ev == null) continue;
+					net.getRow(e).set(CyNetwork.SELECTED, false);
+					ev.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, false);
+				}
 			}
 		}
 	}
