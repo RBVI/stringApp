@@ -120,7 +120,6 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, 
 	                     String useDATABASE, String aNetSpecies, boolean queryAddNodes) {
 		this(manager, stringNetwork, useDATABASE, queryAddNodes, null);
-		// System.out.println("Simple terms panel 2");
 		if (aNetSpecies != null) {
 			this.netSpecies = aNetSpecies;
 			// optionsPanel.setSpeciesText(aNetSpecies);
@@ -154,7 +153,6 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		this.initialStringNetwork = stringNetwork;
 		this.useDATABASE = useDATABASE;
 		if (panel == null) {
-			// System.out.println("panel = null");
 			panel = new SearchOptionsPanel(manager, false, false, false);
 			panel.setConfidence((int)(manager.getDefaultConfidence()*100));
 			panel.setAdditionalNodes(manager.getDefaultAdditionalProteins());
@@ -208,6 +206,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		// if (!useDATABASE.equals(Databases.STITCH.getAPIName()))
 		// 	optionsPanel.setUseSmartDelimiters(true);
 		optionsPanel.setMinimumSize(new Dimension(400, 150));
+		optionsPanel.showSpeciesBox(false); // We don't want to show two of these
 		add(optionsPanel, c.down().expandHoriz().insets(5,5,0,5));
 
 		// Add Query/Cancel buttons

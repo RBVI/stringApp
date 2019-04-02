@@ -65,6 +65,7 @@ public class SearchOptionsPanel extends JPanel {
 	StringNetwork initialStringNetwork = null;
 	final StringManager manager;
 
+	JPanel speciesBox;
 	JComboBox<Species> speciesCombo;
 	JSlider confidenceSlider;
 	JTextField confidenceValue;
@@ -114,7 +115,7 @@ public class SearchOptionsPanel extends JPanel {
 		EasyGBC c = new EasyGBC();
 		if (showSpecies) {
 			List<Species> speciesList = getSpeciesList();
-			JPanel speciesBox = createSpeciesComboBox(speciesList);
+			speciesBox = createSpeciesComboBox(speciesList);
 			add(speciesBox, c.expandHoriz().insets(5,5,0,5));
 		}
 
@@ -133,6 +134,11 @@ public class SearchOptionsPanel extends JPanel {
 		// Add Query/Cancel buttons
 		// JPanel buttonPanel =  createControlButtons(true);
 		// add(buttonPanel, c.down().expandHoriz().insets(0,5,5,5));
+	}
+
+	public void showSpeciesBox(boolean visible) {
+		if (speciesBox != null)
+			speciesBox.setVisible(visible);
 	}
 
 
