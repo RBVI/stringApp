@@ -150,6 +150,8 @@ public class StringEdgePanel extends AbstractStringPanel {
 		JCheckBox cb = new JCheckBox("");
 		cb.setMinimumSize(new Dimension(1,15));
 		cb.setMaximumSize(new Dimension(20,15));
+		cb.setBackground(colorMap.get(subScore));
+		cb.setOpaque(true);
 		cb.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				Boolean selected = Boolean.FALSE;
