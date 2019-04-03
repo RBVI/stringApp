@@ -56,7 +56,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 		colorMap.put("experiments",Color.MAGENTA);
 		colorMap.put("neighborhood",Color.GREEN);
 		colorMap.put("fusion",Color.RED);
-		colorMap.put("cooccurrrence",Color.BLUE);
+		colorMap.put("cooccurrence",Color.BLUE);
 		colorMap.put("textmining",new Color(199,234,70)); // Lime green
 		colorMap.put("coexpression", Color.BLACK);
 		colorMap.put("interspecies", new Color(238,130,238)); // Violet
