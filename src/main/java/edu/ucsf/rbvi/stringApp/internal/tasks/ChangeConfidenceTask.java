@@ -56,6 +56,7 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 		if (network != null)
 			this.network = network;
 		this.netView = netView;
+		
 		if (this.network != null) {
 			Double current = ModelUtils.getConfidence(network);
 			if (current == null)
@@ -70,7 +71,13 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 		
 		if (network == null) {
 			network = manager.getCurrentNetwork();
+
+			Double current = ModelUtils.getConfidence(network);
+			if (current == null)
+				throw new RuntimeException("Network doesn't appear to be a STRING network");
+			currentConfidence = current.floatValue();
 		}
+		System.out.println("currentConfidence = " + currentConfidence);
 		
 		// First see if we've got a view
 		if (netView == null) {
