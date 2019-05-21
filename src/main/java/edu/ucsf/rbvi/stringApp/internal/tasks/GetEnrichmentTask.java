@@ -110,7 +110,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		monitor = null;
 		// Get list of (selected) nodes
 		selected = getSelected(network).trim();
-		if (selected.length() == 0) {
+		if (selected.length() <= 1) {
 		 	selectedNodesOnly = false;
 		}
 		allNetSpecies = new ListSingleSelection<String>(ModelUtils.getEnrichmentNetSpecies(network));

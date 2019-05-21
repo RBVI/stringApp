@@ -226,7 +226,7 @@ public class StringNodePanel extends AbstractStringPanel {
 
 		List<String> tissueList = ModelUtils.getTissueList(currentNetwork);
 		for (String tissue: tissueList) {
-			tissuesPanel.add(createFilterSlider("tissue", tissue, currentNetwork, true, Integer.class), 
+			tissuesPanel.add(createFilterSlider("tissue", tissue, currentNetwork, true, 500.0), 
 			                 c.anchor("west").down().expandHoriz());
 		}
 
@@ -241,7 +241,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		EasyGBC c = new EasyGBC();
 		List<String> tissueList = ModelUtils.getTissueList(currentNetwork);
 		for (String tissue: tissueList) {
-			tissuesPanel.add(createFilterSlider("tissue", tissue, currentNetwork, true, Integer.class), 
+			tissuesPanel.add(createFilterSlider("tissue", tissue, currentNetwork, true, 500.0), 
 			                 c.anchor("west").down().expandHoriz());
 		}
 		return;
@@ -253,7 +253,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		EasyGBC c = new EasyGBC();
 		List<String> compartmentList = ModelUtils.getCompartmentList(currentNetwork);
 		for (String compartment: compartmentList) {
-			panel.add(createFilterSlider("compartment", compartment, currentNetwork, true, Integer.class), 
+			panel.add(createFilterSlider("compartment", compartment, currentNetwork, true, 500.0), 
 			          c.anchor("west").down().expandHoriz());
 		}
 		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Compartments Filter", panel, true, 10);
@@ -267,7 +267,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		EasyGBC c = new EasyGBC();
 		List<String> compartmentsList = ModelUtils.getTissueList(currentNetwork);
 		for (String compartments: compartmentsList) {
-			compartmentsPanel.add(createFilterSlider("compartment", compartments, currentNetwork, true, Integer.class), 
+			compartmentsPanel.add(createFilterSlider("compartment", compartments, currentNetwork, true, 500.0), 
 			                      c.anchor("west").down().expandHoriz());
 		}
 		return;
@@ -293,15 +293,15 @@ public class StringNodePanel extends AbstractStringPanel {
 
 	// Hide all nodes who's values are less than "value"
 	void doFilter(String type) {
-		Map<String, Long> filter = filters.get(currentNetwork).get(type);
+		Map<String, Double> filter = filters.get(currentNetwork).get(type);
 		CyNetworkView view = manager.getCurrentNetworkView();
 		CyNetwork net = view.getModel();
 		for (CyNode node: currentNetwork.getNodeList()) {
 			CyRow nodeRow = currentNetwork.getRow(node);
 			boolean show = true;
 			for (String lbl: filter.keySet()) {
-				Long v = nodeRow.get(type, lbl, Long.class);
-				long nv = filter.get(lbl);
+				Double v = nodeRow.get(type, lbl, Double.class);
+				double nv = filter.get(lbl);
 				if ((v == null && nv > 0) || v < nv) {
 					show = false;
 					break;

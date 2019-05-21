@@ -70,7 +70,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 		setLayout(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
 		add(new JSeparator(SwingConstants.HORIZONTAL), c.anchor("west").expandHoriz());
-		JComponent scoreSlider = createFilterSlider("score", "score", currentNetwork, true, Double.class);
+		JComponent scoreSlider = createFilterSlider("score", "score", currentNetwork, true, 100.0);
 		add(scoreSlider, c.down().anchor("west").expandHoriz());
 
 		add(createSubScorePanel(), c.down().anchor("west").expandHoriz());
@@ -131,7 +131,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 			filterPanel.add(lbl, d.anchor("north").noExpand());
 			for (String subScore: subScoreList) {
-				JComponent scoreSlider = createFilterSlider("score", subScore, currentNetwork, false, Double.class);
+				JComponent scoreSlider = createFilterSlider("score", subScore, currentNetwork, false, 100.0);
 				scoreSlider.setMinimumSize(new Dimension(100,30));
 				scoreSlider.setMaximumSize(new Dimension(100,30));
 				filterPanel.add(scoreSlider, d.down().expandBoth());
@@ -140,7 +140,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 			subScorePanel.add(filterPanel, c.right().expandBoth());
 		}
 
-		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Subscores", subScorePanel, true, 10);
+		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Subscores", subScorePanel, false, 10);
 		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
 		return collapsablePanel;
 
@@ -167,14 +167,14 @@ public class StringEdgePanel extends AbstractStringPanel {
 	}
 
 	void doFilter(String type) {
-		Map<String, Long> filter = filters.get(currentNetwork).get(type);
+		Map<String, Double> filter = filters.get(currentNetwork).get(type);
 		CyNetworkView view = manager.getCurrentNetworkView();
 		for (CyEdge edge: currentNetwork.getEdgeList()) {
 			CyRow edgeRow = currentNetwork.getRow(edge);
 			boolean show = true;
 			for (String lbl: filter.keySet()) {
 				Double v = edgeRow.get(ModelUtils.STRINGDB_NAMESPACE, lbl, Double.class);
-				double nv = ((double)filter.get(lbl))/100.0;
+				double nv = filter.get(lbl);
 				if ((v == null && nv > 0) || v < nv) {
 					show = false;
 					break;
