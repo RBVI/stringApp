@@ -102,10 +102,10 @@ public class LoadInteractions extends AbstractTask {
 		}
 
 		// Rename network collection to have the same name as network
-		EditNetworkTitleTaskFactory editNetworkTitle = (EditNetworkTitleTaskFactory) manager
-				.getService(EditNetworkTitleTaskFactory.class);
-		insertTasksAfterCurrentTask(editNetworkTitle.createTaskIterator(network,
-				network.getRow(network).get(CyNetwork.NAME, String.class)));
+		// EditNetworkTitleTaskFactory editNetworkTitle = (EditNetworkTitleTaskFactory) manager
+		//		.getService(EditNetworkTitleTaskFactory.class);
+		//insertTasksAfterCurrentTask(editNetworkTitle.createTaskIterator(network,
+		//		network.getRow(network).get(CyNetwork.NAME, String.class)));
 		
 		// Set our confidence score
 		ModelUtils.setConfidence(network, ((double)confidence)/100.0);
