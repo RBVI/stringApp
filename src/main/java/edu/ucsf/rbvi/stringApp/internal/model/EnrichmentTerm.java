@@ -88,10 +88,10 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	public static final String colPvalue = "p-value";
 	public static final String colBonferroni = "bonferroni value";
 	public static final String colFDR = "FDR value";
-	public static final String colGenesBG = "# genes in set";
-	public static final String colGenes = "enriched genes";
+	public static final String colGenesBG = "# background genes";
+	public static final String colGenes = "genes";
 	public static final String colGenesSUID = "nodes.SUID";
-	public static final String colGenesCount = "# enriched genes";
+	public static final String colGenesCount = "# genes";
 	public static final String colNetworkSUID = "network.SUID";
 	// public static final String colShowChart = "showInPieChart";
 	public static final String colChartColor = "chart color";

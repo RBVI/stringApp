@@ -11,6 +11,7 @@ import org.json.simple.JSONObject;
 
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
+import org.cytoscape.task.edit.EditNetworkTitleTaskFactory;
 import org.cytoscape.view.layout.CyLayoutAlgorithm;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkView;
@@ -100,6 +101,12 @@ public class LoadInteractions extends AbstractTask {
 			return;
 		}
 
+		// Rename network collection to have the same name as network
+		EditNetworkTitleTaskFactory editNetworkTitle = (EditNetworkTitleTaskFactory) manager
+				.getService(EditNetworkTitleTaskFactory.class);
+		insertTasksAfterCurrentTask(editNetworkTitle.createTaskIterator(network,
+				network.getRow(network).get(CyNetwork.NAME, String.class)));
+		
 		// Set our confidence score
 		ModelUtils.setConfidence(network, ((double)confidence)/100.0);
 		ModelUtils.setDatabase(network, useDATABASE);

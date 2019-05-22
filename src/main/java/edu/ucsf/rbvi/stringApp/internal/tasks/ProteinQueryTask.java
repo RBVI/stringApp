@@ -38,6 +38,11 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 					 exampleStringValue="EGFR,BRCA1,BRCA2,TP53")
 	public String query = null;
 
+	@Tunable(description = "New network name", 
+	         longDescription="Name for the network to be created",
+					 exampleStringValue="String Network")
+	public String newNetName = "";
+
 	@Tunable(description = "Species", 
 	         longDescription="Species name.  This should be the actual "+
 					                "taxonomic name (e.g. homo sapiens, not human)",
@@ -141,7 +146,7 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
 		LoadInteractions load = new LoadInteractions(stringNetwork, sp.toString(), sp.getTaxId(),
-				confidence, limit.getValue(), stringIds, queryTermMap, "", Databases.STRING.getAPIName());
+				confidence, limit.getValue(), stringIds, queryTermMap, newNetName, Databases.STRING.getAPIName());
 		manager.execute(new TaskIterator(load), true);
 		loadedNetwork = stringNetwork.getNetwork();
 		if (loadedNetwork == null) {

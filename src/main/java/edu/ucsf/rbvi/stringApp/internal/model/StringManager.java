@@ -2,6 +2,7 @@ package edu.ucsf.rbvi.stringApp.internal.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -14,22 +15,17 @@ import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.CyUserLog;
-import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.command.AvailableCommands;
 import org.cytoscape.command.CommandExecutorTaskFactory;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
-import org.cytoscape.model.CyNode;
-import org.cytoscape.model.CyTable;
-import org.cytoscape.model.CyTableManager;
 import org.cytoscape.model.events.NetworkAboutToBeDestroyedEvent;
 import org.cytoscape.model.events.NetworkAboutToBeDestroyedListener;
 import org.cytoscape.model.events.NetworkAddedEvent;
 import org.cytoscape.model.events.NetworkAddedListener;
-import org.cytoscape.model.events.NetworkDestroyedEvent;
-import org.cytoscape.model.events.NetworkDestroyedListener;
+import org.cytoscape.model.subnetwork.CySubNetwork;
 import org.cytoscape.property.CyProperty;
 import org.cytoscape.property.CyProperty.SavePolicy;
 import org.cytoscape.service.util.CyServiceRegistrar;
@@ -41,6 +37,8 @@ import org.cytoscape.work.SynchronousTaskManager;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskObserver;
+import org.jcolorbrewer.ColorBrewer;
+import org.json.simple.JSONObject;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
@@ -51,9 +49,6 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.ui.StringCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
-
-import org.jcolorbrewer.ColorBrewer;
-import org.json.simple.JSONObject;
 
 public class StringManager implements NetworkAddedListener, SessionLoadedListener, NetworkAboutToBeDestroyedListener {
 	final CyServiceRegistrar registrar;
@@ -271,11 +266,16 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public CyNetwork createNetwork(String name) {
 		CyNetwork network = registrar.getService(CyNetworkFactory.class).createNetwork();
 		CyNetworkManager netMgr = registrar.getService(CyNetworkManager.class);
-
-		// See if this name is already taken
+		
+		Set<CyNetwork> nets = netMgr.getNetworkSet();
+		Set<CyNetwork> allNets = new HashSet<CyNetwork>();
+		for (CyNetwork net : nets) {
+			allNets.add(((CySubNetwork)net).getRootNetwork());
+		}
+		// See if this name is already taken by a network or a network collection (root network)
 		int index = -1;
 		boolean match = false;
-		for (CyNetwork net: netMgr.getNetworkSet()) {
+		for (CyNetwork net: allNets) {			
 			String netName = net.getRow(net).get(CyNetwork.NAME, String.class);
 			if (netName.equals(name)) {
 				match = true;
