@@ -268,7 +268,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		CyNetworkManager netMgr = registrar.getService(CyNetworkManager.class);
 		
 		Set<CyNetwork> nets = netMgr.getNetworkSet();
-		Set<CyNetwork> allNets = new HashSet<CyNetwork>();
+		Set<CyNetwork> allNets = new HashSet<CyNetwork>(nets);
 		for (CyNetwork net : nets) {
 			allNets.add(((CySubNetwork)net).getRootNetwork());
 		}
