@@ -41,6 +41,7 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
  */
 public class StringEdgePanel extends AbstractStringPanel {
 	JPanel subScorePanel;
+	JPanel scorePanel;
 	private Map<CyNetwork, Map<String, Boolean>> colors;
 	private Map<String, Color> colorMap;
 
@@ -68,19 +69,33 @@ public class StringEdgePanel extends AbstractStringPanel {
 
 	private void init() {
 		setLayout(new GridBagLayout());
-		EasyGBC c = new EasyGBC();
-		add(new JSeparator(SwingConstants.HORIZONTAL), c.anchor("west").expandHoriz());
-		JComponent scoreSlider = createFilterSlider("score", "score", currentNetwork, true, 100.0);
-		add(scoreSlider, c.down().anchor("west").expandHoriz());
+		{
+			EasyGBC c = new EasyGBC();
+			add(new JSeparator(SwingConstants.HORIZONTAL), c.anchor("west").expandHoriz());
+			JComponent scoreSlider = createFilterSlider("score", "score", currentNetwork, true, 100.0);
+			{
+				scorePanel = new JPanel();
+				scorePanel.setLayout(new GridBagLayout());
+				EasyGBC d = new EasyGBC();
+				scorePanel.add(scoreSlider, d.anchor("west").expandHoriz());
+			}
+			add(scorePanel, c.down().anchor("west").expandHoriz());
 
-		add(createSubScorePanel(), c.down().anchor("west").expandHoriz());
+			{
+				subScorePanel = new JPanel();
+				scorePanel.setLayout(new GridBagLayout());
+				EasyGBC d = new EasyGBC();
+				subScorePanel.add(createSubScorePanel(), d.anchor("west").expandHoriz());
+			}
 
-		add(new JPanel(), c.down().anchor("west").expandBoth());
+			add(subScorePanel, c.down().anchor("west").expandHoriz());
+			add(new JPanel(), c.down().anchor("west").expandBoth());
+		}
 	}
 
 	private JPanel createSubScorePanel() {
-		subScorePanel = new JPanel();
-		subScorePanel.setLayout(new GridBagLayout());
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
 
 		List<String> subScoreList = ModelUtils.getSubScoreList(currentNetwork);
@@ -100,7 +115,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 			}
 
 			colorPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-			subScorePanel.add(colorPanel, c.anchor("northwest").expandVert());
+			panel.add(colorPanel, c.anchor("northwest").expandVert());
 		}
 
 		{
@@ -119,7 +134,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 				labelPanel.add(scoreLabel, d.down().expandVert());
 			}
 			labelPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
-			subScorePanel.add(labelPanel, c.right().expandVert());
+			panel.add(labelPanel, c.right().expandVert());
 		}
 
 		{
@@ -137,10 +152,10 @@ public class StringEdgePanel extends AbstractStringPanel {
 				filterPanel.add(scoreSlider, d.down().expandBoth());
 			}
 			filterPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-			subScorePanel.add(filterPanel, c.right().expandBoth());
+			panel.add(filterPanel, c.right().expandBoth());
 		}
 
-		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Subscores", subScorePanel, false, 10);
+		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Subscores", panel, false, 10);
 		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
 		return collapsablePanel;
 
@@ -152,6 +167,10 @@ public class StringEdgePanel extends AbstractStringPanel {
 		cb.setMaximumSize(new Dimension(20,15));
 		cb.setBackground(colorMap.get(subScore));
 		cb.setOpaque(true);
+		if (colors.containsKey(currentNetwork) && 
+		    colors.get(currentNetwork).containsKey(subScore) &&
+		    colors.get(currentNetwork).get(subScore))
+			cb.setSelected(true);
 		cb.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				Boolean selected = Boolean.FALSE;
@@ -211,12 +230,30 @@ public class StringEdgePanel extends AbstractStringPanel {
 		}
 	}
 
+	private void updateScore() {
+		scorePanel.removeAll();
+		JComponent scoreSlider = createFilterSlider("score", "score", currentNetwork, true, 100.0);
+		scorePanel.add(scoreSlider);
+	}
+
+	private void updateSubPanel() {
+		subScorePanel.removeAll();
+		EasyGBC d = new EasyGBC();
+		subScorePanel.add(createSubScorePanel(), d.anchor("west").expandHoriz());
+	}
+
 	public void networkChanged(CyNetwork newNetwork) {
 		this.currentNetwork = newNetwork;
 		if (!filters.containsKey(currentNetwork)) {
 			filters.put(currentNetwork, new HashMap<>());
 			filters.get(currentNetwork).put("score", new HashMap<>());
 		}
+		if (!colors.containsKey(currentNetwork)) {
+			colors.put(currentNetwork, new HashMap<>());
+		}
+
+		updateSubPanel();
+		updateScore();
 	}
 
 	public void selectedEdges(Collection<CyEdge> edges) {

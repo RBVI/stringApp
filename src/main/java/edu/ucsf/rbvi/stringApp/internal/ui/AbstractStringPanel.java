@@ -62,6 +62,7 @@ public abstract class AbstractStringPanel extends JPanel {
 		    filters.get(network).containsKey(type) && 
 		    filters.get(network).get(type).containsKey(text)) {
 			value = filters.get(network).get(type).get(text);
+			System.out.println("value = "+value);
 		}
 		Box box = Box.createHorizontalBox();
 		if (labels) {
@@ -73,7 +74,7 @@ public abstract class AbstractStringPanel extends JPanel {
 			box.add(Box.createHorizontalGlue());
 		}
 		JSlider slider;
-		slider = new JSlider(0,(int)max,(int)value);
+		slider = new JSlider(0,(int)max,(int)(value*100));
 
 		slider.setPreferredSize(new Dimension(100,20));
 		box.add(slider);
