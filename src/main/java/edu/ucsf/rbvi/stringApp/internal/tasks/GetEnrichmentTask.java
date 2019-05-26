@@ -56,6 +56,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	final Map<String, Long> stringNodesMap;
 	final Map<String, CyNetwork> stringNetworkMap;
 	final ShowEnrichmentPanelTaskFactory showFactory;
+	final ShowPublicationsPanelTaskFactory showFactoryPubl;
 	private Map<String, String> ppiSummary;
 	List<CyNode> analyzedNodes;
 	String selected;
@@ -95,7 +96,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	public CyTable enrichmentTable = null;
 
 	public GetEnrichmentTask(StringManager manager, CyNetwork network, CyNetworkView netView,
-			ShowEnrichmentPanelTaskFactory showFactory) {
+			ShowEnrichmentPanelTaskFactory showFactory, ShowPublicationsPanelTaskFactory showFactoryPubl) {
 		this.manager = manager;
 		if (view != null) {
 			this.netView = view;
@@ -105,6 +106,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			this.netView = netView;
 		}
 		this.showFactory = showFactory;
+		this.showFactoryPubl = showFactoryPubl;
 		enrichmentResult = new HashMap<>();
 		stringNodesMap = new HashMap<>();
 		monitor = null;
@@ -234,12 +236,16 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			monitor.showMessage(Level.WARN,
 					"Enrichment retrieval returned no results that met the criteria.");
 		}
-		if (showFactory != null) {
-			SynchronousTaskManager<?> taskM = manager.getService(SynchronousTaskManager.class);
-			TaskIterator ti = showFactory.createTaskIterator(true, noSig);
+		SynchronousTaskManager<?> taskM = manager.getService(SynchronousTaskManager.class);
+		if (showFactoryPubl != null) {
+			TaskIterator ti = showFactoryPubl.createTaskIterator(true, noSig);
 			taskM.execute(ti);
 		}
-}
+		if (showFactory != null) {
+			TaskIterator ti = showFactory.createTaskIterator(true, noSig);
+			taskM.execute(ti);
+		} 
+	}
 
 	private void writeDouble(CyTable table, Map<String, String> data, String column) {
 		ModelUtils.createColumnIfNeeded(table, Double.class, column);
@@ -284,9 +290,21 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			// throw new RuntimeException("Enrichment retrieval returned no results, possibly due to an error. " + errorMsg);
 		} else if (terms.size() > 0) {
 			Collections.sort(terms);
-			TermCategory category = TermCategory.ALL;
-			enrichmentResult.put(category.getKey(), terms);
-			saveEnrichmentTable(category.getTable(), category.getKey());
+			// separate terms into all and pmid
+			List<EnrichmentTerm> termsAll = new ArrayList<EnrichmentTerm>();
+			List<EnrichmentTerm> termsPubl = new ArrayList<EnrichmentTerm>();
+			for (EnrichmentTerm term : terms) {
+				// System.out.println(term.getCategory());
+				if (term.getCategory().equals(TermCategory.PMID.getName())) {
+					termsPubl.add(term);
+				} else {
+					termsAll.add(term);
+				}
+			}
+			enrichmentResult.put(TermCategory.ALL.getKey(), termsAll);
+			saveEnrichmentTable(TermCategory.ALL.getTable(), TermCategory.ALL.getKey());
+			enrichmentResult.put(TermCategory.PMID.getKey(), termsPubl);
+			saveEnrichmentTable(TermCategory.PMID.getTable(), TermCategory.PMID.getKey());
 		}
 	}
 
@@ -331,78 +349,83 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		return ppiEnrichment;
 	}
 
-	private boolean getEnrichment(String[] selectedNodes, String filter, String species,
-			String enrichmentCategory) throws Exception {
-		Map<String, String> queryMap = new HashMap<String, String>();
-		String xmlQuery = "<experiment>";
-		if (filter.length() > 0) {
-			xmlQuery += "<filter>" + filter + "</filter>";
-		}
-		xmlQuery += "<tax_id>" + species + "</tax_id>";
-		xmlQuery += "<category>" + enrichmentCategory + "</category>";
-		xmlQuery += "<hits>";
-		for (String selectedNode : selectedNodes) {
-			xmlQuery += "<gene>" + selectedNode + "</gene>";
-		}
-		xmlQuery += "</hits></experiment>";
-		// System.out.println(xmlQuery);
-		queryMap.put("xml", xmlQuery);
-
-		// get and parse enrichment results
-		List<EnrichmentTerm> enrichmentTerms = null;
-		// System.out.println(enrichmentCategory);
-		// double time = System.currentTimeMillis();
-		// parse using DOM
-		//Object results = HttpUtils.postXMLDOM(EnrichmentTerm.enrichmentURL, queryMap, manager);
-		//enrichmentTerms = ModelUtils.parseXMLDOM(results, cutoff, network, stringNodesMap, manager);
-		//System.out.println("dom output: " + enrichmentTerms.size());
-		// System.out
-		// .println("from dom document to java structure: " + (System.currentTimeMillis() - time) /
-		// 1000 + " seconds.");
-		// time = System.currentTimeMillis();
-		// parse using SAX
-		EnrichmentSAXHandler myHandler = new EnrichmentSAXHandler(network, stringNodesMap, enrichmentCategory);
-		// TODO: change for release
-		HttpUtils.postXMLSAX(EnrichmentTerm.enrichmentURL, queryMap, manager, myHandler);
-		if (!myHandler.isStatusOK()) {
-			// monitor.showMessage(Level.ERROR, "Error returned by enrichment webservice: " +
-			// myHandler.getStatusCode());
-			// return false;
-			if (myHandler.getMessage().equals("No genes found in the XML")) {
-				throw new RuntimeException(
-						"Task cannot be performed. Current node identifiers were not recognized by the enrichment service.");
-			}
-			else if (myHandler.getStatusCode() != null)
-				throw new RuntimeException(
-						"Task cannot be performed. Error returned by enrichment webservice: " + myHandler.getMessage());
-			else
-				throw new RuntimeException(
-						"Task cannot be performed. Uknown error while receiving or parsing output from the enrichment service.");
-		} else if (myHandler.getWarning() != null) {
-			monitor.showMessage(Level.WARN,
-					"Warning returned by enrichment webservice: " + myHandler.getWarning());
-		}
-		enrichmentTerms = myHandler.getParsedData();
-
-		// save results
-		if (enrichmentTerms == null) {
-			// monitor.showMessage(Level.ERROR,
-			// "No terms retrieved from the enrichment webservice for this category.");
-			throw new RuntimeException(
-					"No terms retrieved from the enrichment webservice for this category.");
-			// return false;
-		} else {
-			enrichmentResult.put(enrichmentCategory, enrichmentTerms);
-			if (enrichmentTerms.size() == 0) {
-				monitor.showMessage(Level.WARN,
-						"No significant terms for this enrichment category and cut-off.");
-			} else {
-				monitor.setStatusMessage("Retrieved " + enrichmentTerms.size()
-						+ " significant terms for this enrichment category and cut-off.");
-			}
-		}
-		return true;
-	}
+	// private boolean getEnrichment(String[] selectedNodes, String filter, String species,
+	// String enrichmentCategory) throws Exception {
+	// Map<String, String> queryMap = new HashMap<String, String>();
+	// String xmlQuery = "<experiment>";
+	// if (filter.length() > 0) {
+	// xmlQuery += "<filter>" + filter + "</filter>";
+	// }
+	// xmlQuery += "<tax_id>" + species + "</tax_id>";
+	// xmlQuery += "<category>" + enrichmentCategory + "</category>";
+	// xmlQuery += "<hits>";
+	// for (String selectedNode : selectedNodes) {
+	// xmlQuery += "<gene>" + selectedNode + "</gene>";
+	// }
+	// xmlQuery += "</hits></experiment>";
+	// // System.out.println(xmlQuery);
+	// queryMap.put("xml", xmlQuery);
+	//
+	// // get and parse enrichment results
+	// List<EnrichmentTerm> enrichmentTerms = null;
+	// // System.out.println(enrichmentCategory);
+	// // double time = System.currentTimeMillis();
+	// // parse using DOM
+	// //Object results = HttpUtils.postXMLDOM(EnrichmentTerm.enrichmentURL, queryMap, manager);
+	// //enrichmentTerms = ModelUtils.parseXMLDOM(results, cutoff, network, stringNodesMap,
+	// manager);
+	// //System.out.println("dom output: " + enrichmentTerms.size());
+	// // System.out
+	// // .println("from dom document to java structure: " + (System.currentTimeMillis() - time) /
+	// // 1000 + " seconds.");
+	// // time = System.currentTimeMillis();
+	// // parse using SAX
+	// EnrichmentSAXHandler myHandler = new EnrichmentSAXHandler(network, stringNodesMap,
+	// enrichmentCategory);
+	// // TODO: change for release
+	// HttpUtils.postXMLSAX(EnrichmentTerm.enrichmentURL, queryMap, manager, myHandler);
+	// if (!myHandler.isStatusOK()) {
+	// // monitor.showMessage(Level.ERROR, "Error returned by enrichment webservice: " +
+	// // myHandler.getStatusCode());
+	// // return false;
+	// if (myHandler.getMessage().equals("No genes found in the XML")) {
+	// throw new RuntimeException(
+	// "Task cannot be performed. Current node identifiers were not recognized by the enrichment
+	// service.");
+	// }
+	// else if (myHandler.getStatusCode() != null)
+	// throw new RuntimeException(
+	// "Task cannot be performed. Error returned by enrichment webservice: " +
+	// myHandler.getMessage());
+	// else
+	// throw new RuntimeException(
+	// "Task cannot be performed. Uknown error while receiving or parsing output from the enrichment
+	// service.");
+	// } else if (myHandler.getWarning() != null) {
+	// monitor.showMessage(Level.WARN,
+	// "Warning returned by enrichment webservice: " + myHandler.getWarning());
+	// }
+	// enrichmentTerms = myHandler.getParsedData();
+	//
+	// // save results
+	// if (enrichmentTerms == null) {
+	// // monitor.showMessage(Level.ERROR,
+	// // "No terms retrieved from the enrichment webservice for this category.");
+	// throw new RuntimeException(
+	// "No terms retrieved from the enrichment webservice for this category.");
+	// // return false;
+	// } else {
+	// enrichmentResult.put(enrichmentCategory, enrichmentTerms);
+	// if (enrichmentTerms.size() == 0) {
+	// monitor.showMessage(Level.WARN,
+	// "No significant terms for this enrichment category and cut-off.");
+	// } else {
+	// monitor.setStatusMessage("Retrieved " + enrichmentTerms.size()
+	// + " significant terms for this enrichment category and cut-off.");
+	// }
+	// }
+	// return true;
+	// }
 
 	private void saveEnrichmentTable(String tableName, String enrichmentCategory) {
 		CyTableFactory tableFactory = manager.getService(CyTableFactory.class);

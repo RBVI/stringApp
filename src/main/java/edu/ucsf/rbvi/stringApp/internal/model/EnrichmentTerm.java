@@ -101,13 +101,18 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	public static final String colEnrichmentPassthrough = "enrichmentPassthrough";
 
 	
-	public static final String[] swingColumns = new String[] { colCategory, colChartColor, colName, colDescription, colFDR,
+	public static final String[] swingColumnsEnrichment = new String[] { colCategory, colChartColor, colName, colDescription, colFDR,
 			colGenesCount, colGenesBG, colGenes, colGenesSUID };
 	public static final int nodeSUIDColumn = 8;
 	public static final int fdrColumn = 4;
 	// public static final int chartColumnSel = 1;
 	public static final int chartColumnCol = 1;
 	public static final int nameColumn = 2;
+	
+	public static final String[] swingColumnsPublications = new String[] { colName, colDescription, colFDR,
+			colGenesCount, colGenesBG, colGenes, colGenesSUID };
+	public static final int nodeSUIDColumnPubl = 6;
+	public static final int fdrColumnPubl = 2;
 	
 	public EnrichmentTerm() {
 		this.name = "";

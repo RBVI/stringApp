@@ -46,6 +46,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowPublicationsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.ui.StringCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
@@ -62,6 +63,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private ShowImagesTaskFactory imagesTaskFactory;
 	private ShowEnhancedLabelsTaskFactory labelsTaskFactory;
 	private ShowEnrichmentPanelTaskFactory enrichmentTaskFactory;
+	private ShowPublicationsPanelTaskFactory publicationsTaskFactory;
 	private ShowGlassBallEffectTaskFactory glassBallTaskFactory;
 	private ShowResultsPanelTaskFactory resultsPanelTaskFactory;
 
@@ -646,14 +648,19 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 				}
 			}
 			TaskIterator taskIt = null;
+			TaskIterator taskIt2 = null;
 			if (show) {
 				taskIt = enrichmentTaskFactory.createTaskIterator(true, false);
+				taskIt2 = publicationsTaskFactory.createTaskIterator(true, false);
 			} else {
 				taskIt = enrichmentTaskFactory.createTaskIterator(false, false);
+				taskIt2 = publicationsTaskFactory.createTaskIterator(false, false);
 			}
 			SynchronousTaskManager<?> taskM = getService(SynchronousTaskManager.class);
 			taskM.execute(taskIt);
 			enrichmentTaskFactory.reregister();
+			taskM.execute(taskIt2);
+			publicationsTaskFactory.reregister();
 		}
 	}
 	
@@ -687,6 +694,14 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	public ShowEnrichmentPanelTaskFactory getShowEnrichmentPanelTaskFactory() {
 		return enrichmentTaskFactory;		
+	}
+	
+	public void setShowPublicationsPanelTaskFactory(ShowPublicationsPanelTaskFactory factory) {
+		publicationsTaskFactory = factory;		
+	}
+
+	public ShowPublicationsPanelTaskFactory getShowPublicationsPanelTaskFactory() {
+		return publicationsTaskFactory;		
 	}
 	
 	public void setShowResultsPanelTaskFactory(ShowResultsPanelTaskFactory factory) {

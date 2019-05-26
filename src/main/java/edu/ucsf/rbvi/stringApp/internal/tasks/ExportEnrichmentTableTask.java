@@ -24,6 +24,7 @@ public class ExportEnrichmentTableTask extends AbstractTask {
 
 	private StringManager manager;
 	private CyNetwork network;
+	private CyTable selectedTable;
 
 	@Tunable(description = "Save Table as", params = "input=false", 
 	         tooltip="<html>Note: for convenience spaces are replaced by underscores.</html>", gravity = 2.0)
@@ -32,21 +33,21 @@ public class ExportEnrichmentTableTask extends AbstractTask {
 	public ExportEnrichmentTableTask(StringManager manager, CyNetwork network) {
 		this.manager = manager;
 		this.network = network;
+		this.selectedTable = ModelUtils.getEnrichmentTable(this.manager, this.network,
+                TermCategory.ALL.getTable());
 		// file = new File("test.csv");
 	}
 
-	public ExportEnrichmentTableTask(StringManager manager, CyNetwork network, CyTable table,
-			File file) {
+	public ExportEnrichmentTableTask(StringManager manager, CyNetwork network, CyTable table) {
 		this.manager = manager;
 		this.network = network;
+		this.selectedTable = table;
 	}
 
 	@Override
 	public void run(TaskMonitor taskMonitor) throws Exception {
 		ExportTableTaskFactory exportTF = manager.getService(ExportTableTaskFactory.class);
-		CyTable selectedTable = ModelUtils.getEnrichmentTable(manager, network,
-                TermCategory.ALL.getTable());
-
+		
 		if (selectedTable != null && fileName != null) {
 			File file = fileName;
 			taskMonitor.showMessage(TaskMonitor.Level.INFO,

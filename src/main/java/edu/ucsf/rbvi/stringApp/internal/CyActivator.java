@@ -52,6 +52,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowPublicationsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.StitchSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.StringifyTaskFactory;
@@ -470,6 +471,11 @@ public class CyActivator extends AbstractCyActivator {
 				showEnrichment.reregister();
 				getEnrichment.setShowEnrichmentPanelFactory(showEnrichment);
 				manager.setShowEnrichmentPanelTaskFactory(showEnrichment);
+
+				ShowPublicationsPanelTaskFactory showPublications = new ShowPublicationsPanelTaskFactory(manager);
+				showPublications.reregister();
+				getEnrichment.setShowPublicationsPanelFactory(showPublications);
+				manager.setShowPublicationsPanelTaskFactory(showPublications);
 
 				ShowResultsPanelTaskFactory showResults = new ShowResultsPanelTaskFactory(manager);
 				showResults.reregister();

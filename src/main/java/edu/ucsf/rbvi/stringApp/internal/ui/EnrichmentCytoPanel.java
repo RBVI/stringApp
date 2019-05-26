@@ -404,7 +404,7 @@ public class EnrichmentCytoPanel extends JPanel
 
 	private void createJTable(CyTable cyTable) {
 		tableModel = new EnrichmentTableModel(cyTable,
-		                                      EnrichmentTerm.swingColumns);
+		                                      EnrichmentTerm.swingColumnsEnrichment);
 		JTable jTable = new JTable(tableModel);
 		TableColumnModel tcm = jTable.getColumnModel();
 		tcm.removeColumn(tcm.getColumn(EnrichmentTerm.nodeSUIDColumn));
