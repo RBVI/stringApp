@@ -1,5 +1,9 @@
 package edu.ucsf.rbvi.stringApp.internal.ui;
 
+import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.LAYERED_STRING_ICON;
+import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.STRING_COLORS;
+import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.getIconFont;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 
@@ -26,6 +30,7 @@ import org.cytoscape.util.swing.OpenBrowser;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.TextIcon;
 
 /**
  * Displays information about a protein taken from STRING
@@ -43,6 +48,7 @@ public class StringCytoPanel extends JPanel
 	private StringNodePanel nodePanel;
 	private StringEdgePanel edgePanel;
 	private boolean registered = false;
+	private static final Icon icon = new TextIcon(LAYERED_STRING_ICON, getIconFont(24.0f), STRING_COLORS, 18, 18);
 
 	public StringCytoPanel(final StringManager manager) {
 		this.manager = manager;
@@ -93,8 +99,7 @@ public class StringCytoPanel extends JPanel
 	}
 
 	public Icon getIcon() {
-		// TODO Auto-generated method stub
-		return null;
+		return icon;
 	}
 
 	public String getTitle() {
