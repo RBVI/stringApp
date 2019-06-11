@@ -614,7 +614,7 @@ public class EnrichmentCytoPanel extends JPanel
 					&& !row.get(EnrichmentTerm.colChartColor, String.class).equals("#ffffff")) {
 				String selTerm = row.get(EnrichmentTerm.colName, String.class);
 				if (selTerm != null) {
-					EnrichmentTerm enrTerm = new EnrichmentTerm(selTerm,
+					EnrichmentTerm enrTerm = new EnrichmentTerm(selTerm, 0, 
 							row.get(EnrichmentTerm.colDescription, String.class),
 							row.get(EnrichmentTerm.colCategory, String.class), -1.0, -1.0,
 							row.get(EnrichmentTerm.colFDR, Double.class), row.get(EnrichmentTerm.colGenesBG, Integer.class));
@@ -649,7 +649,7 @@ public class EnrichmentCytoPanel extends JPanel
 			CyRow row = currTable.getRow(rowNames[i]);
 			String selTerm = row.get(EnrichmentTerm.colName, String.class);
 			if (selTerm != null) {
-				EnrichmentTerm enrTerm = new EnrichmentTerm(selTerm,
+				EnrichmentTerm enrTerm = new EnrichmentTerm(selTerm, 0,
 						row.get(EnrichmentTerm.colDescription, String.class),
 						row.get(EnrichmentTerm.colCategory, String.class), -1.0, -1.0,
 						row.get(EnrichmentTerm.colFDR, Double.class), row.get(EnrichmentTerm.colGenesBG, Integer.class));

@@ -1370,7 +1370,7 @@ public class ModelUtils {
 					// System.out.println(enrGenes);
 					// }
 					if (!name.equals("") && fdr > -1 && fdr <= cutoff) {
-						EnrichmentTerm enrTerm = new EnrichmentTerm(name, descr, enrichmentCategory, pvalue, bonf, fdr, genesbg);
+						EnrichmentTerm enrTerm = new EnrichmentTerm(name, 0, descr, enrichmentCategory, pvalue, bonf, fdr, genesbg);
 						enrTerm.setGenes(enrGenes);
 						enrTerm.setNodesSUID(enrNodes);
 						enrichmentTerms.add(enrTerm);

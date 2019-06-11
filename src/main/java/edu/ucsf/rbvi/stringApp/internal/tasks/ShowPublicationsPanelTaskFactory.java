@@ -60,7 +60,7 @@ public class ShowPublicationsPanelTaskFactory extends AbstractTaskFactory {
 		}
 		props.setProperty(COMMAND_SUPPORTS_JSON, "true");
 		props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-		props.setProperty(MENU_GRAVITY, "3.0");
+		props.setProperty(MENU_GRAVITY, "5.0");
 		props.setProperty(IN_MENU_BAR, "true");
 		manager.registerService(this, TaskFactory.class, props);
 	}

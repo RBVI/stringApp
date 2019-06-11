@@ -8,12 +8,12 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
-public class ExportEnrichmentTaskFactory extends AbstractNetworkTaskFactory {
+public class ExportPublicationsTaskFactory extends AbstractNetworkTaskFactory {
 	// implements ExportTableTaskFactory {
 
 	private StringManager manager;
 
-	public ExportEnrichmentTaskFactory(StringManager manager) {
+	public ExportPublicationsTaskFactory(StringManager manager) {
 		this.manager = manager;
 	}
 
@@ -27,7 +27,7 @@ public class ExportEnrichmentTaskFactory extends AbstractNetworkTaskFactory {
 	@Override
 	public TaskIterator createTaskIterator(CyNetwork network) {
 		return new TaskIterator(new ExportEnrichmentTableTask(manager, network,
-				ModelUtils.getEnrichmentTable(manager, network, TermCategory.ALL.getTable())));
+				ModelUtils.getEnrichmentTable(manager, network, TermCategory.PMID.getTable())));
 	}
 
 }

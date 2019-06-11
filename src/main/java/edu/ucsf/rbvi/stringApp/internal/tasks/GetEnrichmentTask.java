@@ -52,10 +52,11 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 	final CyNetwork network;
 	final CyNetworkView netView;
+	final boolean publOnly;
 	Map<String, List<EnrichmentTerm>> enrichmentResult;
 	final Map<String, Long> stringNodesMap;
 	final Map<String, CyNetwork> stringNetworkMap;
-	final ShowEnrichmentPanelTaskFactory showFactory;
+	final ShowEnrichmentPanelTaskFactory showFactoryEnrich;
 	final ShowPublicationsPanelTaskFactory showFactoryPubl;
 	private Map<String, String> ppiSummary;
 	List<CyNode> analyzedNodes;
@@ -96,7 +97,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	public CyTable enrichmentTable = null;
 
 	public GetEnrichmentTask(StringManager manager, CyNetwork network, CyNetworkView netView,
-			ShowEnrichmentPanelTaskFactory showFactory, ShowPublicationsPanelTaskFactory showFactoryPubl) {
+			ShowEnrichmentPanelTaskFactory showEnrichmentFactory, ShowPublicationsPanelTaskFactory showFactoryPubl, boolean publOnly) {
 		this.manager = manager;
 		if (view != null) {
 			this.netView = view;
@@ -105,8 +106,9 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			this.network = network;
 			this.netView = netView;
 		}
-		this.showFactory = showFactory;
+		this.showFactoryEnrich = showEnrichmentFactory;
 		this.showFactoryPubl = showFactoryPubl;
+		this.publOnly = publOnly;
 		enrichmentResult = new HashMap<>();
 		stringNodesMap = new HashMap<>();
 		monitor = null;
@@ -196,7 +198,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 
 		// retrieve enrichment (new API)
 		getEnrichmentJSON(selected, species, background.getSelectedValue());
-		if (!isLargeNetwork) 
+		if (!isLargeNetwork && !publOnly) 
 			ppiSummary = getEnrichmentPPIJSON(selected, species, background.getSelectedValue());
 		else
 			ppiSummary = null;
@@ -237,12 +239,12 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 					"Enrichment retrieval returned no results that met the criteria.");
 		}
 		SynchronousTaskManager<?> taskM = manager.getService(SynchronousTaskManager.class);
-		if (showFactoryPubl != null) {
+		if (showFactoryPubl != null && publOnly) {
 			TaskIterator ti = showFactoryPubl.createTaskIterator(true, noSig);
 			taskM.execute(ti);
 		}
-		if (showFactory != null) {
-			TaskIterator ti = showFactory.createTaskIterator(true, noSig);
+		if (showFactoryEnrich != null && !publOnly) {
+			TaskIterator ti = showFactoryEnrich.createTaskIterator(true, noSig);
 			taskM.execute(ti);
 		} 
 	}
@@ -301,10 +303,13 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 					termsAll.add(term);
 				}
 			}
-			enrichmentResult.put(TermCategory.ALL.getKey(), termsAll);
-			saveEnrichmentTable(TermCategory.ALL.getTable(), TermCategory.ALL.getKey());
-			enrichmentResult.put(TermCategory.PMID.getKey(), termsPubl);
-			saveEnrichmentTable(TermCategory.PMID.getTable(), TermCategory.PMID.getKey());
+			if (publOnly) {
+				enrichmentResult.put(TermCategory.PMID.getKey(), termsPubl);
+				saveEnrichmentTable(TermCategory.PMID.getTable(), TermCategory.PMID.getKey());				
+			} else {
+				enrichmentResult.put(TermCategory.ALL.getKey(), termsAll);
+				saveEnrichmentTable(TermCategory.ALL.getTable(), TermCategory.ALL.getKey());
+			}
 		}
 	}
 
@@ -445,6 +450,9 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		if (enrichmentTable.getColumn(EnrichmentTerm.colName) == null) {
 			enrichmentTable.createColumn(EnrichmentTerm.colName, String.class, false);
 		}
+		if (enrichmentTable.getColumn(EnrichmentTerm.colYear) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colYear, Integer.class, false);
+		}
 		if (enrichmentTable.getColumn(EnrichmentTerm.colDescription) == null) {
 			enrichmentTable.createColumn(EnrichmentTerm.colDescription, String.class, false);
 		}
@@ -486,6 +494,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			EnrichmentTerm term = processTerms.get(i);
 			CyRow row = enrichmentTable.getRow((long) i);
 			row.set(EnrichmentTerm.colName, term.getName());
+			row.set(EnrichmentTerm.colYear, term.getYear());
 			row.set(EnrichmentTerm.colDescription, term.getDescription());
 			row.set(EnrichmentTerm.colCategory, term.getCategory());
 			row.set(EnrichmentTerm.colFDR, term.getFDRPValue());
@@ -548,6 +557,9 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 					"\""+ModelUtils.NET_ENRICHMENT_EXPECTED_EDGES+"\": 57,"+
 					"\""+ModelUtils.NET_ENRICHMENT_CLSTR+"\": 0.177,"+
 					"\""+ModelUtils.NET_ENRICHMENT_DEGREE+"\": 2.66}";
+
+	public static String EXAMPLE_JSON_PUBL = 
+			"{\"EnrichmentTable\": 101}";
 
 	@Override
 	@SuppressWarnings("unchecked")

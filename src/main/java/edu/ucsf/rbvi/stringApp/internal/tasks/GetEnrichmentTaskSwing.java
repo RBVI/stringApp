@@ -11,8 +11,8 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 public class GetEnrichmentTaskSwing extends GetEnrichmentTask {
 
 	public GetEnrichmentTaskSwing(StringManager manager, CyNetwork network, CyNetworkView netView,
-			ShowEnrichmentPanelTaskFactory showFactory, ShowPublicationsPanelTaskFactory showFactoryPubl) {
-		super(manager, network, netView, showFactory, showFactoryPubl);
+			ShowEnrichmentPanelTaskFactory showFactory, ShowPublicationsPanelTaskFactory showFactoryPubl, boolean publOnly) {
+		super(manager, network, netView, showFactory, showFactoryPubl, publOnly);
 	}
 
 	@Override

@@ -36,9 +36,11 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeConfidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.DiseaseSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExpandNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ExportPublicationsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.FilterEnrichmentTableTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetNetworkTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.GetPublicationsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetSpeciesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.HideChartsTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.FindProteinsTaskFactory;
@@ -441,19 +443,29 @@ public class CyActivator extends AbstractCyActivator {
 
 		{
 			ExportEnrichmentTaskFactory exportEnrichment = new ExportEnrichmentTaskFactory(manager);
-			Properties props = new Properties();
-			props.setProperty(PREFERRED_MENU, "File.Export");
-			props.setProperty(TITLE, "STRING Enrichment");
-			props.setProperty(MENU_GRAVITY, "4.0");
-			props.setProperty(IN_MENU_BAR, "true");
-			registerService(bc, exportEnrichment, NetworkTaskFactory.class, props);
+			// Properties props = new Properties();
+			// props.setProperty(PREFERRED_MENU, "File.Export");
+			// props.setProperty(TITLE, "STRING Enrichment");
+			// props.setProperty(MENU_GRAVITY, "4.0");
+			// props.setProperty(IN_MENU_BAR, "true");
+			// registerService(bc, exportEnrichment, NetworkTaskFactory.class, props);
 
 			Properties props2 = new Properties();
 			props2.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
 			props2.setProperty(TITLE, "Export enrichment results");
-			props2.setProperty(MENU_GRAVITY, "4.0");
+			props2.setProperty(MENU_GRAVITY, "3.0");
 			props2.setProperty(IN_MENU_BAR, "true");
 			registerService(bc, exportEnrichment, NetworkTaskFactory.class, props2);
+		}
+
+		{
+			ExportPublicationsTaskFactory exportPublications = new ExportPublicationsTaskFactory(manager);
+			Properties props = new Properties();
+			props.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
+			props.setProperty(TITLE, "Export publications results");
+			props.setProperty(MENU_GRAVITY, "6.0");
+			props.setProperty(IN_MENU_BAR, "true");
+			registerService(bc, exportPublications, NetworkTaskFactory.class, props);
 		}
 
 		if (haveGUI) {
@@ -471,12 +483,25 @@ public class CyActivator extends AbstractCyActivator {
 				showEnrichment.reregister();
 				getEnrichment.setShowEnrichmentPanelFactory(showEnrichment);
 				manager.setShowEnrichmentPanelTaskFactory(showEnrichment);
+			}
+			
+			GetPublicationsTaskFactory getPublications = new GetPublicationsTaskFactory(manager, true);
+			{
+				Properties propsPublications = new Properties();
+				propsPublications.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
+				propsPublications.setProperty(TITLE, "Retrieve enriched publications");
+				propsPublications.setProperty(MENU_GRAVITY, "4.0");
+				propsPublications.setProperty(IN_MENU_BAR, "true");
+				propsPublications.setProperty(INSERT_SEPARATOR_BEFORE, "true");
+				registerService(bc, getPublications, NetworkTaskFactory.class, propsPublications);
 
 				ShowPublicationsPanelTaskFactory showPublications = new ShowPublicationsPanelTaskFactory(manager);
 				showPublications.reregister();
-				getEnrichment.setShowPublicationsPanelFactory(showPublications);
+				getPublications.setShowPublicationsPanelFactory(showPublications);
 				manager.setShowPublicationsPanelTaskFactory(showPublications);
+			}
 
+			{
 				ShowResultsPanelTaskFactory showResults = new ShowResultsPanelTaskFactory(manager);
 				showResults.reregister();
 				manager.setShowResultsPanelTaskFactory(showResults);
@@ -487,7 +512,7 @@ public class CyActivator extends AbstractCyActivator {
 					// It's the current network.  Bring up the results panel
 					manager.execute(showResults.createTaskIterator(), true);
 				}
-			}
+			}	
 		}
 		
 		GetEnrichmentTaskFactory getCommandEnrichment = new GetEnrichmentTaskFactory(manager, false);
@@ -505,6 +530,20 @@ public class CyActivator extends AbstractCyActivator {
     	propsEnrichment.setProperty(COMMAND_EXAMPLE_JSON, GetEnrichmentTaskFactory.EXAMPLE_JSON);
 			// propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 			registerService(bc, getCommandEnrichment, NetworkTaskFactory.class, propsEnrichment);
+		}
+
+		GetPublicationsTaskFactory getCommandPublications = new GetPublicationsTaskFactory(manager, false);
+		{
+			Properties propsPubl = new Properties();
+			propsPubl.setProperty(COMMAND_NAMESPACE, "string");
+			propsPubl.setProperty(COMMAND, "retrieve publications");
+			propsPubl.setProperty(COMMAND_DESCRIPTION, 
+			                            "Retrieve enriched publications for the current String network");
+			propsPubl.setProperty(COMMAND_LONG_DESCRIPTION, 
+			                            "Retrieve the enriched PubMed publications for the current String network.");
+			propsPubl.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			propsPubl.setProperty(COMMAND_EXAMPLE_JSON, GetPublicationsTaskFactory.EXAMPLE_JSON);
+			registerService(bc, getCommandPublications, NetworkTaskFactory.class, propsPubl);
 		}
 
 		GetSpeciesTaskFactory getSpecies = new GetSpeciesTaskFactory(manager);

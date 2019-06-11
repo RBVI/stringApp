@@ -7,6 +7,7 @@ import java.util.List;
 public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	String name;
 	String description;
+	int year;
 	String category;
 	double pvalue;
 	double bonfPValue;
@@ -83,6 +84,7 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 
 	public static final String colID = "term id";
 	public static final String colName = "term name";
+	public static final String colYear = "year";
 	public static final String colDescription = "description";
 	public static final String colCategory = "category";
 	public static final String colPvalue = "p-value";
@@ -109,13 +111,14 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	public static final int chartColumnCol = 1;
 	public static final int nameColumn = 2;
 	
-	public static final String[] swingColumnsPublications = new String[] { colName, colDescription, colFDR,
+	public static final String[] swingColumnsPublications = new String[] { colName, colYear, colDescription, colFDR,
 			colGenesCount, colGenesBG, colGenes, colGenesSUID };
-	public static final int nodeSUIDColumnPubl = 6;
-	public static final int fdrColumnPubl = 2;
+	public static final int nodeSUIDColumnPubl = 7;
+	public static final int fdrColumnPubl = 3;
 	
 	public EnrichmentTerm() {
 		this.name = "";
+		this.year = 0;
 		this.description = "";
 		this.category = "";
 		this.pvalue = -1.0;
@@ -129,6 +132,7 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 
 	public EnrichmentTerm(String enrichmentCategory) {
 		this.name = "";
+		this.year = 0;
 		this.description = "";
 		this.category = enrichmentCategory;
 		this.pvalue = -1.0;
@@ -140,9 +144,10 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 
 	}
 
-	public EnrichmentTerm(String name, String description, String category, double pvalue, double bonfPValue,
+	public EnrichmentTerm(String name, int year, String description, String category, double pvalue, double bonfPValue,
 			double fdrPValue, int genesBG) {
 		this.name = name;
+		this.year = year;
 		this.description = description;
 		this.category = category;
 		this.pvalue = pvalue;
@@ -167,6 +172,18 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 
 	public void setDescription(String desc) {
 		this.description = desc;
+		if (desc.substring(1,5).matches("^\\d{4}")) {
+			this.description = desc.substring(6);
+			this.year = Integer.parseInt(desc.substring(1,5));
+		}
+	}
+
+	public int getYear() {
+		return year;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
 	}
 
 	public String getCategory() {

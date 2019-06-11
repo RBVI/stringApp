@@ -102,9 +102,9 @@ public class PublicationsCytoPanel extends JPanel
 			PublicationsCytoPanel.class.getResource("/images/chart20.png"));
 	final Font iconFont;
 
-	final String colEnrichmentTerms = "enrichmentTerms";
-	final String colEnrichmentTermsPieChart = "enrichmentTermsPieChart";
-	final String colEnrichmentPieChart = "enrichmentPieChart";
+	// final String colEnrichmentTerms = "enrichmentTerms";
+	// final String colEnrichmentTermsPieChart = "enrichmentTermsPieChart";
+	// final String colEnrichmentPieChart = "enrichmentPieChart";
 
 	// final String butSettingsName = "Network-specific enrichment panel settings";
 	// final String butFilterName = "Filter enrichment table";
@@ -159,23 +159,23 @@ public class PublicationsCytoPanel extends JPanel
 		// TODO: clear table selection when switching
 		if (publicationsTable.getSelectedColumnCount() == 1
 				&& publicationsTable.getSelectedRow() > -1) {
-			if (publicationsTable.getSelectedColumn() != EnrichmentTerm.chartColumnCol) {
+			//if (publicationsTable.getSelectedColumn() != EnrichmentTerm.chartColumnCol) {
 				// Only clear the network selection if it's our first selected row
-				if (publicationsTable.getSelectedRowCount() == 1)
-					clearNetworkSelection(network);
-				for (int row : publicationsTable.getSelectedRows()) {
-					Object cellContent = publicationsTable.getModel().getValueAt(
-							publicationsTable.convertRowIndexToModel(row),
-							EnrichmentTerm.nodeSUIDColumnPubl);
-					if (cellContent instanceof List) {
-						List<Long> nodeIDs = (List<Long>) cellContent;
-						for (Long nodeID : nodeIDs) {
-							network.getDefaultNodeTable().getRow(nodeID).set(CyNetwork.SELECTED,
-									true);
-						}
+			if (publicationsTable.getSelectedRowCount() == 1)
+				clearNetworkSelection(network);
+			for (int row : publicationsTable.getSelectedRows()) {
+				Object cellContent = publicationsTable.getModel().getValueAt(
+						publicationsTable.convertRowIndexToModel(row),
+						EnrichmentTerm.nodeSUIDColumnPubl);
+				if (cellContent instanceof List) {
+					List<Long> nodeIDs = (List<Long>) cellContent;
+					for (Long nodeID : nodeIDs) {
+						network.getDefaultNodeTable().getRow(nodeID).set(CyNetwork.SELECTED,
+								true);
 					}
 				}
 			}
+			//}
 		}
 	}
 
@@ -258,13 +258,10 @@ public class PublicationsCytoPanel extends JPanel
 		this.removeAll();
 
 		Set<CyTable> currTables = ModelUtils.getEnrichmentTables(manager, network);
-		// availableTables = new ArrayList<String>();
 		for (CyTable currTable : currTables) {
-			System.out.println(currTable.getTitle());
 			if (currTable.getTitle().equals(TermCategory.PMID.getTable())) {
 				publicationsTable = createJTable(currTable);
 			}
-			// availableTables.add(currTable.getTitle());
 		}
 		if (noSignificant) {
 			mainPanel = new JPanel(new BorderLayout());

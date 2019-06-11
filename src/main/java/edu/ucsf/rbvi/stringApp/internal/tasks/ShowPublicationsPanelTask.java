@@ -35,9 +35,9 @@ public class ShowPublicationsPanelTask extends AbstractTask {
 
 	public void run(TaskMonitor monitor) {
 		if (show)
-			monitor.setTitle("Show enrichment panel");
+			monitor.setTitle("Show publications panel");
 		else
-			monitor.setTitle("Hide enrichment panel");
+			monitor.setTitle("Hide publications panel");
 
 		CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
 		CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.SOUTH);
@@ -57,7 +57,7 @@ public class ShowPublicationsPanelTask extends AbstractTask {
 					cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Publications"));
 
 		} else if (show && cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Publications") >= 0) {
-			EnrichmentCytoPanel panel = (EnrichmentCytoPanel) cytoPanel.getComponentAt(
+			PublicationsCytoPanel panel = (PublicationsCytoPanel) cytoPanel.getComponentAt(
 					cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Publications"));
 			panel.initPanel(noSignificant);
 		} else if (!show && cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Publications") >= 0) {
