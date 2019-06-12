@@ -453,6 +453,9 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		if (enrichmentTable.getColumn(EnrichmentTerm.colYear) == null) {
 			enrichmentTable.createColumn(EnrichmentTerm.colYear, Integer.class, false);
 		}
+		if (enrichmentTable.getColumn(EnrichmentTerm.colIDPubl) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colIDPubl, String.class, false);
+		}
 		if (enrichmentTable.getColumn(EnrichmentTerm.colDescription) == null) {
 			enrichmentTable.createColumn(EnrichmentTerm.colDescription, String.class, false);
 		}
@@ -494,6 +497,11 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			EnrichmentTerm term = processTerms.get(i);
 			CyRow row = enrichmentTable.getRow((long) i);
 			row.set(EnrichmentTerm.colName, term.getName());
+			if (term.getName().length() > 4 && term.getName().startsWith("PMID.")) {
+				row.set(EnrichmentTerm.colIDPubl, term.getName().substring(5));
+			} else {
+				row.set(EnrichmentTerm.colIDPubl, "");
+			}
 			row.set(EnrichmentTerm.colYear, term.getYear());
 			row.set(EnrichmentTerm.colDescription, term.getDescription());
 			row.set(EnrichmentTerm.colCategory, term.getCategory());

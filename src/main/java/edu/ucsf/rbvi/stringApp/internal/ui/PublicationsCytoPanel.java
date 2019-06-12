@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,6 +59,7 @@ import org.cytoscape.model.events.RowSetRecord;
 import org.cytoscape.model.events.RowsSetEvent;
 import org.cytoscape.model.events.RowsSetListener;
 import org.cytoscape.util.swing.IconManager;
+import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.vizmap.VisualMappingManager;
@@ -80,7 +82,8 @@ public class PublicationsCytoPanel extends JPanel
 		implements CytoPanelComponent2, ListSelectionListener, ActionListener, RowsSetListener {
 	// TableModelListener
 	final StringManager manager;
-	// Map<String, JTable> enrichmentTables;
+	final OpenBrowser openBrowser;
+		// Map<String, JTable> enrichmentTables;
 	JTable publicationsTable;
 	JPanel topPanel;
 	JPanel mainPanel;
@@ -115,6 +118,7 @@ public class PublicationsCytoPanel extends JPanel
 
 	public PublicationsCytoPanel(StringManager manager, boolean noSignificant) {
 		this.manager = manager;
+		this.openBrowser = manager.getService(OpenBrowser.class);
 		// enrichmentTables = new HashMap<String, JTable>();
 		publicationsTable = null;
 		this.setLayout(new BorderLayout());
@@ -159,23 +163,23 @@ public class PublicationsCytoPanel extends JPanel
 		// TODO: clear table selection when switching
 		if (publicationsTable.getSelectedColumnCount() == 1
 				&& publicationsTable.getSelectedRow() > -1) {
-			//if (publicationsTable.getSelectedColumn() != EnrichmentTerm.chartColumnCol) {
+			if (publicationsTable.getSelectedColumn() != EnrichmentTerm.idColumnPubl) {
 				// Only clear the network selection if it's our first selected row
-			if (publicationsTable.getSelectedRowCount() == 1)
-				clearNetworkSelection(network);
-			for (int row : publicationsTable.getSelectedRows()) {
-				Object cellContent = publicationsTable.getModel().getValueAt(
-						publicationsTable.convertRowIndexToModel(row),
-						EnrichmentTerm.nodeSUIDColumnPubl);
-				if (cellContent instanceof List) {
-					List<Long> nodeIDs = (List<Long>) cellContent;
-					for (Long nodeID : nodeIDs) {
-						network.getDefaultNodeTable().getRow(nodeID).set(CyNetwork.SELECTED,
-								true);
+				if (publicationsTable.getSelectedRowCount() == 1)
+					clearNetworkSelection(network);
+				for (int row : publicationsTable.getSelectedRows()) {
+					Object cellContent = publicationsTable.getModel().getValueAt(
+							publicationsTable.convertRowIndexToModel(row),
+							EnrichmentTerm.nodeSUIDColumnPubl);
+					if (cellContent instanceof List) {
+						List<Long> nodeIDs = (List<Long>) cellContent;
+						for (Long nodeID : nodeIDs) {
+							network.getDefaultNodeTable().getRow(nodeID).set(CyNetwork.SELECTED,
+									true);
+						}
 					}
 				}
 			}
-			//}
 		}
 	}
 
@@ -383,6 +387,7 @@ public class PublicationsCytoPanel extends JPanel
 		TableColumnModel tcm = jTable.getColumnModel();
 		tcm.removeColumn(tcm.getColumn(EnrichmentTerm.nodeSUIDColumnPubl));
 		tcm.getColumn(EnrichmentTerm.fdrColumnPubl).setCellRenderer(new DecimalFormatRenderer());
+		tcm.getColumn(EnrichmentTerm.idColumnPubl).setCellRenderer(new LinkRenderer());
 		// jTable.setDefaultEditor(Object.class, null);
 		// jTable.setPreferredScrollableViewportSize(jTable.getPreferredSize());
 		jTable.setFillsViewportHeight(true);
@@ -393,32 +398,18 @@ public class PublicationsCytoPanel extends JPanel
 		// jTable.getModel().addTableModelListener(this);
 		jTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
 		jTable.setDefaultEditor(Color.class, new ColorEditor());
-		popupMenu = new JPopupMenu();
+		// popupMenu = new JPopupMenu();
 		// menuItemReset = new JMenuItem("Remove color");
 		// menuItemReset.addActionListener(this);
 		// popupMenu.add(menuItemReset);
-		jTable.setComponentPopupMenu(popupMenu);
+		// jTable.setComponentPopupMenu(popupMenu);
 		jTable.addMouseListener(new MouseAdapter() {
-
 			public void mousePressed(MouseEvent e) {
-				if (e.isPopupTrigger() || SwingUtilities.isRightMouseButton(e)) {
-					JTable source = (JTable) e.getSource();
-					int row = source.rowAtPoint(e.getPoint());
-					int column = source.columnAtPoint(e.getPoint());
-					if (!source.isRowSelected(row)) {
-						source.changeSelection(row, column, false, false);
-					}
-				}
-			}
-
-			public void mouseReleased(MouseEvent e) {
-				if (e.isPopupTrigger() || SwingUtilities.isRightMouseButton(e)) {
-					JTable source = (JTable) e.getSource();
-					int row = source.rowAtPoint(e.getPoint());
-					int column = source.columnAtPoint(e.getPoint());
-					if (!source.isRowSelected(row)) {
-						source.changeSelection(row, column, false, false);
-					}
+				JTable source = (JTable) e.getSource();
+				int row = source.rowAtPoint(e.getPoint());
+				int column = source.columnAtPoint(e.getPoint());
+				if (column == EnrichmentTerm.idColumnPubl) {
+					openBrowser.openURL( "https://www.ncbi.nlm.nih.gov/pubmed/" + (String) source.getValueAt(row, column));
 				}
 			}
 		});
@@ -490,6 +481,18 @@ public class PublicationsCytoPanel extends JPanel
 		}
 	}
 
+	
+	static class LinkRenderer extends DefaultTableCellRenderer {
+
+		@Override
+		public Component getTableCellRendererComponent(JTable table, final Object value,
+				boolean arg2, boolean arg3, int arg4, int arg5) {
+			final JLabel lab = new SwingLink(value.toString(),
+					"https://www.ncbi.nlm.nih.gov/pubmed/" + value, null);
+			return lab;
+		}
+	}
+	
 	// public void resetColor(int currentRow) {
 	// // JTable currentTable = enrichmentTables.get(showTable);
 	// // currentRow = currentTable.getSelectedRow();

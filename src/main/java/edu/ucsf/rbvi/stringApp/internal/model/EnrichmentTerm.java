@@ -83,6 +83,7 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	}
 
 	public static final String colID = "term id";
+	public static final String colIDPubl = "PMID";
 	public static final String colName = "term name";
 	public static final String colYear = "year";
 	public static final String colDescription = "description";
@@ -111,10 +112,11 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	public static final int chartColumnCol = 1;
 	public static final int nameColumn = 2;
 	
-	public static final String[] swingColumnsPublications = new String[] { colName, colYear, colDescription, colFDR,
+	public static final String[] swingColumnsPublications = new String[] { colIDPubl, colYear, colDescription, colFDR,
 			colGenesCount, colGenesBG, colGenes, colGenesSUID };
 	public static final int nodeSUIDColumnPubl = 7;
 	public static final int fdrColumnPubl = 3;
+	public static final int idColumnPubl = 0;
 	
 	public EnrichmentTerm() {
 		this.name = "";
@@ -172,7 +174,7 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 
 	public void setDescription(String desc) {
 		this.description = desc;
-		if (desc.substring(1,5).matches("^\\d{4}")) {
+		if (desc.length() > 5 && desc.substring(1,5).matches("^\\d{4}")) {
 			this.description = desc.substring(6);
 			this.year = Integer.parseInt(desc.substring(1,5));
 		}

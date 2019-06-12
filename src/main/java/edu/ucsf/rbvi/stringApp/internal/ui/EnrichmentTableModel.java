@@ -62,6 +62,8 @@ public class EnrichmentTableModel extends AbstractTableModel {
 			return cyTable.getRow(rowName).get(colName, Integer.class);
 		} else if (colName.equals(EnrichmentTerm.colGenesCount)) {
 			return cyTable.getRow(rowName).get(colName, Integer.class);
+		}  else if (colName.equals(EnrichmentTerm.colIDPubl)) {
+			return cyTable.getRow(rowName).get(colName, String.class);
 		} else if (colName.equals(EnrichmentTerm.colYear)) {
 			return cyTable.getRow(rowName).get(colName, Integer.class);
 		} else if (colName.equals(EnrichmentTerm.colGenes)) {
@@ -93,6 +95,8 @@ public class EnrichmentTableModel extends AbstractTableModel {
 			return cyTable.getRow(rowName).get(colName, Integer.class);
 		} else if (colName.equals(EnrichmentTerm.colGenesCount)) {
 			return cyTable.getRow(rowName).get(colName, Integer.class);
+		}  else if (colName.equals(EnrichmentTerm.colIDPubl)) {
+			return cyTable.getRow(rowName).get(colName, String.class);
 		} else if (colName.equals(EnrichmentTerm.colYear)) {
 			return cyTable.getRow(rowName).get(colName, Integer.class);
 		} else if (colName.equals(EnrichmentTerm.colGenes)) {
@@ -118,6 +122,8 @@ public class EnrichmentTableModel extends AbstractTableModel {
 			return Integer.class;
 		} else if (colName.equals(EnrichmentTerm.colGenesCount)) {
 			return Integer.class;
+		} else if (colName.equals(EnrichmentTerm.colIDPubl)) {
+			return String.class;
 		} else if (colName.equals(EnrichmentTerm.colYear)) {
 			return Integer.class;
 		} else if (colName.equals(EnrichmentTerm.colGenes)) {
