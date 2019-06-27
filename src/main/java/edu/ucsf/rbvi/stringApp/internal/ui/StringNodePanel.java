@@ -131,7 +131,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		layout.setVgap(0);
 		controlPanel.setLayout(layout);
 		{
-			enableGlass = new JCheckBox("Glass Ball Effect");
+			enableGlass = new JCheckBox("Glass ball effect");
 			enableGlass.setFont(labelFont);
 			enableGlass.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
@@ -144,7 +144,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		}
 		
 		{
-			showStructure = new JCheckBox("Structure Images");
+			showStructure = new JCheckBox("Structure images");
 			showStructure.setFont(labelFont);
 			// showStructure.setBorder(null);
 			showStructure.addItemListener(new ItemListener() {
@@ -158,7 +158,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		}
 		
 		{
-			stringLabels = new JCheckBox("String-Style Labels");
+			stringLabels = new JCheckBox("STRING style labels");
 			stringLabels.setFont(labelFont);
 			stringLabels.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
@@ -171,7 +171,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		}
 		
 		{
-			showSingletons = new JCheckBox("Show singletons");
+			showSingletons = new JCheckBox("Singletons");
 			showSingletons.setFont(labelFont);
 			showSingletons.setSelected(true);
 			showSingletons.addItemListener(new ItemListener() {
@@ -184,7 +184,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		}
 
 		{
-			JButton getEnrichment = new JButton("Get Enrichment");
+			JButton getEnrichment = new JButton("Get enrichment");
 			getEnrichment.setFont(labelFont);
 			controlPanel.add(getEnrichment);
 			getEnrichment.addActionListener(new ActionListener() {
@@ -198,7 +198,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		}
 
 		{
-			highlightQuery = new JButton("Select Query");
+			highlightQuery = new JButton("Select query");
 			highlightQuery.setFont(labelFont);
 
 			// See if we have anything in "query term"
@@ -230,7 +230,7 @@ public class StringNodePanel extends AbstractStringPanel {
 			                 c.anchor("west").down().expandHoriz());
 		}
 
-		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Tissues Filters", tissuesPanel, true, 10);
+		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Tissue filters", tissuesPanel, true, 10);
 		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
 		return collapsablePanel;
 	}
@@ -256,7 +256,7 @@ public class StringNodePanel extends AbstractStringPanel {
 			panel.add(createFilterSlider("compartment", compartment, currentNetwork, true, 500.0), 
 			          c.anchor("west").down().expandHoriz());
 		}
-		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Compartments Filter", panel, true, 10);
+		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Compartment filters", panel, true, 10);
 		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
 		return collapsablePanel;
 	}
@@ -286,7 +286,7 @@ public class StringNodePanel extends AbstractStringPanel {
 			nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
 		}
 		nodesPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Selected Nodes", nodesPanel, false, 10);
+		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Selected nodes", nodesPanel, false, 10);
 		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
 		return collapsablePanel;
 	}
@@ -354,7 +354,7 @@ public class StringNodePanel extends AbstractStringPanel {
 					}
 			});
 			highlightBox.setAlignmentX( Component.LEFT_ALIGNMENT );
-			highlightBox.setBorder(BorderFactory.createEmptyBorder(0,0,10,0));
+			highlightBox.setBorder(BorderFactory.createEmptyBorder(10,2,10,0));
 			panel.add(highlightBox, c.anchor("northwest").down().expandHoriz());
 		}
 
@@ -362,7 +362,7 @@ public class StringNodePanel extends AbstractStringPanel {
 			JLabel lbl = new JLabel("Crosslinks");
 			lbl.setFont(labelFont);
 			lbl.setAlignmentX( Component.LEFT_ALIGNMENT );
-			lbl.setBorder(BorderFactory.createEmptyBorder(0,0,5,0));
+			lbl.setBorder(BorderFactory.createEmptyBorder(0,2,5,0));
 			panel.add(lbl, c.anchor("west").down().noExpand());
 
 			JPanel crosslinkPanel = new JPanel();
@@ -370,27 +370,27 @@ public class StringNodePanel extends AbstractStringPanel {
 			crosslinkPanel.setLayout(layout);
 			crosslinkPanel.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
 			if (sNode.haveUniprot()) {
-  			JLabel link = new SwingLink("Uniprot", sNode.getUniprotURL(), openBrowser);
+  			JLabel link = new SwingLink("UniProt", sNode.getUniprotURL(), openBrowser);
 				link.setFont(textFont);
 				crosslinkPanel.add(link);
 			}
 			if (sNode.haveGeneCard()) {
-  			JLabel link = new SwingLink("Gene card", sNode.getGeneCardURL(), openBrowser);
+  			JLabel link = new SwingLink("GeneCards", sNode.getGeneCardURL(), openBrowser);
 				link.setFont(textFont);
 				crosslinkPanel.add(link);
 			}
 			if (sNode.haveCompartments()) {
-  			JLabel link = new SwingLink("Compartments", sNode.getCompartmentsURL(), openBrowser);
+  			JLabel link = new SwingLink("COMPARTMENTS", sNode.getCompartmentsURL(), openBrowser);
 				link.setFont(textFont);
 				crosslinkPanel.add(link);
 			}
 			if (sNode.haveTissues()) {
-  			JLabel link = new SwingLink("Tissues", sNode.getTissuesURL(), openBrowser);
+  			JLabel link = new SwingLink("TISSUES", sNode.getTissuesURL(), openBrowser);
 				link.setFont(textFont);
 				crosslinkPanel.add(link);
 			}
 			if (sNode.haveDisease()) {
-  			JLabel link = new SwingLink("Disease", sNode.getDiseaseURL(), openBrowser);
+  			JLabel link = new SwingLink("DISEASES", sNode.getDiseaseURL(), openBrowser);
 				link.setFont(textFont);
 				crosslinkPanel.add(link);
 			}
@@ -421,7 +421,7 @@ public class StringNodePanel extends AbstractStringPanel {
 			JLabel lbl = new JLabel("Description");
 			lbl.setFont(labelFont);
 			lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
-			lbl.setBorder(BorderFactory.createEmptyBorder(10,0,5,0));
+			lbl.setBorder(BorderFactory.createEmptyBorder(10,2,5,0));
 			panel.add(lbl, c.anchor("west").down().expandHoriz());
 
 			JLabel description = new JLabel("<html><body style='width:250px;font-size:8px'>"+sNode.getDescription()+"</body></html>");
@@ -434,7 +434,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		{
 			JLabel lbl = new JLabel("Structure");
 			lbl.setFont(labelFont);
-			lbl.setBorder(BorderFactory.createEmptyBorder(10,0,5,0));
+			lbl.setBorder(BorderFactory.createEmptyBorder(10,2,5,0));
 			panel.add(lbl, c.anchor("west").down().expandHoriz());
 
 			// Now add our image

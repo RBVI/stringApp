@@ -103,7 +103,7 @@ public class StringCytoPanel extends JPanel
 	}
 
 	public String getTitle() {
-		return "String";
+		return "STRING";
 	}
 
 	public void updateControls() {
