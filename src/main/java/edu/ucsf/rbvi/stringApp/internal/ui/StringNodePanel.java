@@ -265,7 +265,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		if (compartmentsPanel == null) return;
 		compartmentsPanel.removeAll();
 		EasyGBC c = new EasyGBC();
-		List<String> compartmentsList = ModelUtils.getTissueList(currentNetwork);
+		List<String> compartmentsList = ModelUtils.getCompartmentList(currentNetwork);
 		for (String compartments: compartmentsList) {
 			compartmentsPanel.add(createFilterSlider("compartment", compartments, currentNetwork, true, 500.0), 
 			                      c.anchor("west").down().expandHoriz());

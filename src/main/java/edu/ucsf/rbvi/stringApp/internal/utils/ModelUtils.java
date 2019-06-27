@@ -162,8 +162,11 @@ public class ModelUtils {
 	}
 
 	public static List<String> getCompartmentList(CyNetwork network) {
-		Collection<CyColumn> columns = network.getDefaultNodeTable().getColumns(COMPARTMENT_NAMESPACE);
 		List<String> compartments = new ArrayList<>();
+		if (network == null) {
+			return compartments;
+		}
+		Collection<CyColumn> columns = network.getDefaultNodeTable().getColumns(COMPARTMENT_NAMESPACE);
 		if (columns == null || columns.size() == 0) return compartments;
 		for (CyColumn col: columns) {
 			compartments.add(col.getNameOnly());
@@ -184,8 +187,12 @@ public class ModelUtils {
 	}
 
 	public static List<String> getTissueList(CyNetwork network) {
-		Collection<CyColumn> columns = network.getDefaultNodeTable().getColumns(TISSUE_NAMESPACE);
 		List<String> tissues = new ArrayList<>();
+		if (network == null) {
+			// System.out.println("network is null");
+			return tissues;
+		}
+		Collection<CyColumn> columns = network.getDefaultNodeTable().getColumns(TISSUE_NAMESPACE);
 		if (columns == null || columns.size() == 0) return tissues;
 		for (CyColumn col: columns) {
 			tissues.add(col.getNameOnly());
@@ -1034,8 +1041,8 @@ public class ModelUtils {
 	}
 
 	public static String getString(CyNetwork network, CyIdentifiable ident, String column) {
-		if (network.getRow(ident) != null)
-			return network.getRow(ident).get(column, String.class);
+		if (network.getRow(ident, CyNetwork.DEFAULT_ATTRS) != null)
+			return network.getRow(ident, CyNetwork.DEFAULT_ATTRS).get(column, String.class);
 		return null;
 	}
 
