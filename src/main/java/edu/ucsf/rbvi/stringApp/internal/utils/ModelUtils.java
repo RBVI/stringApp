@@ -179,7 +179,7 @@ public class ModelUtils {
 		List<String> scores = new ArrayList<>();
 		if (columns == null || columns.size() == 0) return scores;
 		for (CyColumn col: columns) {
-			if (col.getNameOnly().equals("score"))
+			if (col.getNameOnly().equals("score") || !col.getType().equals(Double.class))
 				continue;
 			scores.add(col.getNameOnly());
 		}
