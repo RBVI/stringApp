@@ -53,7 +53,9 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNode;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.GetPublicationsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowPublicationsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
@@ -127,7 +129,7 @@ public class StringNodePanel extends AbstractStringPanel {
 
 	private JPanel createControlPanel() {
 		JPanel controlPanel = new JPanel();
-		GridLayout layout = new GridLayout(3,2);
+		GridLayout layout = new GridLayout(4,2);
 		layout.setVgap(0);
 		controlPanel.setLayout(layout);
 		{
@@ -184,7 +186,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		}
 
 		{
-			JButton getEnrichment = new JButton("Get enrichment");
+			JButton getEnrichment = new JButton("Functional enrichment");
 			getEnrichment.setFont(labelFont);
 			controlPanel.add(getEnrichment);
 			getEnrichment.addActionListener(new ActionListener() {
@@ -192,6 +194,20 @@ public class StringNodePanel extends AbstractStringPanel {
 					GetEnrichmentTaskFactory tf = new GetEnrichmentTaskFactory(manager, true);
 		      ShowEnrichmentPanelTaskFactory showTf = manager.getShowEnrichmentPanelTaskFactory();
 					tf.setShowEnrichmentPanelFactory(showTf);
+					manager.execute(tf.createTaskIterator(currentNetwork), false);
+				}
+			});
+		}
+
+		{
+			JButton getPublications = new JButton("Enriched publications");
+			getPublications.setFont(labelFont);
+			controlPanel.add(getPublications);
+			getPublications.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					GetPublicationsTaskFactory tf = new GetPublicationsTaskFactory(manager, true);
+		      ShowPublicationsPanelTaskFactory showTf = manager.getShowPublicationsPanelTaskFactory();
+					tf.setShowPublicationsPanelFactory(showTf);
 					manager.execute(tf.createTaskIterator(currentNetwork), false);
 				}
 			});
