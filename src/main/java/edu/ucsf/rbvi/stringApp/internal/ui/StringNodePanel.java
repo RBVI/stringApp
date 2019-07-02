@@ -377,12 +377,12 @@ public class StringNodePanel extends AbstractStringPanel {
 						if (e.getStateChange() == ItemEvent.SELECTED) {
 							if (highlightCheck != null)
 								highlightCheck.setSelected(false);
-							ViewUtils.clearHighlight(manager, manager.getCurrentNetworkView(), highlightNode);
+							ViewUtils.clearHighlight(manager, manager.getCurrentNetworkView());
 							ViewUtils.highlight(manager, manager.getCurrentNetworkView(), node);
 							highlightNode = node;
 							highlightCheck = (JCheckBox)e.getItem();
 						} else {
-							ViewUtils.clearHighlight(manager, manager.getCurrentNetworkView(), highlightNode);
+							ViewUtils.clearHighlight(manager, manager.getCurrentNetworkView());
 							highlightNode = null;
 							highlightCheck = null;
 						}
@@ -521,6 +521,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		// Clear the nodes panel
 		nodesPanel.removeAll();
 		EasyGBC c = new EasyGBC();
+		ViewUtils.clearHighlight(manager, manager.getCurrentNetworkView());
 
 		for (CyNode node: nodes) {
 			JPanel newPanel = createNodePanel(node);

@@ -644,9 +644,9 @@ public class ViewUtils {
 		}
 	}
 
-	public static void clearHighlight(StringManager manager, CyNetworkView view, CyNode node) {
-		if (node == null) return;
-		View<CyNode> nodeView = view.getNodeView(node);
+	public static void clearHighlight(StringManager manager, CyNetworkView view) {
+		// if (node == null) return;
+		// View<CyNode> nodeView = view.getNodeView(node);
 
 		VisualLexicon lex = manager.getService(RenderingEngineManager.class).getDefaultVisualLexicon();
 		VisualProperty customGraphics1 = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_1");
