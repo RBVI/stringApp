@@ -77,6 +77,10 @@ public class StringCytoPanel extends JPanel
 		}
 		if (cytoPanel.getState() == CytoPanelState.HIDE)
 			cytoPanel.setState(CytoPanelState.DOCK);
+
+		// Tell tabs
+		nodePanel.networkChanged(manager.getCurrentNetwork());
+		edgePanel.networkChanged(manager.getCurrentNetwork());
 	}
 
 	public void hideCytoPanel() {

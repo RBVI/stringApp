@@ -124,7 +124,7 @@ public class ViewUtils {
 		stringStyle.setDefaultValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.ELLIPSE);
 
 		// And set the color to white
-		stringStyle.setDefaultValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.WHITE);
+		stringStyle.setDefaultValue(BasicVisualLexicon.NODE_FILL_COLOR, Color.LIGHT_GRAY);
 
 		// And set the edge color to blue
 		stringStyle.setDefaultValue(BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT, new Color(31,41,61));
@@ -480,8 +480,8 @@ public class ViewUtils {
 		style.addVisualMappingFunction(dMapping);
 	}
 	
-	public static void updateNodeColorsHost(StringManager manager, 
-	                                        CyNetwork net, CyNetworkView view) {
+	public static void updateNodeColors(StringManager manager, 
+	                                    CyNetwork net, CyNetworkView view, boolean host) {
 		// manager.flushEvents();
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
 		VisualMappingFunctionFactory discreteFactory = manager
@@ -511,7 +511,12 @@ public class ViewUtils {
 			vmm.addVisualStyle(stringStyle);
 			style = stringStyle;
 		}
-		updateColorMapHost(manager, style, net);
+
+		if (host) {
+			updateColorMapHost(manager, style, net);
+		} else {
+			updateColorMap(manager, style, net);
+		}
 		if (view != null)
 			vmm.setVisualStyle(style, view);
 		vmm.setCurrentVisualStyle(style);
@@ -657,6 +662,30 @@ public class ViewUtils {
 
 		for (View<CyEdge> ev: view.getEdgeViews()) {
 			ev.clearValueLock(BasicVisualLexicon.EDGE_TRANSPARENCY);
+		}
+	}
+
+	public static void hideStringColors(StringManager manager, CyNetworkView view, boolean show) {
+		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
+		VisualStyle style = null;
+	 	if (view != null)
+			style	= vmm.getVisualStyle(view);
+		else {
+			String styleName = getStyleName(manager, view.getModel());
+			for (VisualStyle s: vmm.getAllVisualStyles()) {
+				if (s.getTitle().equals(styleName)) {
+					style = s;
+					break;
+				}
+			}
+		}
+
+		if (style == null) return;
+
+		if (show) {
+			updateColorMap(manager, style, view.getModel());
+		} else {
+			style.removeVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
 		}
 	}
 

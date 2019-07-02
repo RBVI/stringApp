@@ -102,6 +102,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private boolean showImage = true;
 	private boolean showEnhancedLabels = true;
 	private boolean showGlassBallEffect = true;
+	private boolean showStringColors = true;
 	private Species species;
 	private double defaultConfidence = 0.40;
 	private int additionalProteins = 0;
@@ -117,6 +118,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String ShowStructureImages = "showStructureImages";
 	public static String ShowEnhancedLabels = "showEnhancedLabels";
 	public static String ShowGlassBallEffect = "showGlassBallEffect";
+	public static String ShowStringColors = "showStringColors";
 
 
 	private CyProperty<Properties> sessionProperties;
@@ -367,6 +369,12 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		showGlassBallEffect = set; 
 	}
 
+	public boolean showStringColors() { return showStringColors; }
+	
+	public void setShowStringColors(boolean set) { 
+		showStringColors = set; 
+	}
+
 	public void setCytoPanel(StringCytoPanel panel) {
 		this.cytoPanel = panel;
 	}
@@ -516,6 +524,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		ModelUtils.setStringProperty(configProps, "showImage", Boolean.toString(showImage));
 		ModelUtils.setStringProperty(configProps, "showEnhancedLabels", Boolean.toString(showEnhancedLabels));
 		ModelUtils.setStringProperty(configProps, "showGlassBallEffect", Boolean.toString(showGlassBallEffect));
+		ModelUtils.setStringProperty(configProps, "showStringColors", Boolean.toString(showStringColors));
 
 		ModelUtils.setStringProperty(configProps, "species", getDefaultSpecies().toString());
 		ModelUtils.setStringProperty(configProps, "defaultConfidence", Double.toString(getDefaultConfidence()));

@@ -62,7 +62,7 @@ public abstract class AbstractStringPanel extends JPanel {
 		    filters.get(network).containsKey(type) && 
 		    filters.get(network).get(type).containsKey(text)) {
 			value = filters.get(network).get(type).get(text);
-			System.out.println("value = "+value);
+			// System.out.println("value = "+value);
 		}
 		Box box = Box.createHorizontalBox();
 		if (labels) {

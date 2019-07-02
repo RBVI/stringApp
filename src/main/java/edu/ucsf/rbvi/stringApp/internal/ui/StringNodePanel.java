@@ -32,6 +32,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
 
 
 import org.cytoscape.application.events.SetCurrentNetworkEvent;
@@ -70,6 +71,7 @@ public class StringNodePanel extends AbstractStringPanel {
 	private JCheckBox showStructure;
 	private JCheckBox stringLabels;
 	private JCheckBox showSingletons;
+	private JCheckBox stringColors;
 	private JPanel tissuesPanel = null;
 	private JPanel compartmentsPanel = null;
 	private JPanel nodesPanel = null;
@@ -93,6 +95,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		enableGlass.setSelected(manager.showGlassBallEffect());
 		showStructure.setSelected(manager.showImage());
 		stringLabels.setSelected(manager.showEnhancedLabels());
+		stringColors.setSelected(manager.showStringColors());
 		if (!manager.showGlassBallEffect())
 			showStructure.setEnabled(false);
 		else
@@ -129,7 +132,7 @@ public class StringNodePanel extends AbstractStringPanel {
 
 	private JPanel createControlPanel() {
 		JPanel controlPanel = new JPanel();
-		GridLayout layout = new GridLayout(4,2);
+		GridLayout layout = new GridLayout(5,2);
 		layout.setVgap(0);
 		controlPanel.setLayout(layout);
 		{
@@ -173,6 +176,20 @@ public class StringNodePanel extends AbstractStringPanel {
 		}
 		
 		{
+			stringColors = new JCheckBox("String colors");
+			stringColors.setFont(labelFont);
+			stringColors.setSelected(true);
+			stringColors.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					if (updating) return;
+					manager.setShowStringColors(stringColors.isSelected());
+					ViewUtils.hideStringColors(manager, manager.getCurrentNetworkView(), stringColors.isSelected());
+				}
+			});
+			controlPanel.add(stringColors);
+		}
+		
+		{
 			showSingletons = new JCheckBox("Singletons");
 			showSingletons.setFont(labelFont);
 			showSingletons.setSelected(true);
@@ -184,6 +201,8 @@ public class StringNodePanel extends AbstractStringPanel {
 			});
 			controlPanel.add(showSingletons);
 		}
+		
+		controlPanel.add(new JLabel());
 
 		{
 			JButton getEnrichment = new JButton("Functional enrichment");
@@ -466,7 +485,9 @@ public class StringNodePanel extends AbstractStringPanel {
 		}
 
 		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, sNode.getDisplayName(), panel, false, 10);
-		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
+		Border etchedBorder = BorderFactory.createEtchedBorder();
+		Border emptyBorder = BorderFactory.createEmptyBorder(0,5,0,0);
+		collapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
 		return collapsablePanel;
 	}
 

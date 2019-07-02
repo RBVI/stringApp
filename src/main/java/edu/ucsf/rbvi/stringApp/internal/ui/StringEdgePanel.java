@@ -72,7 +72,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 		{
 			EasyGBC c = new EasyGBC();
 			add(new JSeparator(SwingConstants.HORIZONTAL), c.anchor("west").expandHoriz());
-			JComponent scoreSlider = createFilterSlider("score", "score", currentNetwork, true, 100.0);
+			JComponent scoreSlider = createFilterSlider("score", "Score", currentNetwork, true, 100.0);
 			{
 				scorePanel = new JPanel();
 				scorePanel.setLayout(new GridBagLayout());
@@ -192,7 +192,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 			CyRow edgeRow = currentNetwork.getRow(edge);
 			boolean show = true;
 			for (String lbl: filter.keySet()) {
-				Double v = edgeRow.get(ModelUtils.STRINGDB_NAMESPACE, lbl, Double.class);
+				Double v = edgeRow.get(ModelUtils.STRINGDB_NAMESPACE, lbl.toLowerCase(), Double.class);
 				double nv = filter.get(lbl);
 				if ((v == null && nv > 0) || v < nv) {
 					show = false;
@@ -232,7 +232,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 
 	private void updateScore() {
 		scorePanel.removeAll();
-		JComponent scoreSlider = createFilterSlider("score", "score", currentNetwork, true, 100.0);
+		JComponent scoreSlider = createFilterSlider("score", "Score", currentNetwork, true, 100.0);
 		scorePanel.add(scoreSlider);
 	}
 
