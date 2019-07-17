@@ -138,7 +138,8 @@ public class ModelUtils {
 	public static boolean ifString(CyNetwork network) {
 		if (network == null) return false;
 		CyRow netRow = network.getRow(network);
-		if (netRow.isSet(CONFIDENCE) && netRow.isSet(NET_SPECIES))
+		Collection<CyColumn> columns = network.getDefaultNodeTable().getColumns(STRINGDB_NAMESPACE);
+		if (netRow.isSet(CONFIDENCE) && netRow.isSet(NET_SPECIES) && columns != null && columns.size() > 0)
 			return true;
 		return false;
 	}
@@ -775,7 +776,7 @@ public class ModelUtils {
 		// This is a string network only if we have a confidence score in the network table,
 		// "@id", "species", "canonical name", and "sequence" columns in the node table, and
 		// a "score" column in the edge table
-		if (network == null || network.getRow(network).get(CONFIDENCE, Double.class) == null)
+		if (network == null || network.getRow(network).get(CONFIDENCE, Double.class) == null || network.getDefaultNodeTable().getColumns(STRINGDB_NAMESPACE) == null)
 			return false;
 		return isMergedStringNetwork(network);
 	}
@@ -1608,6 +1609,8 @@ public class ModelUtils {
 		for (View<CyNode> nodeView: fromView.getNodeViews()) {
 			// Get the to node
 			String nodeKey = from.getRow(nodeView.getModel()).get(column, String.class);
+			if (!nodeMap.containsKey(nodeKey)) 
+				continue;
 			View<CyNode> toNodeView = toView.getNodeView(nodeMap.get(nodeKey));
 			// Copy over the positions
 			Double x = nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION);
@@ -1631,6 +1634,9 @@ public class ModelUtils {
 
 			String source = fromNetwork.getRow(sourceNode).get(column, String.class);
 			String target = fromNetwork.getRow(targetNode).get(column, String.class);
+			
+			if (!nodeMap.containsKey(source) || !nodeMap.containsKey(target))
+				continue;
 
 			CyNode newSource = nodeMap.get(source);
 			CyNode newTarget = nodeMap.get(target);
@@ -1657,6 +1663,8 @@ public class ModelUtils {
 		copyColumns(from.getDefaultNodeTable(), to.getDefaultNodeTable());
 		for (CyNode node: from.getNodeList()) {
 			String nodeKey = from.getRow(node).get(column, String.class);
+			if (!nodeMap.containsKey(nodeKey))
+				continue;
 			CyNode newNode = nodeMap.get(nodeKey);
 			copyRow(from.getDefaultNodeTable(), to.getDefaultNodeTable(), node, newNode);
 		}
