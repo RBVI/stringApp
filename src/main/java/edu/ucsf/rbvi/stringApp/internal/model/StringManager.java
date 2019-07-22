@@ -627,6 +627,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public void handleEvent(NetworkAboutToBeDestroyedEvent e) {
 		CyNetwork network = e.getNetwork();
 		ModelUtils.deleteEnrichmentTables(network, this);
+		if (stringNetworkMap.containsKey(network))
+			stringNetworkMap.remove(network);
 		CyNetworkManager netManager = this.getService(CyNetworkManager.class);
 		Set<CyNetwork> networks = netManager.getNetworkSet();
 		reloadEnrichmentPanel(networks);
@@ -763,7 +765,6 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public boolean haveCyBrowser() {
 		if (haveCyBrowser == null)
 			haveCyBrowser = availableCommands.getNamespaces().contains("cybrowser");
-		System.out.println("haveCyBrowser = "+haveCyBrowser);
 		return haveCyBrowser;
 	}
 

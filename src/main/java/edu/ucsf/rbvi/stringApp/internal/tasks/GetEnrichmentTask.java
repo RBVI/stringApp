@@ -106,6 +106,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			this.network = network;
 			this.netView = netView;
 		}
+
 		this.showFactoryEnrich = showEnrichmentFactory;
 		this.showFactoryPubl = showFactoryPubl;
 		this.publOnly = publOnly;
