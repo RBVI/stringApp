@@ -126,7 +126,7 @@ public class StringCytoPanel extends JPanel
 	@Override
 	public void handleEvent(SetCurrentNetworkEvent event) {
 		CyNetwork network = event.getNetwork();
-		if (ModelUtils.ifString(network)) {
+		if (ModelUtils.ifHaveStringNS(network)) {
 			if (!registered) {
 				showCytoPanel();
 			}

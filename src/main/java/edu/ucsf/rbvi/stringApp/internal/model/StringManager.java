@@ -204,7 +204,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 		// If we already have networks loaded, see if they are string networks
 		for (CyNetwork network: registrar.getService(CyNetworkManager.class).getNetworkSet()) {
-			if (ModelUtils.ifString(network)) {
+			// FIXME: this should be isString
+			if (ModelUtils.isStringNetwork(network)) {
 				StringNetwork stringNet = new StringNetwork(this);
 				addStringNetwork(stringNet, network);
 			}
@@ -568,7 +569,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		// Create string networks for any networks loaded by string
 		Set<CyNetwork> networks = arg0.getLoadedSession().getNetworks();
 		for (CyNetwork network: networks) {
-			if (ModelUtils.ifString(network)) {
+			if (ModelUtils.isStringNetwork(network)) {
 				StringNetwork stringNet = new StringNetwork(this);
 				addStringNetwork(stringNet, network);
 			}
@@ -618,7 +619,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			}
 			imagesTaskFactory.reregister();
 		}
-		if (ModelUtils.ifString(getCurrentNetwork()))
+		if (ModelUtils.ifHaveStringNS(getCurrentNetwork()))
 			showResultsPanel();
 		else
 			hideResultsPanel();

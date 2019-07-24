@@ -134,15 +134,6 @@ public class ModelUtils {
 	// Other stuff
 	public static String COMPOUND = "STITCH compounds";
 	public static String EMPTYLINE = "--------";
-	
-	public static boolean ifString(CyNetwork network) {
-		if (network == null) return false;
-		CyRow netRow = network.getRow(network);
-		Collection<CyColumn> columns = network.getDefaultNodeTable().getColumns(STRINGDB_NAMESPACE);
-		if (netRow.isSet(CONFIDENCE) && netRow.isSet(NET_SPECIES) && columns != null && columns.size() > 0)
-			return true;
-		return false;
-	}
 
 	public static boolean haveQueryTerms(CyNetwork network) {
 		if (network == null) return false;
@@ -779,6 +770,16 @@ public class ModelUtils {
 		if (network == null || network.getRow(network).get(CONFIDENCE, Double.class) == null || network.getDefaultNodeTable().getColumns(STRINGDB_NAMESPACE) == null)
 			return false;
 		return isMergedStringNetwork(network);
+	}
+	
+	// This method will tell us if we have the new side panel functionality (i.e. namespaces)
+	public static boolean ifHaveStringNS(CyNetwork network) {
+		if (network == null) return false;
+		CyRow netRow = network.getRow(network);
+		Collection<CyColumn> columns = network.getDefaultNodeTable().getColumns(STRINGDB_NAMESPACE);
+		if (netRow.isSet(CONFIDENCE) && netRow.isSet(NET_SPECIES) && columns != null && columns.size() > 0)
+			return true;
+		return false;
 	}
 
 	public static String getExisting(CyNetwork network) {
