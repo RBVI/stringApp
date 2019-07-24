@@ -78,7 +78,7 @@ public abstract class AbstractStringPanel extends JPanel {
 
 		slider.setPreferredSize(new Dimension(100,20));
 		box.add(slider);
-		box.add(Box.createHorizontalGlue());
+		// box.add(Box.createHorizontalGlue());
 		JTextField textField;
 		textField = new JTextField(String.format("%.2f",value),4);
 		textField.setPreferredSize(new Dimension(30,20));

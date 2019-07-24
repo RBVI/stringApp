@@ -18,6 +18,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
@@ -83,13 +84,17 @@ public class StringEdgePanel extends AbstractStringPanel {
 
 			{
 				subScorePanel = new JPanel();
-				scorePanel.setLayout(new GridBagLayout());
+				subScorePanel.setLayout(new GridBagLayout());
 				EasyGBC d = new EasyGBC();
 				subScorePanel.add(createSubScorePanel(), d.anchor("west").expandHoriz());
+				subScorePanel.add(new JPanel(), d.down().anchor("west").expandBoth());
 			}
 
-			add(subScorePanel, c.down().anchor("west").expandHoriz());
-			add(new JPanel(), c.down().anchor("west").expandBoth());
+			JScrollPane scrollPane = new JScrollPane(subScorePanel, JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+		                                         JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+			add(scrollPane, c.down().anchor("west").expandBoth());
+			// add(new JPanel(), c.down().anchor("west").expandBoth());
 		}
 	}
 
@@ -103,6 +108,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 		// OK, now we want to create 3 panels: Color, Label, and Filter
 		{
 			JPanel colorPanel = new JPanel();
+			colorPanel.setMinimumSize(new Dimension(25,30));
 			colorPanel.setLayout(new GridBagLayout());
 			EasyGBC d = new EasyGBC();
 			JLabel lbl = new JLabel("Color");
@@ -148,7 +154,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 			for (String subScore: subScoreList) {
 				JComponent scoreSlider = createFilterSlider("score", subScore, currentNetwork, false, 100.0);
 				scoreSlider.setMinimumSize(new Dimension(100,30));
-				scoreSlider.setMaximumSize(new Dimension(100,30));
+				// scoreSlider.setMaximumSize(new Dimension(100,30));
 				filterPanel.add(scoreSlider, d.down().expandBoth());
 			}
 			filterPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -163,8 +169,8 @@ public class StringEdgePanel extends AbstractStringPanel {
 
 	private JComponent createScoreCheckBox(String subScore) {
 		JCheckBox cb = new JCheckBox("");
-		cb.setMinimumSize(new Dimension(1,15));
-		cb.setMaximumSize(new Dimension(20,15));
+		cb.setMinimumSize(new Dimension(20,30));
+		cb.setMaximumSize(new Dimension(20,30));
 		cb.setBackground(colorMap.get(subScore));
 		cb.setOpaque(true);
 		if (colors.containsKey(currentNetwork) && 
