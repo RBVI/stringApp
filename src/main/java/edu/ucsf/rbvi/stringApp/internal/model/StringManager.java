@@ -1,5 +1,6 @@
 package edu.ucsf.rbvi.stringApp.internal.model;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -115,12 +116,18 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private List<TermCategory> categoryFilter = TermCategory.getValues();
 	private ChartType chartType = ChartType.SPLIT;
 	private boolean removeOverlap = false;
+	private Map<String, Color> channelColors;
 
 	public static String ShowStructureImages = "showStructureImages";
 	public static String ShowEnhancedLabels = "showEnhancedLabels";
 	public static String ShowGlassBallEffect = "showGlassBallEffect";
 	public static String ShowStringColors = "showStringColors";
 	public static String ShowSingletons = "showSingletons";
+
+	public static String[] channels = { "databases", "experiments", "neighborhood", "fusion",
+	                                    "cooccurrence", "textmining", // Lime green 
+																			"coexpression"
+	};
 
 
 	private CyProperty<Properties> sessionProperties;
@@ -148,6 +155,16 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 				throw new RuntimeException("Can't read species information");
 			}
 		}
+
+		channelColors = new HashMap<>();
+		// Set up our default channel colors
+		channelColors.put("databases",Color.CYAN);
+		channelColors.put("experiments",Color.MAGENTA);
+		channelColors.put("neighborhood",Color.GREEN);
+		channelColors.put("fusion",Color.RED);
+		channelColors.put("cooccurrence",Color.BLUE);
+		channelColors.put("textmining",new Color(199,234,70)); // Lime green
+		channelColors.put("coexpression", Color.BLACK);
 
 		// Get our default settings
 		configProps = ModelUtils.getPropertyService(this, SavePolicy.CONFIG_DIR);
@@ -205,6 +222,9 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		}
 		if (ModelUtils.hasProperty(configProps, "removeOverlap")) {
 			setRemoveOverlap(null, ModelUtils.getBooleanProperty(configProps,"removeOverlap"));
+		}
+		if (ModelUtils.hasProperty(configProps, "channelColors")) {
+			setChannelColors(ModelUtils.getStringProperty(configProps,"channelColors"));
 		}
 
 		// If we already have networks loaded, see if they are string networks
@@ -557,6 +577,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 				categories = categories.substring(categories.length()-1);
 			ModelUtils.setStringProperty(configProps,"categoryFilter", categories);
 		}
+
+		ModelUtils.setStringProperty(configProps, "channelColors", getChannelColorString());
 	}
 
 	public void handleEvent(NetworkAddedEvent nae) {
@@ -872,7 +894,41 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			stringNetworkMap.get(network).setRemoveOverlap(remove);
 	}
 
+	public Map<String, Color> getChannelColors() { return channelColors; }
+
+	public void setChannelColors(Map<String, Color> colorMap) { channelColors = colorMap; }
+	public void setChannelColors(String colors) { 
+		String[] colorStrs = colors.split("\\|");
+		if (colorStrs.length != 7) return;
+
+		channelColors = new HashMap<>();
+		for (int i = 0; i < colorStrs.length; i++) {
+			channelColors.put(channels[i], parseColor(colorStrs[i]));
+		}
+	}
+
+	public String getChannelColorString() {
+		String str = "";
+		for (int i = 0; i < 7; i++) {
+			Color clr = channelColors.get(channels[i]);
+			int rgb = clr.getRGB();
+			str += "#"+Integer.toUnsignedString(rgb, 16)+"|"; // get the hex
+		}
+
+		return str.substring(0, str.length()-1);
+	}
+
 	public CyProperty<Properties> getConfigProperties() {
 		return configProps;
 	}
+
+	// Assumes hex color: #ff0000
+	private Color parseColor(String s) {
+		int r = 0, g = 0, b = 0;
+		r = Integer.parseInt(s.substring(1,3), 16);
+		g = Integer.parseInt(s.substring(3,5), 16);
+		b = Integer.parseInt(s.substring(5,7), 16);
+		return new Color(r,g,b);
+	}
+
 }

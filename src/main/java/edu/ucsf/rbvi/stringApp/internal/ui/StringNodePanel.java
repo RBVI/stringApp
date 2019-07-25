@@ -212,12 +212,14 @@ public class StringNodePanel extends AbstractStringPanel {
 							if (highlightCheck != null)
 								highlightCheck.setSelected(false);
 
-							List<CyNode> nodes = CyTableUtil.getNodesInState(manager.getCurrentNetwork(), CyNetwork.SELECTED, Boolean.TRUE);
-							if (nodes == null || nodes.size() == 0)
-								return;
+							if (manager.getCurrentNetwork() != null) {
+								List<CyNode> nodes = CyTableUtil.getNodesInState(manager.getCurrentNetwork(), CyNetwork.SELECTED, Boolean.TRUE);
+								if (nodes == null || nodes.size() == 0)
+									return;
 
-							ViewUtils.clearHighlight(manager, manager.getCurrentNetworkView());
-							ViewUtils.highlight(manager, manager.getCurrentNetworkView(), nodes);
+								ViewUtils.clearHighlight(manager, manager.getCurrentNetworkView());
+								ViewUtils.highlight(manager, manager.getCurrentNetworkView(), nodes);
+							}
 							// highlightNodes = nodes;
 							highlightCheck = (JCheckBox)e.getItem();
 						} else {
@@ -343,12 +345,14 @@ public class StringNodePanel extends AbstractStringPanel {
 		nodesPanel.setLayout(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
 
-		List<CyNode> nodes = CyTableUtil.getNodesInState(currentNetwork, CyNetwork.SELECTED, true);
-		for (CyNode node: nodes) {
-			JPanel newPanel = createNodePanel(node);
-			newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
-
-			nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
+		if (currentNetwork != null) {
+			List<CyNode> nodes = CyTableUtil.getNodesInState(currentNetwork, CyNetwork.SELECTED, true);
+			for (CyNode node: nodes) {
+				JPanel newPanel = createNodePanel(node);
+				newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
+	
+				nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
+			}
 		}
 		nodesPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Selected nodes", nodesPanel, false, 10);

@@ -53,14 +53,15 @@ public class StringEdgePanel extends AbstractStringPanel {
 		colors = new HashMap<>();
 		colors.put(currentNetwork, new HashMap<>());
 
-		colorMap = new HashMap<>();
-		colorMap.put("databases",Color.CYAN);
-		colorMap.put("experiments",Color.MAGENTA);
-		colorMap.put("neighborhood",Color.GREEN);
-		colorMap.put("fusion",Color.RED);
-		colorMap.put("cooccurrence",Color.BLUE);
-		colorMap.put("textmining",new Color(199,234,70)); // Lime green
-		colorMap.put("coexpression", Color.BLACK);
+		// TODO: Externalize these colors -- put in settings
+		// colorMap = new HashMap<>();
+		// colorMap.put("databases",Color.CYAN);
+		// colorMap.put("experiments",Color.MAGENTA);
+		// colorMap.put("neighborhood",Color.GREEN);
+		// colorMap.put("fusion",Color.RED);
+		// colorMap.put("cooccurrence",Color.BLUE);
+		// colorMap.put("textmining",new Color(199,234,70)); // Lime green
+		// colorMap.put("coexpression", Color.BLACK);
 		//colorMap.put("interspecies", new Color(238,130,238)); // Violet
 
 		init();
@@ -168,6 +169,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 	}
 
 	private JComponent createScoreCheckBox(String subScore) {
+		Map<String, Color> colorMap = manager.getChannelColors();
 		JCheckBox cb = new JCheckBox("");
 		cb.setMinimumSize(new Dimension(20,30));
 		cb.setMaximumSize(new Dimension(20,30));

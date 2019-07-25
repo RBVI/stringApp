@@ -1,13 +1,22 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.SwingUtilities;
 
 import org.cytoscape.model.CyNetwork;
+import org.cytoscape.util.color.BrewerType;
+import org.cytoscape.util.color.Palette;
+import org.cytoscape.util.color.PaletteProvider;
+import org.cytoscape.util.color.PaletteProviderManager;
+import org.cytoscape.util.color.PaletteType;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ContainsTunables;
@@ -75,6 +84,19 @@ public class SettingsTask extends AbstractTask implements ObservableTask {
 			groups={"View Defaults"}, gravity=16.0)
 	public boolean showGlassBallEffect = true;
 
+	@Tunable(description="Edge channel color palettes", groups={"View Defaults"}, gravity=17.0)
+	public ListSingleSelection channelColors;
+	// Get list of palettes for edge filter colors
+	// Default palette
+	// 7 colors
+	//	colorMap.put("databases",Color.CYAN);
+	//	colorMap.put("experiments",Color.MAGENTA);
+	//	colorMap.put("neighborhood",Color.GREEN);
+	//	colorMap.put("fusion",Color.RED);
+	//	colorMap.put("cooccurrence",Color.BLUE);
+	//	colorMap.put("textmining",new Color(199,234,70)); // Lime green
+	//	colorMap.put("coexpression", Color.BLACK);
+
 	@ContainsTunables
 	public EnrichmentSettings enrichmentSettings;
 
@@ -90,6 +112,19 @@ public class SettingsTask extends AbstractTask implements ObservableTask {
 		showImage = manager.showImage();
 		showEnhancedLabels = manager.showEnhancedLabels();
 		showGlassBallEffect = manager.showGlassBallEffect();
+
+
+		List<Palette> colors = new ArrayList<Palette>();
+		colors.add(new StringChannelPalette());
+
+		List<PaletteProvider> providers = manager.getService(PaletteProviderManager.class).getPaletteProviders(BrewerType.QUALITATIVE, false);
+		for (PaletteProvider provider: providers) {
+			for (String pName: provider.listPaletteNames(BrewerType.QUALITATIVE, false)) {
+				colors.add(provider.getPalette(pName, 7));
+			}
+		}
+
+		channelColors = new ListSingleSelection<Palette>(colors);
 	}
 
 	@Override
@@ -125,6 +160,7 @@ public class SettingsTask extends AbstractTask implements ObservableTask {
 		manager.setDefaultConfidence(defaultConfidence.getValue());
 		manager.setDefaultAdditionalProteins(additionalProteins.getValue());
 		manager.setDefaultMaxProteins(maxProteins.getValue());
+		manager.setChannelColors(getChannelColorMap());
 
 		manager.setTopTerms(null,enrichmentSettings.nTerms.getValue());
 		manager.setOverlapCutoff(null,enrichmentSettings.overlapCutoff.getValue());
@@ -156,6 +192,30 @@ public class SettingsTask extends AbstractTask implements ObservableTask {
 	@Override
 	public List<Class<?>> getResultClasses() {
 		return Arrays.asList(JSONResult.class, String.class);
+	}
+
+	public Map<String, Color> getChannelColorMap() {
+		Map<String, Color> colorMap = new HashMap<>();
+		Palette palette = (Palette)channelColors.getSelectedValue();
+		Color[] colors = palette.getColors(7);
+		for (int i = 0; i < 7; i++) {
+			colorMap.put(manager.channels[i], colors[i]);
+		}
+		return colorMap;
+	}
+
+	class StringChannelPalette implements Palette {
+		Color[] colors = new Color[] {
+						Color.CYAN, Color.MAGENTA, Color.GREEN, Color.RED, Color.BLUE,
+						new Color(199,234,70), Color.BLACK };
+		public Color[] getColors() { return colors; }
+		public Color[] getColors(int nColors) { return colors; }
+		public Object getIdentifier() { return "STRING channel colors"; }
+		public PaletteType getType() { return BrewerType.QUALITATIVE; }
+		public boolean isColorBlindSafe() { return false; }
+		public int size() { return 7; }
+		public String toString() { return "STRING channel colors"; }
+		public String getName() { return "STRING channel colors"; }
 	}
 
 }
