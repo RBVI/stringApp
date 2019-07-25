@@ -103,6 +103,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private boolean showEnhancedLabels = true;
 	private boolean showGlassBallEffect = true;
 	private boolean showStringColors = true;
+	private boolean showSingletons = true;
 	private Species species;
 	private double defaultConfidence = 0.40;
 	private int additionalProteins = 0;
@@ -119,6 +120,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String ShowEnhancedLabels = "showEnhancedLabels";
 	public static String ShowGlassBallEffect = "showGlassBallEffect";
 	public static String ShowStringColors = "showStringColors";
+	public static String ShowSingletons = "showSingletons";
 
 
 	private CyProperty<Properties> sessionProperties;
@@ -167,6 +169,9 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		}
 		if (ModelUtils.hasProperty(configProps, ShowGlassBallEffect)) {
 			setShowGlassBallEffect(ModelUtils.getBooleanProperty(configProps,ShowGlassBallEffect));
+		}
+		if (ModelUtils.hasProperty(configProps, ShowSingletons)) {
+			setShowSingletons(ModelUtils.getBooleanProperty(configProps,ShowSingletons));
 		}
 
 
@@ -374,6 +379,12 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	
 	public void setShowStringColors(boolean set) { 
 		showStringColors = set; 
+	}
+	
+	public boolean showSingletons() { return showSingletons; }
+
+	public void setShowSingletons(boolean set) { 
+		showSingletons = set; 
 	}
 
 	public void setCytoPanel(StringCytoPanel panel) {

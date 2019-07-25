@@ -96,6 +96,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		showStructure.setSelected(manager.showImage());
 		stringLabels.setSelected(manager.showEnhancedLabels());
 		stringColors.setSelected(manager.showStringColors());
+		showSingletons.setSelected(manager.showSingletons());
 		if (!manager.showGlassBallEffect())
 			showStructure.setEnabled(false);
 		else
