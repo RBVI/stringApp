@@ -78,7 +78,7 @@ public class StringNodePanel extends AbstractStringPanel {
 	private JButton highlightQuery;
 	private boolean updating = false;
 	private Color defaultBackground;
-	private CyNode highlightNode = null;
+	// private List<CyNode> highlightNodes = null;
 	private JCheckBox highlightCheck = null;
 
 	public StringNodePanel(final StringManager manager) {
@@ -202,7 +202,36 @@ public class StringNodePanel extends AbstractStringPanel {
 			controlPanel.add(showSingletons);
 		}
 		
-		controlPanel.add(new JLabel());
+		{
+			JCheckBox highlightBox = new JCheckBox("Highlight first neighbors");
+			highlightBox.setFont(labelFont);
+			highlightBox.addItemListener(new ItemListener() {
+					public void itemStateChanged(ItemEvent e) {
+						if (e.getStateChange() == ItemEvent.SELECTED) {
+							if (highlightCheck != null)
+								highlightCheck.setSelected(false);
+
+							List<CyNode> nodes = CyTableUtil.getNodesInState(manager.getCurrentNetwork(), CyNetwork.SELECTED, Boolean.TRUE);
+							if (nodes == null || nodes.size() == 0)
+								return;
+
+							ViewUtils.clearHighlight(manager, manager.getCurrentNetworkView());
+							ViewUtils.highlight(manager, manager.getCurrentNetworkView(), nodes);
+							// highlightNodes = nodes;
+							highlightCheck = (JCheckBox)e.getItem();
+						} else {
+							ViewUtils.clearHighlight(manager, manager.getCurrentNetworkView());
+							// highlightNodes = null;
+							highlightCheck = null;
+						}
+					}
+			});
+			highlightBox.setAlignmentX( Component.LEFT_ALIGNMENT );
+			highlightBox.setBorder(BorderFactory.createEmptyBorder(10,2,10,0));
+			controlPanel.add(highlightBox);
+		}
+		
+		// controlPanel.add(new JLabel());
 
 		{
 			JButton getEnrichment = new JButton("Functional enrichment");
@@ -369,6 +398,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		StringNode sNode = new StringNode(manager.getStringNetwork(currentNetwork), node);
 		EasyGBC c = new EasyGBC();
 		panel.setLayout(new GridBagLayout());
+		/*
 		{
 			JCheckBox highlightBox = new JCheckBox("Highlight first neighbors");
 			highlightBox.setFont(labelFont);
@@ -392,6 +422,7 @@ public class StringNodePanel extends AbstractStringPanel {
 			highlightBox.setBorder(BorderFactory.createEmptyBorder(10,2,10,0));
 			panel.add(highlightBox, c.anchor("northwest").down().expandHoriz());
 		}
+		*/
 
 		{
 			JLabel lbl = new JLabel("Crosslinks");

@@ -610,12 +610,16 @@ public class ViewUtils {
 				EnrichmentTerm.colEnrichmentPassthrough);
 	}
 
-	public static void highlight(StringManager manager, CyNetworkView view, CyNode node) {
-		View<CyNode> nodeView = view.getNodeView(node);
+	public static void highlight(StringManager manager, CyNetworkView view, List<CyNode> nodes) {
 		CyNetwork net = view.getModel();
 
-		List<CyEdge> edges = net.getAdjacentEdgeList(node, CyEdge.Type.ANY);
-		List<CyNode> nodes = net.getNeighborList(node, CyEdge.Type.ANY);
+		List<CyEdge> edgeList = new ArrayList<CyEdge>();
+		List<CyNode> nodeList = new ArrayList<CyNode>();
+	 	for (CyNode node: nodes) {
+			edgeList.addAll(net.getAdjacentEdgeList(node, CyEdge.Type.ANY));
+			nodeList.addAll(net.getNeighborList(node, CyEdge.Type.ANY));
+		}
+
 
 		VisualLexicon lex = manager.getService(RenderingEngineManager.class).getDefaultVisualLexicon();
 		VisualProperty customGraphics1 = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_1");
@@ -626,7 +630,7 @@ public class ViewUtils {
 
 		// Override our current style through overrides
 		for (View<CyNode> nv: view.getNodeViews()) {
-			if (nv.getModel().equals(node) || nodes.contains(nv.getModel())) {
+			if (nodeList.contains(nv.getModel()) || nodes.contains(nv.getModel())) {
 				nv.setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY, 255);
 			} else {
 				nv.setLockedValue(customGraphics1, cg);
@@ -636,7 +640,7 @@ public class ViewUtils {
 			}
 		}
 		for (View<CyEdge> ev: view.getEdgeViews()) {
-			if (edges.contains(ev.getModel())) {
+			if (edgeList.contains(ev.getModel())) {
 				ev.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY, 255);
 			} else {
 				ev.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY, 20);
