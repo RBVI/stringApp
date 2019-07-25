@@ -44,7 +44,6 @@ public class StringEdgePanel extends AbstractStringPanel {
 	JPanel subScorePanel;
 	JPanel scorePanel;
 	private Map<CyNetwork, Map<String, Boolean>> colors;
-	private Map<String, Color> colorMap;
 
 	public StringEdgePanel(final StringManager manager) {
 		super(manager);
@@ -52,17 +51,6 @@ public class StringEdgePanel extends AbstractStringPanel {
 
 		colors = new HashMap<>();
 		colors.put(currentNetwork, new HashMap<>());
-
-		// TODO: Externalize these colors -- put in settings
-		// colorMap = new HashMap<>();
-		// colorMap.put("databases",Color.CYAN);
-		// colorMap.put("experiments",Color.MAGENTA);
-		// colorMap.put("neighborhood",Color.GREEN);
-		// colorMap.put("fusion",Color.RED);
-		// colorMap.put("cooccurrence",Color.BLUE);
-		// colorMap.put("textmining",new Color(199,234,70)); // Lime green
-		// colorMap.put("coexpression", Color.BLACK);
-		//colorMap.put("interspecies", new Color(238,130,238)); // Violet
 
 		init();
 		revalidate();
@@ -217,6 +205,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 
 	void doColors() {
 		Map<String, Boolean> color = colors.get(currentNetwork);
+		Map<String, Color> colorMap = manager.getChannelColors();
 		CyNetworkView view = manager.getCurrentNetworkView();
 		for (CyEdge edge: currentNetwork.getEdgeList()) {
 			CyRow edgeRow = currentNetwork.getRow(edge);
@@ -244,10 +233,11 @@ public class StringEdgePanel extends AbstractStringPanel {
 		scorePanel.add(scoreSlider);
 	}
 
-	private void updateSubPanel() {
+	public void updateSubPanel() {
 		subScorePanel.removeAll();
 		EasyGBC d = new EasyGBC();
 		subScorePanel.add(createSubScorePanel(), d.anchor("west").expandHoriz());
+		subScorePanel.add(new JPanel(), d.down().anchor("west").expandBoth());
 	}
 
 	public void networkChanged(CyNetwork newNetwork) {

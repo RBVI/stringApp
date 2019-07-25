@@ -229,7 +229,6 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 		// If we already have networks loaded, see if they are string networks
 		for (CyNetwork network: registrar.getService(CyNetworkManager.class).getNetworkSet()) {
-			// FIXME: this should be isString
 			if (ModelUtils.isStringNetwork(network)) {
 				StringNetwork stringNet = new StringNetwork(this);
 				addStringNetwork(stringNet, network);
@@ -579,6 +578,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		}
 
 		ModelUtils.setStringProperty(configProps, "channelColors", getChannelColorString());
+		updateControls();
 	}
 
 	public void handleEvent(NetworkAddedEvent nae) {
@@ -903,6 +903,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 		channelColors = new HashMap<>();
 		for (int i = 0; i < colorStrs.length; i++) {
+			System.out.println("color["+i+"] = "+colorStrs[i]);
+			System.out.println(channels[i]+" = "+parseColor(colorStrs[i]));
 			channelColors.put(channels[i], parseColor(colorStrs[i]));
 		}
 	}
@@ -922,12 +924,18 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		return configProps;
 	}
 
-	// Assumes hex color: #ff0000
+	// Assumes hex color: #ff000000
 	private Color parseColor(String s) {
 		int r = 0, g = 0, b = 0;
-		r = Integer.parseInt(s.substring(1,3), 16);
-		g = Integer.parseInt(s.substring(3,5), 16);
-		b = Integer.parseInt(s.substring(5,7), 16);
+		if (s.length() == 9)
+			s = s.substring(3);
+		else if (s.length() == 7)
+			s = s.substring(1);
+		else return Color.BLACK;
+
+		r = Integer.parseInt(s.substring(0,2), 16);
+		g = Integer.parseInt(s.substring(2,4), 16);
+		b = Integer.parseInt(s.substring(4,6), 16);
 		return new Color(r,g,b);
 	}
 

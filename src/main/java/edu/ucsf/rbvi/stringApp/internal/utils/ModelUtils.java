@@ -167,8 +167,9 @@ public class ModelUtils {
 	}
 
 	public static List<String> getSubScoreList(CyNetwork network) {
-		Collection<CyColumn> columns = network.getDefaultEdgeTable().getColumns(STRINGDB_NAMESPACE);
 		List<String> scores = new ArrayList<>();
+		if (network == null) return scores;
+		Collection<CyColumn> columns = network.getDefaultEdgeTable().getColumns(STRINGDB_NAMESPACE);
 		if (columns == null || columns.size() == 0) return scores;
 		for (CyColumn col: columns) {
 			if (col.getNameOnly().equals("score") || !col.getType().equals(Double.class))

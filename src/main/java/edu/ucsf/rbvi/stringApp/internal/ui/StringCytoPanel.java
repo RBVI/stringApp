@@ -112,6 +112,7 @@ public class StringCytoPanel extends JPanel
 
 	public void updateControls() {
 		nodePanel.updateControls();
+		edgePanel.updateSubPanel();
 	}
 
 	@Override

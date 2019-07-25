@@ -62,9 +62,7 @@ public class SettingsTask extends AbstractTask implements ObservableTask {
 	@Tunable(description="Maximum proteins (disease and PubMed query)",
 			longDescription="Default number of proteins for the disease and PubMed query",
 			exampleStringValue = "100",
-			groups={"Query Defaults (take effect after restarting Cytoscape)"}, gravity=13.0,
-	         params="slider=true")
-	public BoundedInteger maxProteins = new BoundedInteger(1, 100, 2000, false, false);
+			groups={"Query Defaults (take effect after restarting Cytoscape)"}, gravity=13.0, params="slider=true") public BoundedInteger maxProteins = new BoundedInteger(1, 100, 2000, false, false);
 
 	@Tunable(description="Show structure images",
 			longDescription="Show structure images by default",
@@ -84,18 +82,10 @@ public class SettingsTask extends AbstractTask implements ObservableTask {
 			groups={"View Defaults"}, gravity=16.0)
 	public boolean showGlassBallEffect = true;
 
-	@Tunable(description="Edge channel color palettes", groups={"View Defaults"}, gravity=17.0)
+	@Tunable(description="Edge channel color palettes", 
+			longDescriptgion="Set the palette to use for the channel colors",
+			exampleStringValue = "STRING channel colors", groups={"View Defaults"}, gravity=17.0)
 	public ListSingleSelection channelColors;
-	// Get list of palettes for edge filter colors
-	// Default palette
-	// 7 colors
-	//	colorMap.put("databases",Color.CYAN);
-	//	colorMap.put("experiments",Color.MAGENTA);
-	//	colorMap.put("neighborhood",Color.GREEN);
-	//	colorMap.put("fusion",Color.RED);
-	//	colorMap.put("cooccurrence",Color.BLUE);
-	//	colorMap.put("textmining",new Color(199,234,70)); // Lime green
-	//	colorMap.put("coexpression", Color.BLACK);
 
 	@ContainsTunables
 	public EnrichmentSettings enrichmentSettings;
@@ -197,8 +187,10 @@ public class SettingsTask extends AbstractTask implements ObservableTask {
 	public Map<String, Color> getChannelColorMap() {
 		Map<String, Color> colorMap = new HashMap<>();
 		Palette palette = (Palette)channelColors.getSelectedValue();
+		System.out.println("Selected palette = "+palette);
 		Color[] colors = palette.getColors(7);
 		for (int i = 0; i < 7; i++) {
+			System.out.println(manager.channels[i]+" = "+colors[i]);
 			colorMap.put(manager.channels[i], colors[i]);
 		}
 		return colorMap;
@@ -215,7 +207,7 @@ public class SettingsTask extends AbstractTask implements ObservableTask {
 		public boolean isColorBlindSafe() { return false; }
 		public int size() { return 7; }
 		public String toString() { return "STRING channel colors"; }
-		public String getName() { return "STRING channel colors"; }
+		public String getName() { return "STRING"; }
 	}
 
 }
