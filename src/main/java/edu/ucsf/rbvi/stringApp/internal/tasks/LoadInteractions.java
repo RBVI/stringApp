@@ -111,6 +111,8 @@ public class LoadInteractions extends AbstractTask {
 		ModelUtils.setConfidence(network, ((double)confidence)/100.0);
 		ModelUtils.setDatabase(network, useDATABASE);
 		ModelUtils.setNetSpecies(network, species);
+		ModelUtils.setDataVersion(network, manager.getDataVersion());
+		ModelUtils.setNetURI(network, manager.getNetworkURL());
 		stringNet.setNetwork(network);
 
 		// System.out.println("Results: "+results.toString());

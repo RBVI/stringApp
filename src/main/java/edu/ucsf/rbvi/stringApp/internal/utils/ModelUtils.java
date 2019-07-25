@@ -108,6 +108,8 @@ public class ModelUtils {
 	public static String CONFIDENCE = "confidence score";
 	public static String DATABASE = "database";
 	public static String NET_SPECIES = "species";
+	public static String NET_DATAVERSION = "data version";
+	public static String NET_URI = "uri";
 	public static String NET_ANALYZED_NODES = "analyzedNodes.SUID";
 	public static String NET_PPI_ENRICHMENT = "ppiEnrichment";
 	public static String NET_ENRICHMENT_NODES = "enrichmentNodes";
@@ -536,6 +538,28 @@ public class ModelUtils {
 		return network.getRow(network).get(DATABASE, String.class);
 	}
 
+	public static void setDataVersion(CyNetwork network, String dataVersion) {
+		createColumnIfNeeded(network.getDefaultNetworkTable(), String.class, NET_DATAVERSION);
+		network.getRow(network).set(NET_DATAVERSION, dataVersion);
+	}
+
+	public static String getDataVersion(CyNetwork network) {
+		if (network.getDefaultNetworkTable().getColumn(NET_DATAVERSION) == null)
+			return null;
+		return network.getRow(network).get(NET_DATAVERSION, String.class);
+	}
+
+	public static void setNetURI(CyNetwork network, String netURI) {
+		createColumnIfNeeded(network.getDefaultNetworkTable(), String.class, NET_URI);
+		network.getRow(network).set(NET_URI, netURI);
+	}
+
+	public static String getNetURI(CyNetwork network) {
+		if (network.getDefaultNetworkTable().getColumn(NET_URI) == null)
+			return null;
+		return network.getRow(network).get(NET_URI, String.class);
+	}
+
 	public static void setNetSpecies(CyNetwork network, String species) {
 		createColumnIfNeeded(network.getDefaultNetworkTable(), String.class, NET_SPECIES);
 		network.getRow(network).set(NET_SPECIES, species);
@@ -780,6 +804,14 @@ public class ModelUtils {
 		if (netRow.isSet(CONFIDENCE) && netRow.isSet(NET_SPECIES) && columns != null && columns.size() > 0)
 			return true;
 		return false;
+	}
+
+	public static boolean isCurrentDataVersion(CyNetwork network) {
+		if (network == null || network.getRow(network).get(NET_DATAVERSION, String.class) == null
+				|| !network.getRow(network).get(NET_DATAVERSION, String.class)
+						.equals(StringManager.DATAVERSION))
+			return false;
+		return true;
 	}
 
 	public static String getExisting(CyNetwork network) {
