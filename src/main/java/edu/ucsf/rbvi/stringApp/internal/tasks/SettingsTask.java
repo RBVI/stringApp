@@ -83,7 +83,7 @@ public class SettingsTask extends AbstractTask implements ObservableTask {
 	public boolean showGlassBallEffect = true;
 
 	@Tunable(description="Edge channel color palettes", 
-			longDescriptgion="Set the palette to use for the channel colors",
+			longDescription="Set the palette to use for the channel colors",
 			exampleStringValue = "STRING channel colors", groups={"View Defaults"}, gravity=17.0)
 	public ListSingleSelection channelColors;
 
