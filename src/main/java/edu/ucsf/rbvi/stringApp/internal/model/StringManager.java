@@ -43,6 +43,7 @@ import org.json.simple.JSONObject;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.AddNamespacesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectTaskFactory;
@@ -84,6 +85,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
 	public static String URI = "https://api11.jensenlab.org/";
 	public static String DATAVERSION = "11";
+	public static String OLD_DATAVERSION = "10";
 	public static String alternativeAPIProperty = "alternativeAPI";
 	public static String alternativeCONFIGURIProperty = "alternativeCONFIGURI";
 	public static String alternativeCONFIGURI = "";
@@ -489,6 +491,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		return DATAVERSION;
 	}
 	
+	public String getOldDataVersion() {
+		return OLD_DATAVERSION;
+	}
+	
 	private String getDataAPIURL() {
 		String alternativeAPI = (String) ModelUtils.getStringProperty(configProps,
 				alternativeAPIProperty);
@@ -609,11 +615,23 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 		// Create string networks for any networks loaded by string
 		Set<CyNetwork> networks = arg0.getLoadedSession().getNetworks();
+		Set<CyNetwork> networksToUpgrade = new HashSet<CyNetwork>();
 		for (CyNetwork network: networks) {
 			if (ModelUtils.isStringNetwork(network)) {
-				StringNetwork stringNet = new StringNetwork(this);
-				addStringNetwork(stringNet, network);
+				if (ModelUtils.ifHaveStringNS(network)) {
+					StringNetwork stringNet = new StringNetwork(this);
+					addStringNetwork(stringNet, network);
+				} else {
+					networksToUpgrade.add(network);
+				}
 			}
+		}
+
+		// if there are old string networks, figure out what to do
+		SynchronousTaskManager<?> taskM = getService(SynchronousTaskManager.class);
+		for (CyNetwork networkToUpgrade : networksToUpgrade) {
+			System.out.println("Adding namespaces to old STRING network: " + networkToUpgrade.toString());
+			taskM.execute(new AddNamespacesTaskFactory(this).createTaskIterator(networkToUpgrade));
 		}
 
 		// load enrichment
