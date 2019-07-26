@@ -83,6 +83,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String VIRUSESResolveURI = "http://viruses.string-db.org/cgi/webservice_handler.pl";
 	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
 	public static String URI = "https://api11.jensenlab.org/";
+	public static String DATAVERSION = "11";
 	public static String alternativeAPIProperty = "alternativeAPI";
 	public static String alternativeCONFIGURIProperty = "alternativeCONFIGURI";
 	public static String alternativeCONFIGURI = "";
@@ -273,6 +274,9 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 					} 
 					if (uris.containsKey("VIRUSESResolveURI")) {
 						VIRUSESResolveURI = uris.get("VIRUSESResolveURI").toString();
+					}
+					if (uris.containsKey("DataVersion")) {
+						DATAVERSION = uris.get("DataVersion").toString();
 					}
 					if (uris.containsKey("messageUserError")) {
 						error(uris.get("messageUserError").toString());
@@ -481,6 +485,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		execute(ti, true);
 	}
 
+	public String getDataVersion() {
+		return DATAVERSION;
+	}
+	
 	private String getDataAPIURL() {
 		String alternativeAPI = (String) ModelUtils.getStringProperty(configProps,
 				alternativeAPIProperty);
