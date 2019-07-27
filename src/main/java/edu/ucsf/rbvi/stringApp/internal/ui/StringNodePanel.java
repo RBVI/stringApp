@@ -72,6 +72,7 @@ public class StringNodePanel extends AbstractStringPanel {
 	private JCheckBox stringLabels;
 	private JCheckBox showSingletons;
 	private JCheckBox stringColors;
+	private JCheckBox highlightBox;
 	private JPanel tissuesPanel = null;
 	private JPanel compartmentsPanel = null;
 	private JPanel nodesPanel = null;
@@ -79,7 +80,7 @@ public class StringNodePanel extends AbstractStringPanel {
 	private boolean updating = false;
 	private Color defaultBackground;
 	// private List<CyNode> highlightNodes = null;
-	private JCheckBox highlightCheck = null;
+	// private JCheckBox highlightCheck = null;
 
 	public StringNodePanel(final StringManager manager) {
 		super(manager);
@@ -97,6 +98,9 @@ public class StringNodePanel extends AbstractStringPanel {
 		stringLabels.setSelected(manager.showEnhancedLabels());
 		stringColors.setSelected(manager.showStringColors());
 		showSingletons.setSelected(manager.showSingletons());
+
+		// TODO: fix me
+		highlightBox.setSelected(manager.highlightNeighbors());
 		if (!manager.showGlassBallEffect())
 			showStructure.setEnabled(false);
 		else
@@ -197,6 +201,7 @@ public class StringNodePanel extends AbstractStringPanel {
 			showSingletons.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
 					if (updating) return;
+					manager.setShowSingletons(showSingletons.isSelected());
 					ViewUtils.hideSingletons(manager.getCurrentNetworkView(), showSingletons.isSelected());
 				}
 			});
@@ -204,28 +209,16 @@ public class StringNodePanel extends AbstractStringPanel {
 		}
 		
 		{
-			JCheckBox highlightBox = new JCheckBox("Highlight first neighbors");
+			highlightBox = new JCheckBox("Highlight first neighbors");
 			highlightBox.setFont(labelFont);
 			highlightBox.addItemListener(new ItemListener() {
 					public void itemStateChanged(ItemEvent e) {
 						if (e.getStateChange() == ItemEvent.SELECTED) {
-							if (highlightCheck != null)
-								highlightCheck.setSelected(false);
-
-							if (manager.getCurrentNetwork() != null) {
-								List<CyNode> nodes = CyTableUtil.getNodesInState(manager.getCurrentNetwork(), CyNetwork.SELECTED, Boolean.TRUE);
-								if (nodes == null || nodes.size() == 0)
-									return;
-
-								ViewUtils.clearHighlight(manager, manager.getCurrentNetworkView());
-								ViewUtils.highlight(manager, manager.getCurrentNetworkView(), nodes);
-							}
-							// highlightNodes = nodes;
-							highlightCheck = (JCheckBox)e.getItem();
+							manager.setHighlightNeighbors(true);
+							doHighlight(manager.getCurrentNetworkView());
 						} else {
-							ViewUtils.clearHighlight(manager, manager.getCurrentNetworkView());
-							// highlightNodes = null;
-							highlightCheck = null;
+							manager.setHighlightNeighbors(false);
+							clearHighlight(manager.getCurrentNetworkView());
 						}
 					}
 			});
@@ -403,31 +396,6 @@ public class StringNodePanel extends AbstractStringPanel {
 		StringNode sNode = new StringNode(manager.getStringNetwork(currentNetwork), node);
 		EasyGBC c = new EasyGBC();
 		panel.setLayout(new GridBagLayout());
-		/*
-		{
-			JCheckBox highlightBox = new JCheckBox("Highlight first neighbors");
-			highlightBox.setFont(labelFont);
-			highlightBox.addItemListener(new ItemListener() {
-					public void itemStateChanged(ItemEvent e) {
-						if (e.getStateChange() == ItemEvent.SELECTED) {
-							if (highlightCheck != null)
-								highlightCheck.setSelected(false);
-							ViewUtils.clearHighlight(manager, manager.getCurrentNetworkView());
-							ViewUtils.highlight(manager, manager.getCurrentNetworkView(), node);
-							highlightNode = node;
-							highlightCheck = (JCheckBox)e.getItem();
-						} else {
-							ViewUtils.clearHighlight(manager, manager.getCurrentNetworkView());
-							highlightNode = null;
-							highlightCheck = null;
-						}
-					}
-			});
-			highlightBox.setAlignmentX( Component.LEFT_ALIGNMENT );
-			highlightBox.setBorder(BorderFactory.createEmptyBorder(10,2,10,0));
-			panel.add(highlightBox, c.anchor("northwest").down().expandHoriz());
-		}
-		*/
 
 		{
 			JLabel lbl = new JLabel("Crosslinks");
@@ -538,6 +506,9 @@ public class StringNodePanel extends AbstractStringPanel {
 			return;
 		}
 
+		// We need to get the view for the new network since we haven't actually switched yet
+		CyNetworkView networkView = ModelUtils.getNetworkView(manager, currentNetwork);
+
 		if (!ModelUtils.haveQueryTerms(currentNetwork))
 			highlightQuery.setEnabled(false);
 		else
@@ -548,6 +519,20 @@ public class StringNodePanel extends AbstractStringPanel {
 			filters.get(currentNetwork).put("tissue", new HashMap<>());
 			filters.get(currentNetwork).put("compartment", new HashMap<>());
 		}
+
+		if (manager.highlightNeighbors()) {
+			doHighlight(networkView);
+		} else {
+			clearHighlight(networkView);
+		}
+
+		if (manager.showSingletons()) {
+			ViewUtils.hideSingletons(networkView, true);
+		} else {
+			ViewUtils.hideSingletons(networkView, false);
+		}
+
+		ViewUtils.hideStringColors(manager, networkView, manager.showStringColors());
 
 		updateTissuesPanel();
 		updateCompartmentsPanel();
@@ -565,7 +550,30 @@ public class StringNodePanel extends AbstractStringPanel {
 
 			nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
 		}
+
+		if(manager.highlightNeighbors()) {
+			doHighlight(manager.getCurrentNetworkView());
+		} else {
+			clearHighlight(manager.getCurrentNetworkView());
+		}
 		revalidate();
 		repaint();
+	}
+
+	private void doHighlight(CyNetworkView networkView) {
+
+		if (networkView != null) {
+			List<CyNode> nodes = CyTableUtil.getNodesInState(networkView.getModel(), CyNetwork.SELECTED, Boolean.TRUE);
+			if (nodes == null || nodes.size() == 0) {
+				return;
+			}
+
+			ViewUtils.clearHighlight(manager, networkView);
+			ViewUtils.highlight(manager, networkView, nodes);
+		}
+	}
+
+	private void clearHighlight(CyNetworkView networkView) {
+		ViewUtils.clearHighlight(manager, networkView);
 	}
 }

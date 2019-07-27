@@ -106,6 +106,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private boolean showGlassBallEffect = true;
 	private boolean showStringColors = true;
 	private boolean showSingletons = true;
+	private boolean highlightNeighbors = false;
 	private Species species;
 	private double defaultConfidence = 0.40;
 	private int additionalProteins = 0;
@@ -124,6 +125,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String ShowGlassBallEffect = "showGlassBallEffect";
 	public static String ShowStringColors = "showStringColors";
 	public static String ShowSingletons = "showSingletons";
+	public static String HighlightNeighbors = "highlightNeighbors";
 
 	public static String[] channels = { "databases", "experiments", "neighborhood", "fusion",
 	                                    "cooccurrence", "textmining", // Lime green 
@@ -190,6 +192,9 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		}
 		if (ModelUtils.hasProperty(configProps, ShowSingletons)) {
 			setShowSingletons(ModelUtils.getBooleanProperty(configProps,ShowSingletons));
+		}
+		if (ModelUtils.hasProperty(configProps, HighlightNeighbors)) {
+			setHighlightNeighbors(ModelUtils.getBooleanProperty(configProps,HighlightNeighbors));
 		}
 
 
@@ -409,6 +414,12 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public void setShowSingletons(boolean set) { 
 		showSingletons = set; 
 	}
+	
+	public boolean highlightNeighbors() { return highlightNeighbors; }
+
+	public void setHighlightNeighbors(boolean set) { 
+		highlightNeighbors = set; 
+	}
 
 	public void setCytoPanel(StringCytoPanel panel) {
 		this.cytoPanel = panel;
@@ -564,6 +575,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		ModelUtils.setStringProperty(configProps, "showEnhancedLabels", Boolean.toString(showEnhancedLabels));
 		ModelUtils.setStringProperty(configProps, "showGlassBallEffect", Boolean.toString(showGlassBallEffect));
 		ModelUtils.setStringProperty(configProps, "showStringColors", Boolean.toString(showStringColors));
+		ModelUtils.setStringProperty(configProps, "showSingletons", Boolean.toString(showSingletons));
+		ModelUtils.setStringProperty(configProps, "highlightNeighbors", Boolean.toString(highlightNeighbors));
 
 		ModelUtils.setStringProperty(configProps, "species", getDefaultSpecies().toString());
 		ModelUtils.setStringProperty(configProps, "defaultConfidence", Double.toString(getDefaultConfidence()));
@@ -911,8 +924,6 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 		channelColors = new HashMap<>();
 		for (int i = 0; i < colorStrs.length; i++) {
-			System.out.println("color["+i+"] = "+colorStrs[i]);
-			System.out.println(channels[i]+" = "+parseColor(colorStrs[i]));
 			channelColors.put(channels[i], parseColor(colorStrs[i]));
 		}
 	}
