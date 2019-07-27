@@ -262,6 +262,7 @@ public class PublicationsCytoPanel extends JPanel
 		this.removeAll();
 
 		Set<CyTable> currTables = ModelUtils.getEnrichmentTables(manager, network);
+		publicationsTable = null;
 		for (CyTable currTable : currTables) {
 			if (currTable.getTitle().equals(TermCategory.PMID.getTable())) {
 				publicationsTable = createJTable(currTable);
@@ -276,7 +277,7 @@ public class PublicationsCytoPanel extends JPanel
 			this.add(mainPanel, BorderLayout.CENTER);
 		} else if (publicationsTable == null) {
 			mainPanel = new JPanel(new BorderLayout());
-			JLabel label = new JLabel("No enrichment has been retrieved for this network.",
+			JLabel label = new JLabel("No enriched publications have been retrieved for this network.",
 					SwingConstants.CENTER);
 			mainPanel.add(label, BorderLayout.CENTER);
 			this.add(mainPanel, BorderLayout.CENTER);

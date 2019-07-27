@@ -85,7 +85,10 @@ public class ModelUtils {
 	public static String COMPARTMENT_NAMESPACE = "compartment";
 	// public static String TM_LINKOUT = "TextMining Linkout";
 	public static List<String> ignoreKeys = new ArrayList<String>(Arrays.asList("image", "canonical", "@id", "description"));
-
+	public static List<String> namespacedNodeAttributes = new ArrayList<String>(Arrays.asList("canonical name", "full name", "chemViz Passthrough", 
+			"enhancedLabel Passthrough", "description", "disease score", "namespace", "sequence", "smiles", "species", "database identifier", 
+			"STRING style", "node type", "textmining foreground", "textmining background", "textmining score"));
+		
 	public static int NDOCUMENTS = 50;
 	public static int NEXPERIMENTS = 50;
 	public static int NKNOWLEDGE = 50;
@@ -104,6 +107,9 @@ public class ModelUtils {
 	public static String SCORE_NO_NAMESPACE = "score";
 	public static String INTERSPECIES = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "interspecies";
 
+	public static List<String> namespacedEdgeAttributes = new ArrayList<String>(Arrays.asList("score", "interspecies", "experiments", "cooccurrence",
+			"coexpression", "textmining", "databases", "neighborhood"));
+	
 	// Network information
 	public static String CONFIDENCE = "confidence score";
 	public static String DATABASE = "database";
