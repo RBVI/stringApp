@@ -922,7 +922,6 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	}
 
 	public void setEnrichmentPalette(CyNetwork network, Palette palette) { 
-		System.out.println("setEnrichmentPalette: "+palette.toString());
 		if (network == null || !stringNetworkMap.containsKey(network))
 			brewerPalette = palette;
 		else
@@ -930,7 +929,6 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	}
 
 	public void setEnrichmentPalette(CyNetwork network, String palette) { 
-		System.out.println("setEnrichmentPalette(str): "+palette);
 		PaletteProviderManager pm = registrar.getService(PaletteProviderManager.class);
 		for (PaletteProvider provider: pm.getPaletteProviders(BrewerType.QUALITATIVE, false)) {
 			for (Object id: provider.listPaletteIdentifiers(BrewerType.QUALITATIVE, false)) {

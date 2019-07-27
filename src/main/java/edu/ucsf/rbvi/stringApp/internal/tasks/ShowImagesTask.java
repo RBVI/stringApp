@@ -15,6 +15,8 @@ import org.cytoscape.work.Tunable;
 import org.cytoscape.work.json.JSONResult;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
 public class ShowImagesTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
@@ -69,10 +71,16 @@ public class ShowImagesTask extends AbstractTask implements ObservableTask {
 			return;
 		}
 
-		if (manager.showImage())
+		if (manager.showImage()) {
 			manager.setShowImage(false);
-		else
+			if (ModelUtils.isStitchNetwork(netView.getModel()))
+				ViewUtils.updateChemVizPassthrough(manager, netView, false);
+		} else {
 			manager.setShowImage(true);
+			if (ModelUtils.isStitchNetwork(netView.getModel()))
+				ViewUtils.updateChemVizPassthrough(manager, netView, true);
+		}
+
 		netView.updateView();
 		factory.reregister();
 		manager.updateControls();

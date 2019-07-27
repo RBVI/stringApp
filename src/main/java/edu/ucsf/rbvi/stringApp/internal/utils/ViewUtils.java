@@ -307,6 +307,25 @@ public class ViewUtils {
 		return stringStyle;
 	}
 
+	public static void updateChemVizPassthrough(StringManager manager, CyNetworkView view, boolean show) {
+		VisualStyle stringStyle = getStyle(manager, view);
+
+		VisualMappingFunctionFactory passthroughFactory = 
+            manager.getService(VisualMappingFunctionFactory.class, "(mapping.type=passthrough)");
+		VisualLexicon lex = manager.getService(RenderingEngineManager.class).getDefaultVisualLexicon();
+
+		if (show && manager.haveChemViz()) {
+			VisualProperty customGraphics = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_2");
+			PassthroughMapping pMapping = 
+				(PassthroughMapping) passthroughFactory.createVisualMappingFunction(ModelUtils.CV_STYLE, 
+				                                                                    String.class, customGraphics);
+			stringStyle.addVisualMappingFunction(pMapping);
+		} else {
+			stringStyle
+					.removeVisualMappingFunction(lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_2"));
+		}
+	}
+
 	public static void updateEnhancedLabels(StringManager manager, VisualStyle stringStyle, 
 	                                        CyNetwork net, boolean show) {
 
@@ -651,6 +670,7 @@ public class ViewUtils {
 	public static void clearHighlight(StringManager manager, CyNetworkView view) {
 		// if (node == null) return;
 		// View<CyNode> nodeView = view.getNodeView(node);
+		if (view == null) return;
 
 		VisualLexicon lex = manager.getService(RenderingEngineManager.class).getDefaultVisualLexicon();
 		VisualProperty customGraphics1 = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_1");
@@ -670,20 +690,7 @@ public class ViewUtils {
 	}
 
 	public static void hideStringColors(StringManager manager, CyNetworkView view, boolean show) {
-		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
-		VisualStyle style = null;
-	 	if (view != null)
-			style	= vmm.getVisualStyle(view);
-		else {
-			String styleName = getStyleName(manager, view.getModel());
-			for (VisualStyle s: vmm.getAllVisualStyles()) {
-				if (s.getTitle().equals(styleName)) {
-					style = s;
-					break;
-				}
-			}
-		}
-
+		VisualStyle style = getStyle(manager, view);
 		if (style == null) return;
 
 		if (show) {
@@ -793,6 +800,24 @@ public class ViewUtils {
 		if (type.equals(ChartType.TEETH))
 			return CIRCOS_CHART2+colorString.substring(0, colorString.length()-1)+"\"";
 		return CIRCOS_CHART+colorString.substring(0, colorString.length()-1)+"\"";
+	}
+
+	public static VisualStyle getStyle(StringManager manager, CyNetworkView view) {
+		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
+		VisualStyle style = null;
+	 	if (view != null)
+			style	= vmm.getVisualStyle(view);
+		else {
+			String styleName = getStyleName(manager, view.getModel());
+			for (VisualStyle s: vmm.getAllVisualStyles()) {
+				if (s.getTitle().equals(styleName)) {
+					style = s;
+					break;
+				}
+			}
+		}
+
+		return style;
 	}
 
 	private static String getStyleName(StringManager manager, CyNetwork network) {

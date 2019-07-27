@@ -532,6 +532,10 @@ public class StringNodePanel extends AbstractStringPanel {
 			ViewUtils.hideSingletons(networkView, false);
 		}
 
+		if (ModelUtils.isStitchNetwork(currentNetwork)) {
+			ViewUtils.updateChemVizPassthrough(manager, networkView, manager.showImage());
+		}
+
 		ViewUtils.hideStringColors(manager, networkView, manager.showStringColors());
 
 		updateTissuesPanel();

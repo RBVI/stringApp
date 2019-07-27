@@ -821,6 +821,12 @@ public class ModelUtils {
 		return true;
 	}
 
+	public static boolean isStitchNetwork(CyNetwork network) {
+		if (network == null || network.getDefaultNodeTable().getColumn(SMILES) == null)
+			return false;
+		return true;
+	}
+
 	public static String getExisting(CyNetwork network) {
 		StringBuilder str = new StringBuilder();
 		for (CyNode node : network.getNodeList()) {
