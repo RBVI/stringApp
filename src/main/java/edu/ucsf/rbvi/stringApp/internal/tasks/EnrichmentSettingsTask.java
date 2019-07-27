@@ -42,14 +42,14 @@ public class EnrichmentSettingsTask extends AbstractTask {
 		if (makeDefault) {
 			manager.setTopTerms(null,enrichmentSettings.nTerms.getValue());
 			manager.setOverlapCutoff(null,enrichmentSettings.overlapCutoff.getValue());
-			manager.setBrewerPalette(null,enrichmentSettings.defaultPalette.getSelectedValue());
+			manager.setEnrichmentPalette(null,enrichmentSettings.defaultPalette.getSelectedValue());
 			manager.setChartType(null,enrichmentSettings.chartType.getSelectedValue());
 			manager.updateSettings();
 		}
 
 		manager.setTopTerms(network,enrichmentSettings.nTerms.getValue());
 		manager.setOverlapCutoff(network,enrichmentSettings.overlapCutoff.getValue());
-		manager.setBrewerPalette(network,enrichmentSettings.defaultPalette.getSelectedValue());
+		manager.setEnrichmentPalette(network,enrichmentSettings.defaultPalette.getSelectedValue());
 		manager.setChartType(network,enrichmentSettings.chartType.getSelectedValue());
 
 		// TODO: maybe this is a way to automatically apply settings?

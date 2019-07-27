@@ -31,20 +31,23 @@ package edu.ucsf.rbvi.stringApp.internal.ui;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */ 
 
+import java.awt.Component;
+
 import javax.swing.AbstractCellEditor;
 import javax.swing.table.TableCellEditor;
 
-import org.jcolorbrewer.ui.JColorChooserBrewer;
-import org.jcolorbrewer.ColorBrewer;
-
 import javax.swing.JButton;
-import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JTable;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import org.cytoscape.util.color.BrewerType;
+import org.cytoscape.util.color.Palette;
+import org.cytoscape.util.swing.CyColorPaletteChooser;
+import org.cytoscape.util.swing.CyColorPaletteChooserFactory;
 
 /* 
  * ColorEditor.java (compiles with releases 1.3 and 1.4) is used by 
@@ -55,23 +58,26 @@ public class ColorEditor extends AbstractCellEditor
                          implements TableCellEditor,
 			            ActionListener {
     Color currentColor;
-		ColorBrewer currentPalette;
+		Palette currentPalette;
     JButton button;
-    JColorChooser colorChooser;
-    JColorChooserBrewer dialog;
+    // JColorChooser colorChooser;
+    CyColorPaletteChooserFactory chooserFactory;
+		final Component parent;
     protected static final String EDIT = "edit";
 
-    public ColorEditor() {
+    public ColorEditor(Component parent, CyColorPaletteChooserFactory chooserFactory, Palette current) {
         //Set up the editor (from the table's point of view),
         //which is a button.
         //This button brings up the color chooser dialog,
         //which is the editor from the user's point of view.
+				this.chooserFactory = chooserFactory;
+				this.parent = parent;
+				this.currentPalette = current;
         button = new JButton();
         button.setActionCommand(EDIT);
         button.addActionListener(this);
         button.setBorderPainted(false);
 
-				dialog = JColorChooserBrewer.createDialog(null, "Pick a Color", true, this, null);
     }
 
     /**
@@ -80,6 +86,14 @@ public class ColorEditor extends AbstractCellEditor
      */
     public void actionPerformed(ActionEvent e) {
         if (EDIT.equals(e.getActionCommand())) {
+					// button.setBackground(currentColor);
+					CyColorPaletteChooser chooser = chooserFactory.getColorPaletteChooser(BrewerType.QUALITATIVE, false);
+					chooser.showDialog(parent, "Pick a color", currentPalette, currentColor, 10);
+					currentPalette = chooser.getSelectedPalette();
+					currentColor = chooser.getSelectedColor();
+           fireEditingStopped();
+
+					/*
             //The user has clicked the cell, so
             //bring up the dialog.
             button.setBackground(currentColor);
@@ -90,10 +104,11 @@ public class ColorEditor extends AbstractCellEditor
 
             //Make the renderer reappear.
             fireEditingStopped();
+					*/
 
         } else { //User pressed dialog's "OK" button.
-            currentColor = dialog.getColor();
-						currentPalette = dialog.getColorPalette();
+            // currentColor = dialog.getColor();
+						// currentPalette = dialog.getColorPalette();
         }
     }
 

@@ -1,14 +1,25 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.SwingUtilities;
 
 import org.cytoscape.model.CyNetwork;
+import org.cytoscape.util.color.BrewerType;
+import org.cytoscape.util.color.Palette;
+import org.cytoscape.util.color.PaletteProvider;
+import org.cytoscape.util.color.PaletteProviderManager;
+import org.cytoscape.util.color.PaletteType;
+import org.cytoscape.util.swing.CyColorPaletteChooser;
+import org.cytoscape.util.swing.CyColorPaletteChooserFactory;
 import org.cytoscape.work.Tunable;
+import org.cytoscape.work.swing.RequestsUIHelper;
+import org.cytoscape.work.swing.TunableUIHelper;
 import org.cytoscape.work.swing.util.UserAction;
 import org.cytoscape.work.util.BoundedDouble;
 import org.cytoscape.work.util.BoundedInteger;
@@ -16,13 +27,14 @@ import org.cytoscape.work.util.ListSingleSelection;
 
 import edu.ucsf.rbvi.stringApp.internal.model.ChartType;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
-import org.jcolorbrewer.ColorBrewer;
-import org.jcolorbrewer.ui.ColorPaletteChooserDialog;
-import org.jcolorbrewer.ui.ColorPaletteChooserDialog.PALETTE_TYPE;
+// import org.jcolorbrewer.ColorBrewer;
+// import org.jcolorbrewer.ui.ColorPaletteChooserDialog;
+// import org.jcolorbrewer.ui.ColorPaletteChooserDialog.PALETTE_TYPE;
 
-public class EnrichmentSettings implements ActionListener {
+public class EnrichmentSettings implements ActionListener, RequestsUIHelper {
 	private StringManager manager;
 	private CyNetwork network;
+	private Component parent;
 
 	@Tunable(description = "Type of chart to draw",
 	         tooltip = "Set the desired chart type",
@@ -42,10 +54,10 @@ public class EnrichmentSettings implements ActionListener {
 	
 	@Tunable(description = "Default Brewer palette",
 	         longDescription = "Set the default Brewer palette for charts",
-	         exampleStringValue = "Paired colors",
+	         exampleStringValue = "ColorBrewer Paired colors",
 					 groups = {"Enrichment Defaults"},
 	         gravity = 102.0, context="nogui")
-	public ListSingleSelection<ColorBrewer> defaultPalette;
+	public ListSingleSelection<Palette> defaultPalette;
 
 	@Tunable(description = "Change Color Palette",
 	         tooltip = "Set the default Brewer color palette for charts",
@@ -67,16 +79,38 @@ public class EnrichmentSettings implements ActionListener {
 		this.manager = manager;
 		this.network = network;
 
+		PaletteProviderManager pm = manager.getService(PaletteProviderManager.class);
+		List<PaletteProvider> providers = pm.getPaletteProviders(BrewerType.QUALITATIVE, false);
+		List<Palette> palettes = new ArrayList<>();
+		for (PaletteProvider provider: providers) {
+			List<String> paletteList = provider.listPaletteNames(BrewerType.QUALITATIVE, false);
+			for (String id: paletteList) {
+				palettes.add(provider.getPalette(id));
+			}
+
+		}
+		defaultPalette = new ListSingleSelection<Palette>(palettes);
+
 		nTerms.setValue(manager.getTopTerms(network));
 		overlapCutoff.setValue(manager.getOverlapCutoff(network));
-		ColorBrewer[] palettes = ColorBrewer.getQualitativeColorPalettes(false);
-		defaultPalette = new ListSingleSelection<ColorBrewer>(Arrays.asList(palettes));
+		// ColorBrewer[] palettes = ColorBrewer.getQualitativeColorPalettes(false);
+		defaultPalette = new ListSingleSelection<Palette>(palettes);
 		chartType = new ListSingleSelection<ChartType>(ChartType.values());
 		chartType.setSelectedValue(manager.getChartType(network));
-		if (manager.getBrewerPalette(network) != null) defaultPalette.setSelectedValue(manager.getBrewerPalette(network));
+		if (manager.getEnrichmentPalette(network) != null) defaultPalette.setSelectedValue(manager.getEnrichmentPalette(network));
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		PaletteProviderManager pm = manager.getService(PaletteProviderManager.class);
+
+		CyColorPaletteChooser paletteChooser = 
+			manager.getService(CyColorPaletteChooserFactory.class).getColorPaletteChooser(BrewerType.QUALITATIVE, true);
+		Palette palette = paletteChooser.showDialog(parent, "Palette for Channel Colors", null, 7);
+		System.out.println("Setting enrichment palette to: "+palette);
+		manager.setEnrichmentPalette(network, palette);
+		defaultPalette.setSelectedValue(palette);
+
+		/*
 		ColorPaletteChooserDialog dialog = new ColorPaletteChooserDialog(null, PALETTE_TYPE.QUALITATIVE);
 		if (defaultPalette.getSelectedValue() != null)
 			dialog.setColorBrewer(defaultPalette.getSelectedValue());
@@ -84,5 +118,10 @@ public class EnrichmentSettings implements ActionListener {
 		if (okPressed) {
 			defaultPalette.setSelectedValue(dialog.getColorPalette());
 		}
+		*/
+	}
+
+	public void setUIHelper(TunableUIHelper helper) {
+		parent = helper.getParent();
 	}
 }

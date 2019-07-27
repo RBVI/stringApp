@@ -58,6 +58,7 @@ import org.cytoscape.model.CyTable;
 import org.cytoscape.model.events.RowSetRecord;
 import org.cytoscape.model.events.RowsSetEvent;
 import org.cytoscape.model.events.RowsSetListener;
+import org.cytoscape.util.swing.CyColorPaletteChooserFactory;
 import org.cytoscape.util.swing.IconManager;
 import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.view.model.CyNetworkView;
@@ -65,7 +66,7 @@ import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
-import org.jcolorbrewer.ColorBrewer;
+// import org.jcolorbrewer.ColorBrewer;
 
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
@@ -101,6 +102,7 @@ public class PublicationsCytoPanel extends JPanel
 	// JMenuItem menuItemReset;
 	JPopupMenu popupMenu;
 	EnrichmentTableModel tableModel;
+	final CyColorPaletteChooserFactory colorChooserFactory;
 	private static final Icon chartIcon = new ImageIcon(
 			PublicationsCytoPanel.class.getResource("/images/chart20.png"));
 	final Font iconFont;
@@ -124,6 +126,7 @@ public class PublicationsCytoPanel extends JPanel
 		this.setLayout(new BorderLayout());
 		IconManager iconManager = manager.getService(IconManager.class);
 		iconFont = iconManager.getIconFont(22.0f);
+		colorChooserFactory = manager.getService(CyColorPaletteChooserFactory.class);
 		initPanel(noSignificant);
 	}
 
@@ -398,7 +401,8 @@ public class PublicationsCytoPanel extends JPanel
 		jTable.getSelectionModel().addListSelectionListener(this);
 		// jTable.getModel().addTableModelListener(this);
 		jTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
-		jTable.setDefaultEditor(Color.class, new ColorEditor());
+		CyNetwork network = manager.getCurrentNetwork();
+		jTable.setDefaultEditor(Color.class, new ColorEditor(this, colorChooserFactory, manager.getEnrichmentPalette(network)));
 		// popupMenu = new JPopupMenu();
 		// menuItemReset = new JMenuItem("Remove color");
 		// menuItemReset.addActionListener(this);

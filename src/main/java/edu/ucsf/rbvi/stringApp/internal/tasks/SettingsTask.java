@@ -1,6 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -17,6 +18,8 @@ import org.cytoscape.util.color.Palette;
 import org.cytoscape.util.color.PaletteProvider;
 import org.cytoscape.util.color.PaletteProviderManager;
 import org.cytoscape.util.color.PaletteType;
+import org.cytoscape.util.swing.CyColorPaletteChooser;
+import org.cytoscape.util.swing.CyColorPaletteChooserFactory;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ContainsTunables;
@@ -26,18 +29,24 @@ import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.json.JSONResult;
+import org.cytoscape.work.swing.RequestsUIHelper;
+import org.cytoscape.work.swing.TunableUIHelper;
+import org.cytoscape.work.swing.util.UserAction;
 import org.cytoscape.work.util.BoundedDouble;
 import org.cytoscape.work.util.BoundedInteger;
 import org.cytoscape.work.util.ListSingleSelection;
 
 import edu.ucsf.rbvi.stringApp.internal.model.ChartType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
+import edu.ucsf.rbvi.stringApp.internal.model.StringChannelPaletteProvider;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
-public class SettingsTask extends AbstractTask implements ObservableTask {
+public class SettingsTask extends AbstractTask implements ObservableTask, ActionListener, RequestsUIHelper {
 
 	private StringManager manager;
 	private CyNetwork network;
+	private Palette channelPalette = null;
+	private Component parent;
 
 	@Tunable(description="Species", 
 			longDescription="Default species",
@@ -85,7 +94,7 @@ public class SettingsTask extends AbstractTask implements ObservableTask {
 	@Tunable(description="Edge channel color palettes", 
 			longDescription="Set the palette to use for the channel colors",
 			exampleStringValue = "STRING channel colors", groups={"View Defaults"}, gravity=17.0)
-	public ListSingleSelection channelColors;
+	public UserAction paletteChooser = new UserAction(this);
 
 	@ContainsTunables
 	public EnrichmentSettings enrichmentSettings;
@@ -104,9 +113,7 @@ public class SettingsTask extends AbstractTask implements ObservableTask {
 		showGlassBallEffect = manager.showGlassBallEffect();
 
 
-		List<Palette> colors = new ArrayList<Palette>();
-		colors.add(new StringChannelPalette());
-
+		/*
 		List<PaletteProvider> providers = manager.getService(PaletteProviderManager.class).getPaletteProviders(BrewerType.QUALITATIVE, false);
 		for (PaletteProvider provider: providers) {
 			for (String pName: provider.listPaletteNames(BrewerType.QUALITATIVE, false)) {
@@ -115,6 +122,7 @@ public class SettingsTask extends AbstractTask implements ObservableTask {
 		}
 
 		channelColors = new ListSingleSelection<Palette>(colors);
+		*/
 	}
 
 	@Override
@@ -154,7 +162,7 @@ public class SettingsTask extends AbstractTask implements ObservableTask {
 
 		manager.setTopTerms(null,enrichmentSettings.nTerms.getValue());
 		manager.setOverlapCutoff(null,enrichmentSettings.overlapCutoff.getValue());
-		manager.setBrewerPalette(null,enrichmentSettings.defaultPalette.getSelectedValue());
+		manager.setEnrichmentPalette(null,enrichmentSettings.defaultPalette.getSelectedValue());
 		manager.setChartType(null,enrichmentSettings.chartType.getSelectedValue());
 		manager.updateSettings();
 		
@@ -184,30 +192,32 @@ public class SettingsTask extends AbstractTask implements ObservableTask {
 		return Arrays.asList(JSONResult.class, String.class);
 	}
 
+	public void actionPerformed(ActionEvent ae) {
+		PaletteProviderManager pm = manager.getService(PaletteProviderManager.class);
+		PaletteProvider stringProvider = new StringChannelPaletteProvider();
+		pm.addPaletteProvider(stringProvider);
+
+		CyColorPaletteChooser paletteChooser = 
+			manager.getService(CyColorPaletteChooserFactory.class).getColorPaletteChooser(BrewerType.QUALITATIVE, true);
+		Palette initial = stringProvider.getPalette("default");
+		channelPalette = paletteChooser.showDialog(parent, "Palette for Channel Colors", initial, 7);
+
+		pm.removePaletteProvider(stringProvider);
+	}
+
+	public void setUIHelper(TunableUIHelper helper) {
+		parent = helper.getParent();
+	}
+
 	public Map<String, Color> getChannelColorMap() {
 		Map<String, Color> colorMap = new HashMap<>();
-		Palette palette = (Palette)channelColors.getSelectedValue();
-		System.out.println("Selected palette = "+palette);
-		Color[] colors = palette.getColors(7);
+		System.out.println("Selected palette = "+channelPalette);
+		Color[] colors = channelPalette.getColors(7);
 		for (int i = 0; i < 7; i++) {
 			System.out.println(manager.channels[i]+" = "+colors[i]);
 			colorMap.put(manager.channels[i], colors[i]);
 		}
 		return colorMap;
-	}
-
-	class StringChannelPalette implements Palette {
-		Color[] colors = new Color[] {
-						Color.CYAN, Color.MAGENTA, Color.GREEN, Color.RED, Color.BLUE,
-						new Color(199,234,70), Color.BLACK };
-		public Color[] getColors() { return colors; }
-		public Color[] getColors(int nColors) { return colors; }
-		public Object getIdentifier() { return "STRING channel colors"; }
-		public PaletteType getType() { return BrewerType.QUALITATIVE; }
-		public boolean isColorBlindSafe() { return false; }
-		public int size() { return 7; }
-		public String toString() { return "STRING channel colors"; }
-		public String getName() { return "STRING"; }
 	}
 
 }

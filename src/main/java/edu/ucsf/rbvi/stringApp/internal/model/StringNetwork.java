@@ -10,6 +10,7 @@ import java.util.Map;
 import org.json.simple.JSONObject;
 
 import org.cytoscape.model.CyNetwork;
+import org.cytoscape.util.color.Palette;
 import org.cytoscape.view.model.CyNetworkView;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
@@ -17,7 +18,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
-import org.jcolorbrewer.ColorBrewer;
+// import org.jcolorbrewer.ColorBrewer;
 
 public class StringNetwork {
 	final StringManager manager;
@@ -29,7 +30,7 @@ public class StringNetwork {
 	// Enrichment table options for this network
 	private int topTerms = -1;
 	private double overlapCutoff = -1;
-	private ColorBrewer brewerPalette = null;
+	private Palette brewerPalette = null;
 	private List<TermCategory> categoryFilter = null;
 	private ChartType chartType = null;
 	private boolean removeOverlap = false;
@@ -41,7 +42,7 @@ public class StringNetwork {
 		annotations = null;
 		topTerms = manager.getTopTerms(null);
 		overlapCutoff = manager.getOverlapCutoff(null);
-		brewerPalette = manager.getBrewerPalette(null);
+		brewerPalette = manager.getEnrichmentPalette(null);
 		categoryFilter = manager.getCategoryFilter(null);
 		removeOverlap = manager.getRemoveOverlap(null);
 		chartType = manager.getChartType(null);
@@ -78,8 +79,15 @@ public class StringNetwork {
 				categoryFilter.add(Enum.valueOf(TermCategory.class, filter));
 			}
 		}
+
+		// FIXME
+		/*
 		if (settings.containsKey("brewerPalette")) {
 			brewerPalette = Enum.valueOf(ColorBrewer.class, settings.get("brewerPalette"));
+		}
+		*/
+		if (settings.containsKey("brewerPalette")) {
+			manager.setBrewerPalette(network, settings.get("brewerPalette"));
 		}
 		if (settings.containsKey("chartType")) {
 			chartType = Enum.valueOf(ChartType.class, settings.get("chartType"));
@@ -95,8 +103,8 @@ public class StringNetwork {
 	public List<TermCategory> getCategoryFilter() { return categoryFilter; }
 	public void setCategoryFilter(List<TermCategory> categories) { categoryFilter = categories; update(); }
 
-	public ColorBrewer getBrewerPalette() { return brewerPalette; }
-	public void setBrewerPalette(ColorBrewer palette) { brewerPalette = palette; update(); }
+	public Palette getEnrichmentPalette() { return brewerPalette; }
+	public void setEnrichmentPalette(Palette palette) { brewerPalette = palette; update(); }
 
 	public ChartType getChartType() { return chartType; }
 	public void setChartType(ChartType type) { chartType = type; update(); }
@@ -117,7 +125,7 @@ public class StringNetwork {
 			}
 			settings.put("categoryFilter", ModelUtils.listToString(filters));
 		}
-		settings.put("brewerPalette", brewerPalette.name());
+		settings.put("brewerPalette", brewerPalette.toString());
 		settings.put("chartType", chartType.name());
 		ModelUtils.updateEnrichmentSettings(network, settings);
 

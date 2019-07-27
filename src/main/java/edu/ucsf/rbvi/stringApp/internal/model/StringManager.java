@@ -32,13 +32,17 @@ import org.cytoscape.property.CyProperty.SavePolicy;
 import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.session.events.SessionLoadedEvent;
 import org.cytoscape.session.events.SessionLoadedListener;
+import org.cytoscape.util.color.BrewerType;
+import org.cytoscape.util.color.Palette;
+import org.cytoscape.util.color.PaletteProvider;
+import org.cytoscape.util.color.PaletteProviderManager;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.work.SynchronousTaskManager;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskObserver;
-import org.jcolorbrewer.ColorBrewer;
+// import org.jcolorbrewer.ColorBrewer;
 import org.json.simple.JSONObject;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
@@ -116,7 +120,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	private int topTerms = 5;
 	private double overlapCutoff = 0.5;
-	private ColorBrewer brewerPalette = ColorBrewer.Paired;
+	private Palette brewerPalette;
 	private List<TermCategory> categoryFilter = TermCategory.getValues();
 	private ChartType chartType = ChartType.SPLIT;
 	private boolean removeOverlap = false;
@@ -151,6 +155,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		stringNetworkMap = new HashMap<>();
 		if (!haveEnhancedGraphics())
 			showEnhancedLabels = false;
+
+		PaletteProviderManager pm = registrar.getService(PaletteProviderManager.class);
+		PaletteProvider brewerProvider = pm.getPaletteProvider("ColorBrewer");
+		brewerPalette = brewerProvider.getPalette("Paired colors");
 
 		// Make sure we've read in our species
 		if (Species.getSpecies() == null) {
@@ -224,6 +232,9 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		}
 		if (ModelUtils.hasProperty(configProps, "brewerPalette")) {
 			setBrewerPalette(null, ModelUtils.getStringProperty(configProps,"brewerPalette"));
+		}
+		if (ModelUtils.hasProperty(configProps, "enrichmentPalette")) {
+			setEnrichmentPalette(null, ModelUtils.getStringProperty(configProps,"enrichmentPalette"));
 		}
 		if (ModelUtils.hasProperty(configProps, "categoryFilter")) {
 			setCategoryFilter(null, ModelUtils.getStringProperty(configProps,"categoryFilter"));
@@ -592,7 +603,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		ModelUtils.setStringProperty(configProps, "overlapCutoff", Double.toString(overlapCutoff));
 		ModelUtils.setStringProperty(configProps,"topTerms", Integer.toString(topTerms));
 		ModelUtils.setStringProperty(configProps,"chartType", chartType.name());
-		ModelUtils.setStringProperty(configProps,"brewerPalette", brewerPalette.name());
+		ModelUtils.setStringProperty(configProps,"enrichmentPalette", brewerPalette.toString());
 		ModelUtils.setStringProperty(configProps,"removeOverlap", Boolean.toString(removeOverlap));
 		{
 			String categories = "";
@@ -891,6 +902,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		setCategoryFilter(network, catList);
 	}
 
+	/*
 	public ColorBrewer getBrewerPalette(CyNetwork network) { 
 		if (network == null || !stringNetworkMap.containsKey(network))
 			return brewerPalette; 
@@ -902,8 +914,38 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		} else
 			stringNetworkMap.get(network).setBrewerPalette(palette);
 	}
+*/
+	public Palette getEnrichmentPalette(CyNetwork network) { 
+		if (network == null || !stringNetworkMap.containsKey(network))
+			return brewerPalette;
+		return stringNetworkMap.get(network).getEnrichmentPalette();
+	}
+
+	public void setEnrichmentPalette(CyNetwork network, Palette palette) { 
+		System.out.println("setEnrichmentPalette: "+palette.toString());
+		if (network == null || !stringNetworkMap.containsKey(network))
+			brewerPalette = palette;
+		else
+			stringNetworkMap.get(network).setEnrichmentPalette(palette);
+	}
+
+	public void setEnrichmentPalette(CyNetwork network, String palette) { 
+		System.out.println("setEnrichmentPalette(str): "+palette);
+		PaletteProviderManager pm = registrar.getService(PaletteProviderManager.class);
+		for (PaletteProvider provider: pm.getPaletteProviders(BrewerType.QUALITATIVE, false)) {
+			for (Object id: provider.listPaletteIdentifiers(BrewerType.QUALITATIVE, false)) {
+				Palette p = provider.getPalette(id);
+				if (p.toString().equals(palette))
+					setEnrichmentPalette(network, p);
+			}
+		}
+	}
+
+	// Retained for backwards compatability
 	public void setBrewerPalette(CyNetwork network, String palette) { 
-		setBrewerPalette(network, Enum.valueOf(ColorBrewer.class, palette));
+		if (palette.startsWith("ColorBrewer "))
+			setEnrichmentPalette(network, palette);
+		setEnrichmentPalette(network, "ColorBrewer "+palette);
 	}
 
 	public ChartType getChartType(CyNetwork network) { 
