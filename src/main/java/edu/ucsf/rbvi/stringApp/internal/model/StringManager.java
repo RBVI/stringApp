@@ -645,17 +645,16 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 				if (ModelUtils.ifHaveStringNS(network)) {
 					StringNetwork stringNet = new StringNetwork(this);
 					addStringNetwork(stringNet, network);
-				} else {
+				} else if (ModelUtils.getDataVersion(network) == null) {
 					networksToUpgrade.add(network);
 				}
 			}
 		}
 
 		// if there are old string networks, figure out what to do
-		SynchronousTaskManager<?> taskM = getService(SynchronousTaskManager.class);
-		for (CyNetwork networkToUpgrade : networksToUpgrade) {
-			System.out.println("Adding namespaces to old STRING network: " + networkToUpgrade.toString());
-			taskM.execute(new AddNamespacesTaskFactory(this).createTaskIterator(networkToUpgrade));
+		if (networksToUpgrade.size() > 0) {
+			SynchronousTaskManager<?> taskM = getService(SynchronousTaskManager.class);
+			taskM.execute(new AddNamespacesTaskFactory(this).createTaskIterator(networksToUpgrade));			
 		}
 
 		// load enrichment

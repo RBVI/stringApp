@@ -1,25 +1,14 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
-import java.util.Properties;
-
-import static org.cytoscape.work.ServiceProperties.COMMAND;
-import static org.cytoscape.work.ServiceProperties.COMMAND_DESCRIPTION;
-import static org.cytoscape.work.ServiceProperties.COMMAND_NAMESPACE;
-import static org.cytoscape.work.ServiceProperties.ENABLE_FOR;
-import static org.cytoscape.work.ServiceProperties.INSERT_SEPARATOR_BEFORE;
-import static org.cytoscape.work.ServiceProperties.IN_MENU_BAR;
-import static org.cytoscape.work.ServiceProperties.MENU_GRAVITY;
-import static org.cytoscape.work.ServiceProperties.PREFERRED_MENU;
-import static org.cytoscape.work.ServiceProperties.TITLE;
+import java.util.List;
+import java.util.Set;
 
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.task.AbstractNetworkTaskFactory;
-import org.cytoscape.task.NetworkTaskFactory;
 import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
-import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class AddNamespacesTaskFactory extends AbstractNetworkTaskFactory implements TaskFactory {
 	final StringManager manager;
@@ -28,11 +17,19 @@ public class AddNamespacesTaskFactory extends AbstractNetworkTaskFactory impleme
 		this.manager = manager;
 	}
 
+	public boolean isReady(List<CyNetwork> networks) {
+		if (!manager.haveURIs() || networks.size() == 0) return false;
+
+		return true;
+	}
+
+	public TaskIterator createTaskIterator(Set<CyNetwork> networks) {
+		return new TaskIterator(new AddNamespacesTask(manager, networks));
+	}
+
+
 	public boolean isReady(CyNetwork net) {
 		if (!manager.haveURIs() || net == null) return false;
-
-		// Are we already a string network?
-		if (ModelUtils.isStringNetwork(net)) return false;
 
 		return true;
 	}
@@ -46,7 +43,7 @@ public class AddNamespacesTaskFactory extends AbstractNetworkTaskFactory impleme
 	}
 
 	public TaskIterator createTaskIterator() {
-		return new TaskIterator(new AddNamespacesTask(manager, null));
+		return new TaskIterator(new AddNamespacesTask(manager));
 	}
 
 }

@@ -506,9 +506,6 @@ public class StringNodePanel extends AbstractStringPanel {
 			return;
 		}
 
-		// We need to get the view for the new network since we haven't actually switched yet
-		CyNetworkView networkView = ModelUtils.getNetworkView(manager, currentNetwork);
-
 		if (!ModelUtils.haveQueryTerms(currentNetwork))
 			highlightQuery.setEnabled(false);
 		else
@@ -520,24 +517,27 @@ public class StringNodePanel extends AbstractStringPanel {
 			filters.get(currentNetwork).put("compartment", new HashMap<>());
 		}
 
-		if (manager.highlightNeighbors()) {
-			doHighlight(networkView);
-		} else {
-			clearHighlight(networkView);
+		// We need to get the view for the new network since we haven't actually switched yet
+		CyNetworkView networkView = ModelUtils.getNetworkView(manager, currentNetwork);
+		if (networkView != null) {
+			if (manager.highlightNeighbors()) {
+				doHighlight(networkView);
+			} else {
+				clearHighlight(networkView);
+			}
+	
+			if (manager.showSingletons()) {
+				ViewUtils.hideSingletons(networkView, true);
+			} else {
+				ViewUtils.hideSingletons(networkView, false);
+			}
+	
+			if (ModelUtils.isStitchNetwork(currentNetwork)) {
+				ViewUtils.updateChemVizPassthrough(manager, networkView, manager.showImage());
+			}
+	
+			ViewUtils.hideStringColors(manager, networkView, manager.showStringColors());
 		}
-
-		if (manager.showSingletons()) {
-			ViewUtils.hideSingletons(networkView, true);
-		} else {
-			ViewUtils.hideSingletons(networkView, false);
-		}
-
-		if (ModelUtils.isStitchNetwork(currentNetwork)) {
-			ViewUtils.updateChemVizPassthrough(manager, networkView, manager.showImage());
-		}
-
-		ViewUtils.hideStringColors(manager, networkView, manager.showStringColors());
-
 		updateTissuesPanel();
 		updateCompartmentsPanel();
 	}
