@@ -653,8 +653,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 		// if there are old string networks, figure out what to do
 		if (networksToUpgrade.size() > 0) {
-			SynchronousTaskManager<?> taskM = getService(SynchronousTaskManager.class);
-			taskM.execute(new AddNamespacesTaskFactory(this).createTaskIterator(networksToUpgrade));			
+			// System.out.println("found networks to upgrade");
+			synchronousTaskManager.execute(new AddNamespacesTaskFactory(this).createTaskIterator(networksToUpgrade));
 		}
 
 		// load enrichment
