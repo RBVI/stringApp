@@ -141,6 +141,13 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		this.monitor = monitor;
 		monitor.setTitle(this.getTitle());
 
+		if (!ModelUtils.getDataVersion(network).equals(manager.getDataVersion())) {
+			monitor.showMessage(Level.ERROR,
+					"Task cannot be performed. Network appears to be an old STRING network.");
+			showError("Task cannot be performed. Network appears to be an old STRING network.");
+			return;			
+		}
+		
 		if (!selectedNodesOnly)
 			selected = getExisting(network).trim();
 		/*
