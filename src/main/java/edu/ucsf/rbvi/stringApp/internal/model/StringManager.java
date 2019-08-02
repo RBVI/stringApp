@@ -22,6 +22,8 @@ import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
+import org.cytoscape.model.CyTable;
+import org.cytoscape.model.CyTableManager;
 import org.cytoscape.model.events.NetworkAboutToBeDestroyedEvent;
 import org.cytoscape.model.events.NetworkAboutToBeDestroyedListener;
 import org.cytoscape.model.events.NetworkAddedEvent;
@@ -733,27 +735,35 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	}
 
 	private void reloadEnrichmentPanel(Set<CyNetwork> networks) {
-		if (enrichmentTaskFactory != null) {
-			boolean show = false;
-			for (CyNetwork net : networks) {
-				if (ModelUtils.getEnrichmentNodes(net).size() > 0) {
-					show = true;
-					break;
-				}
+		CyTableManager tableManager = getService(CyTableManager.class);
+		Set<CyTable> tables = tableManager.getAllTables(true);
+		boolean showEnrichment = false;
+		boolean showPublications = false;
+		for (CyTable table : tables) {
+			if (table.getTitle().equals(TermCategory.PMID.getTable())) {
+				showPublications = true;
+			} else if (table.getTitle().equals(TermCategory.ALL.getTable())) {
+				showEnrichment = true;
 			}
+		}
+		if (enrichmentTaskFactory != null) {
 			TaskIterator taskIt = null;
-			TaskIterator taskIt2 = null;
-			if (show) {
+			if (showEnrichment) {
 				taskIt = enrichmentTaskFactory.createTaskIterator(true, false);
-				taskIt2 = publicationsTaskFactory.createTaskIterator(true, false);
 			} else {
 				taskIt = enrichmentTaskFactory.createTaskIterator(false, false);
+			}
+			synchronousTaskManager.execute(taskIt);
+			enrichmentTaskFactory.reregister();
+		}
+		if (publicationsTaskFactory != null) {
+			TaskIterator taskIt2 = null;
+			if (showPublications) {
+				taskIt2 = publicationsTaskFactory.createTaskIterator(true, false);
+			} else {
 				taskIt2 = publicationsTaskFactory.createTaskIterator(false, false);
 			}
-			SynchronousTaskManager<?> taskM = getService(SynchronousTaskManager.class);
-			taskM.execute(taskIt);
-			enrichmentTaskFactory.reregister();
-			taskM.execute(taskIt2);
+			synchronousTaskManager.execute(taskIt2);
 			publicationsTaskFactory.reregister();
 		}
 	}
