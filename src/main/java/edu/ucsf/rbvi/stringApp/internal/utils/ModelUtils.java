@@ -783,7 +783,7 @@ public class ModelUtils {
 		CyTable nodeTable = network.getDefaultNodeTable();
 		if (nodeTable.getColumn(ID) == null)
 			return false;
-		// TODO: decide for which columns to check for isStringNetwork
+		// Enough to check for id in the node columns and score in the edge columns
 		//if (nodeTable.getColumn(SPECIES) == null)
 		//	return false;
 		//if (nodeTable.getColumn(CANONICAL) == null)
@@ -796,9 +796,8 @@ public class ModelUtils {
 
 	public static boolean isStringNetwork(CyNetwork network) {
 		// This is a string network only if we have a confidence score in the network table,
-		// "@id", "species", "canonical name", and "sequence" columns in the node table, and
-		// a "score" column in the edge table
-		if (network == null || network.getRow(network).get(CONFIDENCE, Double.class) == null || network.getDefaultNodeTable().getColumns(STRINGDB_NAMESPACE) == null)
+		// "@id" column in the node table, and a "score" column in the edge table
+		if (network == null || network.getRow(network).get(CONFIDENCE, Double.class) == null)
 			return false;
 		return isMergedStringNetwork(network);
 	}
@@ -1306,12 +1305,15 @@ public class ModelUtils {
 	}
 
 	
-	public static void deleteEnrichmentTables(CyNetwork network, StringManager manager) {
+	public static void deleteEnrichmentTables(CyNetwork network, StringManager manager, boolean publOnly) {
 		CyTableManager tableManager = manager.getService(CyTableManager.class);
 		Set<CyTable> oldTables = ModelUtils.getEnrichmentTables(manager, network);
 		for (CyTable table : oldTables) {
+			if (publOnly && !table.getTitle().equals(TermCategory.PMID.getTable())) {
+				continue;
+			} 
 			tableManager.deleteTable(table.getSUID());
-			manager.flushEvents();
+			manager.flushEvents();				
 		}
 	}
 

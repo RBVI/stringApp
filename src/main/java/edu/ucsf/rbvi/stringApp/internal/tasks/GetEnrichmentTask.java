@@ -202,7 +202,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		}
 
 		// clear old results
-		ModelUtils.deleteEnrichmentTables(network, manager);
+		ModelUtils.deleteEnrichmentTables(network, manager, publOnly);
 
 		// retrieve enrichment (new API)
 		getEnrichmentJSON(selected, species, background.getSelectedValue());

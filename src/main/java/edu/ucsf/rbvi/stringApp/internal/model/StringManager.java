@@ -660,7 +660,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		}
 
 		// load enrichment
-		reloadEnrichmentPanel(networks);
+		reloadEnrichmentPanel();
 		
 		// check if enhanced labels should be shown or not
 		if (labelsTaskFactory != null) {
@@ -711,12 +711,16 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	public void handleEvent(NetworkAboutToBeDestroyedEvent e) {
 		CyNetwork network = e.getNetwork();
-		ModelUtils.deleteEnrichmentTables(network, this);
+		// delete enrichment tables
+		CyTableManager tableManager = getService(CyTableManager.class);
+		Set<CyTable> oldTables = ModelUtils.getEnrichmentTables(this, network);
+		for (CyTable table : oldTables) {
+			tableManager.deleteTable(table.getSUID());
+		}
+		reloadEnrichmentPanel();
+		// remove as string network
 		if (stringNetworkMap.containsKey(network))
 			stringNetworkMap.remove(network);
-		CyNetworkManager netManager = this.getService(CyNetworkManager.class);
-		Set<CyNetwork> networks = netManager.getNetworkSet();
-		reloadEnrichmentPanel(networks);
 	}
 
 	public void showResultsPanel() {
@@ -734,7 +738,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		}
 	}
 
-	private void reloadEnrichmentPanel(Set<CyNetwork> networks) {
+	private void reloadEnrichmentPanel() {
 		CyTableManager tableManager = getService(CyTableManager.class);
 		Set<CyTable> tables = tableManager.getAllTables(true);
 		boolean showEnrichment = false;
@@ -742,19 +746,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		for (CyTable table : tables) {
 			if (table.getTitle().equals(TermCategory.PMID.getTable())) {
 				showPublications = true;
-			} else if (table.getTitle().equals(TermCategory.ALL.getTable())) {
+			} 
+			if (table.getTitle().equals(TermCategory.ALL.getTable())) {
 				showEnrichment = true;
 			}
-		}
-		if (enrichmentTaskFactory != null) {
-			TaskIterator taskIt = null;
-			if (showEnrichment) {
-				taskIt = enrichmentTaskFactory.createTaskIterator(true, false);
-			} else {
-				taskIt = enrichmentTaskFactory.createTaskIterator(false, false);
-			}
-			synchronousTaskManager.execute(taskIt);
-			enrichmentTaskFactory.reregister();
 		}
 		if (publicationsTaskFactory != null) {
 			TaskIterator taskIt2 = null;
@@ -765,6 +760,16 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			}
 			synchronousTaskManager.execute(taskIt2);
 			publicationsTaskFactory.reregister();
+		}
+		if (enrichmentTaskFactory != null) {
+			TaskIterator taskIt = null;
+			if (showEnrichment) {
+				taskIt = enrichmentTaskFactory.createTaskIterator(true, false);
+			} else {
+				taskIt = enrichmentTaskFactory.createTaskIterator(false, false);
+			}
+			synchronousTaskManager.execute(taskIt);
+			enrichmentTaskFactory.reregister();
 		}
 	}
 	
