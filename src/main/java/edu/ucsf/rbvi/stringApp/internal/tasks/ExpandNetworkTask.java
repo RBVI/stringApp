@@ -29,6 +29,7 @@ import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.TunableSetter;
+import org.cytoscape.work.TaskMonitor.Level;
 import org.cytoscape.work.util.BoundedDouble;
 import org.cytoscape.work.util.ListSingleSelection;
 import org.json.simple.JSONObject;
@@ -136,6 +137,13 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			return;
 		}
 		
+		if (!ModelUtils.isCurrentDataVersion(network)) {
+			monitor.showMessage(Level.ERROR,
+					"Task cannot be performed. Network appears to be an old STRING network.");
+			// showError("Task cannot be performed. Network appears to be an old STRING network.");
+			return;			
+		}
+
 		// First see if we've got a view
 		if (netView == null) {
 			Collection<CyNetworkView> views = 

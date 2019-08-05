@@ -22,7 +22,12 @@ public class AddTermsTaskFactory extends AbstractNetworkTaskFactory implements N
 	}
 
 	public TaskIterator createTaskIterator(CyNetwork network) {
-		return new TaskIterator(new AddTermsTask(manager, network, null));
+		// check if we have a current STRING network and if not, notify user and ask to requery
+		if (ModelUtils.isCurrentDataVersion(network)) {
+			return new TaskIterator(new AddTermsTask(manager, network, null));
+		} else {
+			return new TaskIterator(new RequeryTask(manager, network));
+		}
 	}
 
 	public boolean isReady(CyNetworkView netView) {
@@ -30,7 +35,12 @@ public class AddTermsTaskFactory extends AbstractNetworkTaskFactory implements N
 	}
 
 	public TaskIterator createTaskIterator(CyNetworkView netView) {
-		return new TaskIterator(new AddTermsTask(manager, netView.getModel(), netView));
+		// check if we have a current STRING network and if not, notify user and ask to requery
+		if (ModelUtils.isCurrentDataVersion(netView.getModel())) {
+			return new TaskIterator(new AddTermsTask(manager, netView.getModel(), netView));
+		} else {
+			return new TaskIterator(new RequeryTask(manager, netView.getModel()));
+		}
 	}
 }
 

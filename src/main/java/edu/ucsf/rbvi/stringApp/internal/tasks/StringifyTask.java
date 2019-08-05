@@ -39,6 +39,7 @@ import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.TaskObserver;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.json.JSONResult;
+import org.cytoscape.work.util.BoundedDouble;
 import org.cytoscape.work.util.ListSingleSelection;
 
 import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
@@ -55,6 +56,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	private StringNetwork stringNetwork;
 	private CyNetwork net;
 	private CyNetwork loadedNetwork = null;
+	private int additionalNodes = 0;
 	private SearchOptionsPanel optionsPanel = null;
 	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
 	private final Map<String, CyNode> nodeMap;
@@ -84,6 +86,16 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	         required=true)
 	public ListSingleSelection<Species> species;
 
+	@Tunable(description = "Confidence cutoff",
+	         longDescription="The confidence score reflects the cumulated evidence that this "+
+					                 "interaction exists.  Only interactions with scores greater than "+
+													 "this cutoff will be returned",
+	         exampleStringValue="0.4",
+	         context="nogui")
+
+	public BoundedDouble cutoff = new BoundedDouble(0.0, 1.0, 1.0, false, false);
+
+
 	public StringifyTask(final StringManager manager, final CyNetwork net) {
 		this.manager = manager;
 		this.net = net;
@@ -96,6 +108,22 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		} else {
 			tableColumn = null;
 		}
+		nodeMap = new HashMap<>();
+	}
+
+	public StringifyTask(final StringManager manager, final CyNetwork net, double confidence, Species sp, String nodeColumn) {
+		this.manager = manager;
+		this.net = net;
+		species = new ListSingleSelection<Species>(Species.getSpecies());
+		species.setSelectedValue(sp);
+		if (net != null) {
+			List<CyColumn> colList = new ArrayList<>(net.getDefaultNodeTable().getColumns());
+			tableColumn = new ListSingleSelection<CyColumn>(colList);
+			tableColumn.setSelectedValue(net.getDefaultNodeTable().getColumn(nodeColumn));
+		} else {
+			tableColumn = null;
+		}
+		cutoff.setValue(confidence);
 		nodeMap = new HashMap<>();
 	}
 
@@ -116,7 +144,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 			return;
 		}
 
-		if (ModelUtils.isStringNetwork(net))  {
+		if (ModelUtils.isStringNetwork(net) && ModelUtils.isCurrentDataVersion(net))  {
 			monitor.showMessage(TaskMonitor.Level.ERROR, "Network '"+net+"' is already a STRING network");
 			return;
 		}
@@ -149,8 +177,8 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		// Are we command or GUI based?
 		if (tableColumn != null) {
 			optionsPanel = new SearchOptionsPanel(manager);
-			optionsPanel.setConfidence(100);
-			optionsPanel.setAdditionalNodes(0);
+			optionsPanel.setConfidence((int)(cutoff.getValue()*100));
+			optionsPanel.setAdditionalNodes(additionalNodes);
 			optionsPanel.setSpecies(species.getSelectedValue());
 
 			// GUI based
@@ -183,7 +211,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
 		LoadInteractions load = 
 				new LoadInteractions(stringNetwork, species.toString(), taxon, 
-				                     100, 0, stringIds, queryTermMap, "", Databases.STRING.getAPIName());
+						(int)(cutoff.getValue()*100), additionalNodes, stringIds, queryTermMap, "", Databases.STRING.getAPIName());
 		manager.execute(new TaskIterator(load), true);
 		loadedNetwork = stringNetwork.getNetwork();
 		if (loadedNetwork == null) {
@@ -220,12 +248,8 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		}
 		boolean noAmbiguity = stringNetwork.resolveAnnotations();
 		if (noAmbiguity) {
-			int additionalNodes = 0;
-
-			final int addNodes = additionalNodes;
-
 			// System.out.println("Calling importNetwork");
-			importNetwork(taxon, 100, 0);
+			importNetwork(taxon, (int)(cutoff.getValue()*100), additionalNodes);
 
 			// Creating the copyTask
 			CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork);
@@ -264,7 +288,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
 		TaskFactory factory = new ImportNetworkTaskFactory(stringNetwork, getSpecies(), 
-		                                                   taxon, 100, 0, stringIds,
+		                                                   taxon, confidence, additionalNodes, stringIds,
 		                                                   queryTermMap, Databases.STRING.getAPIName());
 		if (optionsPanel.getLoadEnrichment())
 			manager.execute(factory.createTaskIterator(), this, true);
@@ -327,7 +351,10 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 			// Get all of the nodes in the network
 			ModelUtils.createNodeMap(loadedNetwork, nodeMap, ModelUtils.QUERYTERM);
 
-			ModelUtils.copyEdges(network, loadedNetwork, nodeMap, column);
+			// TODO: think about that once more
+			// we could also check for string network -> !ModelUtils.isStringNetwork(net) 
+			if (cutoff.getValue() == 1.0)
+				ModelUtils.copyEdges(network, loadedNetwork, nodeMap, column);
 
 			ModelUtils.copyNodeAttributes(network, loadedNetwork, nodeMap, column);
 

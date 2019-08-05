@@ -25,6 +25,7 @@ import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
+import org.cytoscape.work.TaskMonitor.Level;
 import org.cytoscape.work.json.JSONResult;
 import org.cytoscape.work.util.BoundedFloat;
 
@@ -72,6 +73,13 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 			network = manager.getCurrentNetwork();
 		}
 		
+		if (!ModelUtils.isCurrentDataVersion(network)) {
+			monitor.showMessage(Level.ERROR,
+					"Task cannot be performed. Network appears to be an old STRING network.");
+			// showError("Task cannot be performed. Network appears to be an old STRING network.");
+			return;			
+		}
+
 		// Always set the currentConfidence after the network is set
 		Double current = ModelUtils.getConfidence(network);
 		if (current == null)

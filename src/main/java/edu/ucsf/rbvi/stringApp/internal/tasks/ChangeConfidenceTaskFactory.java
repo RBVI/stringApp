@@ -34,7 +34,12 @@ public class ChangeConfidenceTaskFactory extends AbstractNetworkTaskFactory impl
 	}
 
 	public TaskIterator createTaskIterator(CyNetwork network) {
-		return new TaskIterator(new ChangeConfidenceTask(manager, network, null));
+		// check if we have a current STRING network and if not, notify user and ask to requery
+		if (ModelUtils.isCurrentDataVersion(network)) {
+			return new TaskIterator(new ChangeConfidenceTask(manager, network, null));
+		} else {
+			return new TaskIterator(new RequeryTask(manager, network));
+		}
 	}
 
 	public boolean isReady(CyNetworkView netView) {
@@ -44,7 +49,12 @@ public class ChangeConfidenceTaskFactory extends AbstractNetworkTaskFactory impl
 	}
 
 	public TaskIterator createTaskIterator(CyNetworkView netView) {
-		return new TaskIterator(new ChangeConfidenceTask(manager, netView.getModel(), netView));
+		// check if we have a current STRING network and if not, notify user and ask to requery
+		if (ModelUtils.isCurrentDataVersion(netView.getModel())) {
+			return new TaskIterator(new ChangeConfidenceTask(manager, netView.getModel(), netView));
+		} else {
+			return new TaskIterator(new RequeryTask(manager, netView.getModel()));
+		}
 	}
 
 }

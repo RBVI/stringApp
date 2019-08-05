@@ -1592,8 +1592,10 @@ public class ModelUtils {
 		return terms;
 	}
 
-	public static void copyRow(CyTable fromTable, CyTable toTable, CyIdentifiable from, CyIdentifiable to) {
+	public static void copyRow(CyTable fromTable, CyTable toTable, CyIdentifiable from, CyIdentifiable to, List<String> columnsCreated) {
 		for (CyColumn col: fromTable.getColumns()) {
+			if (!columnsCreated.contains(col.getName()))
+				continue;
 			if (col.getName().equals(CyNetwork.SUID)) 
 				continue;
 			if (col.getName().equals(CyNetwork.NAME)) 
@@ -1606,7 +1608,6 @@ public class ModelUtils {
 				continue;
 			if (from.getClass().equals(CyEdge.class) && col.getName().equals(CyEdge.INTERACTION)) 
 				continue;
-
 			Object v = fromTable.getRow(from.getSUID()).getRaw(col.getName());
 			toTable.getRow(to.getSUID()).set(col.getName(), v);
 		}
@@ -1620,7 +1621,8 @@ public class ModelUtils {
 		}
 	}
 
-	public static void copyColumns(CyTable fromTable, CyTable toTable) {
+	public static List<String> copyColumns(CyTable fromTable, CyTable toTable) {
+		List<String> columns = new ArrayList<String>();
 		for (CyColumn col: fromTable.getColumns()) {
 			String fqn = col.getName();
 			// Does that column already exist in our target?
@@ -1646,9 +1648,11 @@ public class ModelUtils {
 						                         (List<Boolean>)col.getDefaultValue());
 				} else {
 					toTable.createColumn(fqn, col.getType(), col.isImmutable(), col.getDefaultValue());
+					columns.add(fqn);
 				}
 			}
 		}
+		return columns;
 	}
 
 	public static void copyNodePositions(StringManager manager, CyNetwork from, CyNetwork to, 
@@ -1674,7 +1678,7 @@ public class ModelUtils {
 
 	public static void copyEdges(CyNetwork fromNetwork, CyNetwork toNetwork, 
 	                             Map<String, CyNode> nodeMap, String column) {
-		copyColumns(fromNetwork.getDefaultEdgeTable(), toNetwork.getDefaultEdgeTable());
+		List<String> columnsCreated = copyColumns(fromNetwork.getDefaultEdgeTable(), toNetwork.getDefaultEdgeTable());
 		List<CyEdge> edgeList = fromNetwork.getEdgeList();
 		for (CyEdge edge: edgeList) {
 			CyNode sourceNode = edge.getSource();
@@ -1691,7 +1695,7 @@ public class ModelUtils {
 			CyNode newTarget = nodeMap.get(target);
 
 			CyEdge newEdge = toNetwork.addEdge(newSource, newTarget, isDirected);
-			copyRow(fromNetwork.getDefaultEdgeTable(), toNetwork.getDefaultEdgeTable(), edge, newEdge);
+			copyRow(fromNetwork.getDefaultEdgeTable(), toNetwork.getDefaultEdgeTable(), edge, newEdge, columnsCreated);
 		}
 	}
 
@@ -1709,13 +1713,13 @@ public class ModelUtils {
 	public static void copyNodeAttributes(CyNetwork from, CyNetwork to, 
 	                                      Map<String, CyNode> nodeMap, String column) {
 		// System.out.println("copyNodeAttributes");
-		copyColumns(from.getDefaultNodeTable(), to.getDefaultNodeTable());
+		List<String> columnsCreated = copyColumns(from.getDefaultNodeTable(), to.getDefaultNodeTable());
 		for (CyNode node: from.getNodeList()) {
 			String nodeKey = from.getRow(node).get(column, String.class);
 			if (!nodeMap.containsKey(nodeKey))
 				continue;
 			CyNode newNode = nodeMap.get(nodeKey);
-			copyRow(from.getDefaultNodeTable(), to.getDefaultNodeTable(), node, newNode);
+			copyRow(from.getDefaultNodeTable(), to.getDefaultNodeTable(), node, newNode, columnsCreated);
 		}
 	}
 

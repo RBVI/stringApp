@@ -26,7 +26,12 @@ public class ExpandNetworkTaskFactory extends AbstractNetworkTaskFactory impleme
 	}
 
 	public TaskIterator createTaskIterator(CyNetwork network) {
-		return new TaskIterator(new ExpandNetworkTask(manager, network, null));
+		// check if we have a current STRING network and if not, notify user and ask to requery
+		if (ModelUtils.isCurrentDataVersion(network)) {
+			return new TaskIterator(new ExpandNetworkTask(manager, network, null));
+		} else {
+			return new TaskIterator(new RequeryTask(manager, network));
+		}
 	}
 
 	public boolean isReady(CyNetworkView netView) {
@@ -34,7 +39,12 @@ public class ExpandNetworkTaskFactory extends AbstractNetworkTaskFactory impleme
 	}
 
 	public TaskIterator createTaskIterator(CyNetworkView netView) {
-		return new TaskIterator(new ExpandNetworkTask(manager, netView.getModel(), netView));
+		// check if we have a current STRING network and if not, notify user and ask to requery
+		if (ModelUtils.isCurrentDataVersion(netView.getModel())) {
+			return new TaskIterator(new ExpandNetworkTask(manager, netView.getModel(), netView));
+		} else {
+			return new TaskIterator(new RequeryTask(manager, netView.getModel()));
+		}
 	}
 
 	public boolean isReady(View<CyNode> nodeView, CyNetworkView netView) {
@@ -42,7 +52,12 @@ public class ExpandNetworkTaskFactory extends AbstractNetworkTaskFactory impleme
 	}
 
 	public TaskIterator createTaskIterator(View<CyNode> nodeView, CyNetworkView netView) {
-		return new TaskIterator(new ExpandNetworkTask(manager, netView.getModel(), netView, nodeView));
+		// check if we have a current STRING network and if not, notify user and ask to requery
+		if (ModelUtils.isCurrentDataVersion(netView.getModel())) {
+			return new TaskIterator(new ExpandNetworkTask(manager, netView.getModel(), netView, nodeView));
+		} else {
+			return new TaskIterator(new RequeryTask(manager, netView.getModel()));
+		}
 	}
 
 	public boolean isReady() {

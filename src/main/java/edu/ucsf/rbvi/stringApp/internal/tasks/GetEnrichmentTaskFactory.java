@@ -38,7 +38,12 @@ public class GetEnrichmentTaskFactory extends AbstractNetworkTaskFactory
 
 	public TaskIterator createTaskIterator(CyNetwork network) {
 		if (hasGUI) {
-			return new TaskIterator(new GetEnrichmentTaskSwing(manager, network, null, showFactoryEnrich, null, false));
+			// check if we have a current STRING network and if not, notify user and ask to requery
+			if (ModelUtils.isCurrentDataVersion(network)) {
+				return new TaskIterator(new GetEnrichmentTaskSwing(manager, network, null, showFactoryEnrich, null, false));
+			} else {
+				return new TaskIterator(new RequeryTask(manager, network));
+			}				
 		} else {
 			return new TaskIterator(new GetEnrichmentTask(manager, network, null, showFactoryEnrich, null, false));
 		}
@@ -56,7 +61,12 @@ public class GetEnrichmentTaskFactory extends AbstractNetworkTaskFactory
 
 	public TaskIterator createTaskIterator(CyNetworkView netView) {
 		if (hasGUI) {
-			return new TaskIterator(new GetEnrichmentTaskSwing(manager, netView.getModel(), netView, showFactoryEnrich, null, false));
+			// check if we have a current STRING network and if not, notify user and ask to requery
+			if (ModelUtils.isCurrentDataVersion(netView.getModel())) {
+				return new TaskIterator(new GetEnrichmentTaskSwing(manager, netView.getModel(), netView, showFactoryEnrich, null, false));
+			} else {
+				return new TaskIterator(new RequeryTask(manager, netView.getModel()));
+			}
 		} else {
 			return new TaskIterator(new GetEnrichmentTask(manager, netView.getModel(), netView, showFactoryEnrich, null, false));
 		}
