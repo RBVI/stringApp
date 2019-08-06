@@ -143,6 +143,12 @@ public class ModelUtils {
 	public static String COMPOUND = "STITCH compounds";
 	public static String EMPTYLINE = "--------";
 
+	public static String REQUERY_MSG_USER = 
+			"<html>This action cannot be performed on the current network as it <br />"
+			+ "appears to be an old STRING network. Would you like to get <br />"
+			 + "the latest STRING network for the nodes in your network?</html>";
+	public static String REQUERY_TITLE = "Re-query network?";
+	
 	public static boolean haveQueryTerms(CyNetwork network) {
 		if (network == null) return false;
 		for (CyNode node: network.getNodeList()) {

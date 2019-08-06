@@ -1,5 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
+import javax.swing.JOptionPane;
+
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.task.AbstractNetworkTaskFactory;
@@ -35,10 +37,12 @@ public class ChangeConfidenceTaskFactory extends AbstractNetworkTaskFactory impl
 
 	public TaskIterator createTaskIterator(CyNetwork network) {
 		// check if we have a current STRING network and if not, notify user and ask to requery
-		if (ModelUtils.isCurrentDataVersion(network)) {
-			return new TaskIterator(new ChangeConfidenceTask(manager, network, null));
-		} else {
+		if (!ModelUtils.isCurrentDataVersion(network) && JOptionPane.showConfirmDialog(null,
+				ModelUtils.REQUERY_MSG_USER, ModelUtils.REQUERY_TITLE, JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
 			return new TaskIterator(new RequeryTask(manager, network));
+		} else {
+			return new TaskIterator(new ChangeConfidenceTask(manager, network, null));
 		}
 	}
 
@@ -50,10 +54,12 @@ public class ChangeConfidenceTaskFactory extends AbstractNetworkTaskFactory impl
 
 	public TaskIterator createTaskIterator(CyNetworkView netView) {
 		// check if we have a current STRING network and if not, notify user and ask to requery
-		if (ModelUtils.isCurrentDataVersion(netView.getModel())) {
-			return new TaskIterator(new ChangeConfidenceTask(manager, netView.getModel(), netView));
-		} else {
+		if (!ModelUtils.isCurrentDataVersion(netView.getModel()) && JOptionPane.showConfirmDialog(null,
+				ModelUtils.REQUERY_MSG_USER, ModelUtils.REQUERY_TITLE, JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
 			return new TaskIterator(new RequeryTask(manager, netView.getModel()));
+		} else {
+			return new TaskIterator(new ChangeConfidenceTask(manager, netView.getModel(), netView));
 		}
 	}
 

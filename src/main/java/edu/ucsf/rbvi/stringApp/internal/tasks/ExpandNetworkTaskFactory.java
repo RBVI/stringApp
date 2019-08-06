@@ -1,5 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
+import javax.swing.JOptionPane;
+
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
@@ -27,10 +29,12 @@ public class ExpandNetworkTaskFactory extends AbstractNetworkTaskFactory impleme
 
 	public TaskIterator createTaskIterator(CyNetwork network) {
 		// check if we have a current STRING network and if not, notify user and ask to requery
-		if (ModelUtils.isCurrentDataVersion(network)) {
-			return new TaskIterator(new ExpandNetworkTask(manager, network, null));
-		} else {
+		if (!ModelUtils.isCurrentDataVersion(network) && JOptionPane.showConfirmDialog(null,
+				ModelUtils.REQUERY_MSG_USER, ModelUtils.REQUERY_TITLE, JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
 			return new TaskIterator(new RequeryTask(manager, network));
+		} else {
+			return new TaskIterator(new ExpandNetworkTask(manager, network, null));
 		}
 	}
 
@@ -40,10 +44,12 @@ public class ExpandNetworkTaskFactory extends AbstractNetworkTaskFactory impleme
 
 	public TaskIterator createTaskIterator(CyNetworkView netView) {
 		// check if we have a current STRING network and if not, notify user and ask to requery
-		if (ModelUtils.isCurrentDataVersion(netView.getModel())) {
-			return new TaskIterator(new ExpandNetworkTask(manager, netView.getModel(), netView));
-		} else {
+		if (!ModelUtils.isCurrentDataVersion(netView.getModel()) && JOptionPane.showConfirmDialog(null,
+				ModelUtils.REQUERY_MSG_USER, ModelUtils.REQUERY_TITLE, JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
 			return new TaskIterator(new RequeryTask(manager, netView.getModel()));
+		} else {
+			return new TaskIterator(new ExpandNetworkTask(manager, netView.getModel(), netView));
 		}
 	}
 
@@ -53,10 +59,12 @@ public class ExpandNetworkTaskFactory extends AbstractNetworkTaskFactory impleme
 
 	public TaskIterator createTaskIterator(View<CyNode> nodeView, CyNetworkView netView) {
 		// check if we have a current STRING network and if not, notify user and ask to requery
-		if (ModelUtils.isCurrentDataVersion(netView.getModel())) {
-			return new TaskIterator(new ExpandNetworkTask(manager, netView.getModel(), netView, nodeView));
-		} else {
+		if (!ModelUtils.isCurrentDataVersion(netView.getModel()) && JOptionPane.showConfirmDialog(null,
+				ModelUtils.REQUERY_MSG_USER, ModelUtils.REQUERY_TITLE, JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
 			return new TaskIterator(new RequeryTask(manager, netView.getModel()));
+		} else {
+			return new TaskIterator(new ExpandNetworkTask(manager, netView.getModel(), netView, nodeView));
 		}
 	}
 
