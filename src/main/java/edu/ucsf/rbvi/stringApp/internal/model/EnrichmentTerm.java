@@ -93,8 +93,10 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	public static final String colFDR = "FDR value";
 	public static final String colGenesBG = "# background genes";
 	public static final String colGenes = "genes";
+	public static final String colGenesOld = "enriched genes";
 	public static final String colGenesSUID = "nodes.SUID";
 	public static final String colGenesCount = "# genes";
+	public static final String colGenesCountOld = "# enriched genes";
 	public static final String colNetworkSUID = "network.SUID";
 	// public static final String colShowChart = "showInPieChart";
 	public static final String colChartColor = "chart color";
@@ -106,6 +108,8 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	
 	public static final String[] swingColumnsEnrichment = new String[] { colCategory, colChartColor, colName, colDescription, colFDR,
 			colGenesCount, colGenesBG, colGenes, colGenesSUID };
+	public static final String[] swingColumnsEnrichmentOld = new String[] { colCategory, colChartColor, colName, colDescription, colFDR,
+			colGenesCountOld, colGenesBG, colGenesOld, colGenesSUID };
 	public static final int nodeSUIDColumn = 8;
 	public static final int fdrColumn = 4;
 	// public static final int chartColumnSel = 1;
