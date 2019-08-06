@@ -37,8 +37,10 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.ChartType;
 
 public class ViewUtils {
-	public static String STYLE_NAME = "STRING style v1.5";
-	public static String STYLE_NAME_ORG = "Organism STRING style v1.5";
+	public static String STYLE_NAME = "STRING style";
+	public static String STYLE_NAME_NAMESPACES = "STRING style v1.5";
+	public static String STYLE_NAME_ORG = "Organism STRING style";
+	public static String STYLE_NAME_ORG_NAMESPACES = "Organism STRING style v1.5";
 	public static String STYLE_ORG = "Organism ";
 
 	// Our chart strings
@@ -522,7 +524,7 @@ public class ViewUtils {
 		// Worst case -- can't find a style, so er just bail
 		if (style == null) return;
 
-		if (!style.getTitle().startsWith(STYLE_NAME_ORG)) {
+		if (!style.getTitle().startsWith(STYLE_NAME_ORG_NAMESPACES)) {
 			VisualStyleFactory vsf = manager.getService(VisualStyleFactory.class);
 
 			VisualStyle stringStyle = vsf.createVisualStyle(vmm.getCurrentVisualStyle());
@@ -822,7 +824,7 @@ public class ViewUtils {
 
 	private static String getStyleName(StringManager manager, CyNetwork network) {
 		String networkName = manager.getNetworkName(network);
-		String styleName = STYLE_NAME;
+		String styleName = STYLE_NAME_NAMESPACES;
 		if (networkName.startsWith("String Network")) {
 			String[] parts = networkName.split("_");
 			if (parts.length == 1) {
