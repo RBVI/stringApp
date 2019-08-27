@@ -693,7 +693,7 @@ public class ViewUtils {
 
 	public static void hideStringColors(StringManager manager, CyNetworkView view, boolean show) {
 		VisualStyle style = getStyle(manager, view);
-		if (style == null) return;
+		if (style == null || !style.getTitle().contains(STYLE_NAME)) return;
 
 		if (show) {
 			updateColorMap(manager, style, view.getModel());
