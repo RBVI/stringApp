@@ -1,6 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.utils;
 
 import java.awt.Color;
+import java.awt.Paint;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +22,7 @@ import org.cytoscape.view.presentation.customgraphics.CyCustomGraphics;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
 import org.cytoscape.view.presentation.property.values.NodeShape;
+import org.cytoscape.view.vizmap.VisualMappingFunction;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualPropertyDependency;
@@ -694,6 +696,11 @@ public class ViewUtils {
 	public static void hideStringColors(StringManager manager, CyNetworkView view, boolean show) {
 		VisualStyle style = getStyle(manager, view);
 		if (style == null || !style.getTitle().contains(STYLE_NAME)) return;
+
+		// Don't overwrite a mapping the user added
+		VisualMappingFunction<?,Paint> function = style.getVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
+		if (function != null && function.getMappingColumnName() != CyNetwork.NAME)
+			return;
 
 		if (show) {
 			updateColorMap(manager, style, view.getModel());
