@@ -1,6 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.utils;
 
 import java.awt.Color;
+import java.awt.Paint;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -733,28 +734,38 @@ public class ViewUtils {
 	public static void hideStringColors(StringManager manager, CyNetworkView view, boolean show) {
 		VisualStyle style = getStyle(manager, view);
 		if (style == null || !style.getTitle().contains(STYLE_NAME)) return;
-		VisualMappingFunction<?, ?> vmf = style.getVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
-
-		// get the root network
-		CyNetwork rootNetwork = manager.getService(CyRootNetworkManager.class).getRootNetwork(view.getModel()).getBaseNetwork();
 		
+		// Don't overwrite a mapping the user added
+		VisualMappingFunction<?,Paint> function = style.getVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
+
+		if (function != null && function.getMappingColumnName() != CyNetwork.NAME)
+			return;
+
+		if (show) {
+			updateColorMap(manager, style, view.getModel());
+		} else {
+			style.removeVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
+		}
+
+		// alternative fix by Marc ... to check 
+		// VisualMappingFunction<?,?> vmf =
+		// style.getVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
+		// // get the root network
+		// CyNetwork rootNetwork =
+		// manager.getService(CyRootNetworkManager.class).getRootNetwork(view.getModel()).getBaseNetwork();
+		//
 		// if (show) {
-		// updateColorMap(manager, style, view.getModel());
+		// // We update the colorMap only if there is no VisualMapping already applied
+		// if (vmf == null) {
+		// updateColorMap(manager, style, rootNetwork);
 		// } else {
+		// // We make sure that this is not a custom VisualMapping
+		// if (vmf != null && sameVisualMappingFunction(rootNetwork, vmf,
+		// getStringNodeColorMapping(manager, rootNetwork))) {
 		// style.removeVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
 		// }
-
-		if(show) {
-			// We update the colorMap only if there is no VisualMapping already applied
-			if(vmf == null) {
-				updateColorMap(manager, style, rootNetwork);
-			}
-		} else {
-			// We make sure that this is not a custom VisualMapping
-			if(vmf != null && sameVisualMappingFunction(rootNetwork, vmf, getStringNodeColorMapping(manager, rootNetwork))) {
-				style.removeVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
-			}
-		}
+		// }
+		// }
 	}
 
 	public static void hideSingletons(CyNetworkView view, boolean show) {
