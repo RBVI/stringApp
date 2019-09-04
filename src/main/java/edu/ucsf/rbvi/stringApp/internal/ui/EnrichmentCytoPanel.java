@@ -1,5 +1,9 @@
 package edu.ucsf.rbvi.stringApp.internal.ui;
 
+import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.LAYERED_STRING_ICON;
+import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.STRING_COLORS;
+import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.getIconFont;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -75,6 +79,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.FilterEnrichmentTableTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.EnrichmentSettingsTask;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.TextIcon;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
 public class EnrichmentCytoPanel extends JPanel
@@ -97,6 +102,7 @@ public class EnrichmentCytoPanel extends JPanel
 	JButton butExportTable;
 	JButton butFilter;
 	JLabel labelPPIEnrichment;
+	JLabel labelRows;
 	JMenuItem menuItemReset; 
 	JPopupMenu popupMenu;
 	EnrichmentTableModel tableModel;
@@ -115,6 +121,13 @@ public class EnrichmentCytoPanel extends JPanel
 	final String butResetChartsName = "Reset charts";
 	final String butAnalyzedNodesName = "Select all analyzed nodes";
 	final String butExportTableDescr = "Export enrichment table";
+	
+	// String[] texts = {LAYERED_STRING_ICON, "Enrich"};
+	//private static String[] texts = new String[] { STRING_ICON_LAYER_1, STRING_ICON_LAYER_2, STRING_ICON_LAYER_3, "ENRICH", "ENRICH"}; 
+	//private static Font[] fonts = new Font[] { getIconFont(24.0f), getIconFont(24.0f), getIconFont(24.0f), new Font("Monospaced", Font.BOLD, 6), new Font("Monospaced", Font.BOLD, 5) };
+	//private static Color[] colors = new Color[] { new Color(163, 172, 216), Color.WHITE, Color.BLACK, Color.WHITE, Color.BLACK };
+	//private static final Icon icon = new TextIcon(texts, fonts, colors, 16, 16);
+	private static final Icon icon = new TextIcon(LAYERED_STRING_ICON, getIconFont(24.0f), STRING_COLORS, 16, 16);
 	
 	public EnrichmentCytoPanel(StringManager manager, boolean noSignificant) {
 		this.manager = manager;
@@ -143,8 +156,7 @@ public class EnrichmentCytoPanel extends JPanel
 	}
 
 	public Icon getIcon() {
-		// TODO Auto-generated method stub
-		return null;
+		return icon;
 	}
 
 	public EnrichmentTableModel getTableModel() { return tableModel; }
@@ -239,7 +251,7 @@ public class EnrichmentCytoPanel extends JPanel
 				// System.out.println("select node: " + nodeID);
 			}
 		} else if (e.getSource().equals(butFilter)) {
-			// ...
+			// filter table
 			tm.execute(new TaskIterator(new FilterEnrichmentTableTask(manager, this)));
 		} else if (e.getSource().equals(butSettings)) {
 			tm.execute(new TaskIterator(new EnrichmentSettingsTask(manager)));
@@ -364,6 +376,7 @@ public class EnrichmentCytoPanel extends JPanel
 			buttonsPanelRight.add(butExportTable);
 			buttonsPanelRight.add(butSettings);
 
+			JPanel panelMiddle = new JPanel(new BorderLayout());
 			Double ppiEnrichment = ModelUtils.getPPIEnrichment(network);
 			labelPPIEnrichment = new JLabel();
 			if (ppiEnrichment != null) {				
@@ -373,16 +386,28 @@ public class EnrichmentCytoPanel extends JPanel
 							+ "than what would be expected for a random set of proteins of similar size, drawn from the genome. Such <br />"
 							+ "an enrichment indicates that the proteins are at least partially biologically connected, as a group.</html>");
 			}
+			panelMiddle.add(labelPPIEnrichment, BorderLayout.WEST);
+			// get the table
+			JTable currentTable = enrichmentTables.get(showTable);
+			// System.out.println("show table: " + showTable);
+			if (tableModel != null) {
+				tableModel.filter(manager.getCategoryFilter(network), manager.getRemoveOverlap(network), manager.getOverlapCutoff(network));
+			}			
+			
+			// labelRows = new JLabel();
+			// updateLabelRows();
+			// labelRows.setHorizontalAlignment(JLabel.RIGHT);
+			// Font labelFont = labelRows.getFont();
+			// labelRows.setFont(labelFont.deriveFont((float)(labelFont.getSize() * 0.8)));
+			// panelMiddle.add(labelRows, BorderLayout.EAST);
 			
 			topPanel = new JPanel(new BorderLayout());
 			topPanel.add(buttonsPanelLeft, BorderLayout.WEST);
-			topPanel.add(labelPPIEnrichment, BorderLayout.CENTER);
+			topPanel.add(panelMiddle, BorderLayout.CENTER);
 			topPanel.add(buttonsPanelRight, BorderLayout.EAST);
 			// topPanel.add(boxTables, BorderLayout.EAST);
 			this.add(topPanel, BorderLayout.NORTH);
 
-			JTable currentTable = enrichmentTables.get(showTable);
-			// System.out.println("show table: " + showTable);
 			mainPanel = new JPanel(new BorderLayout());
 			scrollPane = new JScrollPane(currentTable);
 			mainPanel.setLayout(new GridLayout(1, 1));
@@ -399,8 +424,6 @@ public class EnrichmentCytoPanel extends JPanel
 			// mainPanel.add(subPanel, BorderLayout.CENTER);
 		}
 
-		if (tableModel != null) 
-			tableModel.filter(manager.getCategoryFilter(network), manager.getRemoveOverlap(network), manager.getOverlapCutoff(network));
 		this.revalidate();
 		this.repaint();
 	}
@@ -597,6 +620,22 @@ public class EnrichmentCytoPanel extends JPanel
 			preselectedTerms = getAutoSelectedTopTerms(manager.getTopTerms(network));
 		}
 		ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network));
+	}
+	
+	public void updateLabelRows() {
+		String labelTxt = "";
+		if (tableModel != null) {
+			int totalRows = tableModel.getAllRowCount();
+			int num_rows = tableModel.getRowCount();
+			if (totalRows != num_rows) {
+				labelTxt = num_rows + " rows ("+totalRows+" before filtering)";
+				System.out.println("filtered:" + labelTxt);					
+			} else {
+				labelTxt = totalRows + " rows";
+				System.out.println("total rows: " + labelTxt);
+			}
+		}			
+		labelRows.setText(labelTxt);
 	}
 	
 	private Map<EnrichmentTerm, String> getUserSelectedTerms() {

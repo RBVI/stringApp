@@ -11,6 +11,7 @@ import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyTable;
+import org.cytoscape.model.subnetwork.CyRootNetworkManager;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.model.View;
@@ -21,6 +22,7 @@ import org.cytoscape.view.presentation.customgraphics.CyCustomGraphics;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
 import org.cytoscape.view.presentation.property.values.NodeShape;
+import org.cytoscape.view.vizmap.VisualMappingFunction;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualPropertyDependency;
@@ -427,29 +429,66 @@ public class ViewUtils {
 
 	private static void updateColorMap(StringManager manager, VisualStyle style, CyNetwork network) {
 		// Build the color list
-		VisualMappingFunctionFactory discreteFactory = 
-		                 manager.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
-		{
-			DiscreteMapping<String,Color> dMapping = 
-				(DiscreteMapping) discreteFactory.createVisualMappingFunction(CyNetwork.NAME, String.class, 
-				                                                              BasicVisualLexicon.NODE_FILL_COLOR);
-
-			// Set the node colors around the color wheel
-			float h = 0.0f;
-			float s = 1.0f;
-			float stepSize = 1.0f/(float)network.getNodeCount();
-			for (CyNode node: network.getNodeList()) {
-				Color c = Color.getHSBColor(h, s, 1.0f);
-				h += stepSize;
-				if (s == 1.0f)
-					s = 0.5f;
-				else
-					s = 1.0f;
-				String name = network.getRow(node).get(CyNetwork.NAME, String.class);
-				dMapping.putMapValue(name, c);
-			}
-			style.addVisualMappingFunction(dMapping);
+		DiscreteMapping<String,Color> dMapping = getStringNodeColorMapping(manager, network);		
+		style.addVisualMappingFunction(dMapping);
+	}
+	
+	private static DiscreteMapping<String, Color> getStringNodeColorMapping(StringManager manager,
+			CyNetwork network) {
+		VisualMappingFunctionFactory discreteFactory = manager
+				.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
+		if(discreteFactory == null) {
+			return null;
 		}
+		
+		DiscreteMapping<String, Color> dMapping = (DiscreteMapping) discreteFactory
+				.createVisualMappingFunction(CyNetwork.NAME, String.class,
+						BasicVisualLexicon.NODE_FILL_COLOR);
+		
+		// Set the node colors around the color wheel
+		float h = 0.0f;
+		float s = 1.0f;
+		float stepSize = 1.0f/(float)network.getNodeCount();
+		for (CyNode node: network.getNodeList()) {
+			Color c = Color.getHSBColor(h, s, 1.0f);
+			h += stepSize;
+			if (s == 1.0f)
+				s = 0.5f;
+			else
+				s = 1.0f;
+			String name = network.getRow(node).get(CyNetwork.NAME, String.class);
+			dMapping.putMapValue(name, c);
+		}
+		
+		return dMapping;
+	}
+	
+	private static <K, V> boolean sameVisualMappingFunction(CyNetwork network,
+			VisualMappingFunction<K, V> vmf, DiscreteMapping<String, Color> stringMapping) {
+		if(!(vmf instanceof DiscreteMapping<?, ?>)) {
+			return false;
+		}
+		
+		if(!vmf.getMappingColumnName().equals(stringMapping.getMappingColumnName())) {
+			return false;
+		}
+		
+		if(!vmf.getMappingColumnType().equals(stringMapping.getMappingColumnType())) {
+			return false;
+		}
+		
+		for(CyNode node : network.getNodeList()) {
+			V vmfMappedValue = vmf.getMappedValue(network.getRow(node));
+			Color stringMappedValue = stringMapping.getMappedValue(network.getRow(node));
+			
+			if(vmfMappedValue == null && stringMappedValue != null) {
+				return false;
+			} else if(vmfMappedValue != null && !vmfMappedValue.equals(stringMappedValue)) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 	private static void updateColorMapHost(StringManager manager, VisualStyle style, CyNetwork net) {
@@ -694,11 +733,27 @@ public class ViewUtils {
 	public static void hideStringColors(StringManager manager, CyNetworkView view, boolean show) {
 		VisualStyle style = getStyle(manager, view);
 		if (style == null || !style.getTitle().contains(STYLE_NAME)) return;
+		VisualMappingFunction<?, ?> vmf = style.getVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
 
-		if (show) {
-			updateColorMap(manager, style, view.getModel());
+		// get the root network
+		CyNetwork rootNetwork = manager.getService(CyRootNetworkManager.class).getRootNetwork(view.getModel()).getBaseNetwork();
+		
+		// if (show) {
+		// updateColorMap(manager, style, view.getModel());
+		// } else {
+		// style.removeVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
+		// }
+
+		if(show) {
+			// We update the colorMap only if there is no VisualMapping already applied
+			if(vmf == null) {
+				updateColorMap(manager, style, rootNetwork);
+			}
 		} else {
-			style.removeVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
+			// We make sure that this is not a custom VisualMapping
+			if(vmf != null && sameVisualMappingFunction(rootNetwork, vmf, getStringNodeColorMapping(manager, rootNetwork))) {
+				style.removeVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
+			}
 		}
 	}
 

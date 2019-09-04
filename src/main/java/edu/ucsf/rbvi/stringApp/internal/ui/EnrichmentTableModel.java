@@ -34,6 +34,10 @@ public class EnrichmentTableModel extends AbstractTableModel {
 		return rowNames.length;
 	}
 
+	public int getAllRowCount() {
+		return cyTable.getRowCount();
+	}
+
 	public String getColumnName(int col) {
 		return columnNames[col];
 	}

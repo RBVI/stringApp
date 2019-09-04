@@ -1,5 +1,9 @@
 package edu.ucsf.rbvi.stringApp.internal.ui;
 
+import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.PUBMED_LAYERS;
+import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.STRING_COLORS;
+import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.getIconFont;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -77,6 +81,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.FilterEnrichmentTableTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.EnrichmentSettingsTask;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.TextIcon;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
 public class PublicationsCytoPanel extends JPanel
@@ -103,21 +108,14 @@ public class PublicationsCytoPanel extends JPanel
 	JPopupMenu popupMenu;
 	EnrichmentTableModel tableModel;
 	final CyColorPaletteChooserFactory colorChooserFactory;
-	private static final Icon chartIcon = new ImageIcon(
-			PublicationsCytoPanel.class.getResource("/images/chart20.png"));
 	final Font iconFont;
-
-	// final String colEnrichmentTerms = "enrichmentTerms";
-	// final String colEnrichmentTermsPieChart = "enrichmentTermsPieChart";
-	// final String colEnrichmentPieChart = "enrichmentPieChart";
-
-	// final String butSettingsName = "Network-specific enrichment panel settings";
-	// final String butFilterName = "Filter enrichment table";
-	// final String butDrawChartsName = "Draw charts using default color palette";
-	// final String butResetChartsName = "Reset charts";
+	
 	final String butAnalyzedNodesName = "Select all analyzed nodes";
 	final String butExportTableDescr = "Export publications table";
 
+	private static final Icon icon = new TextIcon(PUBMED_LAYERS, getIconFont(24.0f), STRING_COLORS, 16, 16);
+	
+	
 	public PublicationsCytoPanel(StringManager manager, boolean noSignificant) {
 		this.manager = manager;
 		this.openBrowser = manager.getService(OpenBrowser.class);
@@ -148,7 +146,7 @@ public class PublicationsCytoPanel extends JPanel
 
 	public Icon getIcon() {
 		// TODO Auto-generated method stub
-		return null;
+		return icon;
 	}
 
 	public EnrichmentTableModel getTableModel() {
