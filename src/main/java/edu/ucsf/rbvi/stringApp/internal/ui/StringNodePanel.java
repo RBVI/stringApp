@@ -112,7 +112,6 @@ public class StringNodePanel extends AbstractStringPanel {
 		setLayout(new GridBagLayout());
 
 		EasyGBC c = new EasyGBC();
-		add(new JSeparator(SwingConstants.HORIZONTAL), c.anchor("west").expandHoriz());
 
 		JPanel controlPanel = createControlPanel();
 		controlPanel.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
@@ -137,9 +136,11 @@ public class StringNodePanel extends AbstractStringPanel {
 
 	private JPanel createControlPanel() {
 		JPanel controlPanel = new JPanel();
-		GridLayout layout = new GridLayout(5,2);
-		layout.setVgap(0);
-		controlPanel.setLayout(layout);
+		EasyGBC d = new EasyGBC();
+		controlPanel.setLayout(new GridBagLayout());
+
+		EasyGBC upperGBC = new EasyGBC();
+		JPanel upperPanel = new JPanel(new GridBagLayout());
 		{
 			enableGlass = new JCheckBox("Glass ball effect");
 			enableGlass.setFont(labelFont);
@@ -150,7 +151,7 @@ public class StringNodePanel extends AbstractStringPanel {
 						manager.getGlassBallTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), true);
 				}
 			});
-			controlPanel.add(enableGlass);
+			upperPanel.add(enableGlass, upperGBC.anchor("northwest").noExpand());
 		}
 		
 		{
@@ -164,7 +165,7 @@ public class StringNodePanel extends AbstractStringPanel {
 						manager.getImagesTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), true);
 				}
 			});
-			controlPanel.add(showStructure);
+			upperPanel.add(showStructure, upperGBC.right().insets(0,10,0,0).noExpand());
 		}
 		
 		{
@@ -177,7 +178,7 @@ public class StringNodePanel extends AbstractStringPanel {
 						manager.getEnhancedLabelsTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), true);
 				}
 			});
-			controlPanel.add(stringLabels);
+			upperPanel.add(stringLabels, upperGBC.left().down().noInsets().noExpand());
 		}
 		
 		{
@@ -191,7 +192,7 @@ public class StringNodePanel extends AbstractStringPanel {
 					ViewUtils.hideStringColors(manager, manager.getCurrentNetworkView(), stringColors.isSelected());
 				}
 			});
-			controlPanel.add(stringColors);
+			upperPanel.add(stringColors, upperGBC.right().insets(0,10,0,0).noExpand());
 		}
 		
 		{
@@ -205,7 +206,7 @@ public class StringNodePanel extends AbstractStringPanel {
 					ViewUtils.hideSingletons(manager.getCurrentNetworkView(), showSingletons.isSelected());
 				}
 			});
-			controlPanel.add(showSingletons);
+			upperPanel.add(showSingletons, upperGBC.left().down().noInsets().noExpand());
 		}
 		
 		{
@@ -222,17 +223,25 @@ public class StringNodePanel extends AbstractStringPanel {
 						}
 					}
 			});
-			highlightBox.setAlignmentX( Component.LEFT_ALIGNMENT );
-			highlightBox.setBorder(BorderFactory.createEmptyBorder(10,2,10,0));
-			controlPanel.add(highlightBox);
+			// highlightBox.setAlignmentX( Component.LEFT_ALIGNMENT );
+			// highlightBox.setBorder(BorderFactory.createEmptyBorder(10,2,10,0));
+			upperPanel.add(highlightBox, upperGBC.right().insets(0,10,0,0).noExpand());
 		}
+
+		upperPanel.setBorder(BorderFactory.createEmptyBorder(5,0,10,0));
+
+		controlPanel.add(upperPanel, d.anchor("northwest").expandHoriz());
 		
 		// controlPanel.add(new JLabel());
 
+		JPanel lowerPanel = new JPanel();
+		GridLayout layout2 = new GridLayout(2,2);
+		layout2.setVgap(0);
+		lowerPanel.setLayout(layout2);
 		{
 			JButton getEnrichment = new JButton("Functional enrichment");
 			getEnrichment.setFont(labelFont);
-			controlPanel.add(getEnrichment);
+			lowerPanel.add(getEnrichment);
 			getEnrichment.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					GetEnrichmentTaskFactory tf = new GetEnrichmentTaskFactory(manager, true);
@@ -246,7 +255,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		{
 			JButton getPublications = new JButton("Enriched publications");
 			getPublications.setFont(labelFont);
-			controlPanel.add(getPublications);
+			lowerPanel.add(getPublications);
 			getPublications.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					GetPublicationsTaskFactory tf = new GetPublicationsTaskFactory(manager, true);
@@ -270,8 +279,9 @@ public class StringNodePanel extends AbstractStringPanel {
 					ModelUtils.selectQueryTerms(currentNetwork);
 				}
 			});
-			controlPanel.add(highlightQuery);
+			lowerPanel.add(highlightQuery);
 		}
+		controlPanel.add(lowerPanel, d.down().anchor("west").expandHoriz());
 
 		updateControls();
 		controlPanel.setMaximumSize(new Dimension(300,100));

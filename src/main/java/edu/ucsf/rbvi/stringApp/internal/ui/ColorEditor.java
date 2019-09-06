@@ -44,10 +44,13 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import org.cytoscape.model.CyNetwork;
 import org.cytoscape.util.color.BrewerType;
 import org.cytoscape.util.color.Palette;
 import org.cytoscape.util.swing.CyColorPaletteChooser;
 import org.cytoscape.util.swing.CyColorPaletteChooserFactory;
+
+import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
 /* 
  * ColorEditor.java (compiles with releases 1.3 and 1.4) is used by 
@@ -63,16 +66,20 @@ public class ColorEditor extends AbstractCellEditor
     // JColorChooser colorChooser;
     CyColorPaletteChooserFactory chooserFactory;
 		final Component parent;
+		final StringManager manager;
+		final CyNetwork network;
     protected static final String EDIT = "edit";
 
-    public ColorEditor(Component parent, CyColorPaletteChooserFactory chooserFactory, Palette current) {
+    public ColorEditor(final StringManager manager, final Component parent, 
+		                   final CyColorPaletteChooserFactory chooserFactory, final CyNetwork network) {
         //Set up the editor (from the table's point of view),
         //which is a button.
         //This button brings up the color chooser dialog,
         //which is the editor from the user's point of view.
 				this.chooserFactory = chooserFactory;
 				this.parent = parent;
-				this.currentPalette = current;
+				this.network = network;
+				this.manager = manager;
         button = new JButton();
         button.setActionCommand(EDIT);
         button.addActionListener(this);
@@ -87,6 +94,7 @@ public class ColorEditor extends AbstractCellEditor
     public void actionPerformed(ActionEvent e) {
         if (EDIT.equals(e.getActionCommand())) {
 					// button.setBackground(currentColor);
+					Palette currentPalette = manager.getEnrichmentPalette(network);
 					CyColorPaletteChooser chooser = chooserFactory.getColorPaletteChooser(BrewerType.QUALITATIVE, false);
 					chooser.showDialog(parent, "Pick a color", currentPalette, currentColor, 10);
 					currentPalette = chooser.getSelectedPalette();

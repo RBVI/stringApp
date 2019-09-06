@@ -400,7 +400,7 @@ public class PublicationsCytoPanel extends JPanel
 		// jTable.getModel().addTableModelListener(this);
 		jTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
 		CyNetwork network = manager.getCurrentNetwork();
-		jTable.setDefaultEditor(Color.class, new ColorEditor(this, colorChooserFactory, manager.getEnrichmentPalette(network)));
+		jTable.setDefaultEditor(Color.class, new ColorEditor(manager, this, colorChooserFactory, network));
 		// popupMenu = new JPopupMenu();
 		// menuItemReset = new JMenuItem("Remove color");
 		// menuItemReset.addActionListener(this);
