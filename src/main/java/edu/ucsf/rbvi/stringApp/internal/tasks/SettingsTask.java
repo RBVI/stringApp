@@ -200,7 +200,7 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 		CyColorPaletteChooser paletteChooser = 
 			manager.getService(CyColorPaletteChooserFactory.class).getColorPaletteChooser(BrewerType.QUALITATIVE, true);
 		Palette initial = stringProvider.getPalette("default");
-		channelPalette = paletteChooser.showDialog(parent, "Palette for Channel Colors", initial, 7);
+		channelPalette = paletteChooser.showDialog(parent, "Palette for Channel Colors", initial, manager.channels.length);
 
 		pm.removePaletteProvider(stringProvider);
 	}
@@ -212,8 +212,8 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 	public Map<String, Color> getChannelColorMap() {
 		Map<String, Color> colorMap = new HashMap<>();
 		System.out.println("Selected palette = "+channelPalette);
-		Color[] colors = channelPalette.getColors(7);
-		for (int i = 0; i < 7; i++) {
+		Color[] colors = channelPalette.getColors(manager.channels.length);
+		for (int i = 0; i < manager.channels.length; i++) {
 			System.out.println(manager.channels[i]+" = "+colors[i]);
 			colorMap.put(manager.channels[i], colors[i]);
 		}

@@ -138,7 +138,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String[] channels = { "databases", "experiments", "neighborhood", "fusion",
 	                                    "cooccurrence", "textmining", // Lime green 
 																			"coexpression", 
-																//			"similarity" // Lila
+																			"similarity" // Lila
 	};
 
 
@@ -181,8 +181,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		channelColors.put("cooccurrence",Color.BLUE);
 		channelColors.put("textmining",new Color(199,234,70)); // Lime green
 		channelColors.put("coexpression", Color.BLACK);
-		// channelColors.put("homology", new Color(163, 161, 255)); // Lila
-		// channelColors.put("similarity", new Color(163, 161, 255)); // Lila
+		channelColors.put("similarity", new Color(163, 161, 255)); // Lila
 
 		// Get our default settings
 		configProps = ModelUtils.getPropertyService(this, SavePolicy.CONFIG_DIR);
