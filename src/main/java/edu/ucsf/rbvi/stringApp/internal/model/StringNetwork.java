@@ -186,7 +186,7 @@ public class StringNetwork {
 			args.put("caller_identity", StringManager.CallerIdentity);
 			manager.info("URL: "+url+"?species="+Integer.toString(taxon)+"&caller_identity="+StringManager.CallerIdentity+"&identifiers="+HttpUtils.truncate(encTerms));
 			// Get the results
-			System.out.println("Getting STITCH term resolution");
+			// System.out.println("Getting STITCH term resolution");
 			results = HttpUtils.postJSON(url, args, manager);
 
 			if (results != null) {
@@ -209,7 +209,7 @@ public class StringNetwork {
 			manager.info("URL:" + url + "?species=" + Integer.toString(taxon) + "&caller_identity="
 					+ StringManager.CallerIdentity + "&identifiers=" + HttpUtils.truncate(encTerms));
 			// Get the results
-			System.out.println("Getting VIRUSES term resolution");
+			// System.out.println("Getting VIRUSES term resolution");
 			results = HttpUtils.postJSON(url, args, manager);
 
 			if (results != null) {

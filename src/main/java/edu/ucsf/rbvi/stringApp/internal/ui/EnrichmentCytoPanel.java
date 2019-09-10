@@ -629,10 +629,10 @@ public class EnrichmentCytoPanel extends JPanel
 			int num_rows = tableModel.getRowCount();
 			if (totalRows != num_rows) {
 				labelTxt = num_rows + " rows ("+totalRows+" before filtering)";
-				System.out.println("filtered:" + labelTxt);					
+				// System.out.println("filtered:" + labelTxt);					
 			} else {
 				labelTxt = totalRows + " rows";
-				System.out.println("total rows: " + labelTxt);
+				// System.out.println("total rows: " + labelTxt);
 			}
 		}			
 		labelRows.setText(labelTxt);

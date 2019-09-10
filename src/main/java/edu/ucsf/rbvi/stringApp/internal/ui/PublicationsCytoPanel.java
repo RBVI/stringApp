@@ -162,7 +162,7 @@ public class PublicationsCytoPanel extends JPanel
 		if (network == null)
 			return;
 		// TODO: clear table selection when switching
-		if (publicationsTable.getSelectedColumnCount() == 1
+		if (publicationsTable != null && publicationsTable.getSelectedColumnCount() == 1
 				&& publicationsTable.getSelectedRow() > -1) {
 			if (publicationsTable.getSelectedColumn() != EnrichmentTerm.idColumnPubl) {
 				// Only clear the network selection if it's our first selected row

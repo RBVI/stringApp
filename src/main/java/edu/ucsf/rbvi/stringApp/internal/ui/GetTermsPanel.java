@@ -617,7 +617,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 				return;
 			}
 
-			System.out.println("taskFinished");
+			// System.out.println("taskFinished");
 			GetAnnotationsTask annTask = (GetAnnotationsTask)task;
 
 			final int taxon = annTask.getTaxon();

@@ -211,10 +211,10 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 
 	public Map<String, Color> getChannelColorMap() {
 		Map<String, Color> colorMap = new HashMap<>();
-		System.out.println("Selected palette = "+channelPalette);
+		// System.out.println("Selected palette = "+channelPalette);
 		Color[] colors = channelPalette.getColors(manager.channels.length);
 		for (int i = 0; i < manager.channels.length; i++) {
-			System.out.println(manager.channels[i]+" = "+colors[i]);
+			// System.out.println(manager.channels[i]+" = "+colors[i]);
 			colorMap.put(manager.channels[i], colors[i]);
 		}
 		return colorMap;
