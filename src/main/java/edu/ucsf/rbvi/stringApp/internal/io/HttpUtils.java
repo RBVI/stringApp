@@ -118,9 +118,9 @@ public class HttpUtils {
 //		List<NameValuePair> nvps = HttpUtils.getArguments(queryMap);
 		JSONObject jsonObject = new JSONObject();
 
-		// String args = HttpUtils.getStringArguments(queryMap);
+		String args = HttpUtils.getStringArguments(queryMap);
 		// manager.info("URL: " + url + "?" + truncate(args));
-		// System.out.println("URL: " + url + "?" + truncate(args));
+		System.out.println("URL: " + url + "?" + truncate(args));
 
 		// The underlying HTTP connection is still held by the response object
 		// to allow the response content to be streamed directly from the network socket.

@@ -48,7 +48,7 @@ public class StringCytoPanel extends JPanel
 	private StringNodePanel nodePanel;
 	private StringEdgePanel edgePanel;
 	private boolean registered = false;
-	private static final Icon icon = new TextIcon(LAYERED_STRING_ICON, getIconFont(24.0f), STRING_COLORS, 18, 18);
+	private static final Icon icon = new TextIcon(LAYERED_STRING_ICON, getIconFont(20.0f), STRING_COLORS, 16, 16);
 
 	public StringCytoPanel(final StringManager manager) {
 		this.manager = manager;

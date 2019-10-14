@@ -113,7 +113,7 @@ public class PublicationsCytoPanel extends JPanel
 	final String butAnalyzedNodesName = "Select all analyzed nodes";
 	final String butExportTableDescr = "Export publications table";
 
-	private static final Icon icon = new TextIcon(PUBMED_LAYERS, getIconFont(24.0f), STRING_COLORS, 16, 16);
+	private static final Icon icon = new TextIcon(PUBMED_LAYERS, getIconFont(20.0f), STRING_COLORS, 14, 14);
 	
 	
 	public PublicationsCytoPanel(StringManager manager, boolean noSignificant) {

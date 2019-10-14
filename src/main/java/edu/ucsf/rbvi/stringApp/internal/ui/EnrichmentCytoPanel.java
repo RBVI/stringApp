@@ -1,6 +1,6 @@
 package edu.ucsf.rbvi.stringApp.internal.ui;
 
-import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.LAYERED_STRING_ICON;
+import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.ENRICH_LAYERS;
 import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.STRING_COLORS;
 import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.getIconFont;
 
@@ -122,12 +122,7 @@ public class EnrichmentCytoPanel extends JPanel
 	final String butAnalyzedNodesName = "Select all analyzed nodes";
 	final String butExportTableDescr = "Export enrichment table";
 	
-	// String[] texts = {LAYERED_STRING_ICON, "Enrich"};
-	//private static String[] texts = new String[] { STRING_ICON_LAYER_1, STRING_ICON_LAYER_2, STRING_ICON_LAYER_3, "ENRICH", "ENRICH"}; 
-	//private static Font[] fonts = new Font[] { getIconFont(24.0f), getIconFont(24.0f), getIconFont(24.0f), new Font("Monospaced", Font.BOLD, 6), new Font("Monospaced", Font.BOLD, 5) };
-	//private static Color[] colors = new Color[] { new Color(163, 172, 216), Color.WHITE, Color.BLACK, Color.WHITE, Color.BLACK };
-	//private static final Icon icon = new TextIcon(texts, fonts, colors, 16, 16);
-	private static final Icon icon = new TextIcon(LAYERED_STRING_ICON, getIconFont(24.0f), STRING_COLORS, 16, 16);
+	private static final Icon icon = new TextIcon(ENRICH_LAYERS, getIconFont(20.0f), STRING_COLORS, 14, 14);
 	
 	public EnrichmentCytoPanel(StringManager manager, boolean noSignificant) {
 		this.manager = manager;
