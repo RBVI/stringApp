@@ -201,7 +201,10 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		JSONObject results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
 
 		if (results == null) {
-			monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results");
+			if (conf == 1.0) 
+				monitor.showMessage(TaskMonitor.Level.ERROR,"<html>String returned no results with a confidence larger than 1.0.<br> Consider chnanging the confidence threshold.</html>");
+			else 
+				monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results");
 			return;
 		}
 
