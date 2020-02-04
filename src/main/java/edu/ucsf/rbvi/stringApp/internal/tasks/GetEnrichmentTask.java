@@ -326,7 +326,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/ppi_enrichment";
 		args.put("identifiers", selected);
 		args.put("species", species);
-		if (ModelUtils.getConfidence(network) == null) {
+		if (ModelUtils.getConfidence(network) == null || (ModelUtils.getConfidence(network).equals(new Double(1.0)))) {
 			monitor.showMessage(Level.ERROR,
 					"PPI enrichment cannot be retrieved because of missing confidence values.");
 			return null;
