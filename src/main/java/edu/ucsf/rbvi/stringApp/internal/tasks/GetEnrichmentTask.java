@@ -162,6 +162,20 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			showError("Task cannot be performed. No nodes selected for enrichment.");
 			return;
 		} 
+
+		// get background nodes
+		String bgNodes = null;
+		if (!background.getSelectedValue().equals("genome")) {
+			bgNodes = getBackground(stringNetworkMap.get(background.getSelectedValue()), network);
+			if (bgNodes.equals("")) {
+				monitor.showMessage(Level.ERROR,
+						"Task cannot be performed. Nodes from the foreground are missing in the background.");
+				showError("Task cannot be performed. Nodes from the foreground are missing in the background.");
+				return;
+			}
+		}
+
+		// define large networks and skip ppi enrichment for them
 		boolean isLargeNetwork = false;
 		if (analyzedNodes.size() > 2000) {
 			isLargeNetwork = true;
@@ -205,9 +219,9 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		ModelUtils.deleteEnrichmentTables(network, manager, publOnly);
 
 		// retrieve enrichment (new API)
-		getEnrichmentJSON(selected, species, background.getSelectedValue());
+		getEnrichmentJSON(selected, species, bgNodes);
 		if (!isLargeNetwork && !publOnly) 
-			ppiSummary = getEnrichmentPPIJSON(selected, species, background.getSelectedValue());
+			ppiSummary = getEnrichmentPPIJSON(selected, species, bgNodes);
 		else
 			ppiSummary = null;
 
@@ -272,15 +286,14 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		}
 	}
 
-	private void getEnrichmentJSON(String selected, String species, String backgroundNetwork) {
+	private void getEnrichmentJSON(String selected, String species, String backgroundNodes) {
 		Map<String, String> args = new HashMap<String, String>();
 		String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/enrichment";
 		args.put("identifiers", selected);
 		args.put("species", species);
 		args.put("caller_identity", StringManager.CallerIdentity);
-		if (!backgroundNetwork.equals("genome")) {
-			String bg = getExisting(stringNetworkMap.get(backgroundNetwork));
-			args.put("background_string_identifiers", bg);
+		if (backgroundNodes != null) {
+			args.put("background_string_identifiers", backgroundNodes);
 		}
 		JSONObject results = HttpUtils.postJSON(url, args, manager);
 		if (results == null) {
@@ -321,7 +334,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		}
 	}
 
-	private Map<String, String> getEnrichmentPPIJSON(String selected, String species, String backgroundNetwork) {
+	private Map<String, String> getEnrichmentPPIJSON(String selected, String species, String backgroundNodes) {
 		Map<String, String> args = new HashMap<String, String>();
 		String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/ppi_enrichment";
 		args.put("identifiers", selected);
@@ -334,9 +347,8 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		Double confidence = ModelUtils.getConfidence(network)*1000;
 		args.put("required_score", confidence.toString());
 		args.put("caller_identity", StringManager.CallerIdentity);
-		if (!backgroundNetwork.equals("genome")) {
-			String bg = getExisting(stringNetworkMap.get(backgroundNetwork));
-			args.put("background_string_identifiers", bg);
+		if (backgroundNodes != null) {
+			args.put("background_string_identifiers", backgroundNodes);
 		}
 
 		JSONObject results = HttpUtils.postJSON(url, args, manager);
@@ -528,12 +540,12 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	protected void showError(String msg) {
 	}
 
-	private String getExisting(CyNetwork network) {
+	private String getExisting(CyNetwork currentNetwork) {
 		StringBuilder str = new StringBuilder();
 		analyzedNodes = new ArrayList<CyNode>();
-		for (CyNode node : network.getNodeList()) {
-			String stringID = network.getRow(node).get(ModelUtils.STRINGID, String.class);
-			String type = network.getRow(node).get(ModelUtils.TYPE, String.class);
+		for (CyNode node : currentNetwork.getNodeList()) {
+			String stringID = currentNetwork.getRow(node).get(ModelUtils.STRINGID, String.class);
+			String type = currentNetwork.getRow(node).get(ModelUtils.TYPE, String.class);
 			if (stringID != null && stringID.length() > 0 && type != null
 					&& type.equals("protein")) {
 				str.append(stringID + "\n");
@@ -543,13 +555,33 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		return str.toString();
 	}
 
-	private String getSelected(CyNetwork network) {
+	private String getBackground(CyNetwork bgNetwork, CyNetwork fgNetwork) {
+		StringBuilder str = new StringBuilder();
+		for (CyNode node : bgNetwork.getNodeList()) {
+			String stringID = bgNetwork.getRow(node).get(ModelUtils.STRINGID, String.class);
+			String type = bgNetwork.getRow(node).get(ModelUtils.TYPE, String.class);
+			if (stringID != null && stringID.length() > 0 && type != null
+					&& type.equals("protein")) {
+				str.append(stringID + "\n");
+			}
+		}
+		// check if foreground is contained in background
+		for (CyNode fgNode : analyzedNodes) {
+			if (str.indexOf(fgNetwork.getRow(fgNode).get(ModelUtils.STRINGID, String.class)) == -1) {
+				System.out.println(fgNode.getSUID());
+				return "";
+			}
+		}
+		return str.toString();
+	}
+
+	private String getSelected(CyNetwork currentNetwork) {
 		StringBuilder selectedStr = new StringBuilder();
 		analyzedNodes = new ArrayList<CyNode>();
-		for (CyNode node : network.getNodeList()) {
-			if (network.getRow(node).get(CyNetwork.SELECTED, Boolean.class)) {
-				String stringID = network.getRow(node).get(ModelUtils.STRINGID, String.class);
-				String type = network.getRow(node).get(ModelUtils.TYPE, String.class);
+		for (CyNode node : currentNetwork.getNodeList()) {
+			if (currentNetwork.getRow(node).get(CyNetwork.SELECTED, Boolean.class)) {
+				String stringID = currentNetwork.getRow(node).get(ModelUtils.STRINGID, String.class);
+				String type = currentNetwork.getRow(node).get(ModelUtils.TYPE, String.class);
 				if (stringID != null && stringID.length() > 0 && type != null
 						&& type.equals("protein")) {
 					selectedStr.append(stringID + "\n");
