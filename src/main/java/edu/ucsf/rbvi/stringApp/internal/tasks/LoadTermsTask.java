@@ -61,7 +61,7 @@ public class LoadTermsTask extends AbstractTask {
 	}
 
 	public void run(TaskMonitor monitor) {
-		monitor.setTitle("Adding Terms to Network");
+		monitor.setTitle("Adding " + stringIds.size() + " terms to network");
 		StringManager manager = stringNet.getManager();
 		CyNetwork network = stringNet.getNetwork();
 

@@ -58,9 +58,9 @@ public class LoadInteractions extends AbstractTask {
 
 	public void run(TaskMonitor monitor) {
 		if (useDATABASE.equals(Databases.STRING.getAPIName()))
-			monitor.setTitle("Loading interactions from string-db");
+			monitor.setTitle("Loading data from STRING for " + stringIds.size() + " identifiers.");
 		else if (useDATABASE.equals(Databases.STITCH.getAPIName()))
-			monitor.setTitle("Loading interactions from STITCH");
+			monitor.setTitle("Loading data from STITCH for " + stringIds.size() + " identifiers.");
 		StringManager manager = stringNet.getManager();
 		String ids = null;
 		for (String id: stringIds) {
