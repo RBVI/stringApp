@@ -196,9 +196,11 @@ public class EnrichmentCytoPanel extends JPanel
 		CyNetwork network = manager.getCurrentNetwork();
 		if (network == null)
 			return;
-		if (tableModel.getRowCount() != tableModel.getAllRowCount()) {
-			System.out.println("Table got filtered from " + tableModel.getAllRowCount() + " to " + tableModel.getRowCount() + " rows." );
-		} 
+
+		updateLabelRows();
+		// if (tableModel.getRowCount() != tableModel.getAllRowCount()) {
+		//	System.out.println("Table got filtered from " + tableModel.getAllRowCount() + " to " + tableModel.getRowCount() + " rows." );
+		// } 
 
 		if (column != EnrichmentTerm.chartColumnCol)
 			return;
@@ -400,12 +402,12 @@ public class EnrichmentCytoPanel extends JPanel
 				tableModel.filter(manager.getCategoryFilter(network), manager.getRemoveOverlap(network), manager.getOverlapCutoff(network));
 			}			
 			
-			// labelRows = new JLabel();
-			// updateLabelRows();
-			// labelRows.setHorizontalAlignment(JLabel.RIGHT);
-			// Font labelFont = labelRows.getFont();
-			// labelRows.setFont(labelFont.deriveFont((float)(labelFont.getSize() * 0.8)));
-			// panelMiddle.add(labelRows, BorderLayout.EAST);
+			labelRows = new JLabel("");
+			updateLabelRows();
+			labelRows.setHorizontalAlignment(JLabel.RIGHT);
+			Font labelFont = labelRows.getFont();
+			labelRows.setFont(labelFont.deriveFont((float)(labelFont.getSize() * 0.8)));
+			panelMiddle.add(labelRows, BorderLayout.EAST);
 			
 			topPanel = new JPanel(new BorderLayout());
 			topPanel.add(buttonsPanelLeft, BorderLayout.WEST);
@@ -629,19 +631,18 @@ public class EnrichmentCytoPanel extends JPanel
 	}
 	
 	public void updateLabelRows() {
+		if (tableModel == null)
+			return;
 		String labelTxt = "";
-		if (tableModel != null) {
-			int totalRows = tableModel.getAllRowCount();
-			int num_rows = tableModel.getRowCount();
-			if (totalRows != num_rows) {
-				labelTxt = num_rows + " rows ("+totalRows+" before filtering)";
-				// System.out.println("filtered:" + labelTxt);					
-			} else {
-				labelTxt = totalRows + " rows";
-				// System.out.println("total rows: " + labelTxt);
-			}
-		}			
-		labelRows.setText(labelTxt);
+		if (tableModel.getAllRowCount() != tableModel.getRowCount()) {
+			labelTxt = tableModel.getRowCount() + " rows ("+tableModel.getAllRowCount()+" before filtering)";
+			// System.out.println("filtered:" + labelTxt);					
+		} else {
+			labelTxt = tableModel.getAllRowCount() + " rows";
+			// System.out.println("total rows: " + labelTxt);
+		}
+		if (labelRows != null)
+			labelRows.setText(labelTxt);
 	}
 	
 	private Map<EnrichmentTerm, String> getUserSelectedTerms() {
