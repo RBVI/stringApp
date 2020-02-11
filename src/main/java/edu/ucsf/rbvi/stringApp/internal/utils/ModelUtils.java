@@ -1323,6 +1323,50 @@ public class ModelUtils {
 		}
 	}
 
+	public static void setupEnrichmentTable(CyTable enrichmentTable) {
+		if (enrichmentTable.getColumn(EnrichmentTerm.colGenesSUID) == null) {
+			enrichmentTable.createListColumn(EnrichmentTerm.colGenesSUID, Long.class, false);
+		}
+		if (enrichmentTable.getColumn(EnrichmentTerm.colNetworkSUID) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colNetworkSUID, Long.class, false);
+		}
+		if (enrichmentTable.getColumn(EnrichmentTerm.colName) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colName, String.class, false);
+		}
+		if (enrichmentTable.getColumn(EnrichmentTerm.colYear) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colYear, Integer.class, false);
+		}
+		if (enrichmentTable.getColumn(EnrichmentTerm.colIDPubl) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colIDPubl, String.class, false);
+		}
+		if (enrichmentTable.getColumn(EnrichmentTerm.colDescription) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colDescription, String.class, false);
+		}
+		if (enrichmentTable.getColumn(EnrichmentTerm.colCategory) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colCategory, String.class, false);
+		}
+		if (enrichmentTable.getColumn(EnrichmentTerm.colFDR) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colFDR, Double.class, false);
+		}
+		if (enrichmentTable.getColumn(EnrichmentTerm.colGenesBG) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colGenesBG, Integer.class, false);
+		}
+		if (enrichmentTable.getColumn(EnrichmentTerm.colGenesCount) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colGenesCount, Integer.class, false);
+		}
+		if (enrichmentTable.getColumn(EnrichmentTerm.colGenes) == null) {
+			enrichmentTable.createListColumn(EnrichmentTerm.colGenes, String.class, false);
+		}
+		// if (table.getColumn(EnrichmentTerm.colShowChart) == null) {
+		//	table.createColumn(EnrichmentTerm.colShowChart, Boolean.class, false);
+		// }
+		if (enrichmentTable.getColumn(EnrichmentTerm.colChartColor) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colChartColor, String.class, false);
+		}
+		// table.createColumn(EnrichmentTerm.colPvalue, Double.class, false);
+		// table.createColumn(EnrichmentTerm.colBonferroni, Double.class, false);
+	}
+	
 	
 	public static List<EnrichmentTerm> parseXMLDOM(Object results, double cutoff, String enrichmentCategory, CyNetwork network,
 			Map<String, Long> stringNodesMap, StringManager manager) {

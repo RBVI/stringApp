@@ -18,29 +18,27 @@ import org.cytoscape.work.util.ListMultipleSelection;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
+import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class ExportEnrichmentTableTask extends AbstractTask {
 
 	private StringManager manager;
-	private CyNetwork network;
+	private EnrichmentCytoPanel enrichmentPanel;
 	private CyTable selectedTable;
 
 	@Tunable(description = "Save Table as", params = "input=false", 
 	         tooltip="<html>Note: for convenience spaces are replaced by underscores.</html>", gravity = 2.0)
 	public File fileName = null;
 
-	public ExportEnrichmentTableTask(StringManager manager, CyNetwork network) {
-		this.manager = manager;
-		this.network = network;
-		this.selectedTable = ModelUtils.getEnrichmentTable(this.manager, this.network,
-                TermCategory.ALL.getTable());
-		// file = new File("test.csv");
-	}
+	@Tunable(description = "Filtered terms only",  
+			longDescription = "Save only the enrichment terms after filtering.",
+			 exampleStringValue = "false", gravity = 3.0)
+	public boolean filtered = false;
 
-	public ExportEnrichmentTableTask(StringManager manager, CyNetwork network, CyTable table) {
+	public ExportEnrichmentTableTask(StringManager manager, CyNetwork network, EnrichmentCytoPanel panel, CyTable table) {
 		this.manager = manager;
-		this.network = network;
+		this.enrichmentPanel = panel;
 		this.selectedTable = table;
 	}
 
@@ -50,6 +48,9 @@ public class ExportEnrichmentTableTask extends AbstractTask {
 		
 		if (selectedTable != null && fileName != null) {
 			File file = fileName;
+			if (filtered && enrichmentPanel != null) {
+				selectedTable = enrichmentPanel.getFilteredTable();
+			}
 			taskMonitor.showMessage(TaskMonitor.Level.INFO,
 					"export table " + selectedTable + " to " + file.getAbsolutePath());
 			TaskIterator ti = exportTF.createTaskIterator(selectedTable, file);

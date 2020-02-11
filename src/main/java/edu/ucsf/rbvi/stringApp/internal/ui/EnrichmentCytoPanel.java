@@ -16,6 +16,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -58,6 +59,9 @@ import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
+import org.cytoscape.model.CyTableFactory;
+import org.cytoscape.model.CyTableManager;
+import org.cytoscape.model.SavePolicy;
 import org.cytoscape.model.events.RowSetRecord;
 import org.cytoscape.model.events.RowsSetEvent;
 import org.cytoscape.model.events.RowsSetListener;
@@ -189,6 +193,13 @@ public class EnrichmentCytoPanel extends JPanel
 	@Override
 	public void tableChanged(TableModelEvent e) {
 		int column = e.getColumn();
+		CyNetwork network = manager.getCurrentNetwork();
+		if (network == null)
+			return;
+		if (tableModel.getRowCount() != tableModel.getAllRowCount()) {
+			System.out.println("Table got filtered from " + tableModel.getAllRowCount() + " to " + tableModel.getRowCount() + " rows." );
+		} 
+
 		if (column != EnrichmentTerm.chartColumnCol)
 			return;
 		// int row = e.getFirstRow();
@@ -197,7 +208,6 @@ public class EnrichmentCytoPanel extends JPanel
 		// Object data = model.getValueAt(row, column);
 		Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
 		if (preselectedTerms.size() > 0) {
-			CyNetwork network = manager.getCurrentNetwork();
 			ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network));
 		}
 	}
@@ -252,7 +262,8 @@ public class EnrichmentCytoPanel extends JPanel
 			tm.execute(new TaskIterator(new EnrichmentSettingsTask(manager)));
 		} else if (e.getSource().equals(butExportTable)) {
 			if (network != null)
-				tm.execute(new TaskIterator(new ExportEnrichmentTableTask(manager, network)));
+				tm.execute(new TaskIterator(new ExportEnrichmentTableTask(manager, network, this, ModelUtils.getEnrichmentTable(manager, network,
+		                TermCategory.ALL.getTable()))));
 		} else if (e.getSource().equals(menuItemReset)) {
 			// System.out.println("reset color now");
 			Component c = (Component)e.getSource();
@@ -705,4 +716,46 @@ public class EnrichmentCytoPanel extends JPanel
 		return selectedTerms;
 	}
 	
+	public CyTable getFilteredTable() {
+		//Map<EnrichmentTerm, String> selectedTerms = new LinkedHashMap<EnrichmentTerm, String>();
+		CyNetwork network = manager.getCurrentNetwork();
+		if (network == null || tableModel == null)
+			//return selectedTerms;
+			return null;
+
+		CyTable currTable = ModelUtils.getEnrichmentTable(manager, network,
+				TermCategory.ALL.getTable());
+
+		if (currTable == null || currTable.getRowCount() == 0) {
+			return null;
+		}
+		
+		CyTableFactory tableFactory = manager.getService(CyTableFactory.class);
+		CyTableManager tableManager = manager.getService(CyTableManager.class);
+		CyTable filtTable = tableFactory.createTable(TermCategory.ALLFILTERED.getTable(), EnrichmentTerm.colID, Long.class, false,
+				true);
+		filtTable.setSavePolicy(SavePolicy.DO_NOT_SAVE);
+		tableManager.addTable(filtTable);
+		ModelUtils.setupEnrichmentTable(filtTable);
+
+		Long[] rowNames = tableModel.getRowNames();
+		for (int i = 0; i < rowNames.length; i++) {
+			CyRow row = currTable.getRow(rowNames[i]);
+			CyRow filtRow = filtTable.getRow(rowNames[i]);
+			filtRow.set(EnrichmentTerm.colName, row.get(EnrichmentTerm.colName, String.class));
+			filtRow.set(EnrichmentTerm.colIDPubl, "");
+			filtRow.set(EnrichmentTerm.colYear, row.get(EnrichmentTerm.colYear, Integer.class));
+			filtRow.set(EnrichmentTerm.colDescription, row.get(EnrichmentTerm.colDescription, String.class));
+			filtRow.set(EnrichmentTerm.colCategory, row.get(EnrichmentTerm.colCategory, String.class));
+			filtRow.set(EnrichmentTerm.colFDR, row.get(EnrichmentTerm.colFDR, Double.class));
+			filtRow.set(EnrichmentTerm.colGenesBG, row.get(EnrichmentTerm.colGenesBG, Integer.class));
+			filtRow.set(EnrichmentTerm.colGenesCount, row.get(EnrichmentTerm.colGenesCount, Integer.class));
+			filtRow.set(EnrichmentTerm.colGenes, row.getList(EnrichmentTerm.colGenes, String.class));
+			filtRow.set(EnrichmentTerm.colGenesSUID, row.getList(EnrichmentTerm.colGenesSUID, Long.class));
+			filtRow.set(EnrichmentTerm.colNetworkSUID, row.get(EnrichmentTerm.colNetworkSUID, Long.class));
+			// filtRow.set(EnrichmentTerm.colShowChart, false);
+			filtRow.set(EnrichmentTerm.colChartColor, "");
+		}
+		return filtTable;
+	}
 }

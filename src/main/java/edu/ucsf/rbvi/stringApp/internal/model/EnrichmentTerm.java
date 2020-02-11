@@ -31,7 +31,8 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 		PMID("PMID", "Reference publications", "STRING Enrichment: PMID"),
 		SMART("SMART", "SMART Domains", "STRING Enrichment: SMART Protein Domains"),
 		UniProt("Keyword", "UniProt Keywords", "STRING Enrichment: UniProt Keywords"),
-		ALL("All", "All", "STRING Enrichment: All");
+		ALL("All", "All", "STRING Enrichment: All"),
+		ALLFILTERED("AllFilt", "All Filtered", "STRING Enrichment: All Filtered");
 
 		String key, name, table;
 		TermCategory(String key, String name, String table) {

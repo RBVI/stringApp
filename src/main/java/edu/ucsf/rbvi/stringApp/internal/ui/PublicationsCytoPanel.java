@@ -236,7 +236,7 @@ public class PublicationsCytoPanel extends JPanel
 			// tm.execute(new TaskIterator(new EnrichmentSettingsTask(manager)));
 		} else if (e.getSource().equals(butExportTable)) {
 			if (network != null)
-				tm.execute(new TaskIterator(new ExportEnrichmentTableTask(manager, network,
+				tm.execute(new TaskIterator(new ExportEnrichmentTableTask(manager, network, null,
 						ModelUtils.getEnrichmentTable(manager, network,
 								TermCategory.PMID.getTable()))));
 			// } else if (e.getSource().equals(menuItemReset)) {
@@ -376,9 +376,9 @@ public class PublicationsCytoPanel extends JPanel
 
 		}
 
-		if (tableModel != null)
-			tableModel.filter(manager.getCategoryFilter(network), manager.getRemoveOverlap(network),
-					manager.getOverlapCutoff(network));
+		//if (tableModel != null)
+			//tableModel.filter(manager.getCategoryFilter(network), manager.getRemoveOverlap(network),
+			//		manager.getOverlapCutoff(network));
 		this.revalidate();
 		this.repaint();
 	}

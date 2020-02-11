@@ -464,49 +464,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 				true);
 		enrichmentTable.setSavePolicy(SavePolicy.SESSION_FILE);
 		tableManager.addTable(enrichmentTable);
-
-		if (enrichmentTable.getColumn(EnrichmentTerm.colGenesSUID) == null) {
-			enrichmentTable.createListColumn(EnrichmentTerm.colGenesSUID, Long.class, false);
-		}
-		if (enrichmentTable.getColumn(EnrichmentTerm.colNetworkSUID) == null) {
-			enrichmentTable.createColumn(EnrichmentTerm.colNetworkSUID, Long.class, false);
-		}
-		if (enrichmentTable.getColumn(EnrichmentTerm.colName) == null) {
-			enrichmentTable.createColumn(EnrichmentTerm.colName, String.class, false);
-		}
-		if (enrichmentTable.getColumn(EnrichmentTerm.colYear) == null) {
-			enrichmentTable.createColumn(EnrichmentTerm.colYear, Integer.class, false);
-		}
-		if (enrichmentTable.getColumn(EnrichmentTerm.colIDPubl) == null) {
-			enrichmentTable.createColumn(EnrichmentTerm.colIDPubl, String.class, false);
-		}
-		if (enrichmentTable.getColumn(EnrichmentTerm.colDescription) == null) {
-			enrichmentTable.createColumn(EnrichmentTerm.colDescription, String.class, false);
-		}
-		if (enrichmentTable.getColumn(EnrichmentTerm.colCategory) == null) {
-			enrichmentTable.createColumn(EnrichmentTerm.colCategory, String.class, false);
-		}
-		if (enrichmentTable.getColumn(EnrichmentTerm.colFDR) == null) {
-			enrichmentTable.createColumn(EnrichmentTerm.colFDR, Double.class, false);
-		}
-		if (enrichmentTable.getColumn(EnrichmentTerm.colGenesBG) == null) {
-			enrichmentTable.createColumn(EnrichmentTerm.colGenesBG, Integer.class, false);
-		}
-		if (enrichmentTable.getColumn(EnrichmentTerm.colGenesCount) == null) {
-			enrichmentTable.createColumn(EnrichmentTerm.colGenesCount, Integer.class, false);
-		}
-		if (enrichmentTable.getColumn(EnrichmentTerm.colGenes) == null) {
-			enrichmentTable.createListColumn(EnrichmentTerm.colGenes, String.class, false);
-		}
-		// if (table.getColumn(EnrichmentTerm.colShowChart) == null) {
-		//	table.createColumn(EnrichmentTerm.colShowChart, Boolean.class, false);
-		// }
-		if (enrichmentTable.getColumn(EnrichmentTerm.colChartColor) == null) {
-			enrichmentTable.createColumn(EnrichmentTerm.colChartColor, String.class, false);
-		}
-
-		// table.createColumn(EnrichmentTerm.colPvalue, Double.class, false);
-		// table.createColumn(EnrichmentTerm.colBonferroni, Double.class, false);
+		ModelUtils.setupEnrichmentTable(enrichmentTable);
 
 		// Step 2: populate the table with some data
 		List<EnrichmentTerm> processTerms = enrichmentResult.get(enrichmentCategory);
