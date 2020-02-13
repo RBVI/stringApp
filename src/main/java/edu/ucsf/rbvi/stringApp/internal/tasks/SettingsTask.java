@@ -47,6 +47,7 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 	private CyNetwork network;
 	private Palette channelPalette = null;
 	private Component parent;
+	private PaletteProvider stringProvider = null;
 
 	@Tunable(description="Species", 
 			longDescription="Default species",
@@ -102,6 +103,7 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 	public SettingsTask(StringManager manager) {
 		this.manager = manager;
 		this.network = manager.getCurrentNetwork();
+
 		enrichmentSettings = new EnrichmentSettings(manager, network);
 		species = new ListSingleSelection<Species>(Species.getSpecies());
 		species.setSelectedValue(manager.getDefaultSpecies());
@@ -112,6 +114,11 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 		showEnhancedLabels = manager.showEnhancedLabels();
 		showGlassBallEffect = manager.showGlassBallEffect();
 
+		// Set our custom palette provider
+		stringProvider = new StringChannelPaletteProvider();
+
+		// Get a default palette
+		channelPalette = stringProvider.getPalette("default");
 
 		/*
 		List<PaletteProvider> providers = manager.getService(PaletteProviderManager.class).getPaletteProviders(BrewerType.QUALITATIVE, false);
@@ -194,13 +201,11 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 
 	public void actionPerformed(ActionEvent ae) {
 		PaletteProviderManager pm = manager.getService(PaletteProviderManager.class);
-		PaletteProvider stringProvider = new StringChannelPaletteProvider();
 		pm.addPaletteProvider(stringProvider);
 
 		CyColorPaletteChooser paletteChooser = 
 			manager.getService(CyColorPaletteChooserFactory.class).getColorPaletteChooser(BrewerType.QUALITATIVE, true);
-		Palette initial = stringProvider.getPalette("default");
-		channelPalette = paletteChooser.showDialog(parent, "Palette for Channel Colors", initial, manager.channels.length);
+		channelPalette = paletteChooser.showDialog(parent, "Palette for Channel Colors", channelPalette, manager.channels.length);
 
 		pm.removePaletteProvider(stringProvider);
 	}

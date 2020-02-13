@@ -554,6 +554,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 			// System.out.println("stringNetwork network = "+stringNetwork.getNetwork());
 			manager.execute(newIterator);
 		}
+		optionsPanel.showSpeciesBox(true); // Turn this back on
 	}
 
 	@Override
@@ -609,6 +610,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 
 		@Override
 		public void allFinished(FinishStatus finishStatus) {
+			optionsPanel.showSpeciesBox(true); // Turn this back on
 		}
 
 		@Override
@@ -697,6 +699,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 			}
 
 			importNetwork(taxon, optionsPanel.getConfidence(), additionalNodes, wholeOrgBox.isSelected());
+			optionsPanel.showSpeciesBox(true); // Turn this back on
 		}
 	}
 

@@ -93,6 +93,7 @@ public class SearchOptionsPanel extends JPanel {
 		this.isDisease = isDisease;
 		this.isPubMed = isPubMed;
 		this.showSpecies = showSpecies;
+		System.out.println("SearchOptionsPanel("+isPubMed+","+isDisease+","+showSpecies+")");
 		if (isDisease || isPubMed) 
 				additionalNodes = manager.getDefaultMaxProteins();
 		else
@@ -137,6 +138,7 @@ public class SearchOptionsPanel extends JPanel {
 	}
 
 	public void showSpeciesBox(boolean visible) {
+		System.out.println("showSpeciesBox: "+visible);
 		if (speciesBox != null)
 			speciesBox.setVisible(visible);
 	}
