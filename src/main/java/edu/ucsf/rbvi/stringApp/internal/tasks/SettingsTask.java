@@ -52,7 +52,7 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 	@Tunable(description="Species", 
 			longDescription="Default species",
 			exampleStringValue = "Homo Sapiens",
-			params="lookup=begin", groups={"Query Defaults (take effect after restarting Cytoscape)"}, gravity=10.0)
+			params="lookup=begins", groups={"Query Defaults (take effect after restarting Cytoscape)"}, gravity=10.0)
 	public ListSingleSelection<Species> species;
 
 	@Tunable(description="Confidence (score) cutoff", 

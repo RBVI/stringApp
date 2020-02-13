@@ -29,6 +29,7 @@ import org.cytoscape.view.presentation.customgraphics.CyCustomGraphicsFactory;
 import org.cytoscape.work.TaskFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.Version;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.tasks.AddTermsTaskFactory;
@@ -92,8 +93,12 @@ public class CyActivator extends AbstractCyActivator {
 		StringManager manager = new StringManager(registrar);
 
 		// Get our version number
-		String version = bc.getBundle().getVersion().toString();
-		manager.setVersion(version);
+		Version v = bc.getBundle().getVersion();
+		String version = v.toString(); // The full version
+
+		// Only look at the .0 version for our internal purposes
+		String minorVersion = new Version(v.getMajor(),v.getMinor(), 0).toString();
+		manager.setVersion(minorVersion);
 		
 		// Get configuration and messages for user from server 
 		manager.updateURIsFromConfig();
