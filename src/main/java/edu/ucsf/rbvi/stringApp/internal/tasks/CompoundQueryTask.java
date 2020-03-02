@@ -113,7 +113,7 @@ public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 		int confidence = (int) (cutoff.getValue() * 100);
 
 		// We want the query with newlines, so we need to convert
-		query = query.replace(",", "\n");
+		query = query.replaceAll("(?<!\\\\),", "\n");
 		// Now, strip off any blank lines
 		query = query.replaceAll("(?m)^\\s*", "");
 
