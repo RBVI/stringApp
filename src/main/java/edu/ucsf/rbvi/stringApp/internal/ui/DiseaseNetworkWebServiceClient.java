@@ -14,17 +14,17 @@ public class DiseaseNetworkWebServiceClient extends AbstractWebServiceGUIClient
 
 	public DiseaseNetworkWebServiceClient(StringManager manager) {
 		super(manager.getNetworkURL(), "STRING: disease query", 
-										                "<html>Enter a disease term and create a STRING network by finding all "+
-																		"proteins associated with the disease in the STRING database."+
-																		"<p>STRING is a database of "+
-																		"known and predicted protein interactions.  The interactions include direct "+
-																		"(physical) and indirect (functional) associations; they are derived from four "+
-																		"sources: <ul><li>Genomic Context</li><li>High-throughput Experiments</li>"+
-																		"<li>(Conserved) Coexpression</li><li>Previous Knowledge</li></ul>	 "+
-																		"STRING quantitatively integrates interaction data from these sources "+
-																		"for a large number of organisms, and transfers information between "+
-																		"these organisms where applicable. The database currently covers 9,643,763 "+
-																		"proteins from 2,031 organisms.</html>");
+							"<html>The disease query retrieves a STRING network for the top-N <br />"
+						  + "human proteins associated with the queried disease in the DISEASES <br />"
+						  + "database. <br />"
+						  + "DISEASES is a weekly updated web resource that integrates evidence <br />"
+						  + "on disease-gene associations from automatic text mining, manually <br />"
+						  + "curated literature, cancer mutation data, and genome-wide association <br />"
+						  + "studies. <br />"
+						  + "STRING is a database of known and predicted protein interactions for <br />"
+						  + "thousands of organisms, which are integrated from several sources, <br />"
+						  + "scored, and transferred across orthologs. The network includes both <br />"
+						  + "physical interactions and functional associations.</html>");
 		this.manager = manager;
 		super.gui = new DiseaseQueryPanel(manager);
 	}

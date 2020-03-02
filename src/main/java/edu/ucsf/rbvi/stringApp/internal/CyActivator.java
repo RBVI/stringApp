@@ -142,20 +142,11 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(COMMAND_DESCRIPTION, 
 										    "Create a STRING network from multiple protein names/identifiers");
 			props.setProperty(COMMAND_LONG_DESCRIPTION,
-			                  "Enter protein names or identifiers to query the STRING "+
-												"database for protein-protein interactions.\n"+
-												"<br/>STRING is a database of known and predicted protein "+
-												"interactions.  The interactions include direct (physical) "+
-												"and indirect (functional) associations; they are derived from "+
-												"four sources: \n"+
-												"* Genomic Context\n"+
-												"* High-throughput Experiments\n"+
-												"* (Conserved) Coexpression\n"+
-												"* Previous Knowledge\n\n"+
-										 		"STRING quantitatively integrates "+
-												"interaction data from these sources for a large number "+
-												"of organisms, and transfers information between these "+
-												"organisms where applicable.");
+								"<html>The protein query retrieves a STRING network for one or more proteins. <br />"
+								+ "STRING is a database of known and predicted protein interactions for <br />"
+								+ "thousands of organisms, which are integrated from several sources, <br />"
+								+ "scored, and transferred across orthologs. The network includes both <br />"
+								+ "physical interactions and functional associations.</html>");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
     	props.setProperty(COMMAND_EXAMPLE_JSON, JSON_EXAMPLE);
 
@@ -170,20 +161,13 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(COMMAND_DESCRIPTION, 
 										    "Create a STRING network by finding proteins associated with a disease");
 			props.setProperty(COMMAND_LONG_DESCRIPTION,
-										    "Enter a disease term and create a STRING network by finding all "+
-												"proteins associated with the disease in the STRING database.\n"+
-												" STRING is a database of "+
-												"known and predicted protein interactions.  The interactions include direct "+
-												"(physical) and indirect (functional) associations; they are derived from four "+
-												"sources: \n"+
-												"* Genomic Context\n"+
-												"* High-throughput Experiments\n"+
-												"* (Conserved) Coexpression\n"+
-												"* Previous Knowledge\n\n"+
-												"STRING quantitatively integrates interaction data from these sources "+
-												"for a large number of organisms, and transfers information between "+
-												"these organisms where applicable. The database currently covers 9,643,763 "+
-												"proteins from 2,031 organisms.");
+							  "<html>The disease query retrieves a STRING network for the top-N human proteins associated <br />"
+							  + "with the queried disease in the DISEASES database. DISEASES is a weekly updated web <br />"
+							  + "resource that integrates evidence on disease-gene associations from automatic text <br />"
+							  + "mining, manually curated literature, cancer mutation data, and genome-wide association <br />"
+							  + "studies. STRING is a database of known and predicted protein interactions for thousands <br />"
+							  + "of organisms, which are integrated from several sources, scored, and transferred across <br />"
+							  + "orthologs. The network  includes both physical interactions and functional associations.</html>");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
     	props.setProperty(COMMAND_EXAMPLE_JSON, JSON_EXAMPLE);
 			registerService(bc, getNetwork, TaskFactory.class, props);
@@ -197,20 +181,11 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(COMMAND_DESCRIPTION, 
 										    "Create a STRING network by entering a pubmed query");
 			props.setProperty(COMMAND_LONG_DESCRIPTION, 
-										    "Enter a Pubmed query and create a STRING network by finding all "+
-												"proteins mentioned in the resulting publications.\n"+
-												"STRING is a database of "+
-												"known and predicted protein interactions.  The interactions include direct "+
-												"(physical) and indirect (functional) associations; they are derived from four "+
-												"sources: \n"+
-												"* Genomic Context\n"+
-												"* High-throughput Experiments\n"+
-												"* (Conserved) Coexpression\n"+
-												"* Previous Knowledge\n\n"+
-												"STRING quantitatively integrates interaction data from these sources "+
-												"for a large number of organisms, and transfers information between "+
-												"these organisms where applicable. The database currently covers 9,643,763 "+
-												"proteins from 2,031 organisms.");
+					"<html>The PubMed query retrieves a STRING network pertaining to any topic of interest <br />"
+							+ "based on text mining of PubMed abstracts. STRING is a database of known and <br />"
+							+ "predicted protein interactions for thousands of organisms, which are integrated <br />"
+							+ "from several sources, scored, and transferred across orthologs. The network <br />"
+							+ "includes both physical interactions and functional associations.</html>");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
     	props.setProperty(COMMAND_EXAMPLE_JSON, JSON_EXAMPLE);
 			registerService(bc, getNetwork, TaskFactory.class, props);
@@ -236,17 +211,12 @@ public class CyActivator extends AbstractCyActivator {
       props.setProperty(COMMAND_NAMESPACE, "string");
       props.setProperty(COMMAND, "compound query");
 			props.setProperty(COMMAND_DESCRIPTION, 
-										    "Create a STRING network from multiple protein and compound names/identifiers");
+										    "Create a STITCH network from multiple protein and compound names/identifiers");
 			props.setProperty(COMMAND_LONG_DESCRIPTION, 
-			                  "Enter protein or compound names or identifiers to query "+
-												"the STITCH database for interactions."+
-		 	                  "STITCH is a resource to explore known and predicted "+
-												"interactions of chemicals and proteins. Chemicals are "+
-												"linked to other chemicals and proteins by evidence derived "+
-												"from experiments, databases and the literature.  \n"+
-												"STITCH contains interactions for between 300,000 "+
-												"small molecules and 2.6 million proteins from 1133 "+
-												"organisms.");
+					"<html>The compound query retrieves a STITCH network for one or more proteins or compounds. <br />"
+							+ "STITCH is a resource to explore known and predicted interactions of chemicals and <br />"
+							+ "proteins. Chemicals are linked to other chemicals and proteins by evidence derived <br />"
+							+ "from experiments, databases and the literature.</html>");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
     	props.setProperty(COMMAND_EXAMPLE_JSON, JSON_EXAMPLE);
       registerService(bc, getNetwork, TaskFactory.class, props);

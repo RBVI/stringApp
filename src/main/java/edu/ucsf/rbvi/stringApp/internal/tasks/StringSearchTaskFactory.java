@@ -48,7 +48,7 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 	static String STRING_DESC_LONG = "<html>The protein query retrieves a STRING network for one or more proteins. <br />"
 										+ "STRING is a database of known and predicted protein interactions for <br />"
 										+ "thousands of organisms, which are integrated from several sources, <br />"
-										+ "scored, and transferred across orthologs. The network  includes both <br />"
+										+ "scored, and transferred across orthologs. The network includes both <br />"
 										+ "physical interactions and functional associations.</html>";
 
 	private StringNetwork stringNetwork = null;

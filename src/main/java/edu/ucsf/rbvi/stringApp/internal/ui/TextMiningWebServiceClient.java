@@ -14,16 +14,12 @@ public class TextMiningWebServiceClient extends AbstractWebServiceGUIClient
 
 	public TextMiningWebServiceClient(StringManager manager) {
 		super(manager.getNetworkURL(), "STRING: PubMed query", 
-										                "<html>Enter a Pubmed query and create a STRING network by finding all "+
-																		"proteins mentioned in the resulting publications.<p>STRING is a database of "+
-																		"known and predicted protein interactions.  The interactions include direct "+
-																		"(physical) and indirect (functional) associations; they are derived from four "+
-																		"sources: <ul><li>Genomic Context</li><li>High-throughput Experiments</li>"+
-																		"<li>(Conserved) Coexpression</li><li>Previous Knowledge</li></ul>	 "+
-																		"STRING quantitatively integrates interaction data from these sources "+
-																		"for a large number of organisms, and transfers information between "+
-																		"these organisms where applicable. The database currently covers 9,643,763 "+
-																		"proteins from 2,031 organisms.</html>");
+						"<html>The PubMed query retrieves a STRING network pertaining <br />"
+						+ "to any topic of interest based on text mining of PubMed abstracts. <br />"
+						+ "STRING is a database of known and predicted protein interactions for <br />"
+						+ "thousands of organisms, which are integrated from several sources, <br />"
+						+ "scored, and transferred across orthologs. The network includes both <br />"
+						+ "physical interactions and functional associations.</html>");
 		this.manager = manager;
 		super.gui = new PubMedQueryPanel(manager);
 	}
