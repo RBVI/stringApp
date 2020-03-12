@@ -22,6 +22,7 @@ import org.cytoscape.work.util.ListSingleSelection;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
+import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.EntityIdentifier;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
@@ -124,8 +125,16 @@ public class ProteinQueryAdditionalTask extends AbstractTask implements Observab
 		query = query.replaceAll("(?m)^\\s*", "");
 
 		// Get the annotations
-		Map<String, List<Annotation>> annotations = stringNetwork.getAnnotations(sp.getTaxId(),
-				query, Databases.STRING.getAPIName(), includesViruses);
+		Map<String, List<Annotation>> annotations;
+		try {
+			annotations = stringNetwork.getAnnotations(sp.getTaxId(),
+					query, Databases.STRING.getAPIName(), includesViruses);
+		} catch (ConnectionException e) {
+			e.printStackTrace();
+			monitor.showMessage(TaskMonitor.Level.ERROR,
+					"Cannot connect to " + Databases.STRING);
+			throw new RuntimeException("Cannot connect to " + Databases.STRING);
+		}
 		if (annotations == null || annotations.size() == 0) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,
 					"Query '" + query + "' returned no results");

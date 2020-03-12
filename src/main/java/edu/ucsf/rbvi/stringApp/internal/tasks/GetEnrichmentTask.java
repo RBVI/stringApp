@@ -40,6 +40,7 @@ import org.json.simple.JSONObject;
 
 import edu.ucsf.rbvi.stringApp.internal.io.EnrichmentSAXHandler;
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
@@ -295,7 +296,15 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		if (backgroundNodes != null) {
 			args.put("background_string_identifiers", backgroundNodes);
 		}
-		JSONObject results = HttpUtils.postJSON(url, args, manager);
+		JSONObject results;
+		try {
+			results = HttpUtils.postJSON(url, args, manager);
+		} catch (ConnectionException e) {
+			e.printStackTrace();
+			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+			enrichmentResult = null;
+			return;
+		}
 		if (results == null) {
 			monitor.showMessage(Level.ERROR,
 					"Enrichment retrieval returned no results, possibly due to an error.");
@@ -355,7 +364,14 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			args.put("background_string_identifiers", backgroundNodes);
 		}
 
-		JSONObject results = HttpUtils.postJSON(url, args, manager);
+		JSONObject results;
+		try {
+			results = HttpUtils.postJSON(url, args, manager);
+		} catch (ConnectionException e) {
+			e.printStackTrace();
+			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+			return null;
+		}
 		if (results == null) {
 			monitor.showMessage(Level.ERROR,
 					"PPI enrichment retrieval returned no results, possibly due to an error.");

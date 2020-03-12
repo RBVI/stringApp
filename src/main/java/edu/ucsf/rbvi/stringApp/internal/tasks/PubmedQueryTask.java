@@ -18,6 +18,7 @@ import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.TaskMonitor.Level;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.util.BoundedInteger;
 import org.cytoscape.work.util.BoundedDouble;
@@ -99,9 +100,13 @@ public class PubmedQueryTask extends AbstractTask implements ObservableTask {
 		StringNetwork stringNetwork = new StringNetwork(manager);
 		int confidence = (int)(cutoff.getValue()*100);
 		// Create the network from a pubmed query
-		AbstractTask getIds = 
+		GetStringIDsFromPubmedTask getIds = 
 						new GetStringIDsFromPubmedTask(stringNetwork, sp, limit.getValue(), confidence, pubmed);
 		manager.execute(new TaskIterator(getIds), true);
+		if(getIds.hasError()) {
+			monitor.showMessage(Level.ERROR, getIds.getErrorMessage());
+			return;
+		}
 		loadedNetwork = stringNetwork.getNetwork();
 		if (loadedNetwork == null)
 			throw new RuntimeException("Query '"+pubmed+"' returned no results");

@@ -16,11 +16,13 @@ import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.TaskMonitor.Level;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.util.BoundedInteger;
 import org.cytoscape.work.util.ListSingleSelection;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
@@ -60,8 +62,20 @@ public class FindProteinsTask extends AbstractTask {
 		args.put("retmode","json");
 		args.put("retmax","10000");
 		args.put("term","\""+query+"\"");
-		JSONObject object = HttpUtils.getJSON("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
-		                                  args, manager);
+		
+		JSONObject object=null;
+		try {
+			object = HttpUtils.getJSON("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+					args, manager);
+		} catch(ConnectionException e) {
+			monitor.showMessage(TaskMonitor.Level.ERROR, e.getMessage());
+			return;
+		}
+		if (object == null) {
+			monitor.showMessage(TaskMonitor.Level.ERROR, "Error trying to fetch results.");
+			return;
+		}
+		
 		JSONObject result = ModelUtils.getResultsFromJSON(object, JSONObject.class);
 		if (result == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"Pubmed returned no results");
@@ -99,7 +113,13 @@ public class FindProteinsTask extends AbstractTask {
 		else
 			args.put("type2", Integer.toString(species.getSelectedValue().getTaxId()));
 		monitor.setTitle("Querying STRING");
-		JSONObject tmobject = HttpUtils.postJSON(manager.getTextMiningURL(), args, manager);
+		JSONObject tmobject=null;
+		try {
+			tmobject = HttpUtils.postJSON(manager.getTextMiningURL(), args, manager);
+		} catch (ConnectionException e) {
+			monitor.showMessage(Level.ERROR, e.getMessage());
+			return;
+		}
 		if (tmobject == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results");
 			return;

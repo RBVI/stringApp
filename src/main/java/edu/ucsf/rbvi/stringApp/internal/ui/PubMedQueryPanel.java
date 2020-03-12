@@ -280,6 +280,19 @@ public class PubMedQueryPanel extends JPanel {
 
 		@Override
 		public void taskFinished(ObservableTask task) {
+			if(task instanceof GetStringIDsFromPubmedTask) {
+				GetStringIDsFromPubmedTask specificTask = (GetStringIDsFromPubmedTask) task;
+				
+				if(specificTask.hasError()) {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							JOptionPane.showMessageDialog(null, specificTask.getErrorMessage(),
+										                        "Error", JOptionPane.ERROR_MESSAGE); 
+						}
+					});
+					return;
+				}
+			}
 		}
 
 		@Override
