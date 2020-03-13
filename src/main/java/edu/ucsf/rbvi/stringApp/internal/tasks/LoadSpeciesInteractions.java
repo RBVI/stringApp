@@ -14,10 +14,12 @@ import org.cytoscape.view.model.View;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.TaskMonitor.Level;
 import org.cytoscape.work.TunableSetter;
 import org.json.simple.JSONObject;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
@@ -67,7 +69,14 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		args.put("caller_identity", StringManager.CallerIdentity);
 
 		// double time = System.currentTimeMillis();
-		JSONObject results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+		JSONObject results;
+		try {
+			results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+		} catch (ConnectionException e) {
+			e.printStackTrace();
+			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+			return;
+		}
 		// System.out.println(
 		// "postJSON method " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
 		// time = System.currentTimeMillis();

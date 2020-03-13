@@ -11,6 +11,7 @@ import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.TaskMonitor;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.EntityIdentifier;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
@@ -21,11 +22,13 @@ public class GetDiseaseTermsTask extends AbstractTask implements ObservableTask 
 	final int taxon;
 	final String term;
 	List<EntityIdentifier> matches = null;
+	String errorMsg;
 
 	public GetDiseaseTermsTask(StringManager stringManager, int taxon, String term) {
 		this.stringManager = stringManager;
 		this.taxon = taxon;
 		this.term = term;
+		this.errorMsg = null;
 	}
 
 	@Override
@@ -41,15 +44,31 @@ public class GetDiseaseTermsTask extends AbstractTask implements ObservableTask 
 		// String response = "[[{"type":-26,"id":"DOID:1307","matched":"dementia","primary":"dementia"},{"type":-26,"id":"DOID:11870","matched":"Dementia in Pick's disease ","primary":"Pick's disease"},{"type":-26,"id":"DOID:12217","matched":"Dementia with Lewy bodies","primary":"Lewy body dementia"}],false]"
 		//
 		// Get the results
-		JSONObject results = HttpUtils.getJSON(url, args, stringManager);
+		JSONObject results = null;
+		try {
+			results = HttpUtils.getJSON(url, args, stringManager);
+		} catch(ConnectionException e) {
+			this.errorMsg = e.getMessage();
+			monitor.showMessage(TaskMonitor.Level.ERROR, this.errorMsg);
+			return;
+		}
 		// Object results = HttpUtils.testJSON(url, args, stringManager, response);
 		if (results == null) {
-			monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results");
+			this.errorMsg = "String returned no results";
+			monitor.showMessage(TaskMonitor.Level.ERROR,this.errorMsg);
 			return;
 		}
 
 		matches = ModelUtils.getEntityIdsFromJSON(stringManager, results);
 		
+	}
+	
+	public boolean hasError() {
+		return this.errorMsg != null;
+	}
+	
+	public String getErrorMessage() {
+		return this.errorMsg;
 	}
 
 	public List<EntityIdentifier> getMatchedTerms() { return matches; }

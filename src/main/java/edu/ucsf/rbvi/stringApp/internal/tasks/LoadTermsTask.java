@@ -27,6 +27,7 @@ import org.cytoscape.work.Tunable;
 import org.cytoscape.work.TunableSetter;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
@@ -96,7 +97,14 @@ public class LoadTermsTask extends AbstractTask {
 
 		monitor.setStatusMessage("Getting additional terms from "+manager.getNetworkURL());
 
-		JSONObject results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+		JSONObject results;
+		try {
+			results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+		} catch (ConnectionException e) {
+			e.printStackTrace();
+			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+			return;
+		}
 
 		if (results == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results");

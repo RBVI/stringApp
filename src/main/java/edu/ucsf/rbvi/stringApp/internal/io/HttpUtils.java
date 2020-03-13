@@ -1,6 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.io;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -9,20 +10,23 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.ReadOnlyFileSystemException;
 import java.util.Map;
 
 import org.cytoscape.io.util.StreamUtil;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
 public class HttpUtils {
 	@SuppressWarnings("unchecked")
 	public static JSONObject getJSON(String url, Map<String, String> queryMap,
-			StringManager manager) {
+			StringManager manager) throws ConnectionException {
+		
+		JSONObject jsonObject = new JSONObject();
 
 		// Set up our connection
 		URL trueURL = null;
@@ -37,10 +41,9 @@ public class HttpUtils {
 			}
 		} catch(MalformedURLException e) {
 			manager.info("URL malformed");
-			return new JSONObject();
+//			return new JSONObject();
+			throw new ConnectionException("URL malformed");
 		}
-		
-		JSONObject jsonObject = new JSONObject();
 
 		try {
 			URLConnection connection = manager.getService(StreamUtil.class).getURLConnection(trueURL);
@@ -51,8 +54,15 @@ public class HttpUtils {
 			Object obj = parser.parse(reader);
 			jsonObject.put(StringManager.RESULT, obj);
 
+		} catch(UnknownHostException e) {
+			e.printStackTrace();
+			throw new ConnectionException("Unknown host: " + e.getMessage());
+		} catch(IOException e) {
+			e.printStackTrace();
+			throw new ConnectionException(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new ConnectionException(e.getMessage());
 		} finally {
 		}
 		return jsonObject;
@@ -72,12 +82,12 @@ public class HttpUtils {
 
 	@SuppressWarnings("unchecked")
 	public static JSONObject postJSON(String url, Map<String, String> queryMap,
-			StringManager manager) {
+			StringManager manager) throws ConnectionException {
 
 		// Set up our connection
 		JSONObject jsonObject = new JSONObject();
 
-		String args = HttpUtils.getStringArguments(queryMap);
+		// String args = HttpUtils.getStringArguments(queryMap);
 		// manager.info("URL: " + url + "?" + truncate(args));
 		// System.out.println("URL: " + url + "?" + truncate(args));
 		// System.out.println("URL: " + url + "?" + args);
@@ -110,13 +120,18 @@ public class HttpUtils {
 				}
 				manager.error("Exception reading JSON from STRING: "+ parseFailure.getMessage());
 				System.out.println("Exception reading JSON from STRING: "+ parseFailure.getMessage()+"\n Text: "+errorString);
-				return null;
+//				return null;
+				throw new ConnectionException("Exception reading JSON from STRING: "+ parseFailure.getMessage());
 			}
 
-	 	} catch (Exception e) {
+	 	} catch(UnknownHostException e) {
+			e.printStackTrace();
+			throw new ConnectionException("Unknown host: " + e.getMessage());
+		} catch (Exception e) {
 			// e.printStackTrace();
 			manager.error("Unexpected error when parsing JSON from server: " + e.getMessage());
-			return null;
+//			return null;
+			throw new ConnectionException("Unexpected error when parsing JSON from server: " + e.getMessage());
 		} finally {
 		}
 		return jsonObject;

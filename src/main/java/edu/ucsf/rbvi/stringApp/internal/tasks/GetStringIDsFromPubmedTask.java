@@ -12,8 +12,10 @@ import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.TaskMonitor.Level;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
@@ -29,6 +31,7 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 	final int confidence;
 	final String query;
 	private List<TextMiningResult> tmResults;
+	String errorMsg;
 
 	public GetStringIDsFromPubmedTask(final StringNetwork stringNetwork, final Species species, final int limit, 
 	                                    final int confidence, final String query) {
@@ -38,7 +41,17 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 		this.confidence = confidence;
 		this.limit = limit;
 		this.query = query;
+		this.errorMsg = null;
 	}
+	
+	public boolean hasError() {
+		return this.errorMsg != null;
+	}
+	
+	public String getErrorMessage() {
+		return this.errorMsg;
+	}
+	
 	public void run(TaskMonitor monitor) {
 		monitor.setTitle("Loading STRING network from PubMed query");
 		Map<String, String> args = new HashMap<>();
@@ -47,8 +60,23 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 		args.put("retmax","40000");
 		args.put("term",query);
 		monitor.setTitle("Querying PubMed");
-		JSONObject object = HttpUtils.getJSON("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+		JSONObject object = null;
+		
+		try {
+			object = HttpUtils.getJSON("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
 		                                      args, manager);
+		} catch(ConnectionException e) {
+			this.errorMsg = e.getMessage();
+			monitor.showMessage(TaskMonitor.Level.ERROR, this.errorMsg);
+			return;
+		}
+		
+		if (object == null) {
+			this.errorMsg = "Error trying to fetch results.";
+			monitor.showMessage(TaskMonitor.Level.ERROR, this.errorMsg);
+			return;
+		}
+		
 		JSONObject result = ModelUtils.getResultsFromJSON(object, JSONObject.class);
 		if (result == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"Pubmed returned no results");
@@ -85,7 +113,13 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 		args.put("limit", Integer.toString(limit));
 		args.put("type2", Integer.toString(species.getTaxId()));
 		monitor.setTitle("Querying STRING");
-		JSONObject tmobject = HttpUtils.postJSON(manager.getTextMiningURL(), args, manager);
+		JSONObject tmobject = null;
+		try {
+			tmobject = HttpUtils.postJSON(manager.getTextMiningURL(), args, manager);
+		} catch(ConnectionException e) {
+			monitor.showMessage(Level.ERROR, e.getMessage());
+			return;
+		}
 		if (tmobject == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results");
 			return;

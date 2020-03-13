@@ -6,8 +6,10 @@ import java.util.Map;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.TaskMonitor.Level;
 
 import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
+import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 
@@ -28,7 +30,13 @@ public class GetAnnotationsTask extends AbstractTask implements ObservableTask {
 	@Override
 	public void run(TaskMonitor monitor) {
 		monitor.setTitle("Getting annotations");
-		annotations = stringNetwork.getAnnotations(taxon, terms, useDATABASE, true);
+		try {
+			annotations = stringNetwork.getAnnotations(taxon, terms, useDATABASE, true);
+		} catch (ConnectionException e) {
+			e.printStackTrace();
+			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+			return;
+		}
 		if (annotations == null || annotations.size() == 0) {
 			monitor.showMessage(TaskMonitor.Level.ERROR, "Query returned no terms");
 		}

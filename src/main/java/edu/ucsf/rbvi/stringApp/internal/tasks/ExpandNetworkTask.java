@@ -35,6 +35,7 @@ import org.cytoscape.work.util.ListSingleSelection;
 import org.json.simple.JSONObject;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
@@ -198,7 +199,14 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		args.put("database", Databases.STITCH.getAPIName());
 		monitor.setStatusMessage("Getting additional nodes from: "+manager.getNetworkURL());
 
-		JSONObject results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+		JSONObject results;
+		try {
+			results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+		} catch (ConnectionException e) {
+			e.printStackTrace();
+			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+			return;
+		}
 
 		if (results == null) {
 			if (conf == 1.0) 

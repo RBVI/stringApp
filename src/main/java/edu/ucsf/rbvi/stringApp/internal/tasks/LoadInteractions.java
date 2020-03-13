@@ -19,9 +19,11 @@ import org.cytoscape.view.model.View;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.TaskMonitor.Level;
 import org.cytoscape.work.TunableSetter;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
@@ -90,7 +92,14 @@ public class LoadInteractions extends AbstractTask {
 				args.put("filter", taxonId + ".%%|CIDm%%");
 			}
 		}
-		JSONObject results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+		JSONObject results;
+		try {
+			results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+		} catch (ConnectionException e) {
+			e.printStackTrace();
+			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+			return;
+		}
 
 		// This may change...
 		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, species, results, 

@@ -19,12 +19,14 @@ import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
+import org.cytoscape.work.TaskMonitor.Level;
 import org.cytoscape.work.util.BoundedInteger;
 import org.cytoscape.work.util.BoundedDouble;
 import org.cytoscape.work.util.ListSingleSelection;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
+import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.EntityIdentifier;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
@@ -120,8 +122,15 @@ public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 		query = query.replaceAll("(?m)^\\s*", "");
 
 		// Get the annotations
-		Map<String, List<Annotation>> annotations = stringNetwork.getAnnotations(sp.getTaxId(),
-				query, Databases.STITCH.getAPIName(), includesViruses);
+		Map<String, List<Annotation>> annotations;
+		try {
+			annotations = stringNetwork.getAnnotations(sp.getTaxId(),
+					query, Databases.STITCH.getAPIName(), includesViruses);
+		} catch (ConnectionException e) {
+			e.printStackTrace();
+			monitor.showMessage(Level.ERROR, "Cannot connect to " + Databases.STITCH.getAPIName());
+			throw new RuntimeException("Cannot connect to " + Databases.STITCH.getAPIName());
+		}
 		if (annotations == null || annotations.size() == 0) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,
 					"Query '" + query + "' returned no results");

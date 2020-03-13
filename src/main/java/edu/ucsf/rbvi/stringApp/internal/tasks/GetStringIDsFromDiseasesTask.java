@@ -11,8 +11,10 @@ import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.TaskMonitor.Level;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
@@ -49,7 +51,14 @@ public class GetStringIDsFromDiseasesTask extends AbstractTask implements Observ
 		args.put("format", "json");
 		args.put("limit", Integer.toString(limit));
 		args.put("type2", Integer.toString(species.getTaxId()));
-		JSONObject tmobject = HttpUtils.postJSON(manager.getIntegrationURL(), args, manager);
+		JSONObject tmobject;
+		try {
+			tmobject = HttpUtils.postJSON(manager.getIntegrationURL(), args, manager);
+		} catch (ConnectionException e) {
+			e.printStackTrace();
+			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+			return;
+		}
 		if (tmobject == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results");
 			return;

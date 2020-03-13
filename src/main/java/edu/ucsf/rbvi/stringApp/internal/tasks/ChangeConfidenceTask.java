@@ -30,6 +30,7 @@ import org.cytoscape.work.json.JSONResult;
 import org.cytoscape.work.util.BoundedFloat;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
@@ -127,7 +128,14 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 			args.put("database", Databases.STITCH.getAPIName());
 			args.put("score", confidence.getValue().toString());
 			args.put("maxscore", Float.toString(currentConfidence));
-			JSONObject results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+			JSONObject results;
+			try {
+				results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+			} catch (ConnectionException e) {
+				e.printStackTrace();
+				monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+				return;
+			}
 
 			if (results != null) {
 				// This may change...

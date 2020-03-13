@@ -179,7 +179,7 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 		searchPanel.add(searchLabel, c);
 		searchTerms = new JTextField();
 		searchTerms.setToolTipText(ttText);
-		searchTerms.addActionListener(new InitialAction());
+		searchTerms.addActionListener(new InitialAction(mainSearchPanel));
 		c.down().expandHoriz().insets(5,10,5,10);
 		searchPanel.add(searchTerms, c);
 		JLabel filler = new JLabel();
@@ -215,13 +215,13 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 					replaceSearchPanel();
 					importButton.setEnabled(true);
 					backButton.setEnabled(false);
-					importButton.setAction(new InitialAction());
+					importButton.setAction(new InitialAction(mainSearchPanel));
 					getParent().revalidate();
         }
 			});
 		backButton.setEnabled(false);
 
-		importButton = new JButton(new InitialAction());
+		importButton = new JButton(new InitialAction(mainSearchPanel));
 
 		buttonPanel.add(Box.createRigidArea(new Dimension(10,0)));
 		buttonPanel.add(cancelButton);
@@ -292,7 +292,7 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 		replaceSearchPanel();
 		importButton.setEnabled(true);
 		backButton.setEnabled(false);
-		importButton.setAction(new InitialAction());
+		importButton.setAction(new InitialAction(mainSearchPanel));
 		((Window)getRootPane().getParent()).dispose();
 	}
 
@@ -319,8 +319,10 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 
 
 	class InitialAction extends AbstractAction implements TaskObserver {
-		public InitialAction() {
+		private Component panel;
+		public InitialAction(Component panel) {
 			super("Import");
+			this.panel = panel;
 		}
 
     @Override
@@ -352,6 +354,17 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 				return;
 			}
 			GetDiseaseTermsTask annTask = (GetDiseaseTermsTask)task;
+			
+			Component dialogParent = this.panel;
+			if(annTask.hasError()) {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						JOptionPane.showMessageDialog(dialogParent, annTask.getErrorMessage(),
+									                        "Error", JOptionPane.ERROR_MESSAGE); 
+					}
+				});
+				return;
+			}
 
 			entityList = annTask.getMatchedTerms(); 
 

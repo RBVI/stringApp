@@ -134,7 +134,7 @@ public class StringNetwork {
 	public Map<String, List<Annotation>> getAnnotations() { return annotations; }
 
 	public Map<String, List<Annotation>> getAnnotations(int taxon, final String terms, 
-	                                                    final String useDATABASE, boolean includeViruses) {
+	                                                    final String useDATABASE, boolean includeViruses) throws ConnectionException {
 		String encTerms = terms.trim();
 		// try {
 		// encTerms = URLEncoder.encode(terms.trim(), "UTF-8");
@@ -153,7 +153,7 @@ public class StringNetwork {
 	}
 
 	private Map<String, List<Annotation>> getAnnotationBatch(int taxon, final String encTerms, 
-	                                                         String useDATABASE, boolean includeViruses) {
+	                                                         String useDATABASE, boolean includeViruses) throws ConnectionException {
 		// always call the string API first to resolve all potential protein IDs
 		// new API 
 		String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/get_string_ids";

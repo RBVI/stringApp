@@ -276,13 +276,17 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 				JSONObject uris = null;
 				// use alternative config URI if available and otherwise retrieve the default one
 				// based on the app version
-				if (alternativeCONFIGURI != null && alternativeCONFIGURI.length() > 0) {
-					uris = ModelUtils.getResultsFromJSON(
-							HttpUtils.getJSON(alternativeCONFIGURI, args, manager),
-							JSONObject.class);
-				} else {
-					uris = ModelUtils.getResultsFromJSON(HttpUtils.getJSON(url, args, manager),
-							JSONObject.class);
+				try {
+					if (alternativeCONFIGURI != null && alternativeCONFIGURI.length() > 0) {
+						uris = ModelUtils.getResultsFromJSON(
+								HttpUtils.getJSON(alternativeCONFIGURI, args, manager),
+								JSONObject.class);
+					} else {
+						uris = ModelUtils.getResultsFromJSON(HttpUtils.getJSON(url, args, manager),
+								JSONObject.class);
+					}
+				} catch (ConnectionException e) {
+					e.printStackTrace();
 				}
 				if (uris != null) {
 					if (uris.containsKey("URI")) {

@@ -43,6 +43,7 @@ import org.cytoscape.work.util.BoundedDouble;
 import org.cytoscape.work.util.ListSingleSelection;
 
 import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
+import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
@@ -190,8 +191,15 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		}
 
 		// Get the annotations
-		Map<String, List<Annotation>> annotations = 
-			stringNetwork.getAnnotations(taxon, terms, Databases.STRING.getAPIName(), false);
+		Map<String, List<Annotation>> annotations;
+		try {
+			annotations = stringNetwork.getAnnotations(taxon, terms, Databases.STRING.getAPIName(), false);
+		} catch (ConnectionException e) {
+			e.printStackTrace();
+			monitor.showMessage(TaskMonitor.Level.ERROR,
+					"Cannot connect to " + Databases.STRING.getAPIName());
+			throw new RuntimeException("Cannot connect to " + Databases.STRING.getAPIName());
+		}
 
 		if (annotations == null || annotations.size() == 0) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,

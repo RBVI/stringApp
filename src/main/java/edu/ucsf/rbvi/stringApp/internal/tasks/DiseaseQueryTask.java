@@ -102,6 +102,10 @@ public class DiseaseQueryTask extends AbstractTask implements ObservableTask {
 		// Create the network from a disease query
 		GetDiseaseTermsTask dTask = new GetDiseaseTermsTask(manager, sp.getTaxId(), disease);
 		manager.execute(new TaskIterator(dTask), true);
+		if(dTask.hasError()) {
+			monitor.showMessage(TaskMonitor.Level.ERROR, dTask.getErrorMessage());
+			return;
+		}
 		List<EntityIdentifier> matches = dTask.getMatchedTerms();
 		if (matches == null || matches.size() == 0) {
 			monitor.showMessage(TaskMonitor.Level.ERROR, "Query '"+disease+"' returned no results");
