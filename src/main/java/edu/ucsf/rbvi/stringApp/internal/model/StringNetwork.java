@@ -3,9 +3,12 @@ package edu.ucsf.rbvi.stringApp.internal.model;
 import java.net.URLEncoder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.simple.JSONObject;
 
@@ -142,8 +145,11 @@ public class StringNetwork {
 		// return new HashMap<String, List<Annotation>>();
 		// }
 
+		// make list of terms unique
+		Set<String> termsSet = new HashSet<String>(Arrays.asList(encTerms.split("\n")));
+		Object[] termsArray = termsSet.toArray();
+		
 		// Split the terms up into groups of 5000
-		String[] termsArray = encTerms.split("\n");
 		annotations = new HashMap<>();
 		for (int i = 0; i < termsArray.length; i = i + 5000) {
 			String termsBatch = getTerms(termsArray, i, i + 5000, termsArray.length);
@@ -221,8 +227,8 @@ public class StringNetwork {
 		return annotations;
 	}
 
-	private String getTerms(String[] termsArray, int start, int end, int length) {
-		if (length == 1) return termsArray[0];
+	private String getTerms(Object[] termsArray, int start, int end, int length) {
+		if (length == 1) return (String)termsArray[0];
 		if (end > length) end = length;
 		StringBuilder terms = null;
 		for (int i = start; i < (end); i++) {

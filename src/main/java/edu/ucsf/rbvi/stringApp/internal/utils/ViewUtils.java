@@ -61,7 +61,8 @@ public class ViewUtils {
 		// if (useHost)
 		//	updateColorMapHost(manager, stringStyle, netView);
 		// else
-		updateColorMap(manager, stringStyle, network);
+		if (manager.showStringColors())
+			updateColorMap(manager, stringStyle, network);
 		updateEnhancedLabels(manager, stringStyle, network, manager.showEnhancedLabels());
 		updateGlassBallEffect(manager, stringStyle, network, manager.showGlassBallEffect());
 		
