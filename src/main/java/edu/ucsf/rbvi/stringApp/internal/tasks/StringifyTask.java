@@ -193,7 +193,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		// Get the annotations
 		Map<String, List<Annotation>> annotations;
 		try {
-			annotations = stringNetwork.getAnnotations(taxon, terms, Databases.STRING.getAPIName(), false);
+			annotations = stringNetwork.getAnnotations(taxon, terms, Databases.STITCH.getAPIName(), false);
 		} catch (ConnectionException e) {
 			e.printStackTrace();
 			monitor.showMessage(TaskMonitor.Level.ERROR,
