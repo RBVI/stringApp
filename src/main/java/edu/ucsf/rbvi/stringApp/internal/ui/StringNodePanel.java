@@ -407,6 +407,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		EasyGBC c = new EasyGBC();
 		panel.setLayout(new GridBagLayout());
 
+		if (sNode.isStringNode())
 		{
 			JLabel lbl = new JLabel("Crosslinks");
 			lbl.setFont(labelFont);
@@ -466,7 +467,7 @@ public class StringNodePanel extends AbstractStringPanel {
 			panel.add(crosslinkPanel, c.anchor("west").down().noExpand());
 		}
 
-		{
+		if (sNode.getDescription() != null) {
 			JLabel lbl = new JLabel("Description");
 			lbl.setFont(labelFont);
 			lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -480,7 +481,7 @@ public class StringNodePanel extends AbstractStringPanel {
 
 		}
 
-		{
+		if (sNode.getStructureImage() != null) {
 			JLabel lbl = new JLabel("Structure");
 			lbl.setFont(labelFont);
 			lbl.setBorder(BorderFactory.createEmptyBorder(10,2,5,0));
@@ -498,7 +499,9 @@ public class StringNodePanel extends AbstractStringPanel {
 			}
 		}
 
-		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, sNode.getDisplayName(), panel, false, 10);
+		String name = sNode.getDisplayName();
+		if (name == null) name = sNode.getName();
+		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, name, panel, false, 10);
 		Border etchedBorder = BorderFactory.createEtchedBorder();
 		Border emptyBorder = BorderFactory.createEmptyBorder(0,5,0,0);
 		collapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));

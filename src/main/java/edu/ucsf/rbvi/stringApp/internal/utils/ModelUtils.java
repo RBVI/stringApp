@@ -1663,6 +1663,21 @@ public class ModelUtils {
 		}
 	}
 
+	public static void copyNodes(CyNetwork fromNetwork, CyNetwork toNetwork, Map<String, CyNode> nodeMap, 
+	                             String keyColumn, List<String> toColumns) {
+		for (CyNode node: fromNetwork.getNodeList()) {
+			String key = fromNetwork.getRow(node).get(keyColumn, String.class);
+			if (!nodeMap.containsKey(key)) {
+				CyNode newNode = toNetwork.addNode();
+				nodeMap.put(key, newNode);
+				toNetwork.getRow(newNode).set(CyNetwork.NAME, key);
+				for (String col: toColumns) {
+					toNetwork.getRow(newNode).set(col, key);
+				}
+			}
+		}
+	}
+
 	public static void createNodeMap(CyNetwork network, Map<String, CyNode> nodeMap, String column) {
 		// Get all of the nodes in the network
 		for (CyNode node: network.getNodeList()) {

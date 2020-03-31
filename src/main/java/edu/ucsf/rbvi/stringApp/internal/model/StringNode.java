@@ -41,6 +41,12 @@ public class StringNode {
 		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.STRINGID);
 	}
 
+	public boolean isStringNode() {
+		if (ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.STRINGID) == null)
+			return false;
+		return true;
+	}
+
 	public boolean haveUniprot() {
 		return (getUniprot() != null && !getUniprot().equals(""));
 	}
@@ -100,7 +106,8 @@ public class StringNode {
 		// return haveData("pharos ", 4);
 		// pharos* columns were renamed to target*
 		// every human protein is in pharos as of now
-		return (getSpecies() != null && getSpecies().equals("Homo sapiens") && getNodeType().equals("protein"));
+		return (getSpecies() != null && getSpecies().equals("Homo sapiens") && 
+		        getNodeType() != null && getNodeType().equals("protein"));
 	}
 
 	public String getPharos() {
@@ -132,7 +139,9 @@ public class StringNode {
 	}
 	
 	public boolean havePubChem() {
-		return getNodeType().equals("compound");
+		if (getNodeType() != null && getNodeType().equals("compound")) 
+			return true;
+		return false;
 	}
 
 	public String getPubChem() {
@@ -154,7 +163,8 @@ public class StringNode {
 		BufferedImage bi = null;
 
 		String input = ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.STYLE);
-		if (input != null && input.startsWith("string:data:")) {
+		if (input == null) return null;
+		if (input.startsWith("string:data:")) {
 			input = input.substring(input.indexOf(","));
 		}
 		byte[] byteStream = Base64.decodeBase64(input);

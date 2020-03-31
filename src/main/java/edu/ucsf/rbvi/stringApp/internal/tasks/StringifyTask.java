@@ -359,6 +359,13 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 			// Get all of the nodes in the network
 			ModelUtils.createNodeMap(loadedNetwork, nodeMap, ModelUtils.QUERYTERM);
 
+			List<String> cols = new ArrayList();
+			cols.add(ModelUtils.QUERYTERM);
+			cols.add(ModelUtils.DISPLAY);
+
+			// Copy over any missing nodes that we didn't find in STRING
+			ModelUtils.copyNodes(network, loadedNetwork, nodeMap, column, cols);
+
 			// TODO: think about that once more
 			// we could also check for string network -> !ModelUtils.isStringNetwork(net) 
 			if (cutoff.getValue() == 1.0)
