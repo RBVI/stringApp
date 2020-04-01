@@ -59,13 +59,15 @@ public class LoadInteractions extends AbstractTask {
 	}
 
 	public void run(TaskMonitor monitor) {
+		// make sure the list of resolved IDs is unique
+		Set<String> uniqueIds = new HashSet<String>(stringIds);
 		if (useDATABASE.equals(Databases.STRING.getAPIName()))
-			monitor.setTitle("Loading data from STRING for " + stringIds.size() + " identifiers.");
+			monitor.setTitle("Loading data from STRING for " + uniqueIds.size() + " identifiers.");
 		else if (useDATABASE.equals(Databases.STITCH.getAPIName()))
-			monitor.setTitle("Loading data from STITCH for " + stringIds.size() + " identifiers.");
+			monitor.setTitle("Loading data from STITCH for " + uniqueIds.size() + " identifiers.");
 		StringManager manager = stringNet.getManager();
 		String ids = null;
-		for (String id: stringIds) {
+		for (String id: uniqueIds) {
 			if (ids == null)
 				ids = id;
 			else
