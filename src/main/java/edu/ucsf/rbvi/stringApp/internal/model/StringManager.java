@@ -517,6 +517,11 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		execute(ti, true);
 	}
 
+	public TaskIterator getCommandTaskIterator(String namespace, String command, 
+	                           Map<String, Object> args, TaskObserver observer) {
+		return commandExecutorTaskFactory.createTaskIterator(namespace, command, args, observer);
+	}
+
 	public String getDataVersion() {
 		return DATAVERSION;
 	}
@@ -858,6 +863,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	public boolean haveURIs() {
 		return haveURIs;
+	}
+
+	public boolean haveEnrichmentMap() {
+		return availableCommands.getNamespaces().contains("enrichmentmap");
 	}
 
 	public boolean haveChemViz() {

@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -81,6 +82,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTableTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.FilterEnrichmentTableTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.EnrichmentMapTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.EnrichmentSettingsTask;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.TextIcon;
@@ -105,11 +107,15 @@ public class EnrichmentCytoPanel extends JPanel
 	JButton butAnalyzedNodes;
 	JButton butExportTable;
 	JButton butFilter;
+	JButton butEnrichmentMap;
 	JLabel labelPPIEnrichment;
 	JLabel labelRows;
 	JMenuItem menuItemReset; 
 	JPopupMenu popupMenu;
 	EnrichmentTableModel tableModel;
+
+	CyTable filteredEnrichmentTable = null;
+
 	final CyColorPaletteChooserFactory colorChooserFactory;
 	private static final Icon chartIcon = new ImageIcon(
       EnrichmentCytoPanel.class.getResource("/images/chart20.png"));
@@ -123,6 +129,7 @@ public class EnrichmentCytoPanel extends JPanel
 	final String butFilterName = "Filter enrichment table";
 	final String butDrawChartsName = "Draw charts using default color palette";
 	final String butResetChartsName = "Reset charts";
+	final String butEnrichmentMapName = "Create EnrichmentMap";
 	final String butAnalyzedNodesName = "Select all analyzed nodes";
 	final String butExportTableDescr = "Export enrichment table";
 	
@@ -202,16 +209,23 @@ public class EnrichmentCytoPanel extends JPanel
 		//	System.out.println("Table got filtered from " + tableModel.getAllRowCount() + " to " + tableModel.getRowCount() + " rows." );
 		// } 
 
-		if (column != EnrichmentTerm.chartColumnCol)
-			return;
+		// if (column != EnrichmentTerm.chartColumnCol)
+		// 	return;
 		// int row = e.getFirstRow();
 		// TableModel model = (TableModel)e.getSource();
 		// String columnName = model.getColumnName(column);
 		// Object data = model.getValueAt(row, column);
-		Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
-		if (preselectedTerms.size() > 0) {
-			ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network));
+		if (column == EnrichmentTerm.chartColumnCol) {
+			Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
+			if (preselectedTerms.size() > 0) {
+				ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network));
+			}
 		}
+
+		updateFilteredEnrichmentTable();
+
+		JTable currentTable = enrichmentTables.get(showTable);
+		currentTable.tableChanged(e);
 	}
 
 	// TODO: make this network-specific
@@ -249,6 +263,9 @@ public class EnrichmentCytoPanel extends JPanel
 		} else if (e.getSource().equals(butResetCharts)) {
 			// reset colors and selection
 			resetCharts();
+		} else if (e.getSource().equals(butEnrichmentMap)) {
+			// reset colors and selection
+			drawEnrichmentMap();
 		} else if (e.getSource().equals(butAnalyzedNodes)) {
 			List<CyNode> analyzedNodes = ModelUtils.getEnrichmentNodes(network);  
 			if (network == null || analyzedNodes == null)
@@ -320,7 +337,10 @@ public class EnrichmentCytoPanel extends JPanel
 			// boxTables.setSelectedItem(showTable);
 			// boxTables.addActionListener(this);
 
-			JPanel buttonsPanelLeft = new JPanel(new GridLayout(1, 3)); 
+			// JPanel buttonsPanelLeft = new JPanel(new GridLayout(1, 3)); 
+			JPanel buttonsPanelLeft = new JPanel();
+			BoxLayout layout = new BoxLayout(buttonsPanelLeft, BoxLayout.LINE_AXIS);
+			buttonsPanelLeft.setLayout(layout);
 			butFilter = new JButton(IconManager.ICON_FILTER);
 			butFilter.setFont(iconFont);
 			butFilter.addActionListener(this);
@@ -328,7 +348,7 @@ public class EnrichmentCytoPanel extends JPanel
 			butFilter.setBorderPainted(false);
 			butFilter.setContentAreaFilled(false);
 			butFilter.setFocusPainted(false);
-			butFilter.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+			butFilter.setBorder(BorderFactory.createEmptyBorder(2,10,2,4));
 
 			butDrawCharts = new JButton(chartIcon);
 			butDrawCharts.addActionListener(this);
@@ -336,7 +356,7 @@ public class EnrichmentCytoPanel extends JPanel
 			butDrawCharts.setBorderPainted(false);
 			butDrawCharts.setContentAreaFilled(false);
 			butDrawCharts.setFocusPainted(false);
-			butDrawCharts.setBorder(BorderFactory.createEmptyBorder(2,0,2,2));
+			butDrawCharts.setBorder(BorderFactory.createEmptyBorder(2,4,2,4));
 
 
 			butResetCharts = new JButton(IconManager.ICON_CIRCLE_O);
@@ -346,11 +366,21 @@ public class EnrichmentCytoPanel extends JPanel
 			butResetCharts.setBorderPainted(false);
 			butResetCharts.setContentAreaFilled(false);
 			butResetCharts.setFocusPainted(false);
-			butResetCharts.setBorder(BorderFactory.createEmptyBorder(2,2,2,20));
+			butResetCharts.setBorder(BorderFactory.createEmptyBorder(2,4,2,4));
+
+			// Add enrichment map button here if EnrichmentMap is loaded
+			butEnrichmentMap = new JButton(new ImageIcon(getClass().getClassLoader().getResource("/images/em_logo.png")));
+			butEnrichmentMap.addActionListener(this);
+			butEnrichmentMap.setToolTipText(butEnrichmentMapName);
+			butEnrichmentMap.setBorderPainted(false);
+			butEnrichmentMap.setContentAreaFilled(false);
+			butEnrichmentMap.setFocusPainted(false);
+			butEnrichmentMap.setBorder(BorderFactory.createEmptyBorder(2,4,2,20));
 
 			buttonsPanelLeft.add(butFilter);
 			buttonsPanelLeft.add(butDrawCharts);
 			buttonsPanelLeft.add(butResetCharts);
+			if (manager.haveEnrichmentMap()) buttonsPanelLeft.add(butEnrichmentMap);
 			
 			JPanel buttonsPanelRight = new JPanel(new GridLayout(1, 3)); 
 			butAnalyzedNodes = new JButton(IconManager.ICON_CHECK_SQUARE_O);			
@@ -400,6 +430,7 @@ public class EnrichmentCytoPanel extends JPanel
 			// System.out.println("show table: " + showTable);
 			if (tableModel != null) {
 				tableModel.filter(manager.getCategoryFilter(network), manager.getRemoveOverlap(network), manager.getOverlapCutoff(network));
+				updateFilteredEnrichmentTable();
 			}			
 			
 			labelRows = new JLabel("");
@@ -629,6 +660,14 @@ public class EnrichmentCytoPanel extends JPanel
 		}
 		ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network));
 	}
+
+	public void drawEnrichmentMap() {
+		CyNetwork network = manager.getCurrentNetwork();
+		if (network == null)
+			return;
+
+		manager.execute(new TaskIterator(new EnrichmentMapTask(manager, network, getFilteredTable())));
+	}
 	
 	public void updateLabelRows() {
 		if (tableModel == null)
@@ -724,8 +763,9 @@ public class EnrichmentCytoPanel extends JPanel
 			//return selectedTerms;
 			return null;
 
-		CyTable currTable = ModelUtils.getEnrichmentTable(manager, network,
-				TermCategory.ALL.getTable());
+		if (filteredEnrichmentTable != null) return filteredEnrichmentTable;
+
+		CyTable currTable = ModelUtils.getEnrichmentTable(manager, network, TermCategory.ALL.getTable());
 
 		if (currTable == null || currTable.getRowCount() == 0) {
 			return null;
@@ -733,16 +773,33 @@ public class EnrichmentCytoPanel extends JPanel
 		
 		CyTableFactory tableFactory = manager.getService(CyTableFactory.class);
 		CyTableManager tableManager = manager.getService(CyTableManager.class);
-		CyTable filtTable = tableFactory.createTable(TermCategory.ALLFILTERED.getTable(), EnrichmentTerm.colID, Long.class, false,
-				true);
-		filtTable.setSavePolicy(SavePolicy.DO_NOT_SAVE);
-		tableManager.addTable(filtTable);
-		ModelUtils.setupEnrichmentTable(filtTable);
+		filteredEnrichmentTable = tableFactory.createTable(TermCategory.ALLFILTERED.getTable(), 
+		                                                   EnrichmentTerm.colID, Long.class, false, true);
+		filteredEnrichmentTable.setTitle("STRING Enrichment: filtered");
+		filteredEnrichmentTable.setSavePolicy(SavePolicy.DO_NOT_SAVE);
+		tableManager.addTable(filteredEnrichmentTable);
+		ModelUtils.setupEnrichmentTable(filteredEnrichmentTable);
+
+		updateFilteredEnrichmentTable();
+
+		return filteredEnrichmentTable;
+	}
+
+	public void updateFilteredEnrichmentTable() {
+		if (filteredEnrichmentTable == null) 
+			getFilteredTable();
+
+		CyNetwork network = manager.getCurrentNetwork();
+		if (network == null || tableModel == null)
+			return;
+
+		CyTable currTable = ModelUtils.getEnrichmentTable(manager, network, TermCategory.ALL.getTable());
+		if (currTable == null) return;
 
 		Long[] rowNames = tableModel.getRowNames();
 		for (int i = 0; i < rowNames.length; i++) {
 			CyRow row = currTable.getRow(rowNames[i]);
-			CyRow filtRow = filtTable.getRow(rowNames[i]);
+			CyRow filtRow = filteredEnrichmentTable.getRow(rowNames[i]);
 			filtRow.set(EnrichmentTerm.colName, row.get(EnrichmentTerm.colName, String.class));
 			filtRow.set(EnrichmentTerm.colIDPubl, "");
 			filtRow.set(EnrichmentTerm.colYear, row.get(EnrichmentTerm.colYear, Integer.class));
@@ -757,6 +814,5 @@ public class EnrichmentCytoPanel extends JPanel
 			// filtRow.set(EnrichmentTerm.colShowChart, false);
 			filtRow.set(EnrichmentTerm.colChartColor, "");
 		}
-		return filtTable;
 	}
 }
