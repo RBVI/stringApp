@@ -796,6 +796,8 @@ public class EnrichmentCytoPanel extends JPanel
 		CyTable currTable = ModelUtils.getEnrichmentTable(manager, network, TermCategory.ALL.getTable());
 		if (currTable == null) return;
 
+		filteredEnrichmentTable.deleteRows(filteredEnrichmentTable.getPrimaryKey().getValues(Long.class));
+
 		Long[] rowNames = tableModel.getRowNames();
 		for (int i = 0; i < rowNames.length; i++) {
 			CyRow row = currTable.getRow(rowNames[i]);
