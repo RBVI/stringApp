@@ -26,14 +26,19 @@ public class EnrichmentMapTask extends AbstractTask {
 	@Tunable(description="Similarity cutoff", 
 	         longDescription="The cutoff for the Jaccard similarity of terms.  "+
 					                 "Higher values mean fewer terms but more understandable networks. "+
-													 "Good values for disease networks are 0.8 or 0.9", params="slider=true")
+													 "Good values for disease networks are 0.8 or 0.9",
+			tooltip="<html>The cutoff for the Jaccard similarity of terms. <br /> "+
+					"Higher values mean fewer terms but more understandable <br />"+
+					"networks. Good values for disease networks are 0.8 or 0.9. </html>",
+													 params="slider=true")
 	public BoundedDouble similarity = new BoundedDouble(0.0, 0.5, 1.0, true, true);
 
 	// FDR cutoff
 	@Tunable(description="FDR cutoff", 
-	         longDescription="The FDR cutoff for terms.  Terms with FDR values larger than this will be dropped",
+	         longDescription="The FDR cutoff for terms.  Terms with FDR values larger than this will be dropped.",
+	         tooltip="Terms with FDR values larger than this cutoff will be dropped",
 					 params="slider=true")
-	public BoundedDouble FDRcutoff = new BoundedDouble(0.0, 0.05, 0.5, true, false);
+	public BoundedDouble FDRcutoff = new BoundedDouble(0.0, 0.05, 0.1, true, false);
 	
 	public EnrichmentMapTask(final StringManager manager, final CyNetwork network, final CyTable filteredEnrichmentTable) {
 		this.manager = manager;
@@ -51,6 +56,7 @@ public class EnrichmentMapTask extends AbstractTask {
 	@Override
 	public void run(TaskMonitor arg0) throws Exception {
 		Map<String, Object> args = new HashMap<>();
+		args.put("networkName", mapName);
 		args.put("pvalueColumn","FDR value");
 		args.put("genesColumn","genes");
 		args.put("nameColumn","term name");
