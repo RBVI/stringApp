@@ -106,8 +106,7 @@ public class StringNode {
 		// return haveData("pharos ", 4);
 		// pharos* columns were renamed to target*
 		// every human protein is in pharos as of now
-		return (getSpecies() != null && getSpecies().equals("Homo sapiens") && 
-		        getNodeType() != null && getNodeType().equals("protein"));
+		return (haveUniprot() && getSpecies().equals("Homo sapiens"));
 	}
 
 	public String getPharos() {
