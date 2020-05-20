@@ -977,8 +977,8 @@ public class ModelUtils {
 		if (net == null || node == null)
 			return false;
 
-		String ns = net.getRow(node).get(ID, String.class);
-		return getType(ns).equals("compound");
+		String type = net.getRow(node).get(TYPE, String.class);
+		return type != null && type.equals("compound");
 	}
 
 	private static String getType(String id) {
@@ -1644,20 +1644,22 @@ public class ModelUtils {
 
 	public static void copyRow(CyTable fromTable, CyTable toTable, CyIdentifiable from, CyIdentifiable to, List<String> columnsCreated) {
 		for (CyColumn col: fromTable.getColumns()) {
-			if (!columnsCreated.contains(col.getName()))
-				continue;
+			// TODO: Is it OK to not check for this?
+			//if (!columnsCreated.contains(col.getName()))
+			//	continue;
 			if (col.getName().equals(CyNetwork.SUID)) 
 				continue;
-			if (col.getName().equals(CyNetwork.NAME)) 
+			if (from.getClass().equals(CyNode.class) && col.getName().equals(CyNetwork.NAME)) 
 				continue;
 			if (col.getName().equals(CyNetwork.SELECTED)) 
 				continue;
-			if (col.getName().equals(CyRootNetwork.SHARED_NAME)) 
+			if (from.getClass().equals(CyNode.class) && col.getName().equals(CyRootNetwork.SHARED_NAME)) 
 				continue;
-			if (from.getClass().equals(CyEdge.class) && col.getName().equals(CyRootNetwork.SHARED_INTERACTION)) 
-				continue;
-			if (from.getClass().equals(CyEdge.class) && col.getName().equals(CyEdge.INTERACTION)) 
-				continue;
+			// TODO: Is it OK to overwrite interaction type? 
+			//if (from.getClass().equals(CyEdge.class) && col.getName().equals(CyRootNetwork.SHARED_INTERACTION)) 
+			//	continue;
+			//if (from.getClass().equals(CyEdge.class) && col.getName().equals(CyEdge.INTERACTION)) 
+			//	continue;
 			Object v = fromTable.getRow(from.getSUID()).getRaw(col.getName());
 			toTable.getRow(to.getSUID()).set(col.getName(), v);
 		}

@@ -75,6 +75,12 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	         context="gui", required=true)
 	public ListSingleSelection<CyColumn> tableColumn = null;
 
+	@Tunable(description="Include not-mapping nodes", 
+	         longDescription="Option for choosing if nodes that cannot be mapped to "
+	         		+ "STRING identifiers should be included in the new network or not",
+	         exampleStringValue="true")
+	public boolean includeNotMapped = true;
+
 	@Tunable(description="Column to use for STRING query", 
 	         longDescription="Select the column to use to query for STRING nodes",
 	         exampleStringValue="name",
@@ -226,7 +232,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 			throw new RuntimeException("Query '"+terms+"' returned no results");
 		}
 
-		CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork);
+		CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork, includeNotMapped);
 		copyTask.run(monitor);
 	}
 
@@ -260,7 +266,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 			importNetwork(taxon, (int)(cutoff.getValue()*100), additionalNodes);
 
 			// Creating the copyTask
-			CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork);
+			CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork, includeNotMapped);
 			copyTask.run(monitor);
 		} else {
 			SwingUtilities.invokeLater(new Runnable() {
@@ -270,7 +276,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 					d.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 					// GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, Databases.STRING.getAPIName(), 
 					//                                         getSpecies(), false, getConfidence(), getAdditionalNodes());
-					CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork);
+					CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork, includeNotMapped);
 					GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, 
 					                                        Databases.STRING.getAPIName(), false, 
 					                                        optionsPanel, copyTask);
@@ -345,12 +351,14 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		CyNetwork network;
 		StringNetwork stringNetwork;
 		StringManager manager;
+		boolean copyNotMappedNodes;
 
-		CopyTask(StringManager manager, String col, CyNetwork network, StringNetwork stringNetwork) {
+		CopyTask(StringManager manager, String col, CyNetwork network, StringNetwork stringNetwork, boolean includeNotMapped) {
 			this.manager = manager;
 			this.column = col;
 			this.network = network;
 			this.stringNetwork = stringNetwork;
+			this.copyNotMappedNodes = includeNotMapped;
 		}
 
 		public void run(TaskMonitor monitor) {
@@ -364,7 +372,8 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 			cols.add(ModelUtils.DISPLAY);
 
 			// Copy over any missing nodes that we didn't find in STRING
-			ModelUtils.copyNodes(network, loadedNetwork, nodeMap, column, cols);
+			if (copyNotMappedNodes)
+				ModelUtils.copyNodes(network, loadedNetwork, nodeMap, column, cols);
 
 			// TODO: think about that once more
 			// we could also check for string network -> !ModelUtils.isStringNetwork(net) 
