@@ -31,7 +31,7 @@ public class GetAnnotationsTask extends AbstractTask implements ObservableTask {
 	public void run(TaskMonitor monitor) {
 		monitor.setTitle("Getting annotations");
 		try {
-			annotations = stringNetwork.getAnnotations(taxon, terms, useDATABASE, true);
+			annotations = stringNetwork.getAnnotations(stringNetwork.getManager(), taxon, terms, useDATABASE, true);
 		} catch (ConnectionException e) {
 			e.printStackTrace();
 			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());

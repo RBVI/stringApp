@@ -131,7 +131,7 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 		// Get the annotations
 		Map<String, List<Annotation>> annotations;
 		try {
-			annotations = stringNetwork.getAnnotations(sp.getTaxId(),
+			annotations = stringNetwork.getAnnotations(manager, sp.getTaxId(),
 					query, Databases.STRING.getAPIName(), includesViruses);
 		} catch (ConnectionException e) {
 			e.printStackTrace();

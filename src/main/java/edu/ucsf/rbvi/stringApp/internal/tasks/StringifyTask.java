@@ -56,6 +56,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	final StringManager manager;
 	private StringNetwork stringNetwork;
 	private CyNetwork net;
+	private String netName;
 	private CyNetwork loadedNetwork = null;
 	private int additionalNodes = 0;
 	private SearchOptionsPanel optionsPanel = null;
@@ -67,7 +68,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	         longDescription=StringToModel.CY_NETWORK_LONG_DESCRIPTION,
 	         exampleStringValue=StringToModel.CY_NETWORK_EXAMPLE_STRING,
 	         context="nogui", required=true)
-	public CyNetwork network = null;
+	public CyNetwork networkNoGui = null;
 
 	@Tunable(description="Column to use for STRING query", 
 	         longDescription="Select the column to use to query for STRING nodes",
@@ -106,6 +107,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	public StringifyTask(final StringManager manager, final CyNetwork net) {
 		this.manager = manager;
 		this.net = net;
+		this.netName = "";
 		species = new ListSingleSelection<Species>(Species.getSpecies());
 		species.setSelectedValue(Species.getSpecies("Homo sapiens"));
 		if (net != null) {
@@ -121,6 +123,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	public StringifyTask(final StringManager manager, final CyNetwork net, double confidence, Species sp, String nodeColumn) {
 		this.manager = manager;
 		this.net = net;
+		this.netName = "";
 		species = new ListSingleSelection<Species>(Species.getSpecies());
 		species.setSelectedValue(sp);
 		if (net != null) {
@@ -138,8 +141,8 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		this.monitor = monitor;
 		monitor.setTitle("Stringify network");
 
-		if (network != null) {
-			net = network;
+		if (networkNoGui != null) {
+			net = networkNoGui;
 			tableColumn = null;
 		} else if (net == null) {
 			net = manager.getService(CyApplicationManager.class).getCurrentNetwork();
@@ -156,6 +159,8 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 			return;
 		}
 
+		netName = net.getDefaultNetworkTable().getRow(net.getSUID()).get(CyNetwork.NAME, String.class);
+		
 		CyColumn col = null;
 		if (tableColumn != null)
 			col = tableColumn.getSelectedValue();
@@ -199,7 +204,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		// Get the annotations
 		Map<String, List<Annotation>> annotations;
 		try {
-			annotations = stringNetwork.getAnnotations(taxon, terms, Databases.STITCH.getAPIName(), false);
+			annotations = stringNetwork.getAnnotations(manager, taxon, terms, Databases.STITCH.getAPIName(), false);
 		} catch (ConnectionException e) {
 			e.printStackTrace();
 			monitor.showMessage(TaskMonitor.Level.ERROR,
@@ -225,7 +230,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
 		LoadInteractions load = 
 				new LoadInteractions(stringNetwork, species.toString(), taxon, 
-						(int)(cutoff.getValue()*100), additionalNodes, stringIds, queryTermMap, "", Databases.STRING.getAPIName());
+						(int)(cutoff.getValue()*100), additionalNodes, stringIds, queryTermMap, netName, Databases.STRING.getAPIName());
 		manager.execute(new TaskIterator(load), true);
 		loadedNetwork = stringNetwork.getNetwork();
 		if (loadedNetwork == null) {
@@ -279,7 +284,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 					CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork, includeNotMapped);
 					GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, 
 					                                        Databases.STRING.getAPIName(), false, 
-					                                        optionsPanel, copyTask);
+					                                        optionsPanel, netName, copyTask);
 					panel.createResolutionPanel();
 					d.setContentPane(panel);
 					d.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -303,7 +308,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
 		TaskFactory factory = new ImportNetworkTaskFactory(stringNetwork, getSpecies(), 
 		                                                   taxon, confidence, additionalNodes, stringIds,
-		                                                   queryTermMap, Databases.STRING.getAPIName());
+		                                                   queryTermMap, netName, Databases.STRING.getAPIName());
 		if (optionsPanel.getLoadEnrichment())
 			manager.execute(factory.createTaskIterator(), this, true);
 		else

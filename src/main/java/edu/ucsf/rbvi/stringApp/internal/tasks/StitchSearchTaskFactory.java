@@ -245,7 +245,7 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 		// System.out.println("Importing "+stringIds);
 		TaskFactory factory = new ImportNetworkTaskFactory(stringNetwork, getSpecies(), 
 		                                                   taxon, confidence, additionalNodes, stringIds,
-																											 queryTermMap, Databases.STITCH.getAPIName());
+																											 queryTermMap, "", Databases.STITCH.getAPIName());
 		manager.execute(factory.createTaskIterator());
 	}
 

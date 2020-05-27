@@ -241,7 +241,7 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 		// System.out.println("Importing "+stringIds);
 		TaskFactory factory = new ImportNetworkTaskFactory(stringNetwork, getSpecies(), 
 		                                                   taxon, confidence, additionalNodes, stringIds,
-		                                                   queryTermMap, Databases.STRING.getAPIName());
+		                                                   queryTermMap, "", Databases.STRING.getAPIName());
 		if (optionsPanel.getLoadEnrichment())
 			manager.execute(factory.createTaskIterator(), this);
 		else

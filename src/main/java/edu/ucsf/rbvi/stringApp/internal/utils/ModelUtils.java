@@ -1669,7 +1669,8 @@ public class ModelUtils {
 	                             String keyColumn, List<String> toColumns) {
 		for (CyNode node: fromNetwork.getNodeList()) {
 			String key = fromNetwork.getRow(node).get(keyColumn, String.class);
-			if (!nodeMap.containsKey(key)) {
+			// TODO: double-check what happens when key == null
+			if (key != null && !nodeMap.containsKey(key)) {
 				CyNode newNode = toNetwork.addNode();
 				nodeMap.put(key, newNode);
 				toNetwork.getRow(newNode).set(CyNetwork.NAME, key);

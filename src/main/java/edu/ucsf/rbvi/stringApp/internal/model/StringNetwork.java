@@ -136,7 +136,7 @@ public class StringNetwork {
 
 	public Map<String, List<Annotation>> getAnnotations() { return annotations; }
 
-	public Map<String, List<Annotation>> getAnnotations(int taxon, final String terms, 
+	public Map<String, List<Annotation>> getAnnotations(StringManager manager, int taxon, final String terms, 
 	                                                    final String useDATABASE, boolean includeViruses) throws ConnectionException {
 		String encTerms = terms.trim();
 		// try {
@@ -155,6 +155,9 @@ public class StringNetwork {
 			String termsBatch = getTerms(termsArray, i, i + 5000, termsArray.length);
 			annotations = getAnnotationBatch(taxon, termsBatch, useDATABASE, includeViruses);
 		}
+		// check which identifiers could not be mapped
+		termsSet.removeAll(annotations.keySet());
+		manager.info("List of nodes that could not be mapped to any STRING identifier: " + termsSet);
 		return annotations;
 	}
 
