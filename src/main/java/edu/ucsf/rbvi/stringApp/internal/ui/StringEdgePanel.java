@@ -186,6 +186,9 @@ public class StringEdgePanel extends AbstractStringPanel {
 		CyNetworkView view = manager.getCurrentNetworkView();
 		for (CyEdge edge: currentNetwork.getEdgeList()) {
 			CyRow edgeRow = currentNetwork.getRow(edge);
+			Double edgeScore = edgeRow.get(ModelUtils.SCORE, Double.class);
+			if (edgeScore == null) 
+				continue;
 			boolean show = true;
 			for (String lbl: filter.keySet()) {
 				Double v = edgeRow.get(ModelUtils.STRINGDB_NAMESPACE, lbl.toLowerCase(), Double.class);
@@ -196,9 +199,12 @@ public class StringEdgePanel extends AbstractStringPanel {
 				}
 			}
 			if (show) {
-				view.getEdgeView(edge).setVisualProperty(BasicVisualLexicon.EDGE_VISIBLE, true);
+				// view.getEdgeView(edge).setVisualProperty(BasicVisualLexicon.EDGE_VISIBLE, true);
+				view.getEdgeView(edge).clearValueLock(BasicVisualLexicon.EDGE_VISIBLE);
 			} else {
-				view.getEdgeView(edge).setVisualProperty(BasicVisualLexicon.EDGE_VISIBLE, false);
+				// view.getEdgeView(edge).setVisualProperty(BasicVisualLexicon.EDGE_VISIBLE, false);
+				view.getEdgeView(edge).setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, false);
+				view.getModel().getRow(edge).set(CyNetwork.SELECTED, false);
 			}
 		}
 	}

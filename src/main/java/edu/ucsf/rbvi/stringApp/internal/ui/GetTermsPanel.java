@@ -101,6 +101,8 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 	private String useDATABASE = Databases.STRING.getAPIName();
 	private String netSpecies = null;
 	private boolean queryAddNodes = false;
+	// from stringify
+	private String netName = "";
 	Task additionalTask = null;
 
 	public GetTermsPanel(final StringManager manager, final String useDATABASE, boolean queryAddNodes) {
@@ -140,17 +142,18 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 
 	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, 
 	                     String useDATABASE, boolean queryAddNodes, SearchOptionsPanel panel) {
-		this(manager, stringNetwork, useDATABASE, queryAddNodes, panel, null);
+		this(manager, stringNetwork, useDATABASE, queryAddNodes, panel, "", null);
 	}
 
 	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, 
 	                     String useDATABASE, boolean queryAddNodes, SearchOptionsPanel panel,
-	                     Task additionalTask) {
+	                     String netName, Task additionalTask) {
 		super(new GridBagLayout());
 		// System.out.println("Terms panel");
 		this.manager = manager;
 		this.stringNetwork = stringNetwork;
 		this.initialStringNetwork = stringNetwork;
+		this.netName = netName;
 		this.useDATABASE = useDATABASE;
 		if (panel == null) {
 			panel = new SearchOptionsPanel(manager, false, false, false);
@@ -378,11 +381,11 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		if (!queryAddNodes) {
 			factory = new ImportNetworkTaskFactory(stringNetwork, speciesCombo.getSelectedItem().toString(), 
 			                                       taxon, confidence, additionalNodes, stringIds,
-			                                       queryTermMap, useDATABASE);
+			                                       queryTermMap, netName, useDATABASE);
 		} else {
 			factory = new ImportNetworkTaskFactory(stringNetwork, (String)speciesPartnerCombo.getSelectedItem(), 
 			                                       taxon, confidence, additionalNodes, stringIds,
-			                                       queryTermMap, useDATABASE);
+			                                       queryTermMap, netName, useDATABASE);
 		}
 		cancel();
 		TaskIterator ti = factory.createTaskIterator();

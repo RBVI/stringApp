@@ -5,10 +5,12 @@
 		<bundle.symbolicName>stringApp</bundle.symbolicName>
 		<bundle.namespace>edu.ucsf.rbvi.stringApp.internal</bundle.namespace>
 		<cytoscape.api.version>3.8.0</cytoscape.api.version>
-    <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
-    <maven-surefire-plugin.version>3.0.0-M3</maven-surefire-plugin.version>
-    <maven-bundle-plugin.version>4.1.0</maven-bundle-plugin.version>
-    <osgi.api.version>6.0.0</osgi.api.version>
+
+		<maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+		<maven-surefire-plugin.version>3.0.0-M3</maven-surefire-plugin.version>
+		<maven-bundle-plugin.version>4.1.0</maven-bundle-plugin.version>
+		<osgi.api.version>6.0.0</osgi.api.version>
+
 	</properties>
 
 	<groupId>edu.ucsf.rbvi</groupId>
@@ -32,7 +34,7 @@
 						<Export-Package>!${bundle.namespace}.*</Export-Package>
 						<Private-Package>${bundle.namespace}.*,org.jcolorbrewer.*</Private-Package>
 						<Bundle-Activator>${bundle.namespace}.CyActivator</Bundle-Activator>
-						<Embed-Dependency>*;scope=!provided|!test</Embed-Dependency>
+						<Embed-Dependency>*;scope=!provided</Embed-Dependency>
 						<Embed-Transitive>true</Embed-Transitive>
 						<Import-Package>*;resolution:=optional</Import-Package>
 						<Cytoscape-App-Dependencies>
@@ -44,7 +46,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.3</version>
+				<version>${maven-compiler-plugin.version}</version>
         <configuration>
           <source>11</source>
           <target>11</target>
