@@ -370,6 +370,9 @@ public class StringNodePanel extends AbstractStringPanel {
 		CyNetwork net = view.getModel();
 		for (CyNode node: currentNetwork.getNodeList()) {
 			CyRow nodeRow = currentNetwork.getRow(node);
+			String nodeType = nodeRow.get(ModelUtils.TYPE, String.class);
+			if (nodeType == null || !nodeType.equals("protein"))
+				continue;
 			boolean show = true;
 			for (String lbl: filter.keySet()) {
 				Double v = nodeRow.get(type, lbl, Double.class);
