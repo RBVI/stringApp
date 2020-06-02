@@ -199,9 +199,12 @@ public class StringEdgePanel extends AbstractStringPanel {
 				}
 			}
 			if (show) {
-				view.getEdgeView(edge).setVisualProperty(BasicVisualLexicon.EDGE_VISIBLE, true);
+				// view.getEdgeView(edge).setVisualProperty(BasicVisualLexicon.EDGE_VISIBLE, true);
+				view.getEdgeView(edge).clearValueLock(BasicVisualLexicon.EDGE_VISIBLE);
 			} else {
-				view.getEdgeView(edge).setVisualProperty(BasicVisualLexicon.EDGE_VISIBLE, false);
+				// view.getEdgeView(edge).setVisualProperty(BasicVisualLexicon.EDGE_VISIBLE, false);
+				view.getEdgeView(edge).setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, false);
+				view.getModel().getRow(edge).set(CyNetwork.SELECTED, false);
 			}
 		}
 	}
