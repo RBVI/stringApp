@@ -76,8 +76,8 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	         context="gui", required=true)
 	public ListSingleSelection<CyColumn> tableColumn = null;
 
-	@Tunable(description="Include not-mapping nodes", 
-	         longDescription="Option for choosing if nodes that cannot be mapped to "
+	@Tunable(description="Include unmappable nodes", 
+	         longDescription="Option for choosing whether nodes that cannot be mapped to "
 	         		+ "STRING identifiers should be included in the new network or not",
 	         exampleStringValue="true")
 	public boolean includeNotMapped = true;
