@@ -1727,6 +1727,7 @@ public class ModelUtils {
 	                                     Map<String, CyNode> nodeMap, String column) {
 		CyNetworkView fromView = getNetworkView(manager, from);
 		CyNetworkView toView = getNetworkView(manager, to);
+		if (fromView == null || toView == null) return;
 		for (View<CyNode> nodeView: fromView.getNodeViews()) {
 			// Get the to node
 			String nodeKey = from.getRow(nodeView.getModel()).get(column, String.class);
