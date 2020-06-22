@@ -20,37 +20,40 @@ public class EnrichmentMapTask extends AbstractTask {
 
 	// Network name
 	@Tunable(description="Enrichment Map name")
-	public String mapName = "STRING Enrichment Map";
+	public String mapName = "Enrichment Map - String Network";
 
 	// Similarity cutoff
-	@Tunable(description="Similarity cutoff", 
-	         longDescription="The cutoff for the Jaccard similarity of terms.  "+
-					                 "Higher values mean fewer terms but more understandable networks. "+
-													 "Good values for disease networks are 0.8 or 0.9",
-			tooltip="<html>The cutoff for the Jaccard similarity of terms. <br /> "+
-					"Higher values mean fewer terms but more understandable <br />"+
-					"networks. Good values for disease networks are 0.8 or 0.9. </html>",
+	@Tunable(description="Jaccard-based connectivity cutoff", 
+	         longDescription="The cutoff for the lowest Jaccard similarity between terms.  "+
+						"Higher values mean more sparse connectivity while lower "
+						+ "values mean more dense network cobnnectivity. "
+						+ "Good values for disease networks are 0.8 or 0.9.",
+			tooltip="<html>The cutoff for the lowest Jaccard similarity of terms. <br /> "+
+					"Higher values mean more sparse connectivity while lower <br /> "
+					+ "values mean more dense network cobnnectivity. <br /> "
+					+ "Good values for disease networks are 0.8 or 0.9. </html>",
 													 params="slider=true")
 	public BoundedDouble similarity = new BoundedDouble(0.0, 0.5, 1.0, true, true);
 
 	// FDR cutoff
-	@Tunable(description="FDR cutoff", 
-	         longDescription="The FDR cutoff for terms.  Terms with FDR values larger than this will be dropped.",
-	         tooltip="Terms with FDR values larger than this cutoff will be dropped",
-					 params="slider=true")
-	public BoundedDouble FDRcutoff = new BoundedDouble(0.0, 0.05, 0.1, true, false);
+	//@Tunable(description="FDR cutoff", 
+	//         longDescription="The FDR cutoff for terms.  Terms with FDR values larger than this will be dropped.",
+	//         tooltip="Terms with FDR values larger than this cutoff will be dropped",
+	//				 params="slider=true")
+	//public BoundedDouble FDRcutoff = new BoundedDouble(0.0, 0.05, 0.1, true, false);
 	
 	public EnrichmentMapTask(final StringManager manager, final CyNetwork network, final CyTable filteredEnrichmentTable) {
 		this.manager = manager;
 		this.filteredEnrichmentTable = filteredEnrichmentTable;
 		String netName = network.getRow(network).get(CyNetwork.NAME, String.class);
-		if (netName.equals("String Network")) {
-			mapName = "Enrichment Map - String";
-		} else if (netName.startsWith("String Network")) {
-			mapName = "Enrichment Map "+netName.substring(15);
-		} else {
-			mapName = "Enrichment Map - "+netName;
-		}
+		mapName = "Enrichment Map - "+ netName;
+		//if (netName.equals("String Network")) {
+		//	mapName = "Enrichment Map - String";
+		//} else if (netName.startsWith("String Network")) {
+		//	mapName = "Enrichment Map "+netName.substring(15);
+		//} else {
+		//	mapName = "Enrichment Map - "+netName;
+		//}
 	}
 
 	@Override
@@ -64,7 +67,7 @@ public class EnrichmentMapTask extends AbstractTask {
 		args.put("table","SUID:"+String.valueOf(filteredEnrichmentTable.getSUID()));
 		args.put("coefficients","JACCARD");
 		args.put("similaritycutoff",String.valueOf(similarity.getValue()));
-		args.put("pvalue",FDRcutoff.getValue());
+		args.put("pvalue",0.05);
 		insertTasksAfterCurrentTask(manager.getCommandTaskIterator("enrichmentmap", "build-table", args, null));
 	}
 

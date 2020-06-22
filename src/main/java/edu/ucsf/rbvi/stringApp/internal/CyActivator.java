@@ -640,7 +640,8 @@ public class CyActivator extends AbstractCyActivator {
       registerService(bc, stringSearch, NetworkSearchTaskFactory.class, propsSearch);
     }
 
-		manager.info("String APP initialized");
+		manager.info("stringApp initialized");
+		System.out.println("stringApp initialized");
 	}
 
 }

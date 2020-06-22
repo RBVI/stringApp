@@ -339,8 +339,8 @@ public class EnrichmentCytoPanel extends JPanel
 
 			// JPanel buttonsPanelLeft = new JPanel(new GridLayout(1, 3)); 
 			JPanel buttonsPanelLeft = new JPanel();
-			BoxLayout layout = new BoxLayout(buttonsPanelLeft, BoxLayout.LINE_AXIS);
-			buttonsPanelLeft.setLayout(layout);
+			BoxLayout layoutLeft = new BoxLayout(buttonsPanelLeft, BoxLayout.LINE_AXIS);
+			buttonsPanelLeft.setLayout(layoutLeft);
 			butFilter = new JButton(IconManager.ICON_FILTER);
 			butFilter.setFont(iconFont);
 			butFilter.addActionListener(this);
@@ -348,7 +348,7 @@ public class EnrichmentCytoPanel extends JPanel
 			butFilter.setBorderPainted(false);
 			butFilter.setContentAreaFilled(false);
 			butFilter.setFocusPainted(false);
-			butFilter.setBorder(BorderFactory.createEmptyBorder(2,10,2,4));
+			butFilter.setBorder(BorderFactory.createEmptyBorder(2,10,2,10));
 
 			butDrawCharts = new JButton(chartIcon);
 			butDrawCharts.addActionListener(this);
@@ -356,7 +356,7 @@ public class EnrichmentCytoPanel extends JPanel
 			butDrawCharts.setBorderPainted(false);
 			butDrawCharts.setContentAreaFilled(false);
 			butDrawCharts.setFocusPainted(false);
-			butDrawCharts.setBorder(BorderFactory.createEmptyBorder(2,4,2,4));
+			butDrawCharts.setBorder(BorderFactory.createEmptyBorder(2,4,2,10));
 
 
 			butResetCharts = new JButton(IconManager.ICON_CIRCLE_O);
@@ -366,7 +366,7 @@ public class EnrichmentCytoPanel extends JPanel
 			butResetCharts.setBorderPainted(false);
 			butResetCharts.setContentAreaFilled(false);
 			butResetCharts.setFocusPainted(false);
-			butResetCharts.setBorder(BorderFactory.createEmptyBorder(2,4,2,4));
+			butResetCharts.setBorder(BorderFactory.createEmptyBorder(2,4,2,10));
 
 			// Add enrichment map button here if EnrichmentMap is loaded
 			butEnrichmentMap = new JButton(new ImageIcon(getClass().getClassLoader().getResource("/images/em_logo.png")));
@@ -382,7 +382,10 @@ public class EnrichmentCytoPanel extends JPanel
 			buttonsPanelLeft.add(butResetCharts);
 			if (manager.haveEnrichmentMap()) buttonsPanelLeft.add(butEnrichmentMap);
 			
-			JPanel buttonsPanelRight = new JPanel(new GridLayout(1, 3)); 
+			// JPanel buttonsPanelRight = new JPanel(new GridLayout(1, 3));
+			JPanel buttonsPanelRight = new JPanel();
+			BoxLayout layoutRight = new BoxLayout(buttonsPanelRight, BoxLayout.LINE_AXIS);
+			buttonsPanelRight.setLayout(layoutRight);
 			butAnalyzedNodes = new JButton(IconManager.ICON_CHECK_SQUARE_O);			
 			butAnalyzedNodes.addActionListener(this);
 			butAnalyzedNodes.setFont(iconFont);
@@ -390,7 +393,7 @@ public class EnrichmentCytoPanel extends JPanel
 			butAnalyzedNodes.setBorderPainted(false);
 			butAnalyzedNodes.setContentAreaFilled(false);
 			butAnalyzedNodes.setFocusPainted(false);
-			butAnalyzedNodes.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+			butAnalyzedNodes.setBorder(BorderFactory.createEmptyBorder(2, 20, 2, 10));
 
 			butExportTable = new JButton(IconManager.ICON_SAVE);			
 			butExportTable.addActionListener(this);
@@ -399,7 +402,7 @@ public class EnrichmentCytoPanel extends JPanel
 			butExportTable.setBorderPainted(false);
 			butExportTable.setContentAreaFilled(false);
 			butExportTable.setFocusPainted(false);
-			butExportTable.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+			butExportTable.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 10));
 
 			butSettings = new JButton(IconManager.ICON_COG);
 			butSettings.setFont(iconFont);
@@ -408,7 +411,7 @@ public class EnrichmentCytoPanel extends JPanel
 			butSettings.setBorderPainted(false);
 			butSettings.setContentAreaFilled(false);
 			butSettings.setFocusPainted(false);
-			butSettings.setBorder(BorderFactory.createEmptyBorder(2,2,2,20));
+			butSettings.setBorder(BorderFactory.createEmptyBorder(2,4,2,10));
 
 			buttonsPanelRight.add(butAnalyzedNodes);
 			buttonsPanelRight.add(butExportTable);
