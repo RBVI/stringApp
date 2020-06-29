@@ -264,7 +264,7 @@ public class EnrichmentCytoPanel extends JPanel
 			// reset colors and selection
 			resetCharts();
 		} else if (e.getSource().equals(butEnrichmentMap)) {
-			// reset colors and selection
+			// create enrichment map network
 			drawEnrichmentMap();
 		} else if (e.getSource().equals(butAnalyzedNodes)) {
 			List<CyNode> analyzedNodes = ModelUtils.getEnrichmentNodes(network);  
@@ -668,8 +668,10 @@ public class EnrichmentCytoPanel extends JPanel
 		CyNetwork network = manager.getCurrentNetwork();
 		if (network == null)
 			return;
-
-		manager.execute(new TaskIterator(new EnrichmentMapTask(manager, network, getFilteredTable())));
+		if (tableModel.getAllRowCount() != tableModel.getRowCount())
+			manager.execute(new TaskIterator(new EnrichmentMapTask(manager, network, getFilteredTable(), true)));
+		else
+			manager.execute(new TaskIterator(new EnrichmentMapTask(manager, network, getFilteredTable(), false)));
 	}
 	
 	public void updateLabelRows() {

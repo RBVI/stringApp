@@ -18,22 +18,24 @@ public class EnrichmentMapTask extends AbstractTask {
 	private final StringManager manager;
 	private final CyTable filteredEnrichmentTable;
 
+	private double defaultSimCutoff = 0.8;
+	
 	// Network name
 	@Tunable(description="Enrichment Map name")
 	public String mapName = "Enrichment Map - String Network";
 
 	// Similarity cutoff
-	@Tunable(description="Jaccard-based connectivity cutoff", 
+	@Tunable(description="Connectivity cutoff (Jaccard similarity)", 
 	         longDescription="The cutoff for the lowest Jaccard similarity between terms.  "+
 						"Higher values mean more sparse connectivity while lower "
-						+ "values mean more dense network cobnnectivity. "
-						+ "Good values for disease networks are 0.8 or 0.9.",
+						+ "values mean more dense network cobnnectivity. ",
+						//+ "Good values for disease networks are 0.8 or 0.9.",
 			tooltip="<html>The cutoff for the lowest Jaccard similarity of terms. <br /> "+
 					"Higher values mean more sparse connectivity while lower <br /> "
 					+ "values mean more dense network cobnnectivity. <br /> "
-					+ "Good values for disease networks are 0.8 or 0.9. </html>",
-													 params="slider=true")
-	public BoundedDouble similarity = new BoundedDouble(0.0, 0.5, 1.0, true, true);
+					//+ "Good values for disease networks are 0.8 or 0.9." 
+					+ "</html>", params="slider=true")
+	public BoundedDouble similarity = new BoundedDouble(0.0, defaultSimCutoff, 1.0, true, true);
 
 	// FDR cutoff
 	//@Tunable(description="FDR cutoff", 
@@ -42,15 +44,21 @@ public class EnrichmentMapTask extends AbstractTask {
 	//				 params="slider=true")
 	//public BoundedDouble FDRcutoff = new BoundedDouble(0.0, 0.05, 0.1, true, false);
 	
-	public EnrichmentMapTask(final StringManager manager, final CyNetwork network, final CyTable filteredEnrichmentTable) {
+	public EnrichmentMapTask(final StringManager manager, final CyNetwork network, final CyTable filteredEnrichmentTable, boolean filtered) {
 		this.manager = manager;
 		this.filteredEnrichmentTable = filteredEnrichmentTable;
+		if (filtered) {
+			similarity.setBounds(0.0, manager.getOverlapCutoff(network));
+			similarity.setValue(defaultSimCutoff*manager.getOverlapCutoff(network));
+		}
 		String netName = network.getRow(network).get(CyNetwork.NAME, String.class);
 		mapName = "Enrichment Map - "+ netName;
 		//if (netName.equals("String Network")) {
 		//	mapName = "Enrichment Map - String";
-		//} else if (netName.startsWith("String Network")) {
-		//	mapName = "Enrichment Map "+netName.substring(15);
+		//} else 
+		if (netName.startsWith("String Network")) {
+			mapName = "Enrichment Map "+netName.substring(15);
+		}
 		//} else {
 		//	mapName = "Enrichment Map - "+netName;
 		//}
