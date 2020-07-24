@@ -813,6 +813,7 @@ public class EnrichmentCytoPanel extends JPanel
 			filtRow.set(EnrichmentTerm.colDescription, row.get(EnrichmentTerm.colDescription, String.class));
 			filtRow.set(EnrichmentTerm.colCategory, row.get(EnrichmentTerm.colCategory, String.class));
 			filtRow.set(EnrichmentTerm.colFDR, row.get(EnrichmentTerm.colFDR, Double.class));
+			filtRow.set(EnrichmentTerm.colPvalue, row.get(EnrichmentTerm.colPvalue, Double.class));
 			filtRow.set(EnrichmentTerm.colGenesBG, row.get(EnrichmentTerm.colGenesBG, Integer.class));
 			filtRow.set(EnrichmentTerm.colGenesCount, row.get(EnrichmentTerm.colGenesCount, Integer.class));
 			filtRow.set(EnrichmentTerm.colGenes, row.getList(EnrichmentTerm.colGenes, String.class));

@@ -504,6 +504,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			row.set(EnrichmentTerm.colDescription, term.getDescription());
 			row.set(EnrichmentTerm.colCategory, term.getCategory());
 			row.set(EnrichmentTerm.colFDR, term.getFDRPValue());
+			row.set(EnrichmentTerm.colPvalue, term.getPValue());
 			row.set(EnrichmentTerm.colGenesBG, term.getGenesBG());
 			row.set(EnrichmentTerm.colGenesCount, term.getGenes().size());
 			row.set(EnrichmentTerm.colGenes, term.getGenes());

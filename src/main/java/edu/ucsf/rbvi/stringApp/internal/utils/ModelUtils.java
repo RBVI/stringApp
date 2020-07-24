@@ -360,8 +360,8 @@ public class ModelUtils {
 				}
 			if (enr.containsKey("description"))
 				currTerm.setDescription((String) enr.get("description"));
-			if (enr.containsKey("pvalue"))
-				currTerm.setPValue(((Number) enr.get("pvalue")).doubleValue());
+			if (enr.containsKey("p_value"))
+				currTerm.setPValue(((Number) enr.get("p_value")).doubleValue());
 			if (enr.containsKey("bonferroni"))
 				currTerm.setBonfPValue(((Number) enr.get("bonferroni")).doubleValue());
 			if (enr.containsKey("fdr"))
@@ -1347,6 +1347,9 @@ public class ModelUtils {
 		}
 		if (enrichmentTable.getColumn(EnrichmentTerm.colFDR) == null) {
 			enrichmentTable.createColumn(EnrichmentTerm.colFDR, Double.class, false);
+		}
+		if (enrichmentTable.getColumn(EnrichmentTerm.colPvalue) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colPvalue, Double.class, false);
 		}
 		if (enrichmentTable.getColumn(EnrichmentTerm.colGenesBG) == null) {
 			enrichmentTable.createColumn(EnrichmentTerm.colGenesBG, Integer.class, false);
