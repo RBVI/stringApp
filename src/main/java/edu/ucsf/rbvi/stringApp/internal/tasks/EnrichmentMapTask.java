@@ -11,6 +11,7 @@ import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.util.BoundedDouble;
 
+import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
 public class EnrichmentMapTask extends AbstractTask {
@@ -68,14 +69,17 @@ public class EnrichmentMapTask extends AbstractTask {
 	public void run(TaskMonitor arg0) throws Exception {
 		Map<String, Object> args = new HashMap<>();
 		args.put("networkName", mapName);
-		args.put("pvalueColumn","FDR value");
-		args.put("genesColumn","genes");
-		args.put("nameColumn","term name");
-		args.put("descriptionColumn","description");
+		args.put("pvalueColumn", EnrichmentTerm.colFDR);
+		// args.put("pvalueColumn", EnrichmentTerm.colPvalue);
+		// args.put("qvalueColumn", EnrichmentTerm.colFDR);
+		args.put("genesColumn", EnrichmentTerm.colGenes);
+		args.put("nameColumn", EnrichmentTerm.colName);
+		args.put("descriptionColumn",EnrichmentTerm.colDescription);
 		args.put("table","SUID:"+String.valueOf(filteredEnrichmentTable.getSUID()));
 		args.put("coefficients","JACCARD");
 		args.put("similaritycutoff",String.valueOf(similarity.getValue()));
 		args.put("pvalue",0.05);
+		// args.put("qvalue",0.05);
 		insertTasksAfterCurrentTask(manager.getCommandTaskIterator("enrichmentmap", "build-table", args, null));
 	}
 
