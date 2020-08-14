@@ -105,8 +105,7 @@ public class EnrichmentMapAdvancedTask extends AbstractTask implements TaskObser
 		// args.put("exprGeneNameColumn", "display name");
 		// args.put("exprDescriptionColumn", "stringdb::description");
 
-		List<String> columnsToImport = columns.getSelectedValues();
-		List<String> columnsToImportRenamed = setUpCustomTable(columnsToImport);
+		List<String> columnsToImportRenamed = setUpCustomTable(columns.getSelectedValues());
 		args.put("exprTable","SUID:"+String.valueOf(customTable.getSUID()));
 		args.put("exprGeneNameColumn", geneName);
 		args.put("exprDescriptionColumn", geneDescription);

@@ -92,6 +92,7 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	public static final String colPvalue = "p-value";
 	public static final String colBonferroni = "bonferroni value";
 	public static final String colFDR = "FDR value";
+	public static final String colFDRTransf = "transferred FDR value";
 	public static final String colGenesBG = "# background genes";
 	public static final String colGenes = "genes";
 	public static final String colGenesOld = "enriched genes";

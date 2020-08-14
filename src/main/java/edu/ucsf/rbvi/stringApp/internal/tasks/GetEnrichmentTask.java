@@ -491,6 +491,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			CyRow row = enrichmentTable.getRow((long) 0);
 			row.set(EnrichmentTerm.colNetworkSUID, network.getSUID());
 		}
+		double maxFDRLogValue = ModelUtils.getMaxFdrLogValue(processTerms);
 		for (int i = 0; i < processTerms.size(); i++) {
 			EnrichmentTerm term = processTerms.get(i);
 			CyRow row = enrichmentTable.getRow((long) i);
@@ -504,6 +505,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			row.set(EnrichmentTerm.colDescription, term.getDescription());
 			row.set(EnrichmentTerm.colCategory, term.getCategory());
 			row.set(EnrichmentTerm.colFDR, term.getFDRPValue());
+			row.set(EnrichmentTerm.colFDRTransf, -Math.log10(term.getFDRPValue())/maxFDRLogValue);
 			row.set(EnrichmentTerm.colPvalue, term.getPValue());
 			row.set(EnrichmentTerm.colGenesBG, term.getGenesBG());
 			row.set(EnrichmentTerm.colGenesCount, term.getGenes().size());

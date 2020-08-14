@@ -82,6 +82,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTableTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.FilterEnrichmentTableTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.EnrichmentMapAdvancedTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.EnrichmentMapTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.EnrichmentSettingsTask;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
@@ -813,6 +814,7 @@ public class EnrichmentCytoPanel extends JPanel
 			filtRow.set(EnrichmentTerm.colDescription, row.get(EnrichmentTerm.colDescription, String.class));
 			filtRow.set(EnrichmentTerm.colCategory, row.get(EnrichmentTerm.colCategory, String.class));
 			filtRow.set(EnrichmentTerm.colFDR, row.get(EnrichmentTerm.colFDR, Double.class));
+			filtRow.set(EnrichmentTerm.colFDRTransf, row.get(EnrichmentTerm.colFDRTransf, Double.class));
 			filtRow.set(EnrichmentTerm.colPvalue, row.get(EnrichmentTerm.colPvalue, Double.class));
 			filtRow.set(EnrichmentTerm.colGenesBG, row.get(EnrichmentTerm.colGenesBG, Integer.class));
 			filtRow.set(EnrichmentTerm.colGenesCount, row.get(EnrichmentTerm.colGenesCount, Integer.class));

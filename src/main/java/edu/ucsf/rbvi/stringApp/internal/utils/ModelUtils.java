@@ -1348,6 +1348,9 @@ public class ModelUtils {
 		if (enrichmentTable.getColumn(EnrichmentTerm.colFDR) == null) {
 			enrichmentTable.createColumn(EnrichmentTerm.colFDR, Double.class, false);
 		}
+		if (enrichmentTable.getColumn(EnrichmentTerm.colFDRTransf) == null) {
+			enrichmentTable.createColumn(EnrichmentTerm.colFDRTransf, Double.class, false);
+		}
 		if (enrichmentTable.getColumn(EnrichmentTerm.colPvalue) == null) {
 			enrichmentTable.createColumn(EnrichmentTerm.colPvalue, Double.class, false);
 		}
@@ -1368,6 +1371,18 @@ public class ModelUtils {
 		}
 		// table.createColumn(EnrichmentTerm.colPvalue, Double.class, false);
 		// table.createColumn(EnrichmentTerm.colBonferroni, Double.class, false);
+	}
+	
+	public static double getMaxFdrLogValue(List<EnrichmentTerm> terms) {
+		double maxValue = 0;
+		for (EnrichmentTerm term : terms) {
+			double termValue = -Math.log10(term.getFDRPValue());
+			if (termValue > maxValue)
+				maxValue = termValue;
+		}
+		if (maxValue > 10.0) 
+			return 10.0;
+		return maxValue;
 	}
 	
 	
