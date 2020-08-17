@@ -56,9 +56,12 @@ public class EnrichmentMapAdvancedTask extends AbstractTask implements TaskObser
 					+ "</html>", params="slider=true")
 	public BoundedDouble similarity = new BoundedDouble(0.0, defaultSimCutoff, 1.0, true, true);
 
-	@Tunable(description = "Select columns", 
-	         tooltip = "Select the columns to export to EnrichmentMap",
-	         longDescription = "Select the columns to export to EnrichmentMap",
+	@Tunable(description = "Select node columns to import", 
+	         tooltip = "<html>Selected columns will be imported into EnrichmentMap as \"expression\" <br />"
+	         			   + "values associated with the genes in the enriched terms.</html>",
+	         longDescription = "Select the node columns to be imported into "
+	         				 + "EnrichmentMap as \"expression\" values.",
+	         groups = {"Optional settings"}, params="displayState=collapsed",
 	         exampleStringValue = "")
 	public ListMultipleSelection<String> columns = new ListMultipleSelection<>();
 	
@@ -91,6 +94,7 @@ public class EnrichmentMapAdvancedTask extends AbstractTask implements TaskObser
 		args.put("networkName", mapName);
 		args.put("pvalueColumn", EnrichmentTerm.colPvalue);
 		args.put("qvalueColumn", EnrichmentTerm.colFDR);
+		args.put("nesColumn", EnrichmentTerm.colFDRTransf);
 		args.put("genesColumn", EnrichmentTerm.colGenes);
 		args.put("nameColumn", EnrichmentTerm.colName);
 		args.put("descriptionColumn",EnrichmentTerm.colDescription);
@@ -100,25 +104,25 @@ public class EnrichmentMapAdvancedTask extends AbstractTask implements TaskObser
 		args.put("pvalue",0.05);
 		args.put("qvalue",0.05);
 		
-		// expression data
-		// args.put("exprTable","SUID:"+String.valueOf(network.getDefaultNodeTable().getSUID()));
-		// args.put("exprGeneNameColumn", "display name");
-		// args.put("exprDescriptionColumn", "stringdb::description");
-
+		// expression data [optional]
 		List<String> columnsToImportRenamed = setUpCustomTable(columns.getSelectedValues());
-		args.put("exprTable","SUID:"+String.valueOf(customTable.getSUID()));
-		args.put("exprGeneNameColumn", geneName);
-		args.put("exprDescriptionColumn", geneDescription);
-		args.put("exprValueColumns", String.join(",", columnsToImportRenamed));
-		args.put("filterByExpressions", "false");
+		if (columnsToImportRenamed.size() > 0) {
+			args.put("exprTable","SUID:"+String.valueOf(customTable.getSUID()));
+			args.put("exprGeneNameColumn", geneName);
+			args.put("exprDescriptionColumn", geneDescription);
+			args.put("exprValueColumns", String.join(",", columnsToImportRenamed));
+			args.put("filterByExpressions", "false");
+		}
 		
 		// run task
-		insertTasksAfterCurrentTask(manager.getCommandTaskIterator("enrichmentmap", "build-table", args, this));
+		insertTasksAfterCurrentTask(manager.getCommandTaskIterator("enrichmentmap", "build-table", args, null));
 		
 	}
 
 	public List<String> setUpCustomTable(List<String> columnsToImport) {
 		List<String> columnsToImportRenamed = new ArrayList<String>();
+		if (columnsToImport.size() == 0)
+			return columnsToImportRenamed;
 
 		// create table
 		CyTableFactory tableFactory = manager.getService(CyTableFactory.class);
@@ -171,6 +175,12 @@ public class EnrichmentMapAdvancedTask extends AbstractTask implements TaskObser
 
 	@Override
 	public void taskFinished(ObservableTask arg0) {
+
+		// TODO: Figure out why this doesnt work! 
+		Map<String, Object> args = new HashMap<>();
+		args.put("data", "NES_VALUE");
+		insertTasksAfterCurrentTask(manager.getCommandTaskIterator("enrichmentmap", "chart", args, null));
+		
 		// remove node coloring
 		//CyNetworkManager netManager = (CyNetworkManager) manager.getService(CyNetworkManager.class);
 		//for (CyNetwork net : netManager.getNetworkSet()) {
