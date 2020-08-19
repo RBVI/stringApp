@@ -432,17 +432,18 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 			final JTable table = new JTable();
 			table.setRowSelectionAllowed(false);
 
-			final JPanel selectPanel = new JPanel(new FlowLayout());
+			final JPanel selectPanelAll = new JPanel(new FlowLayout());
+			final JPanel selectPanelTerm = new JPanel(new FlowLayout());
 			final JButton selectAllButton = new JButton(new SelectEverythingAction(tableModelMap));
 			final JButton clearAllButton = new JButton(new ClearEverythingAction(tableModelMap));
 			final JButton selectAllTermButton = new JButton("Select All in Term");
 			final JButton clearAllTermButton = new JButton("Clear All in Term");
 			selectAllTermButton.setEnabled(false);
 			clearAllTermButton.setEnabled(false);
-			selectPanel.add(selectAllButton);
-			selectPanel.add(clearAllButton);
-			selectPanel.add(selectAllTermButton);
-			selectPanel.add(clearAllTermButton);
+			selectPanelAll.add(selectAllButton);
+			selectPanelAll.add(clearAllButton);
+			selectPanelTerm.add(selectAllTermButton);
+			selectPanelTerm.add(clearAllTermButton);
 
 			// Object[] terms = stringNetwork.getAnnotations().keySet().toArray();
 			Object[] terms = getTermList();
@@ -479,7 +480,9 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 			termList.setSelectedIndex(0);
 
 			c.down().spanHoriz(2).expandHoriz().insets(0,5,0,5);
-			mainSearchPanel.add(selectPanel, c);
+			mainSearchPanel.add(selectPanelTerm, c);
+			c.down().spanHoriz(2).expandHoriz().insets(0,5,0,5);
+			mainSearchPanel.add(selectPanelAll, c);
 		}
 
 		importButton.setAction(new ResolvedAction());

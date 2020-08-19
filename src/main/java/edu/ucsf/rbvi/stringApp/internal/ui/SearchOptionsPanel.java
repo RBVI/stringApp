@@ -73,6 +73,7 @@ public class SearchOptionsPanel extends JPanel {
 	JTextField additionalNodesValue;
 	JCheckBox useSmartDelimiters;
 	JCheckBox loadEnrichment;
+	JCheckBox createNetView;
 	JPanel advancedOptions;
 	NumberFormat formatter = new DecimalFormat("#0.00");
 	NumberFormat intFormatter = new DecimalFormat("#0");
@@ -180,6 +181,12 @@ public class SearchOptionsPanel extends JPanel {
 		c.right().expandHoriz().insets(0,10,0,5);
 		loadEnrichment = new JCheckBox("Load Enrichment Data", false);
 		advancedPanel.add(loadEnrichment, c);
+		
+		// if we add an option to create or not a network view
+		//c.right().expandHoriz().insets(0,10,0,5);
+		//createNetView = new JCheckBox("Create network view", true);
+		//advancedPanel.add(createNetView, c);
+		
 		return advancedPanel;
 	}
 
@@ -204,6 +211,21 @@ public class SearchOptionsPanel extends JPanel {
 
 	public void enableLoadEnrichment(boolean enable) {
 		loadEnrichment.setEnabled(enable);
+	}
+
+	public boolean getCreateNetView() {
+		if (!createNetView.isEnabled())
+			return false;
+		return createNetView.isSelected();
+	}
+
+	public void setCreateNetView(boolean selected) {
+		// System.out.println("Setting loadEnrichment to "+selected);
+		createNetView.setSelected(selected);
+	}
+
+	public void enableCreateNetView(boolean enable) {
+		createNetView.setEnabled(enable);
 	}
 
 	JPanel createSpeciesComboBox(List<Species> speciesList) {

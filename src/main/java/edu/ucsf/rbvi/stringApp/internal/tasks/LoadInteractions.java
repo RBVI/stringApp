@@ -127,20 +127,26 @@ public class LoadInteractions extends AbstractTask {
 		stringNet.setNetwork(network);
 
 		// System.out.println("Results: "+results.toString());
-		// Now style the network
-		// TODO:  change style to accomodate STITCH
-		CyNetworkView networkView = manager.createNetworkView(network);
-		ViewUtils.styleNetwork(manager, network, networkView);
-
-		// And lay it out
-		CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");
-		Object context = alg.createLayoutContext();
-		TunableSetter setter = manager.getService(TunableSetter.class);
-		Map<String, Object> layoutArgs = new HashMap<>();
-		layoutArgs.put("defaultNodeMass", 10.0);
-		setter.applyTunables(context, layoutArgs);
-		Set<View<CyNode>> nodeViews = new HashSet<>(networkView.getNodeViews());
-		insertTasksAfterCurrentTask(alg.createTaskIterator(networkView, context, nodeViews, "score"));
+		int viewThreshold = ModelUtils.getViewThreshold(manager);
+		int networkSize = network.getNodeList().size() + network.getEdgeList().size();
+		if (networkSize < viewThreshold) {
+			// Now style the network
+			// TODO:  change style to accomodate STITCH
+			CyNetworkView networkView = manager.createNetworkView(network);
+			ViewUtils.styleNetwork(manager, network, networkView);
+	
+			// And lay it out
+			CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");
+			Object context = alg.createLayoutContext();
+			TunableSetter setter = manager.getService(TunableSetter.class);
+			Map<String, Object> layoutArgs = new HashMap<>();
+			layoutArgs.put("defaultNodeMass", 10.0);
+			setter.applyTunables(context, layoutArgs);
+			Set<View<CyNode>> nodeViews = new HashSet<>(networkView.getNodeViews());
+			insertTasksAfterCurrentTask(alg.createTaskIterator(networkView, context, nodeViews, "score"));
+		} else {
+			ViewUtils.styleNetwork(manager, network, null);
+		}
 	}
 
 	@ProvidesTitle
