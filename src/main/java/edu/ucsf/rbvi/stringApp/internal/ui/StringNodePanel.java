@@ -318,15 +318,15 @@ public class StringNodePanel extends AbstractStringPanel {
 	}
 
 	private JPanel createCompartmentsPanel() {
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridBagLayout());
+		compartmentsPanel = new JPanel();
+		compartmentsPanel.setLayout(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
 		List<String> compartmentList = ModelUtils.getCompartmentList(currentNetwork);
 		for (String compartment: compartmentList) {
-			panel.add(createFilterSlider("compartment", compartment, currentNetwork, true, 500.0), 
+			compartmentsPanel.add(createFilterSlider("compartment", compartment, currentNetwork, true, 500.0), 
 			          c.anchor("west").down().expandHoriz());
 		}
-		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Compartment filters", panel, true, 10);
+		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Compartment filters", compartmentsPanel, true, 10);
 		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
 		return collapsablePanel;
 	}
