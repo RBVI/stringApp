@@ -50,11 +50,13 @@ import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
+import org.cytoscape.work.TaskIterator;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNode;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetPublicationsTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.MCLClusterTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowPublicationsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
@@ -281,6 +283,18 @@ public class StringNodePanel extends AbstractStringPanel {
 			});
 			lowerPanel.add(highlightQuery);
 		}
+
+		{
+			JButton getClusters = new JButton("Cluster network (MCL)");
+			getClusters.setFont(labelFont);
+			getClusters.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					manager.execute(new TaskIterator(new MCLClusterTask(manager, currentNetwork)));
+				}
+			});
+			if (manager.haveClusterMaker()) lowerPanel.add(getClusters);
+		}
+
 		controlPanel.add(lowerPanel, d.down().anchor("west").expandHoriz());
 
 		updateControls();
