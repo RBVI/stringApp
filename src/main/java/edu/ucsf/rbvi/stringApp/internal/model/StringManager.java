@@ -28,6 +28,7 @@ import org.cytoscape.model.events.NetworkAboutToBeDestroyedEvent;
 import org.cytoscape.model.events.NetworkAboutToBeDestroyedListener;
 import org.cytoscape.model.events.NetworkAddedEvent;
 import org.cytoscape.model.events.NetworkAddedListener;
+import org.cytoscape.model.subnetwork.CyRootNetwork;
 import org.cytoscape.model.subnetwork.CySubNetwork;
 import org.cytoscape.property.CyProperty;
 import org.cytoscape.property.CyProperty.SavePolicy;
@@ -50,6 +51,7 @@ import org.json.simple.JSONObject;
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.AddNamespacesTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.SetConfidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectTaskFactory;
@@ -387,6 +389,12 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		return net.getRow(net).get(CyNetwork.NAME, String.class);
 	}
 
+	public String getRootNetworkName(CyNetwork net) {
+		CyRootNetwork rootNet = ((CySubNetwork)net).getRootNetwork();
+		return rootNet.getRow(rootNet).get(CyNetwork.NAME, String.class);
+	}
+	
+	
 	public CyNetworkView createNetworkView(CyNetwork network) {
 		CyNetworkView view = registrar.getService(CyNetworkViewFactory.class)
 		                                          .createNetworkView(network);
@@ -643,6 +651,12 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			StringNetwork stringNet = new StringNetwork(this);
 			addStringNetwork(stringNet, network);
 			showResultsPanel();
+		} else if (getNetworkName(network).endsWith("--clustered") && ModelUtils.isMergedStringNetwork(network)) {
+			execute(new SetConfidenceTaskFactory(this).createTaskIterator(network));
+			showResultsPanel();
+		} else if (getRootNetworkName(network).startsWith("String Network") && ModelUtils.isMergedStringNetwork(network)) {
+			execute(new SetConfidenceTaskFactory(this).createTaskIterator(network));
+			showResultsPanel();
 		}
 	}
 
@@ -863,6 +877,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	public boolean haveURIs() {
 		return haveURIs;
+	}
+
+	public boolean haveClusterMaker() {
+		return availableCommands.getNamespaces().contains("cluster");
 	}
 
 	public boolean haveEnrichmentMap() {

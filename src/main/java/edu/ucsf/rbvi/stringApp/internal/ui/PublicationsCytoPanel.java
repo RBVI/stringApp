@@ -238,7 +238,7 @@ public class PublicationsCytoPanel extends JPanel
 			if (network != null)
 				tm.execute(new TaskIterator(new ExportEnrichmentTableTask(manager, network, null,
 						ModelUtils.getEnrichmentTable(manager, network,
-								TermCategory.PMID.getTable()))));
+								TermCategory.PMID.getTable()), false)));
 			// } else if (e.getSource().equals(menuItemReset)) {
 			// // System.out.println("reset color now");
 			// Component c = (Component)e.getSource();

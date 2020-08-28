@@ -281,9 +281,14 @@ public class EnrichmentCytoPanel extends JPanel
 		} else if (e.getSource().equals(butSettings)) {
 			tm.execute(new TaskIterator(new EnrichmentSettingsTask(manager)));
 		} else if (e.getSource().equals(butExportTable)) {
-			if (network != null)
-				tm.execute(new TaskIterator(new ExportEnrichmentTableTask(manager, network, this, ModelUtils.getEnrichmentTable(manager, network,
-		                TermCategory.ALL.getTable()))));
+			if (network != null) {
+				if (tableModel.getAllRowCount() != tableModel.getRowCount())
+					tm.execute(new TaskIterator(new ExportEnrichmentTableTask(manager, network, this, ModelUtils.getEnrichmentTable(manager, network,
+		                TermCategory.ALL.getTable()), true)));
+				else
+					tm.execute(new TaskIterator(new ExportEnrichmentTableTask(manager, network, this, ModelUtils.getEnrichmentTable(manager, network,
+			                TermCategory.ALL.getTable()), false)));
+			}
 		} else if (e.getSource().equals(menuItemReset)) {
 			// System.out.println("reset color now");
 			Component c = (Component)e.getSource();

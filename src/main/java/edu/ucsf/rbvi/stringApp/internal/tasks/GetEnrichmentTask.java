@@ -496,7 +496,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			EnrichmentTerm term = processTerms.get(i);
 			CyRow row = enrichmentTable.getRow((long) i);
 			row.set(EnrichmentTerm.colName, term.getName());
-			if (term.getName().length() > 4 && term.getName().startsWith("PMID.")) {
+			if (term.getName().length() > 4 && term.getName().startsWith("PMID")) {
 				row.set(EnrichmentTerm.colIDPubl, term.getName().substring(5));
 			} else {
 				row.set(EnrichmentTerm.colIDPubl, "");

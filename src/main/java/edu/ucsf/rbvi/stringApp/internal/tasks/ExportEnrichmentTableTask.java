@@ -36,10 +36,11 @@ public class ExportEnrichmentTableTask extends AbstractTask {
 			 exampleStringValue = "false", gravity = 3.0)
 	public boolean filtered = false;
 
-	public ExportEnrichmentTableTask(StringManager manager, CyNetwork network, EnrichmentCytoPanel panel, CyTable table) {
+	public ExportEnrichmentTableTask(StringManager manager, CyNetwork network, EnrichmentCytoPanel panel, CyTable table, boolean filtered) {
 		this.manager = manager;
 		this.enrichmentPanel = panel;
 		this.selectedTable = table;
+		this.filtered = filtered;
 	}
 
 	@Override
