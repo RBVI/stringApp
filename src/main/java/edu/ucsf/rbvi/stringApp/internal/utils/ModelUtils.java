@@ -414,10 +414,18 @@ public class ModelUtils {
 			JSONObject enr = (JSONObject) enrObject;
 
 			if (enr.containsKey("p_value")) {
-				if (((String)enr.get("p_value")).equals("0"))
-					values.put(NET_PPI_ENRICHMENT, new Double(1e-16).toString());
-				else
-					values.put(NET_PPI_ENRICHMENT, (String)enr.get("p_value"));
+				// Check of the pvalue class needed to keep support for the old perl and new python version of STRING 
+				if (enr.get("p_value").getClass().equals(Double.class)) {
+					if (((Double)enr.get("p_value")).equals(0.0)) {
+						values.put(NET_PPI_ENRICHMENT, new Double(1e-16).toString());
+					} else
+						values.put(NET_PPI_ENRICHMENT, ((Double)enr.get("p_value")).toString());
+				} else if (enr.get("p_value").getClass().equals(String.class)) {
+					if (((String)enr.get("p_value")).equals("0"))
+						values.put(NET_PPI_ENRICHMENT, new Double(1e-16).toString());
+					else
+						values.put(NET_PPI_ENRICHMENT, (String)enr.get("p_value"));
+				}
 			}
 			if (enr.containsKey("expected_number_of_edges")) {
 				values.put(NET_ENRICHMENT_EXPECTED_EDGES, enr.get("expected_number_of_edges").toString());

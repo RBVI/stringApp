@@ -357,6 +357,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 					"PPI enrichment cannot be retrieved for a network with a confidence of 1.0.");
 			return null;	
 		}
+		// TODO: we should be sending an integer and not a float
 		Double confidence = ModelUtils.getConfidence(network)*1000;
 		args.put("required_score", confidence.toString());
 		args.put("caller_identity", StringManager.CallerIdentity);
