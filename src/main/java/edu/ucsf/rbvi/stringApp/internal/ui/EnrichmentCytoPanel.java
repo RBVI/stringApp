@@ -675,9 +675,9 @@ public class EnrichmentCytoPanel extends JPanel
 		if (network == null)
 			return;
 		if (tableModel.getAllRowCount() != tableModel.getRowCount())
-			manager.execute(new TaskIterator(new EnrichmentMapTask(manager, network, getFilteredTable(), true)));
+			manager.execute(new TaskIterator(new EnrichmentMapAdvancedTask(manager, network, getFilteredTable(), true)));
 		else
-			manager.execute(new TaskIterator(new EnrichmentMapTask(manager, network, getFilteredTable(), false)));
+			manager.execute(new TaskIterator(new EnrichmentMapAdvancedTask(manager, network, getFilteredTable(), false)));
 	}
 	
 	public void updateLabelRows() {
