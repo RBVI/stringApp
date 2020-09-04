@@ -372,11 +372,13 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 			// Get all of the nodes in the network
 			ModelUtils.createNodeMap(loadedNetwork, nodeMap, ModelUtils.QUERYTERM);
 
-			List<String> cols = new ArrayList();
+			List<String> cols = new ArrayList<String>();
 			cols.add(ModelUtils.QUERYTERM);
 			cols.add(ModelUtils.DISPLAY);
 
 			// Copy over any missing nodes that we didn't find in STRING
+			// column is the node attribute column chosen by the user to be used as IDs
+			// also, for all nodes to be copied, set query term and display column to the ID value chosen by the user  
 			if (copyNotMappedNodes)
 				ModelUtils.copyNodes(network, loadedNetwork, nodeMap, column, cols);
 

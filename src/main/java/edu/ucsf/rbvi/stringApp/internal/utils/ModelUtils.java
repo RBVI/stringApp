@@ -1681,6 +1681,11 @@ public class ModelUtils {
 				continue;
 			if (from.getClass().equals(CyNode.class) && col.getName().equals(CyRootNetwork.SHARED_NAME)) 
 				continue;
+			if (col.getName().equals(ModelUtils.QUERYTERM) || col.getName().equals(ModelUtils.DISPLAY) || col.getName().equals(ModelUtils.ID)) {
+				Object v = fromTable.getRow(from.getSUID()).getRaw(col.getName());
+				toTable.getRow(to.getSUID()).set(col.getName() + ".copy", v);
+				continue;
+			}
 			// TODO: Is it OK to overwrite interaction type? 
 			//if (from.getClass().equals(CyEdge.class) && col.getName().equals(CyRootNetwork.SHARED_INTERACTION)) 
 			//	continue;
@@ -1744,6 +1749,9 @@ public class ModelUtils {
 					toTable.createColumn(fqn, col.getType(), col.isImmutable(), col.getDefaultValue());
 					columns.add(fqn);
 				}
+			} else if (fqn.equals(ModelUtils.QUERYTERM) || fqn.equals(ModelUtils.DISPLAY) || fqn.equals(ModelUtils.ID)) {
+				toTable.createColumn(fqn + ".copy", col.getType(), col.isImmutable(), col.getDefaultValue());
+				columns.add(fqn + ".copy");
 			}
 		}
 		return columns;
