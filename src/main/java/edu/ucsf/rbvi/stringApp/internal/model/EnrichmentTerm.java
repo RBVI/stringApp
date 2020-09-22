@@ -28,6 +28,7 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 		KEGG("KEGG", "KEGG Pathways", "STRING Enrichment: KEGG Pathways"),
 		PFAM("PFAM", "PFAM Domains", "STRING Enrichment: Pfam Protein Domains"),
 		REACTOME("RCTM", "Reactome Pathways", "STRING Enrichment: Reactome Pathways"),
+		STRINGCLUSTER("NetworkNeighborAL", "STRING Clusters", "STRING Enrichment: STRING network clusters"),
 		PMID("PMID", "Reference publications", "STRING Enrichment: PMID"),
 		SMART("SMART", "SMART Domains", "STRING Enrichment: SMART Protein Domains"),
 		UniProt("Keyword", "UniProt Keywords", "STRING Enrichment: UniProt Keywords"),
@@ -52,10 +53,11 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 			}
 			return cats;
 		}
+		// return only the categories that should/could be filtered (exclude publications and all)
 		static public List<TermCategory> getValues() {
 			List<TermCategory> cats = new ArrayList<TermCategory>();
 			for (TermCategory tc: values()) {
-				if (tc != ALL)
+				if (tc != ALL && tc != ALLFILTERED && tc!= PMID)
 					cats.add(tc);
 			}
 			return cats;
