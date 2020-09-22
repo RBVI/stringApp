@@ -105,10 +105,12 @@ public class EnrichmentSettings implements ActionListener, RequestsUIHelper {
 
 		CyColorPaletteChooser paletteChooser = 
 			manager.getService(CyColorPaletteChooserFactory.class).getColorPaletteChooser(BrewerType.QUALITATIVE, true);
-		Palette palette = paletteChooser.showDialog(parent, "Palette for Channel Colors", null, 7);
+		Palette palette = paletteChooser.showDialog(parent, "Palette for Channel Colors", null, 8);
 		// System.out.println("Setting enrichment palette to: "+palette);
-		manager.setEnrichmentPalette(network, palette);
-		defaultPalette.setSelectedValue(palette);
+		if (palette != null) {
+			manager.setEnrichmentPalette(network, palette);
+			defaultPalette.setSelectedValue(palette);
+		}
 
 		/*
 		ColorPaletteChooserDialog dialog = new ColorPaletteChooserDialog(null, PALETTE_TYPE.QUALITATIVE);

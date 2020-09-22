@@ -163,10 +163,10 @@ public class StringEdgePanel extends AbstractStringPanel {
 		cb.setMaximumSize(new Dimension(20,30));
 		cb.setBackground(colorMap.get(subScore));
 		cb.setOpaque(true);
-		if (colors.containsKey(currentNetwork) && 
-		    colors.get(currentNetwork).containsKey(subScore) &&
-		    colors.get(currentNetwork).get(subScore))
+		if (colors.containsKey(currentNetwork) && colors.get(currentNetwork).containsKey(subScore) 
+				&& colors.get(currentNetwork).get(subScore))
 			cb.setSelected(true);
+		
 		cb.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				Boolean selected = Boolean.FALSE;

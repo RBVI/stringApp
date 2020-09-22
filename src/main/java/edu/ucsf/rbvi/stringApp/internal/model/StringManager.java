@@ -1025,7 +1025,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public void setChannelColors(Map<String, Color> colorMap) { channelColors = colorMap; }
 	public void setChannelColors(String colors) { 
 		String[] colorStrs = colors.split("\\|");
-		if (colorStrs.length != 7) return;
+		if (colorStrs.length != 8) return;
 
 		channelColors = new HashMap<>();
 		for (int i = 0; i < colorStrs.length; i++) {
@@ -1035,7 +1035,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	public String getChannelColorString() {
 		String str = "";
-		for (int i = 0; i < 7; i++) {
+		for (int i = 0; i < 8; i++) {
 			Color clr = channelColors.get(channels[i]);
 			int rgb = clr.getRGB();
 			str += "#"+Integer.toUnsignedString(rgb, 16)+"|"; // get the hex
