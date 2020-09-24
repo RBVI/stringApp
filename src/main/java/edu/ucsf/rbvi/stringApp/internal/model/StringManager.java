@@ -459,10 +459,6 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			cytoPanel.updateControls();
 	}
 
-	public ShowImagesTaskFactory getImagesTaskFactory() { return imagesTaskFactory; }
-	public ShowEnhancedLabelsTaskFactory getEnhancedLabelsTaskFactory() { return labelsTaskFactory; }
-	public ShowGlassBallEffectTaskFactory getGlassBallTaskFactory() { return glassBallTaskFactory; }
-
 	public Species getDefaultSpecies() { 
 		if (species == null) {
 			// Set Human as the default
@@ -622,10 +618,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		ModelUtils.setStringProperty(configProps, "maxProteins", Integer.toString(getDefaultMaxProteins()));
 
 		ModelUtils.setStringProperty(configProps, "overlapCutoff", Double.toString(overlapCutoff));
-		ModelUtils.setStringProperty(configProps,"topTerms", Integer.toString(topTerms));
-		ModelUtils.setStringProperty(configProps,"chartType", chartType.name());
-		ModelUtils.setStringProperty(configProps,"enrichmentPalette", brewerPalette.toString());
-		ModelUtils.setStringProperty(configProps,"removeOverlap", Boolean.toString(removeOverlap));
+		ModelUtils.setStringProperty(configProps, "topTerms", Integer.toString(topTerms));
+		ModelUtils.setStringProperty(configProps, "chartType", chartType.name());
+		ModelUtils.setStringProperty(configProps, "enrichmentPalette", brewerPalette.toString());
+		ModelUtils.setStringProperty(configProps, "removeOverlap", Boolean.toString(removeOverlap));
 		{
 			String categories = "";
 			for (TermCategory c: categoryFilter) {
@@ -633,7 +629,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			}
 			if (categories.length() > 1)
 				categories = categories.substring(categories.length()-1);
-			ModelUtils.setStringProperty(configProps,"categoryFilter", categories);
+			ModelUtils.setStringProperty(configProps, "categoryFilter", categories);
 		}
 
 		ModelUtils.setStringProperty(configProps, "channelColors", getChannelColorString());

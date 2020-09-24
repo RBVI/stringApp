@@ -150,7 +150,7 @@ public class StringNodePanel extends AbstractStringPanel {
 				public void itemStateChanged(ItemEvent e) {
 					if (updating) return;
 					manager.execute(
-						manager.getGlassBallTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), true);
+						manager.getShowGlassBallEffectTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), true);
 				}
 			});
 			upperPanel.add(enableGlass, upperGBC.anchor("northwest").noExpand());
@@ -164,7 +164,7 @@ public class StringNodePanel extends AbstractStringPanel {
 				public void itemStateChanged(ItemEvent e) {
 					if (updating) return;
 					manager.execute(
-						manager.getImagesTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), true);
+						manager.getShowImagesTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), true);
 				}
 			});
 			upperPanel.add(showStructure, upperGBC.right().insets(0,10,0,0).noExpand());
@@ -177,7 +177,7 @@ public class StringNodePanel extends AbstractStringPanel {
 				public void itemStateChanged(ItemEvent e) {
 					if (updating) return;
 					manager.execute(
-						manager.getEnhancedLabelsTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), true);
+						manager.getShowEnhancedLabelsTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), true);
 				}
 			});
 			upperPanel.add(stringLabels, upperGBC.left().down().noInsets().noExpand());
@@ -292,7 +292,8 @@ public class StringNodePanel extends AbstractStringPanel {
 					manager.execute(new TaskIterator(new MCLClusterTask(manager, currentNetwork)));
 				}
 			});
-			if (manager.haveClusterMaker()) lowerPanel.add(getClusters);
+			getClusters.setEnabled(manager.haveClusterMaker());
+			lowerPanel.add(getClusters);
 		}
 
 		controlPanel.add(lowerPanel, d.down().anchor("west").expandHoriz());
