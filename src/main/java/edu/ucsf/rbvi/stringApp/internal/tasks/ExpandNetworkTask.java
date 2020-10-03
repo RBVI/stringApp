@@ -208,14 +208,6 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			return;
 		}
 
-		if (results == null) {
-			if (conf == 1.0) 
-				monitor.showMessage(TaskMonitor.Level.ERROR,"<html>String returned no results with a confidence larger than 1.0.<br> Consider chnanging the confidence threshold.</html>");
-			else 
-				monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results");
-			return;
-		}
-
 		monitor.setStatusMessage("Augmenting network");
 
 		// This may change...
@@ -223,7 +215,14 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, useDatabase);
 
 		if (newNodes.size() == 0 && newEdges.size() == 0) {
-			throw new RuntimeException("This query will not add any new nodes or edges to the existing network.");
+			if (conf == 1.0) { 
+				// monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results with a confidence larger than 1.0.<br> Consider chnanging the confidence threshold.");
+				manager.error("String returned no results with a confidence larger than 1.0.<br> Consider chnanging the confidence threshold.");
+				return;
+			} else { 
+				manager.error("String returned no results");
+				throw new RuntimeException("This query will not add any new nodes or edges to the existing network.");
+			}
 			// SwingUtilities.invokeLater(new Runnable() {
 			// public void run() {
 			// JOptionPane.showMessageDialog(null,

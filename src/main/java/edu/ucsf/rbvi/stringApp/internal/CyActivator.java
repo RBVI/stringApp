@@ -198,8 +198,8 @@ public class CyActivator extends AbstractCyActivator {
 			expandProps.setProperty(COMMAND, "expand");
 			expandProps.setProperty(COMMAND_DESCRIPTION, "Expand a STRING network by more interactors");
 			expandProps.setProperty(COMMAND_LONG_DESCRIPTION, 
-					"Expand an already exisitng STRING network by more interactors such as STITCH compounds, "
-					+ "proteins of the network species as well as proteins interacting with avaialble viruses or host species proteins");
+					"Expand an already existing STRING network by more interactors such as STITCH compounds, "
+					+ "proteins of the network species as well as proteins interacting with available viruses or host species proteins.");
 			expandProps.setProperty(COMMAND_SUPPORTS_JSON, "true");
 			expandProps.setProperty(COMMAND_EXAMPLE_JSON, JSON_EXAMPLE);			
 			registerService(bc, expandFactory, TaskFactory.class, expandProps);
@@ -242,8 +242,7 @@ public class CyActivator extends AbstractCyActivator {
 			Properties versionProps = new Properties();
 			versionProps.setProperty(COMMAND_NAMESPACE, "string");
 			versionProps.setProperty(COMMAND, "version");
-			versionProps.setProperty(COMMAND_DESCRIPTION, 
-										           "Returns the version of StringApp");
+			versionProps.setProperty(COMMAND_DESCRIPTION, "Returns the version of StringApp");
 			versionProps.setProperty(COMMAND_SUPPORTS_JSON, "true");
     	versionProps.setProperty(COMMAND_EXAMPLE_JSON, "{\"version\":\"2.1.0\"}");
 			registerService(bc, versionFactory, TaskFactory.class, versionProps);
@@ -255,8 +254,7 @@ public class CyActivator extends AbstractCyActivator {
 			Properties props = new Properties();
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "filter enrichment");
-			props.setProperty(COMMAND_DESCRIPTION, 
-										           "Filter the terms in the enrichment table");
+			props.setProperty(COMMAND_DESCRIPTION, "Filter the terms in the enrichment table");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
     	props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 			registerService(bc, filterFactory, TaskFactory.class, props);
@@ -268,8 +266,7 @@ public class CyActivator extends AbstractCyActivator {
 			Properties props = new Properties();
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "show charts");
-			props.setProperty(COMMAND_DESCRIPTION, 
-										           "Show the enrichment charts");
+			props.setProperty(COMMAND_DESCRIPTION, "Show the enrichment charts");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
     	props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 			registerService(bc, showChartsFactory, TaskFactory.class, props);
@@ -281,8 +278,7 @@ public class CyActivator extends AbstractCyActivator {
 			Properties props = new Properties();
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "hide charts");
-			props.setProperty(COMMAND_DESCRIPTION, 
-										           "Hide the enrichment charts");
+			props.setProperty(COMMAND_DESCRIPTION, "Hide the enrichment charts");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
     	props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 			registerService(bc, hideChartsFactory, TaskFactory.class, props);
@@ -299,8 +295,7 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "settings");
-			props.setProperty(COMMAND_DESCRIPTION, 
-										           "Adjust various settings");
+			props.setProperty(COMMAND_DESCRIPTION, "Adjust various settings");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
     	props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 			registerService(bc, settingsFactory, TaskFactory.class, props);
@@ -527,9 +522,9 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "list species");
 			props.setProperty(COMMAND_DESCRIPTION, 
-			                            "Retrieve a list of the species for string.");
+			                            "Retrieve a list of the species available in STRING.");
 			props.setProperty(COMMAND_LONG_DESCRIPTION, 
-			                            "Retrieve the list of species known to string, including the texonomy ID.");
+			                            "Retrieve the list of species known to the STRING database, including the taxonomy ID.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
     	props.setProperty(COMMAND_EXAMPLE_JSON, "[{\"taxonomyId\": 9606, \"scientificName\": \"Homo sapiens\", \"abbreviatedName\":\"Homo sapiens\"}]");
 			// propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
@@ -576,7 +571,7 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(COMMAND_DESCRIPTION, 
 			                  "Show the structure images on the nodes");
 			props.setProperty(COMMAND_LONG_DESCRIPTION, 
-			                  "Show the structure images on the nodes");
+			                  "Show the structure images on the nodes.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
 			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 			registerService(bc, showImagesTF, TaskFactory.class, props);
@@ -591,7 +586,7 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(COMMAND_DESCRIPTION, 
 			                  "Hide the structure images on the nodes");
 			props.setProperty(COMMAND_LONG_DESCRIPTION, 
-			                  "Hide the structure images on the nodes");
+			                  "Hide the structure images on the nodes.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
 			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 			registerService(bc, showImagesTF, TaskFactory.class, props);
@@ -603,12 +598,72 @@ public class CyActivator extends AbstractCyActivator {
 			showEnhancedLabelsTF.reregister();
 			manager.setShowEnhancedLabelsTaskFactory(showEnhancedLabelsTF);
 		}
-
+		
+		{
+			// Register our show enhanced labels commands
+			ShowEnhancedLabelsTaskFactory showLabelsTF = new ShowEnhancedLabelsTaskFactory(manager, true);
+			Properties props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "show labels");
+			props.setProperty(COMMAND_DESCRIPTION, 
+			                  "Show the STRING style labels on the nodes");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+			                  "Show the STRING style labels on the nodes.");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
+			registerService(bc, showLabelsTF, TaskFactory.class, props);
+		}
+				
+		{
+			// Register our hide enhanced labels commands
+			ShowEnhancedLabelsTaskFactory showLabelsTF = new ShowEnhancedLabelsTaskFactory(manager, false);
+			Properties props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "hide labels");
+			props.setProperty(COMMAND_DESCRIPTION, 
+			                  "Hide the STRING style labels on the nodes");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+			                  "Hide the STRING style labels on the nodes.");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
+			registerService(bc, showLabelsTF, TaskFactory.class, props);			
+		}
+				
 		{
 			// Register our "show glass ball effect" toggle
 			ShowGlassBallEffectTaskFactory showGlassBallEffectTF = new ShowGlassBallEffectTaskFactory(manager);
 			showGlassBallEffectTF.reregister();
 			manager.setShowGlassBallEffectTaskFactory(showGlassBallEffectTF);
+		}
+
+		{
+			// Register our "show glass ball effect" commands
+			ShowGlassBallEffectTaskFactory showGlassTF = new ShowGlassBallEffectTaskFactory(manager, true);
+			Properties props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "show glass");
+			props.setProperty(COMMAND_DESCRIPTION, 
+			                  "Show the STRING glass ball effect on the nodes");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+			                  "Show the STRING glass ball effect on the nodes.");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
+			registerService(bc, showGlassTF, TaskFactory.class, props);
+		}
+		
+		{
+			// Register our "hide glass ball effect" commands
+			ShowGlassBallEffectTaskFactory showGlassTF = new ShowGlassBallEffectTaskFactory(manager, false);
+			Properties props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "hide glass");
+			props.setProperty(COMMAND_DESCRIPTION, 
+			                  "Hide the STRING glass ball effect on the nodes");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+			                  "Hide the STRING glass ball effect on the nodes.");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
+			registerService(bc, showGlassTF, TaskFactory.class, props);
 		}
 
 		{

@@ -74,7 +74,7 @@ public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 
 	@Tunable(description = "Query includes virus protein identifiers",
 	         longDescription="By default, a query will search for identifiers in both the protein and virus "+
-	                         "databases.  By changing this to 'false', only the protein database will be"+
+	                         "databases.  By changing this to 'false', only the protein database will be "+
 	                         "searched",
 	         exampleStringValue="false")
 	public boolean includesViruses = true;
