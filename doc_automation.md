@@ -6,10 +6,6 @@ Last update: 2020-10-06
 
 ## List of commands
 
-- [Version](#version)
-- [List species](#list-species)
-- [Settings](#settings)
-
 ### Network query
 
 - [Protein query](#protein-query)
@@ -45,6 +41,10 @@ Last update: 2020-10-06
 - [Show publications panel](#show-publications-panel) 
 - [Hide publications panel](#hide-publications-panel) 
 
+### Other
+- [Settings](#settings)
+- [List species](#list-species)
+- [Version](#version)
 
 ## Protein query
 
@@ -243,9 +243,9 @@ Creates a new network from the nodes and edges of the specified network,by query
 
 ## Expand network
 
-`help string expand`
+`string expand`
 
-Expand an already existing STRING network by more interactors such as STITCH compounds, proteins of the network species as well as proteins interacting with available viruses or host species proteins.
+Expands an already existing STRING network by more interactors such as STITCH compounds, proteins of the network species as well as proteins interacting with available viruses or host species proteins.
 
 ### Arguments
 
@@ -297,7 +297,7 @@ Changes the confidence of the network. If increased, some edges will disappear. 
 
 `string add nodes`
 
-Add a new set of query nodes to an existing STRING network as well as their interactions with the nodes in the existing network.
+Adds a new set of query nodes to an existing STRING network as well as their interactions with the nodes in the existing network.
 
 ### Arguments
 
@@ -361,7 +361,7 @@ Sets the network as a STRING network. This assumes that the network was original
 
 `string show images`
 
-Show the structure images on the nodes.
+Shows the structure images on the nodes.
 
 [List of commands](#list-of-commands) - [List of Visual properties commands](#visual-properties)
 
@@ -369,7 +369,7 @@ Show the structure images on the nodes.
 
 `string hide images`
 
-Hide the structure images on the nodes.
+Hides the structure images on the nodes.
 
 [List of commands](#list-of-commands) - [List of Visual properties commands](#visual-properties)
 
@@ -377,7 +377,7 @@ Hide the structure images on the nodes.
 
 `string show glass`
 
-Show the glass ball effect on the nodes.
+Shows the glass ball effect on the nodes.
 
 [List of commands](#list-of-commands) - [List of Visual properties commands](#visual-properties)
 
@@ -385,7 +385,7 @@ Show the glass ball effect on the nodes.
 
 `string hide glass`
 
-Hide the glass ball effect on the nodes.
+Hides the glass ball effect on the nodes.
 
 [List of commands](#list-of-commands) - [List of Visual properties commands](#visual-properties)
 
@@ -393,7 +393,7 @@ Hide the glass ball effect on the nodes.
 
 `string show labels`
 
-Show the STRING style labels on the nodes.
+Shows the STRING style labels on the nodes.
 
 [List of commands](#list-of-commands) - [List of Visual properties commands](#visual-properties)
 
@@ -401,7 +401,7 @@ Show the STRING style labels on the nodes.
 
 `string hide labels`
 
-Hide the STRING style labels on the nodes.
+Hides the STRING style labels on the nodes.
 
 [List of commands](#list-of-commands) - [List of Visual properties commands](#visual-properties)
 
@@ -552,7 +552,7 @@ Hides the enriched publications panel.
 
 `string settings`
 
-Adjust various default settings of the stringApp for network queries, enrichment and visual properties.
+Adjusts various default settings of the stringApp for network queries, enrichment and visual properties.
 
 ### Arguments 
 
@@ -614,7 +614,7 @@ Adjust various default settings of the stringApp for network queries, enrichment
 
 `string settings species="Mus musculus" defaultConfidence=0.7`
 
-[List of commands](#list-of-commands)
+[List of Other commands](#other)
 
 ## List species
 
@@ -622,7 +622,7 @@ Adjust various default settings of the stringApp for network queries, enrichment
 
 Retrieves the list of species known to STRING, including the taxonomy ID.
 
-[List of commands](#list-of-commands)
+[List of Other commands](#other)
 
 ## Version
 
@@ -630,4 +630,4 @@ Retrieves the list of species known to STRING, including the taxonomy ID.
 
 Returns the current version of the app.
 
-[List of commands](#list-of-commands)
+[List of Other commands](#other)
