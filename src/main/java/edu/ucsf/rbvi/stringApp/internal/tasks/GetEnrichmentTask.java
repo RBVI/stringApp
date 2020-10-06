@@ -65,12 +65,6 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	TaskMonitor monitor;
 	// boolean guiMode;
 
-	@Tunable(description="Network view to set enhanced labels on",
-	         // longDescription = StringToModel.CY_NETWORK_VIEW_LONG_DESCRIPTION,
-	         // exampleStringValue = StringToModel.CY_NETWORK_VIEW_EXAMPLE_STRING,
-	         context = "nogui")
-  public CyNetworkView view = null;
-
 	// not needed since the API returns only values with fdr < 0.05
 	// @Tunable(description = "Enrichment FDR value cutoff", 
 	//         longDescription = "Sets the false discovery rate (FDR) value cutoff a term must reach in order to be included",
@@ -78,7 +72,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	//				 gravity = 1.0)
 	// public double cutoff = 0.05;
 
-	@Tunable(description="Background"
+	@Tunable(description="Network to be used as background"
 		// longDescription = StringToModel.CY_NETWORK_VIEW_LONG_DESCRIPTION,
 		// exampleStringValue = StringToModel.CY_NETWORK_VIEW_EXAMPLE_STRING,
 	        )
@@ -100,13 +94,8 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	public GetEnrichmentTask(StringManager manager, CyNetwork network, CyNetworkView netView,
 			ShowEnrichmentPanelTaskFactory showEnrichmentFactory, ShowPublicationsPanelTaskFactory showFactoryPubl, boolean publOnly) {
 		this.manager = manager;
-		if (view != null) {
-			this.netView = view;
-			this.network = view.getModel();
-		} else {
-			this.network = network;
-			this.netView = netView;
-		}
+		this.network = network;
+		this.netView = netView;
 
 		this.showFactoryEnrich = showEnrichmentFactory;
 		this.showFactoryPubl = showFactoryPubl;
@@ -132,7 +121,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			stringNetworkMap.put(name, net);
 		}
 
-		background = new ListSingleSelection(netList);
+		background = new ListSingleSelection<String>(netList);
 		// genome is always the default
 		background.setSelectedValue("genome");
 

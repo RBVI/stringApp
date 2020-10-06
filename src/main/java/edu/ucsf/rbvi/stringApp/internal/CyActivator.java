@@ -255,6 +255,7 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "filter enrichment");
 			props.setProperty(COMMAND_DESCRIPTION, "Filter the terms in the enrichment table");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, "Filter the terms in the enrichment table.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
     	props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 			registerService(bc, filterFactory, TaskFactory.class, props);
@@ -267,6 +268,7 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "show charts");
 			props.setProperty(COMMAND_DESCRIPTION, "Show the enrichment charts");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, "Show the enrichment charts using the default settings.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
     	props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 			registerService(bc, showChartsFactory, TaskFactory.class, props);
@@ -279,6 +281,7 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "hide charts");
 			props.setProperty(COMMAND_DESCRIPTION, "Hide the enrichment charts");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, "Hide the enrichment charts.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
     	props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 			registerService(bc, hideChartsFactory, TaskFactory.class, props);
@@ -296,6 +299,8 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "settings");
 			props.setProperty(COMMAND_DESCRIPTION, "Adjust various settings");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, "Adjust various default settings of "
+					+ "the stringApp for network queries, enrichment and visual properties.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
     	props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 			registerService(bc, settingsFactory, TaskFactory.class, props);
