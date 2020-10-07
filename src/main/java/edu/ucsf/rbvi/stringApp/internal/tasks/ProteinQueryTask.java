@@ -67,14 +67,9 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 	         exampleStringValue="0.4")
 	public BoundedDouble cutoff = new BoundedDouble(0.0, 0.4, 1.0, false, false);
 
-	@Tunable(description="String network to add additional nodes to",
-	         longDescription=StringToModel.CY_NETWORK_LONG_DESCRIPTION,
-					 exampleStringValue="current")
-	public CyNetwork network = null;
-
 	@Tunable(description = "Query includes virus protein identifiers",
 	         longDescription="By default, a query will search for identifiers in both the protein and virus "+
-	                         "databases.  By changing this to 'false', only the protein database will be"+
+	                         "databases.  By changing this to 'false', only the protein database will be "+
 	                         "searched",
 	         exampleStringValue="false")
 	public boolean includesViruses = true;
@@ -116,10 +111,6 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 
 		StringNetwork stringNetwork = new StringNetwork(manager);
 		int confidence = (int) (cutoff.getValue() * 100);
-		if (network != null) {
-			// Make sure it's a string network
-			stringNetwork.setNetwork(network);
-		}
 
 		// We want the query with newlines, so we need to convert
 		query = query.replaceAll("(?<!\\\\),", "\n");
