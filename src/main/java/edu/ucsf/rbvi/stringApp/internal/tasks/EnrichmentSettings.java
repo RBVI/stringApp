@@ -89,15 +89,16 @@ public class EnrichmentSettings implements ActionListener, RequestsUIHelper {
 			}
 
 		}
-		defaultPalette = new ListSingleSelection<Palette>(palettes);
-
-		nTerms.setValue(manager.getTopTerms(network));
-		overlapCutoff.setValue(manager.getOverlapCutoff(network));
 		// ColorBrewer[] palettes = ColorBrewer.getQualitativeColorPalettes(false);
 		defaultPalette = new ListSingleSelection<Palette>(palettes);
+		if (manager.getEnrichmentPalette(network) != null) {
+			defaultPalette.setSelectedValue(manager.getEnrichmentPalette(network));
+		}
+		
+		nTerms.setValue(manager.getTopTerms(network));
+		overlapCutoff.setValue(manager.getOverlapCutoff(network));
 		chartType = new ListSingleSelection<ChartType>(ChartType.values());
 		chartType.setSelectedValue(manager.getChartType(network));
-		if (manager.getEnrichmentPalette(network) != null) defaultPalette.setSelectedValue(manager.getEnrichmentPalette(network));
 	}
 
 	public void actionPerformed(ActionEvent e) {
