@@ -132,6 +132,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 	}
 
 	public void run(TaskMonitor monitor) {
+		monitor.setTitle("Expand network");
 		// check if we have a network
 		if (network == null) {
 			monitor.showMessage(TaskMonitor.Level.WARN, "No network to expand");

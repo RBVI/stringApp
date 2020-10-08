@@ -26,6 +26,7 @@ public class HideChartsTask extends AbstractTask implements ObservableTask {
 
 	@Override
 	public void run(TaskMonitor arg0) throws Exception {
+		arg0.setTitle("Hide enrichment charts");
 		// Filter the current list
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {

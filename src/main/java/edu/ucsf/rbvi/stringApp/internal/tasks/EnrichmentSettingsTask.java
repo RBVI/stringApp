@@ -39,6 +39,7 @@ public class EnrichmentSettingsTask extends AbstractTask {
 
 	@Override
 	public void run(TaskMonitor arg0) throws Exception {
+		arg0.setTitle("Enrichment settings");
 		if (makeDefault) {
 			manager.setTopTerms(null,enrichmentSettings.nTerms.getValue());
 			manager.setOverlapCutoff(null,enrichmentSettings.overlapCutoff.getValue());

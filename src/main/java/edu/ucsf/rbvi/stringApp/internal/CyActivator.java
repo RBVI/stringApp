@@ -243,8 +243,9 @@ public class CyActivator extends AbstractCyActivator {
 			versionProps.setProperty(COMMAND_NAMESPACE, "string");
 			versionProps.setProperty(COMMAND, "version");
 			versionProps.setProperty(COMMAND_DESCRIPTION, "Returns the version of StringApp");
+			versionProps.setProperty(COMMAND_LONG_DESCRIPTION, "Returns the version of StringApp.");
 			versionProps.setProperty(COMMAND_SUPPORTS_JSON, "true");
-    	versionProps.setProperty(COMMAND_EXAMPLE_JSON, "{\"version\":\"2.1.0\"}");
+			versionProps.setProperty(COMMAND_EXAMPLE_JSON, "{\"version\":\"2.1.0\"}");
 			registerService(bc, versionFactory, TaskFactory.class, versionProps);
 		}
 
