@@ -52,18 +52,18 @@ public class EnrichmentSettings implements ActionListener, RequestsUIHelper {
 	         gravity = 101.0, params="slider=true")
 	public BoundedInteger nTerms = new BoundedInteger(1, 5, 8, false, false);
 	
-	@Tunable(description = "Default Brewer palette",
-	         longDescription = "Set the default Brewer palette for charts",
+	@Tunable(description = "Default Brewer palette for enrichment charts",
+	         longDescription = "Set the default Brewer palette for enrichment charts",
 	         exampleStringValue = "ColorBrewer Paired colors",
 					 groups = {"Enrichment Defaults"},
 	         gravity = 102.0, context="nogui")
-	public ListSingleSelection<Palette> defaultPalette;
+	public ListSingleSelection<Palette> defaultEnrichmentPalette;
 
-	@Tunable(description = "Change Color Palette",
-	         tooltip = "Set the default Brewer color palette for charts",
+	@Tunable(description = "Change enrichment color palette",
+	         tooltip = "Set the default Brewer color palette for enrichment charts",
 					 groups = {"Enrichment Defaults"},
 	         gravity = 103.0, context="gui")
-	public UserAction paletteChooser = new UserAction(this);
+	public UserAction paletteChooserEnrichment = new UserAction(this);
 
 	@Tunable(description = "Overlap cutoff", 
 	         tooltip = "<html>This is the maximum Jaccard similarity that will be allowed.<br/>"+
@@ -90,10 +90,8 @@ public class EnrichmentSettings implements ActionListener, RequestsUIHelper {
 
 		}
 		// ColorBrewer[] palettes = ColorBrewer.getQualitativeColorPalettes(false);
-		defaultPalette = new ListSingleSelection<Palette>(palettes);
-		if (manager.getEnrichmentPalette(network) != null) {
-			defaultPalette.setSelectedValue(manager.getEnrichmentPalette(network));
-		}
+		defaultEnrichmentPalette = new ListSingleSelection<Palette>(palettes);
+		defaultEnrichmentPalette.setSelectedValue(manager.getEnrichmentPalette(network));
 		
 		nTerms.setValue(manager.getTopTerms(network));
 		overlapCutoff.setValue(manager.getOverlapCutoff(network));
@@ -102,15 +100,13 @@ public class EnrichmentSettings implements ActionListener, RequestsUIHelper {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		PaletteProviderManager pm = manager.getService(PaletteProviderManager.class);
-
 		CyColorPaletteChooser paletteChooser = 
 			manager.getService(CyColorPaletteChooserFactory.class).getColorPaletteChooser(BrewerType.QUALITATIVE, true);
-		Palette palette = paletteChooser.showDialog(parent, "Palette for Channel Colors", null, 8);
-		// System.out.println("Setting enrichment palette to: "+palette);
+		Palette palette = paletteChooser.showDialog(parent, "Palette for Enrichment Colors", 
+				manager.getEnrichmentPalette(network), nTerms.getValue());
 		if (palette != null) {
 			manager.setEnrichmentPalette(network, palette);
-			defaultPalette.setSelectedValue(palette);
+			defaultEnrichmentPalette.setSelectedValue(palette);
 		}
 
 		/*

@@ -50,52 +50,62 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 	private PaletteProvider stringProvider = null;
 
 	@Tunable(description="Species", 
-			longDescription="Default species",
+			longDescription="Default species for network queries.",
 			exampleStringValue = "Homo Sapiens",
 			params="lookup=begins", groups={"Query Defaults (take effect after restarting Cytoscape)"}, gravity=10.0)
 	public ListSingleSelection<Species> species;
 
 	@Tunable(description="Confidence (score) cutoff", 
-			longDescription="Default confidence (score) cutoff",
+			longDescription="Default confidence (score) cutoff.",
 			exampleStringValue = "0.4",
 			groups={"Query Defaults (take effect after restarting Cytoscape)"}, gravity=11.0,
 	         params="slider=true")
 	public BoundedDouble defaultConfidence = new BoundedDouble(0.0, 0.4, 1.0, false, false);
 
 	@Tunable(description="Maximum additional interactors (protein and compound query)", 
-			longDescription="Default number of additional interactors for the protein and compound query",
+			longDescription="Default number of additional interactors for the protein and compound query.",
 			exampleStringValue = "0",
 			groups={"Query Defaults (take effect after restarting Cytoscape)"}, gravity=12.0,
 	         params="slider=true")
 	public BoundedInteger additionalProteins = new BoundedInteger(0, 0, 100, false, false);
 
 	@Tunable(description="Maximum proteins (disease and PubMed query)",
-			longDescription="Default number of proteins for the disease and PubMed query",
+			longDescription="Default number of proteins for the disease and PubMed query.",
 			exampleStringValue = "100",
-			groups={"Query Defaults (take effect after restarting Cytoscape)"}, gravity=13.0, params="slider=true") public BoundedInteger maxProteins = new BoundedInteger(1, 100, 2000, false, false);
+			groups={"Query Defaults (take effect after restarting Cytoscape)"}, gravity=13.0, params="slider=true") 
+	public BoundedInteger maxProteins = new BoundedInteger(1, 100, 2000, false, false);
 
 	@Tunable(description="Show structure images",
-			longDescription="Show structure images by default",
+			longDescription="Show structure images by default.",
 			exampleStringValue = "true",
 			groups={"View Defaults"}, gravity=14.0)
 	public boolean showImage = true;
 
 	@Tunable(description="Show STRING style labels", 
-			longDescription="Show STRING style labels by default",
+			longDescription="Show STRING style labels by default.",
 			exampleStringValue = "true",
 			groups={"View Defaults"}, gravity=15.0)
 	public boolean showEnhancedLabels = true;
 
 	@Tunable(description="Enable STRING glass ball effect", 
-			longDescription="Enable STRING glass ball effect by default",
+			longDescription="Enable STRING glass ball effect by default.",
 			exampleStringValue = "true",
 			groups={"View Defaults"}, gravity=16.0)
 	public boolean showGlassBallEffect = true;
 
-	@Tunable(description="Edge channel color palettes", 
-			longDescription="Set the palette to use for the channel colors",
-			exampleStringValue = "STRING channel colors", groups={"View Defaults"}, gravity=17.0)
-	public UserAction paletteChooser = new UserAction(this);
+	@Tunable(description="Change edge channel color palette", 
+			longDescription="Set the palette to use for the channel colors.",
+			exampleStringValue = "STRING channel colors", 
+			groups={"View Defaults"}, gravity=17.0, 
+			context="gui")
+	public UserAction paletteChooserChannels = new UserAction(this);
+
+	@Tunable(description = "Default palette for edge colors",
+	         longDescription = "Set the default palette for edge channel colors.",
+	         exampleStringValue = "STRING channel colors", 
+	         groups={"View Defaults"}, gravity=18.0,
+	         context="nogui")
+	public ListSingleSelection<Palette> defaultChannelPalette;
 
 	@ContainsTunables
 	public EnrichmentSettings enrichmentSettings;
@@ -119,17 +129,17 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 
 		// Get a default palette
 		channelPalette = stringProvider.getPalette("default");
-
-		/*
 		List<PaletteProvider> providers = manager.getService(PaletteProviderManager.class).getPaletteProviders(BrewerType.QUALITATIVE, false);
+		List<Palette> colors = new ArrayList<>();
+		colors.add(channelPalette);
 		for (PaletteProvider provider: providers) {
 			for (String pName: provider.listPaletteNames(BrewerType.QUALITATIVE, false)) {
-				colors.add(provider.getPalette(pName, 7));
+				colors.add(provider.getPalette(pName, 8));
 			}
 		}
 
-		channelColors = new ListSingleSelection<Palette>(colors);
-		*/
+		defaultChannelPalette = new ListSingleSelection<Palette>(colors);
+		defaultChannelPalette.setSelectedValue(channelPalette);
 	}
 
 	@Override
@@ -169,9 +179,16 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 
 		manager.setTopTerms(null,enrichmentSettings.nTerms.getValue());
 		manager.setOverlapCutoff(null,enrichmentSettings.overlapCutoff.getValue());
-		manager.setEnrichmentPalette(null,enrichmentSettings.defaultPalette.getSelectedValue());
+		manager.setEnrichmentPalette(null,enrichmentSettings.defaultEnrichmentPalette.getSelectedValue());
 		manager.setChartType(null,enrichmentSettings.chartType.getSelectedValue());
 		manager.updateSettings();
+
+		if (network != null) {
+			manager.setTopTerms(network,enrichmentSettings.nTerms.getValue());
+			manager.setOverlapCutoff(network,enrichmentSettings.overlapCutoff.getValue());
+			manager.setEnrichmentPalette(network,enrichmentSettings.defaultEnrichmentPalette.getSelectedValue());
+			manager.setChartType(network,enrichmentSettings.chartType.getSelectedValue());			
+		}
 		
 	}
 
@@ -206,6 +223,10 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 		CyColorPaletteChooser paletteChooser = 
 			manager.getService(CyColorPaletteChooserFactory.class).getColorPaletteChooser(BrewerType.QUALITATIVE, true);
 		channelPalette = paletteChooser.showDialog(parent, "Palette for Channel Colors", channelPalette, manager.channels.length);
+		if (channelPalette != null) {
+			defaultChannelPalette.setSelectedValue(channelPalette);
+			manager.setChannelColors(getChannelColorMap());
+		}
 
 		pm.removePaletteProvider(stringProvider);
 	}
@@ -216,7 +237,7 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 
 	public Map<String, Color> getChannelColorMap() {
 		Map<String, Color> colorMap = new HashMap<>();
-		Color[] colors = channelPalette.getColors(manager.channels.length);
+		Color[] colors = defaultChannelPalette.getSelectedValue().getColors(manager.channels.length);
 		for (int i = 0; i < manager.channels.length; i++) {
 			colorMap.put(manager.channels[i], colors[i]);
 		}

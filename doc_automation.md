@@ -594,9 +594,9 @@ Adjusts various default settings of the stringApp for network queries, enrichmen
 
    This is the maximum Jaccard similarity that will be allowed. Values larger than this cutoff will be excluded. It must be a value between 0.0 and 1.0.
 
-- `defaultChannelPalette` (optional) *String* Default: `STRING channel colors`
+- `defaultChannelPalette` (optional) *String* Default: `default channel colors`
 
-   Set the palette to use for the edge colors of the STRING channels. Possible values are the default `STRING channel colors` and the available Brewer palettes: `ColorBrewer Set1 colors`, `ColorBrewer Pastel1 colors`, `ColorBrewer Set2 colors`, `ColorBrewer Paired colors`, `ColorBrewer Dark colors`, `ColorBrewer Pastel2 colors`, `ColorBrewer Set3 colors`, `ColorBrewer Accents`, `Rainbow OSC`, `Random`, `Rainbow`.
+   Set the palette to use for the edge colors of the STRING channels. Possible values are the default `default channel colors` and the available Brewer palettes: `ColorBrewer Set1 colors`, `ColorBrewer Pastel1 colors`, `ColorBrewer Set2 colors`, `ColorBrewer Paired colors`, `ColorBrewer Dark colors`, `ColorBrewer Pastel2 colors`, `ColorBrewer Set3 colors`, `ColorBrewer Accents`, `Rainbow OSC`, `Random`, `Rainbow`.
 
 - `showEnhancedLabels` (optional) *boolean* Default: `true`
 
