@@ -57,6 +57,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	private StringNetwork stringNetwork;
 	private CyNetwork net;
 	private String netName;
+	private String useDatabase;
 	private CyNetwork loadedNetwork = null;
 	private int additionalNodes = 0;
 	private SearchOptionsPanel optionsPanel = null;
@@ -71,16 +72,22 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	public CyNetwork networkNoGui = null;
 
 	@Tunable(description="Column to use for STRING query", 
-	         longDescription="Select the column to use to query for STRING nodes",
+	         longDescription="Select the column to use to query for STRING nodes.",
 	         exampleStringValue="name",
 	         context="gui", required=true)
 	public ListSingleSelection<CyColumn> tableColumn = null;
 
 	@Tunable(description="Include unmappable nodes", 
 	         longDescription="Option for choosing whether nodes that cannot be mapped to "
-	         		+ "STRING identifiers should be included in the new network or not",
+	         		+ "STRING identifiers should be included in the new network or not.",
 	         exampleStringValue="true")
 	public boolean includeNotMapped = true;
+
+	@Tunable(description="Map nodes to compounds", 
+	         longDescription="Option for considering compounds when resolving the node "
+	         		+ "identifiers and consequently querying STITCH instead of STRING.",
+	         exampleStringValue="false")
+	public boolean compoundQuery = false;
 
 	@Tunable(description="Column to use for STRING query", 
 	         longDescription="Select the column to use to query for STRING nodes",
@@ -89,25 +96,27 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	public String column = null;
 
 	@Tunable(description="Species for the query", 
-	         longDescription="Species to use for the query",
+	         longDescription="Species to use for the query.",
 	         exampleStringValue="name",
+	         params="lookup=begins",
 	         required=true)
 	public ListSingleSelection<Species> species;
 
 	@Tunable(description = "Confidence cutoff",
 	         longDescription="The confidence score reflects the cumulated evidence that this "+
 					                 "interaction exists.  Only interactions with scores greater than "+
-													 "this cutoff will be returned",
+													 "this cutoff will be returned.",
 	         exampleStringValue="0.4",
 	         context="nogui")
-
 	public BoundedDouble cutoff = new BoundedDouble(0.0, 1.0, 1.0, false, false);
 
 
+	
 	public StringifyTask(final StringManager manager, final CyNetwork net) {
 		this.manager = manager;
 		this.net = net;
 		this.netName = "";
+		this.useDatabase = Databases.STRING.getAPIName();
 		species = new ListSingleSelection<Species>(Species.getSpecies());
 		species.setSelectedValue(Species.getSpecies("Homo sapiens"));
 		if (net != null) {
@@ -124,6 +133,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		this.manager = manager;
 		this.net = net;
 		this.netName = "";
+		this.useDatabase = Databases.STRING.getAPIName();
 		species = new ListSingleSelection<Species>(Species.getSpecies());
 		species.setSelectedValue(sp);
 		if (net != null) {
@@ -186,6 +196,9 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		stringNetwork = new StringNetwork(manager);
 		int taxon = species.getSelectedValue().getTaxId();
 
+		// Set to STICH network
+		if (compoundQuery) useDatabase = Databases.STITCH.getAPIName();
+		
 		// Are we command or GUI based?
 		if (tableColumn != null) {
 			optionsPanel = new SearchOptionsPanel(manager);
@@ -194,9 +207,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 			optionsPanel.setSpecies(species.getSelectedValue());
 
 			// GUI based
-			TaskIterator ti = 
-						new TaskIterator(new GetAnnotationsTask(stringNetwork, taxon, terms, 
-			                                              Databases.STRING.getAPIName()));
+			TaskIterator ti = new TaskIterator(new GetAnnotationsTask(stringNetwork, taxon, terms, useDatabase));
 			manager.execute(ti, this);
 			return;
 		}
@@ -204,12 +215,12 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		// Get the annotations
 		Map<String, List<Annotation>> annotations;
 		try {
-			annotations = stringNetwork.getAnnotations(manager, taxon, terms, Databases.STITCH.getAPIName(), false);
+			annotations = stringNetwork.getAnnotations(manager, taxon, terms, useDatabase, false);
 		} catch (ConnectionException e) {
 			e.printStackTrace();
 			monitor.showMessage(TaskMonitor.Level.ERROR,
-					"Cannot connect to " + Databases.STRING.getAPIName());
-			throw new RuntimeException("Cannot connect to " + Databases.STRING.getAPIName());
+					"Cannot connect to " + useDatabase);
+			throw new RuntimeException("Cannot connect to " + useDatabase);
 		}
 
 		if (annotations == null || annotations.size() == 0) {
@@ -230,7 +241,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
 		LoadInteractions load = 
 				new LoadInteractions(stringNetwork, species.toString(), taxon, 
-						(int)(cutoff.getValue()*100), additionalNodes, stringIds, queryTermMap, netName, Databases.STRING.getAPIName());
+						(int)(cutoff.getValue()*100), additionalNodes, stringIds, queryTermMap, netName, useDatabase);
 		manager.execute(new TaskIterator(load), true);
 		loadedNetwork = stringNetwork.getNetwork();
 		if (loadedNetwork == null) {
@@ -268,7 +279,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		boolean noAmbiguity = stringNetwork.resolveAnnotations();
 		if (noAmbiguity) {
 			// System.out.println("Calling importNetwork");
-			importNetwork(taxon, (int)(cutoff.getValue()*100), additionalNodes);
+			importNetwork(taxon, (int)(cutoff.getValue()*100), additionalNodes, useDatabase);
 
 			// Creating the copyTask
 			CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork, includeNotMapped);
@@ -283,7 +294,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 					//                                         getSpecies(), false, getConfidence(), getAdditionalNodes());
 					CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork, includeNotMapped);
 					GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, 
-					                                        Databases.STRING.getAPIName(), false, 
+					                                        useDatabase, false, 
 					                                        optionsPanel, netName, copyTask);
 					panel.createResolutionPanel();
 					d.setContentPane(panel);
@@ -303,12 +314,12 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		return "Homo sapiens"; // Homo sapiens
 	}
 
-	void importNetwork(int taxon, int confidence, int additionalNodes) {
+	void importNetwork(int taxon, int confidence, int additionalNodes, String useDatabase) {
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
 		TaskFactory factory = new ImportNetworkTaskFactory(stringNetwork, getSpecies(), 
 		                                                   taxon, confidence, additionalNodes, stringIds,
-		                                                   queryTermMap, netName, Databases.STRING.getAPIName());
+		                                                   queryTermMap, netName, useDatabase);
 		if (optionsPanel.getLoadEnrichment())
 			manager.execute(factory.createTaskIterator(), this, true);
 		else

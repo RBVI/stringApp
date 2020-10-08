@@ -2,7 +2,7 @@
 
 stringApp version 1.6.1
 
-Last update: 2020-10-06
+Last update: 2020-10-08
 
 ## List of commands
 
@@ -224,6 +224,10 @@ Creates a new network from the nodes and edges of the specified network,by query
 - `includeNotMapped` (optional) *boolean* Default: `true`
    
    Option for choosing whether nodes that cannot be mapped to STRING identifiers should be included in the new network or not.
+
+- `compoundQuery` (optional) *boolean* Default: `false`
+
+   Option for considering compounds when resolving the node identifiers and consequently querying STITCH instead of STRING.
 
 - `networkNoGui` **required** *String* Default: `current`
    
@@ -574,9 +578,9 @@ Adjusts various default settings of the stringApp for network queries, enrichmen
 
    Default confidence (score) cutoff. It must be a value between 0.0 and 1.0.
 
-- `defaultPalette` (optional) *String* Default: `ColorBrewer Paired colors`
+- `defaultEnrichmentPalette` (optional) *String* Default: `ColorBrewer Paired colors`
 
-   Set the default Brewer palette for charts. Possible values are the available Brewer palettes: `ColorBrewer Set1 colors`, `ColorBrewer Pastel1 colors`, `ColorBrewer Set2 colors`, `ColorBrewer Paired colors`, `ColorBrewer Dark colors`, `ColorBrewer Pastel2 colors`, `ColorBrewer Set3 colors`, `ColorBrewer Accents`, `Rainbow OSC`, `Random`, `Rainbow`.
+   Set the default Brewer palette for enrichment charts. Possible values are the available Brewer palettes: `ColorBrewer Set1 colors`, `ColorBrewer Pastel1 colors`, `ColorBrewer Set2 colors`, `ColorBrewer Paired colors`, `ColorBrewer Dark colors`, `ColorBrewer Pastel2 colors`, `ColorBrewer Set3 colors`, `ColorBrewer Accents`, `Rainbow OSC`, `Random`, `Rainbow`.
 
 - `maxProteins` (optional) *int* Default: `100`
 
@@ -590,7 +594,7 @@ Adjusts various default settings of the stringApp for network queries, enrichmen
 
    This is the maximum Jaccard similarity that will be allowed. Values larger than this cutoff will be excluded. It must be a value between 0.0 and 1.0.
 
-- `channelColors` (optional) *String* Default: `STRING channel colors`
+- `defaultChannelPalette` (optional) *String* Default: `STRING channel colors`
 
    Set the palette to use for the edge colors of the STRING channels. Possible values are the default `STRING channel colors` and the available Brewer palettes: `ColorBrewer Set1 colors`, `ColorBrewer Pastel1 colors`, `ColorBrewer Set2 colors`, `ColorBrewer Paired colors`, `ColorBrewer Dark colors`, `ColorBrewer Pastel2 colors`, `ColorBrewer Set3 colors`, `ColorBrewer Accents`, `Rainbow OSC`, `Random`, `Rainbow`.
 
