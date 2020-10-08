@@ -48,18 +48,18 @@ public class ShowEnrichmentPanelTaskFactory extends AbstractTaskFactory {
 		if (ShowEnrichmentPanelTask.isPanelRegistered(manager)) {
 			props.setProperty(TITLE, "Hide enrichment panel");
 			props.setProperty(COMMAND, "hide enrichment");
-			props.setProperty(COMMAND_DESCRIPTION, 
-										    "Hide the enrichment panel");
+			props.setProperty(COMMAND_DESCRIPTION, "Hide the enrichment panel");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, "Hide the enrichment panel.");
 			show = false;
 		} else {
 			props.setProperty(TITLE, "Show enrichment panel");
 			props.setProperty(COMMAND, "show enrichment");
-			props.setProperty(COMMAND_DESCRIPTION, 
-										    "Show the enrichment panel");
+			props.setProperty(COMMAND_DESCRIPTION, "Show the enrichment panel");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, "Show the enrichment panel");
 			show = true;
 		}
 		props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-   	props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
+		props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 		props.setProperty(MENU_GRAVITY, "2.0");
 		props.setProperty(IN_MENU_BAR, "true");
 		manager.registerService(this, TaskFactory.class, props);

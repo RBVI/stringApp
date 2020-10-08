@@ -48,14 +48,14 @@ public class ShowPublicationsPanelTaskFactory extends AbstractTaskFactory {
 		if (ShowPublicationsPanelTask.isPanelRegistered(manager)) {
 			props.setProperty(TITLE, "Hide publications panel");
 			props.setProperty(COMMAND, "hide publications");
-			props.setProperty(COMMAND_DESCRIPTION, 
-										    "Hide the publications panel");
+			props.setProperty(COMMAND_DESCRIPTION, "Hide the publications panel");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, "Hide the publications panel");
 			show = false;
 		} else {
 			props.setProperty(TITLE, "Show publications panel");
 			props.setProperty(COMMAND, "show publications");
-			props.setProperty(COMMAND_DESCRIPTION, 
-										    "Show the publications panel");
+			props.setProperty(COMMAND_DESCRIPTION, "Show the publications panel");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, "Show the publications panel");
 			show = true;
 		}
 		props.setProperty(COMMAND_SUPPORTS_JSON, "true");
