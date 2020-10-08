@@ -217,8 +217,9 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 
 		if (newNodes.size() == 0 && newEdges.size() == 0) {
 			if (conf == 1.0) { 
-				// monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results with a confidence larger than 1.0.<br> Consider chnanging the confidence threshold.");
-				manager.error("String returned no results with a confidence larger than 1.0.<br> Consider chnanging the confidence threshold.");
+				monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results with a confidence larger than 1.0.<br> Consider changing the confidence threshold.");
+				// manager.error("String returned no results with a confidence larger than 1.0.<br> Consider changing the confidence threshold.");
+				// throw new RuntimeException("String returned no results with a confidence larger than 1.0. Consider changing the confidence threshold.");
 				return;
 			} else { 
 				manager.error("String returned no results");
