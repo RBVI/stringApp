@@ -4,7 +4,10 @@ import java.util.Properties;
 
 import static org.cytoscape.work.ServiceProperties.COMMAND;
 import static org.cytoscape.work.ServiceProperties.COMMAND_DESCRIPTION;
+import static org.cytoscape.work.ServiceProperties.COMMAND_EXAMPLE_JSON;
+import static org.cytoscape.work.ServiceProperties.COMMAND_LONG_DESCRIPTION;
 import static org.cytoscape.work.ServiceProperties.COMMAND_NAMESPACE;
+import static org.cytoscape.work.ServiceProperties.COMMAND_SUPPORTS_JSON;
 import static org.cytoscape.work.ServiceProperties.ENABLE_FOR;
 import static org.cytoscape.work.ServiceProperties.INSERT_SEPARATOR_BEFORE;
 import static org.cytoscape.work.ServiceProperties.IN_MENU_BAR;
@@ -59,13 +62,28 @@ public class ShowImagesTaskFactory extends AbstractNetworkViewTaskFactory implem
 		manager.unregisterService(this, NetworkViewTaskFactory.class);
 		Properties props = new Properties();
 		props.setProperty(PREFERRED_MENU, "Apps.STRING");
-		if (manager.showImage())
+		props.setProperty(COMMAND_NAMESPACE, "string");
+		if (manager.showImage()) {
 			props.setProperty(TITLE, "Don't show structure images");
-		else
+			props.setProperty(COMMAND, "hide images");
+			props.setProperty(COMMAND_DESCRIPTION, 
+			                  "Hide the structure images on the nodes");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+			                  "Hide the structure images on the nodes.");
+		} else {
 			props.setProperty(TITLE, "Show structure images");
+			props.setProperty(COMMAND, "show images");
+			props.setProperty(COMMAND_DESCRIPTION, 
+			                  "Show the structure images on the nodes");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+			                  "Show the structure images on the nodes.");
+
+		}
 		props.setProperty(MENU_GRAVITY, "7.0");
 		props.setProperty(IN_MENU_BAR, "true");
 		props.setProperty(INSERT_SEPARATOR_BEFORE, "true");
+		props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+		props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 		manager.registerService(this, NetworkViewTaskFactory.class, props);
 	}
 }

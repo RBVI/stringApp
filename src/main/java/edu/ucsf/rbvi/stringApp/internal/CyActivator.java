@@ -569,36 +569,6 @@ public class CyActivator extends AbstractCyActivator {
 		}
 
 		{
-			// Register our show image commands
-			ShowImagesTaskFactory showImagesTF = new ShowImagesTaskFactory(manager, true);
-			Properties props = new Properties();
-			props.setProperty(COMMAND_NAMESPACE, "string");
-			props.setProperty(COMMAND, "show images");
-			props.setProperty(COMMAND_DESCRIPTION, 
-			                  "Show the structure images on the nodes");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, 
-			                  "Show the structure images on the nodes.");
-			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-			registerService(bc, showImagesTF, TaskFactory.class, props);
-		}
-		
-		{
-			// Register our hide image commands
-			ShowImagesTaskFactory showImagesTF = new ShowImagesTaskFactory(manager, false);
-			Properties props = new Properties();
-			props.setProperty(COMMAND_NAMESPACE, "string");
-			props.setProperty(COMMAND, "hide images");
-			props.setProperty(COMMAND_DESCRIPTION, 
-			                  "Hide the structure images on the nodes");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, 
-			                  "Hide the structure images on the nodes.");
-			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-			registerService(bc, showImagesTF, TaskFactory.class, props);
-		}
-
-		{
 			// Register our "show enhanced labels" toggle
 			ShowEnhancedLabelsTaskFactory showEnhancedLabelsTF = new ShowEnhancedLabelsTaskFactory(manager);
 			showEnhancedLabelsTF.reregister();
@@ -606,70 +576,10 @@ public class CyActivator extends AbstractCyActivator {
 		}
 		
 		{
-			// Register our show enhanced labels commands
-			ShowEnhancedLabelsTaskFactory showLabelsTF = new ShowEnhancedLabelsTaskFactory(manager, true);
-			Properties props = new Properties();
-			props.setProperty(COMMAND_NAMESPACE, "string");
-			props.setProperty(COMMAND, "show labels");
-			props.setProperty(COMMAND_DESCRIPTION, 
-			                  "Show the STRING style labels on the nodes");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, 
-			                  "Show the STRING style labels on the nodes.");
-			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-			registerService(bc, showLabelsTF, TaskFactory.class, props);
-		}
-				
-		{
-			// Register our hide enhanced labels commands
-			ShowEnhancedLabelsTaskFactory showLabelsTF = new ShowEnhancedLabelsTaskFactory(manager, false);
-			Properties props = new Properties();
-			props.setProperty(COMMAND_NAMESPACE, "string");
-			props.setProperty(COMMAND, "hide labels");
-			props.setProperty(COMMAND_DESCRIPTION, 
-			                  "Hide the STRING style labels on the nodes");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, 
-			                  "Hide the STRING style labels on the nodes.");
-			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-			registerService(bc, showLabelsTF, TaskFactory.class, props);			
-		}
-				
-		{
 			// Register our "show glass ball effect" toggle
 			ShowGlassBallEffectTaskFactory showGlassBallEffectTF = new ShowGlassBallEffectTaskFactory(manager);
 			showGlassBallEffectTF.reregister();
 			manager.setShowGlassBallEffectTaskFactory(showGlassBallEffectTF);
-		}
-
-		{
-			// Register our "show glass ball effect" commands
-			ShowGlassBallEffectTaskFactory showGlassTF = new ShowGlassBallEffectTaskFactory(manager, true);
-			Properties props = new Properties();
-			props.setProperty(COMMAND_NAMESPACE, "string");
-			props.setProperty(COMMAND, "show glass");
-			props.setProperty(COMMAND_DESCRIPTION, 
-			                  "Show the STRING glass ball effect on the nodes");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, 
-			                  "Show the STRING glass ball effect on the nodes.");
-			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-			registerService(bc, showGlassTF, TaskFactory.class, props);
-		}
-		
-		{
-			// Register our "hide glass ball effect" commands
-			ShowGlassBallEffectTaskFactory showGlassTF = new ShowGlassBallEffectTaskFactory(manager, false);
-			Properties props = new Properties();
-			props.setProperty(COMMAND_NAMESPACE, "string");
-			props.setProperty(COMMAND, "hide glass");
-			props.setProperty(COMMAND_DESCRIPTION, 
-			                  "Hide the STRING glass ball effect on the nodes");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, 
-			                  "Hide the STRING glass ball effect on the nodes.");
-			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-			registerService(bc, showGlassTF, TaskFactory.class, props);
 		}
 
 		{
