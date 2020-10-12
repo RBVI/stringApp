@@ -358,6 +358,20 @@ public class StringNodePanel extends AbstractStringPanel {
 		return;
 	}
 
+	private void updateNodesPanel() {
+		if (nodesPanel == null) return;
+		nodesPanel.removeAll();
+		EasyGBC c = new EasyGBC();
+
+		List<CyNode> nodes = CyTableUtil.getNodesInState(currentNetwork, CyNetwork.SELECTED, true);
+		for (CyNode node: nodes) {
+			JPanel newPanel = createNodePanel(node);
+			newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
+			nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
+		}
+		return ;
+	}
+	
 	private JPanel createNodesPanel() {
 		nodesPanel = new JPanel();
 		nodesPanel.setLayout(new GridBagLayout());
@@ -571,6 +585,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		}
 		updateTissuesPanel();
 		updateCompartmentsPanel();
+		updateNodesPanel();
 	}
 
 	public void selectedNodes(Collection<CyNode> nodes) {

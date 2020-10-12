@@ -2,7 +2,7 @@
 
 stringApp version 1.6.1
 
-Last update: 2020-10-08
+Last update: 2020-10-12
 
 ## List of commands
 
@@ -50,7 +50,7 @@ Last update: 2020-10-08
 
 `string protein query`
 
-The protein query retrieves a STRING network for one or more proteins. STRING is a database of known and predicted protein interactions for thousands of organisms, which are integrated from several sources, scored, and transferred across orthologs. The network includes both physical interactions and functional associations. 
+The protein query retrieves a STRING network for one or more proteins. [STRING](https://string-db.org/) is a database of known and predicted protein interactions for thousands of organisms, which are integrated from several sources, scored, and transferred across orthologs.  
 
 ### Arguments
 
@@ -90,7 +90,7 @@ The protein query retrieves a STRING network for one or more proteins. STRING is
 
 `string protein query query="cdk1"`
 
-Create a network of cdk1 and its first 10 neighbors in human (limit is equal to 10 and species to human by default). 
+Creates a STRING network of `cdk1` and its first `10` neighbors in `human` (limit is equal to 10 and species to human by default). 
 
 [List of commands](#list-of-commands) - [List of Network query commands](#network-query)
 
@@ -98,7 +98,7 @@ Create a network of cdk1 and its first 10 neighbors in human (limit is equal to 
 
 `string compound query`
 
-The compound query retrieves a STITCH network for one or more proteins or compounds. STITCH is a resource to explore known and predicted interactions of chemicals and proteins. Chemicals are linked to other chemicals and proteins by evidence derived from experiments, databases and the literature.
+The compound query retrieves a STITCH network for one or more proteins or compounds. [STITCH](http://stitch.embl.de/) is a resource to explore known and predicted interactions of chemicals and proteins. Chemicals are linked to other chemicals and proteins by evidence derived from experiments, databases and the literature.
 
 ### Arguments
 
@@ -134,6 +134,7 @@ The compound query retrieves a STITCH network for one or more proteins or compou
 
 `string compound query query="aspirin"`
 
+Creates a STITCH network of `aspirin` and its first `10` neighbors in `human` (the default values are used for both species and number of interactors), whereas the neighbors could be both proteins and compounds. 
 
 [List of commands](#list-of-commands) - [List of Network query commands](#network-query)
 
@@ -141,7 +142,7 @@ The compound query retrieves a STITCH network for one or more proteins or compou
 
 `string disease query`
 
-The disease query retrieves a STRING network for the top-N human proteins associated with the queried disease in the DISEASES database. DISEASES is a weekly updated web resource that integrates evidence on disease-gene associations from automatic text mining, manually curated literature, cancer mutation data, and genome-wide association studies. STRING is a database of known and predicted protein interactions for thousands of organisms, which are integrated from several sources, scored, and transferred across orthologs. The network includes both physical interactions and functional associations. 
+The disease query retrieves a STRING network for the top-N human proteins associated with the queried disease in the [DISEASES](https://diseases.jensenlab.org/) database. DISEASES is a weekly updated web resource that integrates evidence on disease-gene associations from automatic text mining, manually curated literature, cancer mutation data, and genome-wide association studies. [STRING](https://string-db.org/) is a database of known and predicted protein interactions for thousands of organisms, which are integrated from several sources, scored, and transferred across orthologs.  
 
 ### Arguments
 
@@ -167,7 +168,9 @@ The disease query retrieves a STRING network for the top-N human proteins associ
 
 ### Example 
 
-`string disease query disease="Alzheimer's disease"`
+`string disease query disease="Alzheimer's disease" limit=10`
+
+Creates a STRING network of the `10` proteins with highest integrated disease score for `Alzheimer's disease` according to [DISEASES](https://diseases.jensenlab.org/). 
 
 [List of commands](#list-of-commands) - [List of Network query commands](#network-query)
 
@@ -175,7 +178,7 @@ The disease query retrieves a STRING network for the top-N human proteins associ
 
 `string pubmed query`
 
-The PubMed query retrieves a STRING network pertaining to any topic of interest based on text mining of PubMed abstracts. STRING is a database of known and predicted protein interactions for thousands of organisms, which are integrated from several sources, scored, and transferred across orthologs. The network includes both physical interactions and functional associations.
+The PubMed query retrieves a STRING network of the top-N proteins pertaining to any topic of interest based on text mining of [PubMed](https://pubmed.ncbi.nlm.nih.gov/) abstracts. [STRING](https://string-db.org/) is a database of known and predicted protein interactions for thousands of organisms, which are integrated from several sources, scored, and transferred across orthologs. 
 
 ### Arguments
 
@@ -201,7 +204,9 @@ The PubMed query retrieves a STRING network pertaining to any topic of interest 
 
 ### Example 
 
-`string pubmed query pubmed="Alzheimer's disease"`
+`string pubmed query pubmed="Alzheimer's disease" limit=10`
+
+Creates a network of the top `10` proteins associated with `Alzheimer's diseasse` according to PubMed abstracts.
 
 [List of commands](#list-of-commands) - [List of Network query commands](#network-query)
 
@@ -209,7 +214,7 @@ The PubMed query retrieves a STRING network pertaining to any topic of interest 
 
 `string stringify`
 
-Creates a new network from the nodes and edges of the specified network,by querying STRING for all of the nodes and then copying over the edges from the original network.
+Creates a new network from the nodes and edges of the specified network by querying STRING for all of the nodes and then copying over the edges from the original network. In the resulting network, all nodes contain the typical information for a STRING network and the [Change confidence](#change-confidence) command can be used to add STRING edges above a given confidence cutoff to the network.  
 
 ### Arguments
 
@@ -239,6 +244,8 @@ Creates a new network from the nodes and edges of the specified network,by query
 
 `string stringify column="name" networkNoGui="current" species="Homo sapiens"`
 
+Creates a STRING network from the nodes and edges of the `current` network by querying STRING with the human (`Homo sapiens`) protein names/identifiers contained in the `name` column.  
+
 [List of commands](#list-of-commands) - [List of Network query commands](#network-query)
 
 
@@ -255,7 +262,7 @@ Expands an already existing STRING network by more interactors such as STITCH co
 
 - `additionalNodes` (optional) *int* Default: `10`
 
-   The maximum number of proteins to return in addition to the nodes in the existing network
+   The maximum number of proteins to return in addition to the nodes in the existing network.
 
 - `network` **required** *String* Default: `current`
    
@@ -273,13 +280,15 @@ Expands an already existing STRING network by more interactors such as STITCH co
 
 `string expand network=current nodeTypes="Homo sapiens"`
 
+Expands the `current` network by further `10` human (`Homo sapiens`) proteins. If less than 10 new proteins are added to the network, this means that there were only that many available given the confidence cutoff of the network.  
+
 [List of commands](#list-of-commands) - [List of Modify existing network commands](#modify-existing-network)
 
 ## Change confidence
 
 `string change confidence`
 
-Changes the confidence of the network. If increased, some edges will disappear. If decreased, new edges might be added to the network.
+Changes the confidence of the network. If increased, the edges with a confidence score below the chosen cutoff will disappear. If decreased, new edges might be added to the network.
 
 ### Arguments
 
@@ -294,6 +303,8 @@ Changes the confidence of the network. If increased, some edges will disappear. 
 ### Example
 
 `string change confidence network="current" confidence=0.7`
+
+Requires all edges in the `current` network to have a confidence score equal or above `0.7`. If the confidence cutoff for the network has been `0.4`, some edges might disappear. On the other hand, if the cutoff has been higher, new edges might be added to the network. 
 
 [List of commands](#list-of-commands) - [List of Modify existing network commands](#modify-existing-network)
 
@@ -337,23 +348,21 @@ Adds a new set of query nodes to an existing STRING network as well as their int
 
 `string add nodes query="cdk1"`
 
+Adds `cdk1` and its interaction edges to any proteins in the `current` network. 
+
 [List of commands](#list-of-commands) - [List of Modify existing network commands](#modify-existing-network)
 
 ## Make STRING network
 
 `string make string`
 
-Sets the network as a STRING network. This assumes that the network was originally derived from STRING and has all of the necessary STRING columns.
+Sets the network as a STRING network recognizable by the stringApp. This assumes that the network was originally derived from STRING and has all of the necessary STRING columns. 
 
 ### Arguments 
 
 - `network` (optional) *String* Default: `current`
    
    Specifies a network by name, or by SUID if the prefix `SUID:` is used. The keyword `CURRENT`, or a blank value can also be used to specify the current network.
-
-### Example
-
-`string make string network="current"`
 
 [List of commands](#list-of-commands) - [List of Modify existing network commands](#modify-existing-network)
 
@@ -417,7 +426,7 @@ Hides the STRING style labels on the nodes.
 
 `string retrieve enrichment`
 
-Retrieves the functional enrichment for the current String network. This includes enrichment for GO Process, GO Component, GO Function, InterPro, KEGG Pathways, and PFAM. Note that in order to view the results, the command [Show enrichment panel](#show-enrichment-panel) should be used.
+Retrieves the functional enrichment for the current STRING network. This includes enrichment for GO Biological Process, GO Cellular Component, GO Molecular Function, KEGG & Reactome Pathways, UniProt keywords, InterPro, PFAM, and SMART protein domains as well as STRING clusters. Note that in order to view the results, the command [Show enrichment panel](#show-enrichment-panel) should be used in addition this this one.
 
 ### Arguments
 
@@ -427,7 +436,7 @@ Retrieves the functional enrichment for the current String network. This include
 
 - `background` (optional) *String* Default: `genome`
    
-   Another STRING network to be used as the background set for the functional ernichment. By default, the whole genome of the chosen species is considered.  
+   Another STRING network to be used as the background set for the functional ernichment. By default, the whole `genome` of the chosen species is considered.  
 
 - `selectedNodesOnly` (optional) *boolean* Default: `false`
 
@@ -436,6 +445,8 @@ Retrieves the functional enrichment for the current String network. This include
 ### Example
 
 `string retrieve enrichment selectedNodesOnly=true`
+
+Retrieves functional enrichment for a set of `selected` nodes in the current network. 
 
 [List of commands](#list-of-commands) - [List of Functional enrichment commands](#functional-enrichment)
 
@@ -489,6 +500,8 @@ Removes terms, whose enriched genes significantly overlap with already selected 
 
 `string filter enrichment categories="GO Process,KEGG Pathways" removeOverlapping=true`
 
+Filters the enrichment table to only show terms from the categories: `GO Process` and `KEGG Pathways`. This command also removes redundant terms with a Jaccard overlap larger than the default 50% (`0.5`)  
+
 [List of commands](#list-of-commands) - [List of Functional enrichment commands](#functional-enrichment)
 
 ## Show enrichment charts
@@ -512,7 +525,7 @@ Hides the enrichment charts.
 
 `string retrieve publications`
 
-Retrieves the enriched PubMed publications for the current String network. Note that in order to view the results, the command [Show publications panel](#show-publications-panel) should be used.
+Retrieves the enriched PubMed publications for the current STRING network. In this case, each publication is represented by a set of genes recognized in it by text mining and this set of genes is tested for overrepresentation. Note that in order to view the results, the command [Show publications panel](#show-publications-panel) should be used after this one.
 
 ### Arguments
 
@@ -531,6 +544,8 @@ Retrieves the enriched PubMed publications for the current String network. Note 
 ### Example
 
 `string retrieve publications selectedNodesOnly=true`
+
+Retrieves enriched publications for a set of `selected` nodes in the current network.
 
 [List of commands](#list-of-commands) - [List of Functional enrichment commands](#functional-enrichment)
 
@@ -556,7 +571,7 @@ Hides the enriched publications panel.
 
 `string settings`
 
-Adjusts various default settings of the stringApp for network queries, enrichment and visual properties.
+Adjusts various default settings of the stringApp for network queries, enrichment retrieval and visual properties.
 
 ### Arguments 
 
@@ -566,13 +581,12 @@ Adjusts various default settings of the stringApp for network queries, enrichmen
 
 - `chartType` (optional) *String* Default: `Split donut`
 
-   Set the desired chart type for enrichment visualization. Each chosen term is represented by a color if it annotates the node and by white if it doesnt. Possible values:
-   - `Split donut`  
-   - `Full donut` 
-   - `Donut slices only`
-   - `Split Pie Chart`
-   - `Pie Chart`
-
+   Set the desired chart type for enrichment visualization. Each chosen term is represented by a colored slice if it annotates the node and by a white/transparent slice if it does not. Possible chart types are:
+   - `Split donut`: Each slice represents one of the visualized terms and is colored if the term annotates the node and white otherwise.
+   - `Donut slices only`: Each slice represents one of the visualized terms and is colored if the term annotates the node and transparent otherwise. 
+   - `Full donut`: Each slice represents one of the visualized terms that annotate the node. 
+   - `Split Pie Chart`: Each slice represents one of the visualized terms and is colored if the term annotates the node and white otherwise.
+   - `Pie Chart`: Each slice represents one of the visualized terms that annotate the node.
 
 - `defaultConfidence` (optional) *Double* Default: `0.4`
 
@@ -617,6 +631,8 @@ Adjusts various default settings of the stringApp for network queries, enrichmen
 ### Example 
 
 `string settings species="Mus musculus" defaultConfidence=0.7`
+
+Sets the default species for network queries to mouse (`Mus musculus`) and the default confidence cutoff to `0.7`.
 
 [List of Other commands](#other)
 
