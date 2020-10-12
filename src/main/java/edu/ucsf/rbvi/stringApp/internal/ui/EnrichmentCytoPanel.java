@@ -82,6 +82,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTableTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.FilterEnrichmentTableTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.NodeFilterEnrichmentTableTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.EnrichmentMapAdvancedTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.EnrichmentMapTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.EnrichmentSettingsTask;
@@ -108,6 +109,7 @@ public class EnrichmentCytoPanel extends JPanel
 	JButton butAnalyzedNodes;
 	JButton butExportTable;
 	JButton butFilter;
+	JButton butFilterNodes;
 	JButton butEnrichmentMap;
 	JLabel labelPPIEnrichment;
 	JLabel labelRows;
@@ -128,6 +130,7 @@ public class EnrichmentCytoPanel extends JPanel
 
 	final String butSettingsName = "Network-specific enrichment panel settings";
 	final String butFilterName = "Filter enrichment table";
+	final String butFilterNodeName = "Filter enrichment table by node";
 	final String butDrawChartsName = "Draw charts using default color palette";
 	final String butResetChartsName = "Reset charts";
 	final String butEnrichmentMapName = "Create EnrichmentMap";
@@ -278,6 +281,9 @@ public class EnrichmentCytoPanel extends JPanel
 		} else if (e.getSource().equals(butFilter)) {
 			// filter table
 			tm.execute(new TaskIterator(new FilterEnrichmentTableTask(manager, this)));
+		} else if (e.getSource().equals(butFilterNodes)) {
+			// filter table based on node selection
+			tm.execute(new TaskIterator(new NodeFilterEnrichmentTableTask(manager, this)));
 		} else if (e.getSource().equals(butSettings)) {
 			tm.execute(new TaskIterator(new EnrichmentSettingsTask(manager)));
 		} else if (e.getSource().equals(butExportTable)) {
@@ -356,6 +362,15 @@ public class EnrichmentCytoPanel extends JPanel
 			butFilter.setFocusPainted(false);
 			butFilter.setBorder(BorderFactory.createEmptyBorder(2,10,2,10));
 
+			butFilterNodes = new JButton(IconManager.ICON_BOOK);
+			butFilterNodes.setFont(iconFont);
+			butFilterNodes.addActionListener(this);
+			butFilterNodes.setToolTipText(butFilterNodeName);
+			butFilterNodes.setBorderPainted(false);
+			butFilterNodes.setContentAreaFilled(false);
+			butFilterNodes.setFocusPainted(false);
+			butFilterNodes.setBorder(BorderFactory.createEmptyBorder(2,4,2,10));
+
 			butDrawCharts = new JButton(chartIcon);
 			butDrawCharts.addActionListener(this);
 			butDrawCharts.setToolTipText(butDrawChartsName);
@@ -384,6 +399,7 @@ public class EnrichmentCytoPanel extends JPanel
 			butEnrichmentMap.setBorder(BorderFactory.createEmptyBorder(2,4,2,20));
 
 			buttonsPanelLeft.add(butFilter);
+			buttonsPanelLeft.add(butFilterNodes);
 			buttonsPanelLeft.add(butDrawCharts);
 			buttonsPanelLeft.add(butResetCharts);
 			if (manager.haveEnrichmentMap()) buttonsPanelLeft.add(butEnrichmentMap);

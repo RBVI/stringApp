@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
 
@@ -186,7 +187,37 @@ public class EnrichmentTableModel extends AbstractTableModel {
 		fireTableCellUpdated(row, col);
 	}
 
-	// Filter the table
+	// filter by category and nodeSUID
+	public void filterByNodeSUID(List<Long> nodesToFilterSUID, boolean annotateAllNodes,
+			List<TermCategory> categories, boolean removeRedundancy, double cutoff) {
+		filter(categories, removeRedundancy, cutoff);
+		filterByNodeSUID(nodesToFilterSUID, annotateAllNodes);
+	}
+	
+	// Filter the table by node SUID
+	public void filterByNodeSUID(List<Long> nodesToFilterSUID, boolean annotateAllNodes) {
+		List<CyRow> rows = cyTable.getAllRows();
+		List<Long> shownRows = Arrays.asList(rowNames);
+		Long[] rowArray = new Long[rows.size()];
+		int i = 0;
+		for (CyRow row : rows) {
+			Long rowID = row.get(EnrichmentTerm.colID, Long.class);
+			if (!shownRows.contains(rowID)) {
+				continue;
+			}
+			List<Long> genesSUID = new ArrayList<Long>(row.getList(EnrichmentTerm.colGenesSUID, Long.class));
+			genesSUID.retainAll(nodesToFilterSUID);
+			if ((genesSUID.size() > 0 && !annotateAllNodes) || 
+					(annotateAllNodes && genesSUID.size() == nodesToFilterSUID.size())) {
+				rowArray[i] = rowID;
+				i++;
+			} 
+		}
+		rowNames = Arrays.copyOf(rowArray, i);
+		fireTableDataChanged();
+	}
+	
+	// Filter the table by category
 	public void filter(List<TermCategory> categories, boolean removeRedundancy, double cutoff) {
 		List<CyRow> rows = cyTable.getAllRows();
 		Long[] rowArray = new Long[rows.size()];
