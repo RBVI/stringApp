@@ -14,3 +14,8 @@ In addition, *stringApp* can retrieve functional enrichment for Gene Ontology te
 Since version 1.6, *stringApp* is also integrated with the [clusterMaker](http://apps.cytoscape.org/apps/clustermaker2) and [EnrichmentMap](http://apps.cytoscape.org/apps/enrichmentmap) apps. With the former, users can quickly cluster a STRING network using MCL clustering, while with the latter it is possible to create an enrichment map from the STRING erncihemtn results.  
 
 *stringApp* supports automation from both commands and CyREST.
+
+See also:
+- [stringApp tutorials](https://jensenlab.org/training/stringapp/)
+- [stringApp automation documentation](doc_automation.md)
+- [Cite stringApp](https://pubmed.ncbi.nlm.nih.gov/30450911/)
