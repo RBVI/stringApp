@@ -301,7 +301,9 @@ public class EnrichmentTableModel extends AbstractTableModel {
 	private double jaccard(Long currentTerm, Long term) {
 		List<Long> currentNodes = cyTable.getRow(currentTerm).getList(EnrichmentTerm.colGenesSUID, Long.class);
 		List<Long> newNodes = cyTable.getRow(term).getList(EnrichmentTerm.colGenesSUID, Long.class);
-
+		if (currentNodes == null || newNodes == null)
+			return 0;
+		
 		int intersection = 0;
 		for (Long cn: currentNodes) {
 			if (newNodes.contains(cn))

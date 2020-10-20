@@ -1102,8 +1102,12 @@ public class ModelUtils {
 
 	public static String getString(CyNetwork network, CyIdentifiable ident, String column) {
 		// System.out.println("network = "+network+", ident = "+ident+" column = "+column);
-		if (network.getRow(ident, CyNetwork.DEFAULT_ATTRS) != null)
-			return network.getRow(ident, CyNetwork.DEFAULT_ATTRS).get(column, String.class);
+		try {
+			if (network.getRow(ident, CyNetwork.DEFAULT_ATTRS) != null)
+				return network.getRow(ident, CyNetwork.DEFAULT_ATTRS).get(column, String.class);
+		} catch (Exception ex) {
+			// ignore
+		}
 		return null;
 	}
 

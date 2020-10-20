@@ -45,6 +45,7 @@ public class ExportEnrichmentTableTask extends AbstractTask {
 
 	@Override
 	public void run(TaskMonitor taskMonitor) throws Exception {
+		taskMonitor.setTitle("Export STRING Enrichment table");
 		ExportTableTaskFactory exportTF = manager.getService(ExportTableTaskFactory.class);
 		
 		if (selectedTable != null && fileName != null) {
