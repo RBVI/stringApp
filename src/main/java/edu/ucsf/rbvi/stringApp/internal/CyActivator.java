@@ -14,6 +14,7 @@ import static org.cytoscape.work.ServiceProperties.INSERT_SEPARATOR_BEFORE;
 
 import java.util.Properties;
 
+import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.search.NetworkSearchTaskFactory;
 import org.cytoscape.model.CyNetwork;
@@ -54,6 +55,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ShowChartsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowPublicationsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
@@ -308,7 +310,7 @@ public class CyActivator extends AbstractCyActivator {
 		}
 
 		{
-			// Register our "Add Nodes" factory
+			// Register our "Expand network" factory
 			ExpandNetworkTaskFactory addNodes = new ExpandNetworkTaskFactory(manager);
 			Properties props = new Properties();
 			props.setProperty(PREFERRED_MENU, "Apps.STRING");
@@ -379,8 +381,9 @@ public class CyActivator extends AbstractCyActivator {
 			Properties props = new Properties();
 			props.setProperty(PREFERRED_MENU, "Apps.STRING");
 			props.setProperty(TITLE, "Set as STRING network");
-			props.setProperty(MENU_GRAVITY, "6.0");
+			props.setProperty(MENU_GRAVITY, "5.0");
 			props.setProperty(IN_MENU_BAR, "true");
+			props.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "make string");
 			props.setProperty(COMMAND_DESCRIPTION, 
@@ -399,7 +402,7 @@ public class CyActivator extends AbstractCyActivator {
 			Properties props = new Properties();
 			props.setProperty(PREFERRED_MENU, "Apps.STRING");
 			props.setProperty(TITLE, "STRINGify network");
-			props.setProperty(MENU_GRAVITY, "7.0");
+			props.setProperty(MENU_GRAVITY, "6.0");
 			props.setProperty(IN_MENU_BAR, "true");
 			registerService(bc, stringify, NetworkTaskFactory.class, props);
 
@@ -563,9 +566,23 @@ public class CyActivator extends AbstractCyActivator {
 
 		{
 			// Register our "show image" toggle
+			ShowImagesPanelAction sia = new ShowImagesPanelAction("Show structure images", manager);
+			registerService(bc, sia, CyAction.class);
+			
 			ShowImagesTaskFactory showImagesTF = new ShowImagesTaskFactory(manager);
-			showImagesTF.reregister();
 			manager.setShowImagesTaskFactory(showImagesTF);
+			//showImagesTF.reregister();
+			
+			// Create command version and register it
+			Properties props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "images");
+			props.setProperty(COMMAND_DESCRIPTION, "Show the structure images on the nodes");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, "Show the structure images on the nodes.");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");						
+			manager.registerService(showImagesTF, NetworkViewTaskFactory.class, props);
+			
 		}
 
 		{

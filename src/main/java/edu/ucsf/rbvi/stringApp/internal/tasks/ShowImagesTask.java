@@ -22,13 +22,16 @@ public class ShowImagesTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 	CyNetworkView netView;
 	final ShowImagesTaskFactory factory;
-	final boolean show;
+	
+	@Tunable(description="Option to show images",
+			context= "nogui")
+	public boolean show;
 
-	@Tunable(description="Network view to set enhanced labels on",
+	@Tunable(description="Network view to show structure images for",
 	         // longDescription = StringToModel.CY_NETWORK_VIEW_LONG_DESCRIPTION,
 	         // exampleStringValue = StringToModel.CY_NETWORK_VIEW_EXAMPLE_STRING,
 	         context = "nogui")
-  public CyNetworkView view = null;
+	public CyNetworkView view = null;
 
 	public ShowImagesTask(final StringManager manager, final boolean show, 
             final ShowImagesTaskFactory factory) {
@@ -57,6 +60,7 @@ public class ShowImagesTask extends AbstractTask implements ObservableTask {
 
 		if (netView == null) {
 			// Command version
+			// System.out.println("command version show:" + show);
 			manager.setShowImage(show);
 			CyNetwork network = manager.getCurrentNetwork();
 			Collection<CyNetworkView> views = 
@@ -71,18 +75,21 @@ public class ShowImagesTask extends AbstractTask implements ObservableTask {
 			return;
 		}
 
+		// System.out.println("not command version");
 		if (manager.showImage()) {
 			manager.setShowImage(false);
+			// System.out.println("hide images");
 			if (ModelUtils.isStitchNetwork(netView.getModel()))
 				ViewUtils.updateChemVizPassthrough(manager, netView, false);
 		} else {
 			manager.setShowImage(true);
+			// System.out.println("show images");
 			if (ModelUtils.isStitchNetwork(netView.getModel()))
 				ViewUtils.updateChemVizPassthrough(manager, netView, true);
 		}
 
 		netView.updateView();
-		factory.reregister();
+		// factory.reregister();
 		manager.updateControls();
 	}
 

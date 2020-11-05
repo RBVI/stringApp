@@ -722,7 +722,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 				ModelUtils.setStringProperty(sessionProperties, ModelUtils.showStructureImagesFlag,
 						new Boolean(showImage));
 			}
-			imagesTaskFactory.reregister();
+			//imagesTaskFactory.reregister();
 		}
 		if (ModelUtils.ifHaveStringNS(getCurrentNetwork()))
 			showResultsPanel();
