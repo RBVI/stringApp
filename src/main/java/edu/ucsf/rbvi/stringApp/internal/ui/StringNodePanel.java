@@ -238,6 +238,7 @@ public class StringNodePanel extends AbstractStringPanel {
 
 		JPanel lowerPanel = new JPanel();
 		GridLayout layout2 = new GridLayout(2,2);
+		// GridLayout layout2 = new GridLayout(3,2);
 		layout2.setVgap(0);
 		lowerPanel.setLayout(layout2);
 		{
@@ -282,6 +283,37 @@ public class StringNodePanel extends AbstractStringPanel {
 				}
 			});
 			lowerPanel.add(highlightQuery);
+		}
+
+		{
+			JButton layoutNetwork = new JButton("Re-layout network");
+			layoutNetwork.setFont(labelFont);
+			layoutNetwork.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					// TOOD: how to get the view?
+					//if (currentNetworkView == null) return;
+					// CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");
+					//Object context = alg.createLayoutContext();
+					//TunableSetter setter = manager.getService(TunableSetter.class);
+					//Map<String, Object> layoutArgs = new HashMap<>();
+					//layoutArgs.put("defaultNodeMass", 10.0);
+					//setter.applyTunables(context, layoutArgs);
+					//Set<View<CyNode>> nodeViews = new HashSet<>(currentNetworkView.getNodeViews());
+					//manager.execute(alg.createTaskIterator(currentNetworkView, context, nodeViews, "score"));
+				}
+			});
+			//lowerPanel.add(layoutNetwork);
+		}
+
+		{
+			JButton expandNetwork = new JButton("Expand network");
+			expandNetwork.setFont(labelFont);
+			expandNetwork.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					// manager.execute(new ExpandNetworkTaskFactory(manager).createTaskIterator());
+				}
+			});
+			//lowerPanel.add(expandNetwork);
 		}
 
 		{
