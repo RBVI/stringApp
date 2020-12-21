@@ -121,6 +121,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private double defaultConfidence = 0.40;
 	private int additionalProteins = 0;
 	private int maximumProteins = 100;
+	private NetworkType networkType = NetworkType.FUNCTIONAL;
 
 	private int topTerms = 5;
 	private double overlapCutoff = 0.5;
@@ -486,6 +487,9 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	public int getDefaultMaxProteins() { return maximumProteins; }
 	public void setDefaultMaxProteins(int max) { maximumProteins = max; }
+
+	public NetworkType getDefaultNetworkType() { return networkType; }
+	public void setDefaultNetworkType(NetworkType type) { networkType = type; }
 
 	public void flushEvents() {
 		cyEventHelper.flushPayloadEvents();

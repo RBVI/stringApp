@@ -91,6 +91,7 @@ public class SearchOptionsPanel extends JPanel {
 	private Species species = null;
 	private int additionalNodes = 0;
 	private int confidence = 40;
+	private NetworkType networkType = null;
 
 	public SearchOptionsPanel(final StringManager manager, final boolean isPubMed, 
 	                          final boolean isDisease, final boolean showSpecies) {
@@ -105,6 +106,7 @@ public class SearchOptionsPanel extends JPanel {
 		else
 				additionalNodes = manager.getDefaultAdditionalProteins();
 		confidence = (int)(manager.getDefaultConfidence()*100);
+		this.networkType = manager.getDefaultNetworkType();
 		initOptions();
 	}
 
@@ -309,6 +311,7 @@ public class SearchOptionsPanel extends JPanel {
 					species = getSpecies();
 					confidence = getConfidence();
 					additionalNodes = getAdditionalNodes();
+					networkType = getNetworkType();
 
 					// What do we do here?
 					((Window)getRootPane().getParent()).setVisible(false);
@@ -342,6 +345,9 @@ public class SearchOptionsPanel extends JPanel {
 		ButtonGroup group = new ButtonGroup();
 		group.add(physicalNetwork);
 		group.add(functionalNetwork);
+		
+		if (networkType.equals(NetworkType.PHYSICAL)) 
+			physicalNetwork.setSelected(true);
 		
 		return netTypePanel;
 	}
