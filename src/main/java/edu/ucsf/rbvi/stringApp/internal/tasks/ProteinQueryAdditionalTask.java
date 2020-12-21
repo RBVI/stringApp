@@ -25,6 +25,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.EntityIdentifier;
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
@@ -75,6 +76,11 @@ public class ProteinQueryAdditionalTask extends AbstractTask implements Observab
 	         exampleStringValue="false")
 	public boolean includesViruses = true;
 
+	@Tunable(description = "Type of edges to retrieve",
+	         longDescription="Choose to load functional associations or physical interactions from STRING.",
+	         exampleStringValue="Functional associations")
+	public ListSingleSelection<NetworkType> networkType;
+
 	private List<Species> speciesList;
 
 	private CyNetwork loadedNetwork;
@@ -89,6 +95,8 @@ public class ProteinQueryAdditionalTask extends AbstractTask implements Observab
 				break;
 			}
 		}
+		networkType = new ListSingleSelection<>(NetworkType.values());
+		networkType.setSelectedValue(NetworkType.FUNCTIONAL);
 	}
 
 	public void run(TaskMonitor monitor) {
@@ -156,7 +164,8 @@ public class ProteinQueryAdditionalTask extends AbstractTask implements Observab
 		// LoadInteractions load = new LoadInteractions(stringNetwork, sp.toString(), sp.getTaxId(),
 		// 		confidence, limit.getValue(), stringIds, queryTermMap, "", Databases.STRING.getAPIName());
 		manager.execute(new TaskIterator(new LoadTermsTask(stringNetwork, sp.toString(), sp.getTaxId(), confidence,
-                limit.getValue(), stringIds, queryTermMap, Databases.STRING.getAPIName())), true);
+                								limit.getValue(), stringIds, queryTermMap, Databases.STRING.getAPIName(), 
+                								networkType.getSelectedValue())), true);
 		loadedNetwork = stringNetwork.getNetwork();
 		if (loadedNetwork == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,

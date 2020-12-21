@@ -25,6 +25,7 @@ import org.cytoscape.work.TunableSetter;
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
@@ -40,7 +41,19 @@ public class LoadInteractions extends AbstractTask {
 	final Map<String, String> queryTermMap;
 	final String netName;
 	final String useDATABASE;
+	NetworkType netType;
 
+	public LoadInteractions(final StringNetwork stringNet, final String species, final int taxonId, 
+            final int confidence, final int additionalNodes,
+									final List<String>stringIds,
+									final Map<String, String> queryTermMap,
+									final String netName,
+									final String useDATABASE,
+									final NetworkType netType) {
+		this(stringNet, species, taxonId, confidence, additionalNodes, stringIds, queryTermMap, netName, useDATABASE);
+		this.netType = netType;
+	}
+	
 	public LoadInteractions(final StringNetwork stringNet, final String species, final int taxonId, 
 	                        final int confidence, final int additionalNodes,
 													final List<String>stringIds,
@@ -83,6 +96,7 @@ public class LoadInteractions extends AbstractTask {
 		// args.put("database", useDATABASE);
 		// TODO: Is it OK to always use stitch?
 		args.put("database", Databases.STITCH.getAPIName());
+		args.put("type", netType.getAPIName());
 		args.put("entities",ids.trim());
 		args.put("score", conf);
 		args.put("caller_identity", StringManager.CallerIdentity);

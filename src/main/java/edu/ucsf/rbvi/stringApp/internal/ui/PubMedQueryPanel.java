@@ -273,7 +273,8 @@ public class PubMedQueryPanel extends JPanel {
 
 			// Launch a task to get the annotations. 
 			manager.execute(new TaskIterator(new GetStringIDsFromPubmedTask(stringNetwork, species, 
-		                                                                  additionalNodes, confidence, query)), this);
+		                                                                  additionalNodes, confidence, 
+		                                                                  query, optionsPanel.getNetworkType())), this);
 			// cancel();
 			((Window)getRootPane().getParent()).dispose();
 		}

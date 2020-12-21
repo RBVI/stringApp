@@ -161,7 +161,7 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 
 	JPanel createSearchPanel() {
 		JPanel searchPanel = new JPanel(new GridBagLayout());
-		searchPanel.setPreferredSize(new Dimension(600,400));
+		searchPanel.setPreferredSize(new Dimension(600,300));
 		fillSearchPanel(searchPanel);
 		return searchPanel;
 	}
@@ -241,7 +241,8 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 		int limit = optionsPanel.getAdditionalNodes();
 		manager.execute(new TaskIterator(new GetStringIDsFromDiseasesTask(stringNetwork, species, limit,
 		                                                                  confidence, entity.getIdentifier(),
-																																			entity.getPrimaryName())), this);
+		                                                                  entity.getPrimaryName(), 
+		                                                                  optionsPanel.getNetworkType())), this);
 		cancel();
 	}
 

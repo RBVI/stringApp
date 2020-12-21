@@ -29,6 +29,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.EntityIdentifier;
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
@@ -79,6 +80,12 @@ public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 	         exampleStringValue="false")
 	public boolean includesViruses = true;
 
+	@Tunable(description = "Type of edges to retrieve",
+	         longDescription="By default, the query will retrieve functional associations from STRING, but "
+	         		+ "it can be set to physical interactions using this option. ",
+	         exampleStringValue="Functional associations")
+	public ListSingleSelection<NetworkType> networkType;
+
 	private List<Species> speciesList;
 
 	private CyNetwork loadedNetwork;
@@ -93,6 +100,8 @@ public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 				break;
 			}
 		}
+		networkType = new ListSingleSelection<>(NetworkType.values());
+		networkType.setSelectedValue(NetworkType.FUNCTIONAL);
 	}
 
 	public void run(TaskMonitor monitor) {
@@ -149,7 +158,7 @@ public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
 		LoadInteractions load = new LoadInteractions(stringNetwork, sp.toString(), sp.getTaxId(),
-				confidence, limit.getValue(), stringIds, queryTermMap, newNetName, Databases.STITCH.getAPIName());
+				confidence, limit.getValue(), stringIds, queryTermMap, newNetName, Databases.STITCH.getAPIName(), networkType.getSelectedValue());
 		manager.execute(new TaskIterator(load), true);
 		loadedNetwork = stringNetwork.getNetwork();
 		if (loadedNetwork == null)

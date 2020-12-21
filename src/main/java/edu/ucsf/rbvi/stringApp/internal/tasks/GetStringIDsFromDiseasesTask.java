@@ -16,6 +16,7 @@ import org.cytoscape.work.TaskMonitor.Level;
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
@@ -30,7 +31,14 @@ public class GetStringIDsFromDiseasesTask extends AbstractTask implements Observ
 	final int confidence;
 	final String query;
 	final String diseaseName;
+	NetworkType netType; 
 	private List<TextMiningResult> tmResults;
+
+	public GetStringIDsFromDiseasesTask(final StringNetwork stringNetwork, final Species species, final int limit, 
+            final int confidence, final String query, final String diseaseName, final NetworkType netType) {
+		this(stringNetwork, species, limit, confidence, query, diseaseName);
+		this.netType = netType;
+	}
 
 	public GetStringIDsFromDiseasesTask(final StringNetwork stringNetwork, final Species species, final int limit, 
 	                                    final int confidence, final String query, final String diseaseName) {
@@ -79,7 +87,8 @@ public class GetStringIDsFromDiseasesTask extends AbstractTask implements Observ
 
 		// OK, if we got any results, fetch the network
 		LoadInteractions liTask = new LoadInteractions(stringNetwork, species.getName(), species.getTaxId(), 
-			                                             confidence, 0, stringIds, queryTermMap, diseaseName, Databases.STRING.getAPIName());
+			                                             confidence, 0, stringIds, queryTermMap, diseaseName, 
+			                                             Databases.STRING.getAPIName(), netType);
 		AddTextMiningResultsTask atmTask = new AddTextMiningResultsTask(stringNetwork, tmResults);
 		insertTasksAfterCurrentTask(liTask, atmTask);
 	}

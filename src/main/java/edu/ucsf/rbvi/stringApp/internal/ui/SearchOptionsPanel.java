@@ -29,6 +29,7 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -36,6 +37,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTable;
@@ -55,6 +57,7 @@ import javax.swing.event.ListSelectionListener;
 import org.cytoscape.model.CyNetwork;
 
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
@@ -73,6 +76,8 @@ public class SearchOptionsPanel extends JPanel {
 	JTextField additionalNodesValue;
 	JCheckBox useSmartDelimiters;
 	JCheckBox loadEnrichment;
+	JRadioButton physicalNetwork;
+	JRadioButton functionalNetwork;
 	JCheckBox createNetView;
 	JPanel advancedOptions;
 	NumberFormat formatter = new DecimalFormat("#0.00");
@@ -120,6 +125,10 @@ public class SearchOptionsPanel extends JPanel {
 			speciesBox = createSpeciesComboBox(speciesList);
 			add(speciesBox, c.expandHoriz().insets(5,5,0,5));
 		}
+
+		// Create the radio buttons for the network type
+		JPanel networkTypeRadioButtons = createNetworkTypeRadioGroup();
+		add(networkTypeRadioButtons, c.down().expandBoth().insets(5,5,0,5));
 
 		// Create the slider for the confidence cutoff
 		JPanel confidenceSlider = createConfidenceSlider();
@@ -310,6 +319,44 @@ public class SearchOptionsPanel extends JPanel {
 		return buttonPanel;
 	}
 
+	JPanel createNetworkTypeRadioGroup() {
+
+		JPanel netTypePanel = new JPanel(new GridBagLayout());
+		netTypePanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		EasyGBC c = new EasyGBC();
+		
+		c.anchor("west").noExpand().insets(0,5,0,5);
+		JLabel netTypeLabel = new JLabel("Network type:");
+		Font labelFont = netTypeLabel.getFont();
+		netTypeLabel.setFont(new Font(labelFont.getFontName(), Font.BOLD, labelFont.getSize()));
+		netTypePanel.add(netTypeLabel, c);
+		
+		c.right().noExpand().insets(0,5,0,5);
+		functionalNetwork = new JRadioButton(NetworkType.FUNCTIONAL.toString(), true);
+		netTypePanel.add(functionalNetwork, c);
+
+		c.right().expandHoriz().insets(0,5,0,5);
+		physicalNetwork = new JRadioButton(NetworkType.PHYSICAL.toString(), false);
+		netTypePanel.add(physicalNetwork, c);
+		
+		ButtonGroup group = new ButtonGroup();
+		group.add(physicalNetwork);
+		group.add(functionalNetwork);
+		
+		return netTypePanel;
+	}
+	
+	public NetworkType getNetworkType() {
+		if (physicalNetwork.isSelected())
+			return NetworkType.PHYSICAL;
+		else 
+			return NetworkType.FUNCTIONAL;
+	}
+
+	public void setNetworkType(NetworkType type) {
+		functionalNetwork.setSelected(type.equals(NetworkType.FUNCTIONAL));
+	}
+	
 	JPanel createConfidenceSlider() {
 		JPanel confidencePanel = new JPanel(new GridBagLayout());
 		confidencePanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));

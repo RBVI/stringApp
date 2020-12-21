@@ -21,6 +21,7 @@ import org.json.simple.JSONObject;
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
@@ -38,6 +39,14 @@ public class LoadSpeciesInteractions extends AbstractTask {
 	// final Map<String, String> queryTermMap;
 	final String netName;
 	final String useDATABASE;
+	NetworkType netType;
+	
+	public LoadSpeciesInteractions(final StringNetwork stringNet, final String species,
+			final int taxonId, final int confidence, final String netName,
+			final String useDATABASE, final NetworkType netType) {
+		this(stringNet, species, taxonId, confidence, netName, useDATABASE);
+		this.netType = netType;
+	}
 
 	public LoadSpeciesInteractions(final StringNetwork stringNet, final String species,
 			final int taxonId, final int confidence, final String netName,
@@ -64,6 +73,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 
 		Map<String, String> args = new HashMap<>();
 		args.put("database", Databases.STITCH.getAPIName());
+		args.put("type", netType.getAPIName());
 		args.put("organism", String.valueOf(taxonId));
 		args.put("score", conf);
 		args.put("caller_identity", StringManager.CallerIdentity);
