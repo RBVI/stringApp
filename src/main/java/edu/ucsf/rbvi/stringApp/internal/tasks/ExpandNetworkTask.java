@@ -37,6 +37,7 @@ import org.json.simple.JSONObject;
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
@@ -198,6 +199,9 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		}
 		// TODO: Is it OK to always use stitch?
 		args.put("database", Databases.STITCH.getAPIName());
+		// set network type
+		NetworkType currentType = NetworkType.getType(ModelUtils.getNetworkType(network));
+		args.put("type", currentType.getAPIName());
 		monitor.setStatusMessage("Getting additional nodes from: "+manager.getNetworkURL());
 
 		JSONObject results;

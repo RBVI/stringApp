@@ -14,5 +14,12 @@ public enum NetworkType {
 	public String getAPIName() { return apiName; }
 	
 	public String toString() { return name; }
+	
+	public static NetworkType getType(String type) {
+		if (type.equals(FUNCTIONAL.name))
+			return NetworkType.FUNCTIONAL;
+		else
+			return NetworkType.PHYSICAL;
+	}
 }
 

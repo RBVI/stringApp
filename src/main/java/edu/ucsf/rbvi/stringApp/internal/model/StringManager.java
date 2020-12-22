@@ -218,6 +218,9 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		if (ModelUtils.hasProperty(configProps, "species")) {
 			setDefaultSpecies(ModelUtils.getStringProperty(configProps,"species"));
 		}
+		if (ModelUtils.hasProperty(configProps, "networkType")) {
+			setDefaultNetworkType(ModelUtils.getStringProperty(configProps,"networkType"));
+		}
 		if (ModelUtils.hasProperty(configProps, "defaultConfidence")) {
 			setDefaultConfidence(ModelUtils.getDoubleProperty(configProps,"defaultConfidence"));
 		}
@@ -363,10 +366,11 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	}
 
 	public CyNetwork createStringNetwork(String name, StringNetwork stringNet, 
-	                                     String useDATABASE, String species) {
+	                                     String useDATABASE, String species, String netType) {
 		CyNetwork network = createNetwork(name);
 		ModelUtils.setDatabase(network, useDATABASE);
 		ModelUtils.setNetSpecies(network, species);
+		ModelUtils.setNetworkType(network, netType);
 		addStringNetwork(stringNet, network);
 		return network;
 	}
@@ -490,6 +494,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	public NetworkType getDefaultNetworkType() { return networkType; }
 	public void setDefaultNetworkType(NetworkType type) { networkType = type; }
+	
+	public void setDefaultNetworkType(String type) { 
+		networkType = NetworkType.getType(type); 
+	}
 
 	public void flushEvents() {
 		cyEventHelper.flushPayloadEvents();
@@ -608,7 +616,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	}
 
 	public void updateSettings() {
-		ModelUtils.setStringProperty(configProps, "confidence", Double.toString(overlapCutoff));
+		// ModelUtils.setStringProperty(configProps, "confidence", Double.toString(overlapCutoff));
 		ModelUtils.setStringProperty(configProps, "showImage", Boolean.toString(showImage));
 		ModelUtils.setStringProperty(configProps, "showEnhancedLabels", Boolean.toString(showEnhancedLabels));
 		ModelUtils.setStringProperty(configProps, "showGlassBallEffect", Boolean.toString(showGlassBallEffect));
@@ -617,6 +625,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		ModelUtils.setStringProperty(configProps, "highlightNeighbors", Boolean.toString(highlightNeighbors));
 
 		ModelUtils.setStringProperty(configProps, "species", getDefaultSpecies().toString());
+		ModelUtils.setStringProperty(configProps, "networkType", getDefaultNetworkType().toString());
 		ModelUtils.setStringProperty(configProps, "defaultConfidence", Double.toString(getDefaultConfidence()));
 		ModelUtils.setStringProperty(configProps, "additionalProteins", Integer.toString(getDefaultAdditionalProteins()));
 		ModelUtils.setStringProperty(configProps, "maxProteins", Integer.toString(getDefaultMaxProteins()));

@@ -147,6 +147,7 @@ public class LoadTermsTask extends AbstractTask {
 
 		// Set our confidence score
 		ModelUtils.setConfidence(network, ((double)confidence)/100.0);
+		ModelUtils.setNetworkType(network, netType.toString());
 
 		// Get our view
 		CyNetworkView netView = null;

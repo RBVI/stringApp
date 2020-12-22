@@ -37,6 +37,7 @@ import org.cytoscape.work.util.BoundedInteger;
 import org.cytoscape.work.util.ListSingleSelection;
 
 import edu.ucsf.rbvi.stringApp.internal.model.ChartType;
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringChannelPaletteProvider;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
@@ -52,8 +53,14 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 	@Tunable(description="Species", 
 			longDescription="Default species for network queries.",
 			exampleStringValue = "Homo Sapiens",
-			params="lookup=begins", groups={"Query Defaults (take effect after restarting Cytoscape)"}, gravity=10.0)
+			params="lookup=begins", groups={"Query Defaults (take effect after restarting Cytoscape)"}, gravity=9.0)
 	public ListSingleSelection<Species> species;
+
+	@Tunable(description="Network type", 
+			longDescription="Default type of edges for network queries.",
+			exampleStringValue = "Functional associations",
+			groups={"Query Defaults (take effect after restarting Cytoscape)"}, gravity=10.0)
+	public ListSingleSelection<NetworkType> networkType;
 
 	@Tunable(description="Confidence (score) cutoff", 
 			longDescription="Default confidence (score) cutoff.",
@@ -117,6 +124,8 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 		enrichmentSettings = new EnrichmentSettings(manager, network);
 		species = new ListSingleSelection<Species>(Species.getSpecies());
 		species.setSelectedValue(manager.getDefaultSpecies());
+		networkType = new ListSingleSelection<NetworkType>(NetworkType.values());
+		networkType.setSelectedValue(manager.getDefaultNetworkType());
 		defaultConfidence.setValue(manager.getDefaultConfidence());
 		additionalProteins.setValue(manager.getDefaultAdditionalProteins());
 		maxProteins.setValue(manager.getDefaultMaxProteins());
@@ -173,6 +182,7 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 		}
 
 		manager.setDefaultSpecies(species.getSelectedValue());
+		manager.setDefaultNetworkType(networkType.getSelectedValue());
 		manager.setDefaultConfidence(defaultConfidence.getValue());
 		manager.setDefaultAdditionalProteins(additionalProteins.getValue());
 		manager.setDefaultMaxProteins(maxProteins.getValue());

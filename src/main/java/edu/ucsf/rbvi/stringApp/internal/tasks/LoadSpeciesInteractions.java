@@ -104,6 +104,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 
 		// Set our confidence score
 		ModelUtils.setConfidence(network, ((double) confidence) / 100.0);
+		ModelUtils.setNetworkType(network, netType.toString());
 		ModelUtils.setDatabase(network, useDATABASE);
 		ModelUtils.setNetSpecies(network, species);
 		ModelUtils.setDataVersion(network, manager.getDataVersion());

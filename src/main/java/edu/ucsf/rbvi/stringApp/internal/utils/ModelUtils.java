@@ -112,6 +112,7 @@ public class ModelUtils {
 	
 	// Network information
 	public static String CONFIDENCE = "confidence score";
+	public static String NETWORK_TYPE = "network type";
 	public static String DATABASE = "database";
 	public static String NET_SPECIES = "species";
 	public static String NET_DATAVERSION = "data version";
@@ -546,6 +547,17 @@ public class ModelUtils {
 		if (network.getDefaultNetworkTable().getColumn(CONFIDENCE) == null)
 			return null;
 		return network.getRow(network).get(CONFIDENCE, Double.class);
+	}
+
+	public static void setNetworkType(CyNetwork network, String networkType) {
+		createColumnIfNeeded(network.getDefaultNetworkTable(), String.class, NETWORK_TYPE);
+		network.getRow(network).set(NETWORK_TYPE, networkType);
+	}
+
+	public static String getNetworkType(CyNetwork network) {
+		if (network.getDefaultNetworkTable().getColumn(NETWORK_TYPE) == null)
+			return null;
+		return network.getRow(network).get(NETWORK_TYPE, String.class);
 	}
 
 	public static void setDatabase(CyNetwork network, String database) {
