@@ -184,7 +184,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		}
 		
 		{
-			stringColors = new JCheckBox("String colors");
+			stringColors = new JCheckBox("STRING style colors");
 			stringColors.setFont(labelFont);
 			stringColors.setSelected(true);
 			stringColors.addItemListener(new ItemListener() {

@@ -48,7 +48,7 @@ public class ShowGlassBallEffectTask extends AbstractTask {
 	}
 
 	public void run(TaskMonitor monitor) {
-		monitor.setTitle("Enable/disable STRING glass balls effect");
+		monitor.setTitle("Enable/disable STRING glass ball effect");
 
 		boolean reregister = true;
 		if (netView == null) {

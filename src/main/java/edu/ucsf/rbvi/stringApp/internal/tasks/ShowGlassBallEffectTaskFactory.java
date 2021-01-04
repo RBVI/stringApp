@@ -62,14 +62,14 @@ public class ShowGlassBallEffectTaskFactory extends AbstractNetworkViewTaskFacto
 		props.setProperty(PREFERRED_MENU, "Apps.STRING");
 		props.setProperty(COMMAND_NAMESPACE, "string");
 		if (manager.showGlassBallEffect()) {
-			props.setProperty(TITLE, "Disable STRING glass balls effect");
+			props.setProperty(TITLE, "Disable STRING glass ball effect");
 			props.setProperty(COMMAND, "hide glass");
 			props.setProperty(COMMAND_DESCRIPTION, 
 			                  "Hide the STRING glass ball effect on the nodes");
 			props.setProperty(COMMAND_LONG_DESCRIPTION, 
 			                  "Hide the STRING glass ball effect on the nodes.");
 		} else {
-			props.setProperty(TITLE, "Enable STRING glass balls effect");
+			props.setProperty(TITLE, "Enable STRING glass ball effect");
 			props.setProperty(COMMAND, "show glass");
 			props.setProperty(COMMAND_DESCRIPTION, 
 			                  "Show the STRING glass ball effect on the nodes");
