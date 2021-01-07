@@ -75,9 +75,9 @@ public class LoadInteractions extends AbstractTask {
 		// make sure the list of resolved IDs is unique
 		Set<String> uniqueIds = new HashSet<String>(stringIds);
 		if (useDATABASE.equals(Databases.STRING.getAPIName()))
-			monitor.setTitle("Loading data from STRING for " + uniqueIds.size() + " identifiers.");
+			monitor.setTitle("Loading data from STRING for " + uniqueIds.size() + " identifier(s).");
 		else if (useDATABASE.equals(Databases.STITCH.getAPIName()))
-			monitor.setTitle("Loading data from STITCH for " + uniqueIds.size() + " identifiers.");
+			monitor.setTitle("Loading data from STITCH for " + uniqueIds.size() + " identifier(s).");
 		StringManager manager = stringNet.getManager();
 		String ids = null;
 		for (String id: uniqueIds) {

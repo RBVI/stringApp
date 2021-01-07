@@ -35,6 +35,7 @@ import org.osgi.framework.Version;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.tasks.AddTermsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeConfidenceTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeNetTypeTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.DiseaseSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExpandNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTaskFactory;
@@ -356,6 +357,27 @@ public class CyActivator extends AbstractCyActivator {
 			registerService(bc, changeConfidence, TaskFactory.class, props2);
 		}
 
+		{
+			ChangeNetTypeTaskFactory changeNetType = new ChangeNetTypeTaskFactory(manager);
+			Properties props = new Properties();
+			props.setProperty(PREFERRED_MENU, "Apps.STRING");
+			props.setProperty(TITLE, "Change network type");
+			props.setProperty(MENU_GRAVITY, "2.5");
+			props.setProperty(IN_MENU_BAR, "true");
+			registerService(bc, changeNetType, NetworkTaskFactory.class, props);
+			
+			Properties props2 = new Properties();
+			props2.setProperty(COMMAND_NAMESPACE, "string");
+			props2.setProperty(COMMAND, "change type");
+			props2.setProperty(COMMAND_DESCRIPTION, 
+			                            "Change edge type of the network");
+			props2.setProperty(COMMAND_LONG_DESCRIPTION,
+					"Changes the type of edges of the network between functional associations and physical interactions.");
+			props2.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			props2.setProperty(COMMAND_EXAMPLE_JSON, "{}");
+			registerService(bc, changeNetType, TaskFactory.class, props2);
+		}
+		
 		{
 			AddTermsTaskFactory addTerms = new AddTermsTaskFactory(manager);
 			Properties props = new Properties();
