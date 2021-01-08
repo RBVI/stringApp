@@ -360,7 +360,10 @@ public class SearchOptionsPanel extends JPanel {
 	}
 
 	public void setNetworkType(NetworkType type) {
-		functionalNetwork.setSelected(type.equals(NetworkType.FUNCTIONAL));
+		if (type.equals(NetworkType.FUNCTIONAL)) 
+			functionalNetwork.setSelected(true);
+		else 
+			physicalNetwork.setSelected(true);
 	}
 	
 	JPanel createConfidenceSlider() {

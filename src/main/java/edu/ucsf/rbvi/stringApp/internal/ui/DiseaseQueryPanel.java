@@ -64,6 +64,7 @@ import org.cytoscape.work.TaskObserver;
 import org.cytoscape.work.TunableSetter;
 
 import edu.ucsf.rbvi.stringApp.internal.model.EntityIdentifier;
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
@@ -94,6 +95,7 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 	// Species species;
 
 	private int confidence = 40;
+	private NetworkType networkType = NetworkType.FUNCTIONAL;
 	private int additionalNodes = 100;
 
 	private boolean ignore = false;
@@ -103,31 +105,24 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 		this.manager = manager;
 		species = manager.getDefaultSpecies();
 		confidence = (int)(manager.getDefaultConfidence()*100);
+		networkType = manager.getDefaultNetworkType();
 		additionalNodes = manager.getDefaultMaxProteins();
 		init();
 	}
 
-	public DiseaseQueryPanel(final StringManager manager, StringNetwork stringNetwork) {
-		this(manager, stringNetwork, null, 40, 100);
-	}
-
-
-	public DiseaseQueryPanel(final StringManager manager, StringNetwork stringNetwork, String query) {
-		this(manager, stringNetwork,query, 40, 100);
-	}
-
 	public DiseaseQueryPanel(final StringManager manager, StringNetwork stringNetwork, String query, SearchOptionsPanel searchOptions) {
-		this(manager, stringNetwork, query, searchOptions.getConfidence(), searchOptions.getAdditionalNodes());
+		this(manager, stringNetwork, query, searchOptions.getConfidence(), searchOptions.getAdditionalNodes(), searchOptions.getNetworkType());
 		boolean loadEnrichment = searchOptions.getLoadEnrichment();
 		optionsPanel.setLoadEnrichment(loadEnrichment);
 	}
 
-	public DiseaseQueryPanel(final StringManager manager, StringNetwork stringNetwork, String query, int confidence, int additionalNodes) {
+	public DiseaseQueryPanel(final StringManager manager, StringNetwork stringNetwork, String query, int confidence, int additionalNodes, NetworkType networkType) {
 		super(new GridBagLayout());
 		this.manager = manager;
 		this.stringNetwork = stringNetwork;
 		this.initialStringNetwork = stringNetwork;
 		this.confidence = confidence;
+		this.networkType = networkType;
 		this.additionalNodes = additionalNodes;
 		init();
 		if (query != null)
@@ -150,6 +145,7 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 		optionsPanel = new SearchOptionsPanel(manager, false, true, false);
 		optionsPanel.setMinimumSize(new Dimension(400, 150));
 		optionsPanel.setConfidence(confidence);
+		optionsPanel.setNetworkType(networkType);
 		optionsPanel.setAdditionalNodes(additionalNodes);
 		add(optionsPanel, c.down().expandHoriz().insets(5,5,0,5));
 

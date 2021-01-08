@@ -203,6 +203,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		if (tableColumn != null) {
 			optionsPanel = new SearchOptionsPanel(manager);
 			optionsPanel.setConfidence((int)(cutoff.getValue()*100));
+			optionsPanel.setNetworkType(manager.getDefaultNetworkType());
 			optionsPanel.setAdditionalNodes(additionalNodes);
 			optionsPanel.setSpecies(species.getSelectedValue());
 
