@@ -56,6 +56,8 @@ public abstract class AbstractStringPanel extends JPanel {
 
 	abstract void doFilter(String type);
 	
+	abstract double initFilter(String type, String text);
+
 	protected JComponent createFilterSlider(String type, String text, CyNetwork network, boolean labels, double max) {
 		double value = 0.0;
 		if (filters.containsKey(network) && 
@@ -63,6 +65,8 @@ public abstract class AbstractStringPanel extends JPanel {
 		    filters.get(network).get(type).containsKey(text)) {
 			value = filters.get(network).get(type).get(text);
 			// System.out.println("value = "+value);
+		} else {
+			value = initFilter(type, text);
 		}
 		Box box = Box.createHorizontalBox();
 		if (labels) {
@@ -75,8 +79,7 @@ public abstract class AbstractStringPanel extends JPanel {
 		}
 		JSlider slider;
 		slider = new JSlider(0,(int)max,(int)(value*100));
-
-		slider.setPreferredSize(new Dimension(100,20));
+		slider.setPreferredSize(new Dimension(150,20));
 		box.add(slider);
 		// box.add(Box.createHorizontalGlue());
 		JTextField textField;
