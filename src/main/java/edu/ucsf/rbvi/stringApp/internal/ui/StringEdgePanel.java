@@ -3,8 +3,10 @@ package edu.ucsf.rbvi.stringApp.internal.ui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -14,25 +16,21 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.SwingConstants;
 
-import org.cytoscape.application.events.SetCurrentNetworkEvent;
-import org.cytoscape.application.events.SetCurrentNetworkListener;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyRow;
-import org.cytoscape.model.events.SelectedNodesAndEdgesEvent;
-import org.cytoscape.model.events.SelectedNodesAndEdgesListener;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeConfidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 /**
@@ -61,13 +59,18 @@ public class StringEdgePanel extends AbstractStringPanel {
 		setLayout(new GridBagLayout());
 		{
 			EasyGBC c = new EasyGBC();
-			add(new JSeparator(SwingConstants.HORIZONTAL), c.anchor("west").expandHoriz());
+			// add(new JSeparator(SwingConstants.HORIZONTAL), c.anchor("west").expandHoriz());
 			JComponent scoreSlider = createFilterSlider("score", "Score", currentNetwork, true, 100.0);
 			{
 				scorePanel = new JPanel();
 				scorePanel.setLayout(new GridBagLayout());
 				EasyGBC d = new EasyGBC();
-				scorePanel.add(scoreSlider, d.anchor("west").expandHoriz());
+				scorePanel.add(scoreSlider, d.anchor("northwest").expandHoriz());
+				
+				JPanel controlPanel = createControlPanel();
+				controlPanel.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
+				scorePanel.add(controlPanel, d.anchor("west").down().noExpand());
+				
 			}
 			add(scorePanel, c.down().anchor("west").expandHoriz());
 
@@ -87,6 +90,46 @@ public class StringEdgePanel extends AbstractStringPanel {
 		}
 	}
 
+	private JPanel createControlPanel() {
+		JPanel controlPanel = new JPanel();
+		GridLayout layout = new GridLayout(1,2);
+		//layout.setVgap(0);
+		controlPanel.setLayout(layout);
+		{
+			JButton changeConfidence = new JButton("Change confidence");
+			changeConfidence.setFont(labelFont);
+			controlPanel.add(changeConfidence);
+			changeConfidence.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					ChangeConfidenceTaskFactory tf = new ChangeConfidenceTaskFactory(manager);
+					if (filters.containsKey(currentNetwork)
+							&& filters.get(currentNetwork).containsKey("score")
+							&& filters.get(currentNetwork).get("score").containsKey("Score")) {
+						manager.execute(tf.createTaskIterator(currentNetwork,
+										filters.get(currentNetwork).get("score").get("Score")), false);
+					}
+					else
+						manager.execute(tf.createTaskIterator(currentNetwork), false);
+				}
+			});
+		}
+		{
+			JButton changeNetworkType = new JButton("Change network type");
+			changeNetworkType.setFont(labelFont);
+			// controlPanel.add(changeNetworkType);
+			changeNetworkType.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					// TODO: replace with change network type task factory
+					//ChangeConfidenceTaskFactory tf = new ChangeConfidenceTaskFactory(manager);
+					//manager.execute(tf.createTaskIterator(currentNetwork), false);
+				}
+			});
+		}
+		controlPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		controlPanel.setMaximumSize(new Dimension(100,100));
+		return controlPanel;
+	}
+		
 	private JPanel createSubScorePanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
@@ -109,7 +152,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 				colorPanel.add(createScoreCheckBox(subScore), d.down().expandVert());
 			}
 
-			colorPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			//colorPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			panel.add(colorPanel, c.anchor("northwest").expandVert());
 		}
 
@@ -146,7 +189,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 				// scoreSlider.setMaximumSize(new Dimension(100,30));
 				filterPanel.add(scoreSlider, d.down().expandBoth());
 			}
-			filterPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			//filterPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			panel.add(filterPanel, c.right().expandBoth());
 		}
 
@@ -181,6 +224,20 @@ public class StringEdgePanel extends AbstractStringPanel {
 		return cb;
 	}
 
+	double initFilter(String type, String label) {
+		double minValue = 1.0;
+		for (CyEdge edge: currentNetwork.getEdgeList()) {
+			CyRow edgeRow = currentNetwork.getRow(edge);
+			Double edgeScore = edgeRow.get(ModelUtils.SCORE, Double.class);
+			if (edgeScore == null) 
+				continue;
+			Double v = edgeRow.get(ModelUtils.STRINGDB_NAMESPACE, label, Double.class);
+			if (v != null && v < minValue) 
+				minValue = v.doubleValue();
+		}
+		return minValue;
+	}
+	
 	void doFilter(String type) {
 		Map<String, Double> filter = filters.get(currentNetwork).get(type);
 		CyNetworkView view = manager.getCurrentNetworkView();

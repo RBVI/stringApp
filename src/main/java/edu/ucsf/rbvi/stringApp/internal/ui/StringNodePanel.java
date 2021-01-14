@@ -331,6 +331,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		controlPanel.add(lowerPanel, d.down().anchor("west").expandHoriz());
 
 		updateControls();
+		// TODO: change max size when more buttons get added?
 		controlPanel.setMaximumSize(new Dimension(300,100));
 		controlPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		return controlPanel;
@@ -422,6 +423,20 @@ public class StringNodePanel extends AbstractStringPanel {
 		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Selected nodes", nodesPanel, false, 10);
 		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
 		return collapsablePanel;
+	}
+
+	double initFilter(String type, String label) {
+		double minValue = 1.0;
+		for (CyNode node: currentNetwork.getNodeList()) {
+			CyRow nodeRow = currentNetwork.getRow(node);
+			String nodeType = nodeRow.get(ModelUtils.TYPE, String.class);
+			if (nodeType == null || !nodeType.equals("protein"))
+				continue;
+			Double v = nodeRow.get(type, label, Double.class);
+			if (v != null && v < minValue)
+				minValue = v.doubleValue();
+		}
+		return minValue;
 	}
 
 	// Hide all nodes who's values are less than "value"
