@@ -130,13 +130,14 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 			String database = ModelUtils.getDatabase(network);
 			Map<String, String> args = new HashMap<>();
 			args.put("existing", existing.trim());
-			// TODO: Is it OK to always use stitch?
-			args.put("database", Databases.STITCH.getAPIName());
 			args.put("score", confidence.getValue().toString());
 			args.put("maxscore", Float.toString(currentConfidence));
 			// set network type
 			NetworkType currentType = NetworkType.getType(ModelUtils.getNetworkType(network));
-			args.put("type", currentType.getAPIName());
+			if (currentType != null)
+				args.put("database", currentType.getAPIName());
+			else
+				args.put("database", Databases.STRING.getAPIName());
 			JSONObject results;
 			try {
 				results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);

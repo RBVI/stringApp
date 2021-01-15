@@ -55,7 +55,7 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 		if (this.network != null) {
 			String current = ModelUtils.getNetworkType(network); 
 			if (current == null)
-				throw new RuntimeException("Network doesn't appear to be a STRING network");
+				current = NetworkType.FUNCTIONAL.toString();
 			currentType = NetworkType.getType(current);
 			if (currentType.equals(NetworkType.FUNCTIONAL))
 				networkType.setSelectedValue(NetworkType.PHYSICAL);
@@ -106,11 +106,10 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 		Double confidence = ModelUtils.getConfidence(network);
 		Map<String, String> args = new HashMap<>();
 		args.put("existing", existing.trim());
-		args.put("database", database);
+		// Get chosen network type
+		args.put("database", networkType.getSelectedValue().getAPIName());
 		args.put("score", confidence.toString());
 		// args.put("maxscore", Float.toString(currentConfidence));
-		// Get chosen network type
-		args.put("type", networkType.getSelectedValue().getAPIName());
 		JSONObject results;
 		try {
 			results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);

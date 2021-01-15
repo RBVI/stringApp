@@ -197,11 +197,13 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			if (taxonId != -1) 
 				args.put("filter", taxonId + ".%%");
 		}
-		// TODO: Is it OK to always use stitch?
-		args.put("database", Databases.STITCH.getAPIName());
 		// set network type
 		NetworkType currentType = NetworkType.getType(ModelUtils.getNetworkType(network));
-		args.put("type", currentType.getAPIName());
+		if (currentType != null)
+			args.put("database", currentType.getAPIName());
+		else
+			args.put("database", Databases.STRING.getAPIName());
+		
 		monitor.setStatusMessage("Getting additional nodes from: "+manager.getNetworkURL());
 
 		JSONObject results;

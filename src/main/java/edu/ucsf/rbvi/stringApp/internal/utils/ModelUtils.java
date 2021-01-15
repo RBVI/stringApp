@@ -508,7 +508,7 @@ public class ModelUtils {
 		// Get a network name
 		String defaultName;
 		if (useDATABASE.equals(Databases.STITCH.getAPIName()))
-			defaultName = "STITCH Network";
+			defaultName = "Sitch Network";
 		else
 			defaultName = "String Network";
 		if (netName != null && netName != "") {

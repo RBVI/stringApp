@@ -93,10 +93,7 @@ public class LoadInteractions extends AbstractTask {
 
 		// String url = "http://api.jensenlab.org/network?entities="+URLEncoder.encode(ids.trim())+"&score="+conf;
 		Map<String, String> args = new HashMap<>();
-		// args.put("database", useDATABASE);
-		// TODO: Is it OK to always use stitch?
-		args.put("database", Databases.STITCH.getAPIName());
-		args.put("type", netType.getAPIName());
+		args.put("database", netType.getAPIName());
 		args.put("entities",ids.trim());
 		args.put("score", conf);
 		args.put("caller_identity", StringManager.CallerIdentity);

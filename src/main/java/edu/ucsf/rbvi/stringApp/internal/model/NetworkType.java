@@ -16,10 +16,12 @@ public enum NetworkType {
 	public String toString() { return name; }
 	
 	public static NetworkType getType(String type) {
-		if (type.equals(FUNCTIONAL.name))
-			return NetworkType.FUNCTIONAL;
-		else
+		if (type == null)
+			return null;
+		else if (type.equals(PHYSICAL.name))
 			return NetworkType.PHYSICAL;
+		else
+			return NetworkType.FUNCTIONAL;
 	}
 }
 
