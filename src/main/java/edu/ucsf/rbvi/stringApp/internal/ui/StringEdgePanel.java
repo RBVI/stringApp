@@ -69,8 +69,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 				
 				JPanel controlPanel = createControlPanel();
 				controlPanel.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
-				scorePanel.add(controlPanel, d.anchor("west").down().noExpand());
-				
+				scorePanel.add(controlPanel, d.anchor("west").down().noExpand());				
 			}
 			add(scorePanel, c.down().anchor("west").expandHoriz());
 
@@ -292,8 +291,14 @@ public class StringEdgePanel extends AbstractStringPanel {
 
 	private void updateScore() {
 		scorePanel.removeAll();
+		EasyGBC d = new EasyGBC();
 		JComponent scoreSlider = createFilterSlider("score", "Score", currentNetwork, true, 100.0);
-		scorePanel.add(scoreSlider);
+		scorePanel.add(scoreSlider, d.anchor("northwest").expandHoriz());
+
+		JPanel controlPanel = createControlPanel();
+		controlPanel.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
+		scorePanel.add(controlPanel, d.anchor("west").down().noExpand());
+
 	}
 
 	public void updateSubPanel() {
