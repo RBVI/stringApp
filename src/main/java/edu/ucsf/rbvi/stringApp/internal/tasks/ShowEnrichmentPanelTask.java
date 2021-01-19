@@ -12,6 +12,7 @@ import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.application.swing.CytoPanelState;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.events.RowsSetListener;
+import org.cytoscape.model.events.SelectedNodesAndEdgesListener;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 
@@ -48,6 +49,7 @@ public class ShowEnrichmentPanelTask extends AbstractTask {
 			// Register it
 			manager.registerService(panel, CytoPanelComponent.class, new Properties());
 			manager.registerService(panel, RowsSetListener.class, new Properties());
+			manager.registerService(panel, SelectedNodesAndEdgesListener.class, new Properties());
 
 			if (cytoPanel.getState() == CytoPanelState.HIDE)
 				cytoPanel.setState(CytoPanelState.DOCK);
@@ -66,6 +68,7 @@ public class ShowEnrichmentPanelTask extends AbstractTask {
 				// Unregister it
 				manager.unregisterService(panel, CytoPanelComponent.class);
 				manager.unregisterService(panel, RowsSetListener.class);
+				manager.unregisterService(panel, SelectedNodesAndEdgesListener.class);
 			}
 		}
 

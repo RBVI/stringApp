@@ -66,6 +66,8 @@ import org.cytoscape.model.SavePolicy;
 import org.cytoscape.model.events.RowSetRecord;
 import org.cytoscape.model.events.RowsSetEvent;
 import org.cytoscape.model.events.RowsSetListener;
+import org.cytoscape.model.events.SelectedNodesAndEdgesEvent;
+import org.cytoscape.model.events.SelectedNodesAndEdgesListener;
 import org.cytoscape.util.swing.CyColorPaletteChooserFactory;
 import org.cytoscape.util.swing.IconManager;
 import org.cytoscape.view.model.CyNetworkView;
@@ -91,7 +93,7 @@ import edu.ucsf.rbvi.stringApp.internal.utils.TextIcon;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
 public class EnrichmentCytoPanel extends JPanel
-		implements CytoPanelComponent2, ListSelectionListener, ActionListener, RowsSetListener, TableModelListener {
+		implements CytoPanelComponent2, ListSelectionListener, ActionListener, RowsSetListener, TableModelListener, SelectedNodesAndEdgesListener {
 
 	final StringManager manager;
 	Map<String, JTable> enrichmentTables;
@@ -109,7 +111,6 @@ public class EnrichmentCytoPanel extends JPanel
 	JButton butAnalyzedNodes;
 	JButton butExportTable;
 	JButton butFilter;
-	JButton butFilterNodes;
 	JButton butEnrichmentMap;
 	JLabel labelPPIEnrichment;
 	JLabel labelRows;
@@ -201,6 +202,27 @@ public class EnrichmentCytoPanel extends JPanel
 		}
 	}
 	
+	// filter enrichment terms on node selection as long as no terms are selected
+	@Override
+	public void handleEvent(SelectedNodesAndEdgesEvent event) {
+		//if (!registered) return;
+		JTable table = enrichmentTables.get(showTable);
+		if (table.getSelectedRow() > -1 &&  
+				table.getSelectedColumnCount() == 1 && 
+				table.getSelectedColumn() != EnrichmentTerm.chartColumnCol)
+			return;
+		
+		CyNetwork network = manager.getCurrentNetwork();
+		if (network == null)
+			return;
+		List<Long> nodesToFilterSUID = new ArrayList<Long>();
+		for (final CyNode node : event.getSelectedNodes()) {
+			nodesToFilterSUID.add(node.getSUID());
+		}
+		tableModel.filterByNodeSUID(nodesToFilterSUID, true, manager.getCategoryFilter(network), manager.getRemoveOverlap(network), manager.getOverlapCutoff(network));
+		updateLabelRows();
+	}
+
 	@Override
 	public void tableChanged(TableModelEvent e) {
 		int column = e.getColumn();
@@ -281,9 +303,9 @@ public class EnrichmentCytoPanel extends JPanel
 		} else if (e.getSource().equals(butFilter)) {
 			// filter table
 			tm.execute(new TaskIterator(new FilterEnrichmentTableTask(manager, this)));
-		} else if (e.getSource().equals(butFilterNodes)) {
-			// filter table based on node selection
-			tm.execute(new TaskIterator(new NodeFilterEnrichmentTableTask(manager, this)));
+		//} else if (e.getSource().equals(butFilterNodes)) {
+		//	// filter table based on node selection
+		//	tm.execute(new TaskIterator(new NodeFilterEnrichmentTableTask(manager, this)));
 		} else if (e.getSource().equals(butSettings)) {
 			tm.execute(new TaskIterator(new EnrichmentSettingsTask(manager)));
 		} else if (e.getSource().equals(butExportTable)) {
@@ -362,15 +384,6 @@ public class EnrichmentCytoPanel extends JPanel
 			butFilter.setFocusPainted(false);
 			butFilter.setBorder(BorderFactory.createEmptyBorder(2,10,2,10));
 
-			butFilterNodes = new JButton(IconManager.ICON_BOOK);
-			butFilterNodes.setFont(iconFont);
-			butFilterNodes.addActionListener(this);
-			butFilterNodes.setToolTipText(butFilterNodeName);
-			butFilterNodes.setBorderPainted(false);
-			butFilterNodes.setContentAreaFilled(false);
-			butFilterNodes.setFocusPainted(false);
-			butFilterNodes.setBorder(BorderFactory.createEmptyBorder(2,4,2,10));
-
 			butDrawCharts = new JButton(chartIcon);
 			butDrawCharts.addActionListener(this);
 			butDrawCharts.setToolTipText(butDrawChartsName);
@@ -399,7 +412,6 @@ public class EnrichmentCytoPanel extends JPanel
 			butEnrichmentMap.setBorder(BorderFactory.createEmptyBorder(2,4,2,20));
 
 			buttonsPanelLeft.add(butFilter);
-			buttonsPanelLeft.add(butFilterNodes);
 			buttonsPanelLeft.add(butDrawCharts);
 			buttonsPanelLeft.add(butResetCharts);
 			if (manager.haveEnrichmentMap()) buttonsPanelLeft.add(butEnrichmentMap);
