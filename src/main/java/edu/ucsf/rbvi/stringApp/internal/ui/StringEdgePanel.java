@@ -30,7 +30,6 @@ import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
-import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeConfidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 /**
@@ -41,6 +40,8 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 public class StringEdgePanel extends AbstractStringPanel {
 	JPanel subScorePanel;
 	JPanel scorePanel;
+	JButton fetchEdges;
+	JButton deleteEdges;
 	private Map<CyNetwork, Map<String, Boolean>> colors;
 
 	public StringEdgePanel(final StringManager manager) {
@@ -91,35 +92,59 @@ public class StringEdgePanel extends AbstractStringPanel {
 
 	private JPanel createControlPanel() {
 		JPanel controlPanel = new JPanel();
-		GridLayout layout = new GridLayout(1,2);
+		GridLayout layout = new GridLayout(2,2);
 		//layout.setVgap(0);
 		controlPanel.setLayout(layout);
 		{
-			JButton changeConfidence = new JButton("Change confidence");
-			changeConfidence.setFont(labelFont);
-			controlPanel.add(changeConfidence);
-			changeConfidence.addActionListener(new ActionListener() {
+			fetchEdges = new JButton("Fetch extra edges");
+			fetchEdges.setFont(labelFont);
+			fetchEdges.setEnabled(false);
+			controlPanel.add(fetchEdges);
+			fetchEdges.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					ChangeConfidenceTaskFactory tf = new ChangeConfidenceTaskFactory(manager);
 					if (filters.containsKey(currentNetwork)
 							&& filters.get(currentNetwork).containsKey("score")
 							&& filters.get(currentNetwork).get("score").containsKey("Score")) {
-						manager.execute(tf.createTaskIterator(currentNetwork,
-										filters.get(currentNetwork).get("score").get("Score")), false);
+						Map<String, Object> args = new HashMap<>();
+						args.put("network", "current");
+						args.put("confidence", String.valueOf(filters.get(currentNetwork).get("score").get("Score").doubleValue()));
+						manager.executeCommand("string", "change confidence", args, null);
+						fetchEdges.setEnabled(false);
 					}
-					else
-						manager.execute(tf.createTaskIterator(currentNetwork), false);
 				}
 			});
 		}
 		{
+			deleteEdges = new JButton("Delete hidden edges");
+			deleteEdges.setFont(labelFont);
+			deleteEdges.setEnabled(false);
+			controlPanel.add(deleteEdges);
+			deleteEdges.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					//ChangeConfidenceTaskFactory tf = new ChangeConfidenceTaskFactory(manager);
+					if (filters.containsKey(currentNetwork)
+							&& filters.get(currentNetwork).containsKey("score")
+							&& filters.get(currentNetwork).get("score").containsKey("Score")) {
+						Map<String, Object> args = new HashMap<>();
+						args.put("network", "current");
+						args.put("confidence", String.valueOf(filters.get(currentNetwork).get("score").get("Score").doubleValue()));
+						manager.executeCommand("string", "change confidence", args, null);
+						deleteEdges.setEnabled(false);
+					}
+				}
+			});
+		}
+
+		{
 			JButton changeNetworkType = new JButton("Change network type");
 			changeNetworkType.setFont(labelFont);
 			// controlPanel.add(changeNetworkType);
+			//if (ModelUtils.getNetworkType(currentNetwork) == null) {
+			//	changeNetworkType.setEnabled(false);
+			//}
 			changeNetworkType.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					// TODO: replace with change network type task factory
-					//ChangeConfidenceTaskFactory tf = new ChangeConfidenceTaskFactory(manager);
+					//ChangeNetTypeTaskFactory tf = new ChangeNetTypeTaskFactory(manager);
 					//manager.execute(tf.createTaskIterator(currentNetwork), false);
 				}
 			});
@@ -231,7 +256,10 @@ public class StringEdgePanel extends AbstractStringPanel {
 			if (edgeScore == null) 
 				continue;
 			Double v = edgeRow.get(ModelUtils.STRINGDB_NAMESPACE, label, Double.class);
-			if (v != null && v < minValue) 
+			if (v == null) {
+				minValue = 0.0;
+				break;
+			} else if (v < minValue) 
 				minValue = v.doubleValue();
 		}
 		return minValue;
@@ -239,6 +267,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 	
 	void doFilter(String type) {
 		Map<String, Double> filter = filters.get(currentNetwork).get(type);
+		double score_filter = 0.0;
 		CyNetworkView view = manager.getCurrentNetworkView();
 		for (CyEdge edge: currentNetwork.getEdgeList()) {
 			CyRow edgeRow = currentNetwork.getRow(edge);
@@ -249,6 +278,8 @@ public class StringEdgePanel extends AbstractStringPanel {
 			for (String lbl: filter.keySet()) {
 				Double v = edgeRow.get(ModelUtils.STRINGDB_NAMESPACE, lbl.toLowerCase(), Double.class);
 				double nv = filter.get(lbl);
+				if (lbl.equals("Score"))
+					score_filter = nv;
 				if ((v == null && nv > 0) || v < nv) {
 					show = false;
 					break;
@@ -262,6 +293,17 @@ public class StringEdgePanel extends AbstractStringPanel {
 				view.getEdgeView(edge).setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, false);
 				view.getModel().getRow(edge).set(CyNetwork.SELECTED, false);
 			}
+		}
+		double netConf = ModelUtils.getConfidence(currentNetwork);
+		if (score_filter < netConf) { 
+			fetchEdges.setEnabled(true);
+			deleteEdges.setEnabled(false);
+		} else if (score_filter > netConf) {
+			fetchEdges.setEnabled(false);
+			deleteEdges.setEnabled(true);
+		} else {
+			fetchEdges.setEnabled(false);
+			deleteEdges.setEnabled(false);			
 		}
 	}
 
