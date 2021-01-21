@@ -433,7 +433,10 @@ public class StringNodePanel extends AbstractStringPanel {
 			if (nodeType == null || !nodeType.equals("protein"))
 				continue;
 			Double v = nodeRow.get(type, label, Double.class);
-			if (v != null && v < minValue)
+			if (v == null) {
+				minValue = 0.0;
+				break;
+			} else if (v < minValue) 
 				minValue = v.doubleValue();
 		}
 		return minValue;
