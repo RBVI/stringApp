@@ -161,6 +161,8 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 			insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, "score"));
 			*/
 		}
+		// reset filters in the results panel
+		manager.reinitResultsPanel(network);
 	}
 
 	@ProvidesTitle

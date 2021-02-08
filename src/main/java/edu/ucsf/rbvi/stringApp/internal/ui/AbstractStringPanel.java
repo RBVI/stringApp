@@ -20,7 +20,6 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.util.swing.IconManager;
 import org.cytoscape.util.swing.OpenBrowser;
@@ -56,6 +55,8 @@ public abstract class AbstractStringPanel extends JPanel {
 
 	abstract void doFilter(String type);
 	
+	abstract void undoFilters();
+	
 	abstract double initFilter(String type, String text);
 
 	protected JComponent createFilterSlider(String type, String text, CyNetwork network, boolean labels, double max) {
@@ -79,6 +80,7 @@ public abstract class AbstractStringPanel extends JPanel {
 		}
 		JSlider slider;
 		slider = new JSlider(0,(int)max,(int)(value*100));
+		slider.setToolTipText("Filter ranges between 0.0 and " + max/100);
 		slider.setPreferredSize(new Dimension(150,20));
 		box.add(slider);
 		// box.add(Box.createHorizontalGlue());
@@ -123,4 +125,10 @@ public abstract class AbstractStringPanel extends JPanel {
 		if (value == 0)
 			filter.remove(label);
 	}
+
+	protected void removeFilters(CyNetwork network) {
+		if (network != null && filters.containsKey(network))
+			filters.remove(network);
+	}
+
 }

@@ -27,6 +27,7 @@ import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.view.model.CyNetworkView;
+import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
@@ -309,6 +310,15 @@ public class StringEdgePanel extends AbstractStringPanel {
 		} else {
 			fetchEdges.setEnabled(false);
 			deleteEdges.setEnabled(false);			
+		}
+	}
+
+	void undoFilters() {
+		CyNetworkView view = manager.getCurrentNetworkView();
+		if (view != null) {
+			for (View<CyEdge> edge: view.getEdgeViews()) {
+				edge.clearValueLock(BasicVisualLexicon.EDGE_VISIBLE);
+			}
 		}
 	}
 

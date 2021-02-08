@@ -759,6 +759,15 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		}
 	}
 
+	public void reinitResultsPanel(CyNetwork network) {
+		if (cytoPanel == null) {
+			execute(resultsPanelTaskFactory.createTaskIterator(), true);
+		} else {
+			// Make sure we show it
+			cytoPanel.reinitCytoPanel();
+		}
+	}
+
 	private void reloadEnrichmentPanel() {
 		CyTableManager tableManager = getService(CyTableManager.class);
 		Set<CyTable> tables = tableManager.getAllTables(true);

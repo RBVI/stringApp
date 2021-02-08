@@ -491,6 +491,15 @@ public class StringNodePanel extends AbstractStringPanel {
 		}
 	}
 
+	void undoFilters() {
+		CyNetworkView view = manager.getCurrentNetworkView();
+		if (view != null) {
+			for (View<CyNode> node: view.getNodeViews()) {
+				node.clearValueLock(BasicVisualLexicon.NODE_VISIBLE);
+			}
+		}
+	}
+	
 	private JPanel createNodePanel(CyNode node) {
 		JPanel panel = new JPanel();
 		StringNode sNode = new StringNode(manager.getStringNetwork(currentNetwork), node);
