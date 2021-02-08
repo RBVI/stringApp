@@ -243,6 +243,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		lowerPanel.setLayout(layout2);
 		{
 			JButton getEnrichment = new JButton("Functional enrichment");
+			getEnrichment.setToolTipText("Retrieve and show enriched functional annotations.");
 			getEnrichment.setFont(labelFont);
 			lowerPanel.add(getEnrichment);
 			getEnrichment.addActionListener(new ActionListener() {
@@ -257,6 +258,7 @@ public class StringNodePanel extends AbstractStringPanel {
 
 		{
 			JButton getPublications = new JButton("Enriched publications");
+			getPublications.setToolTipText("Retrieve and show enriched publications.");
 			getPublications.setFont(labelFont);
 			lowerPanel.add(getPublications);
 			getPublications.addActionListener(new ActionListener() {
@@ -271,6 +273,7 @@ public class StringNodePanel extends AbstractStringPanel {
 
 		{
 			highlightQuery = new JButton("Select query");
+			highlightQuery.setToolTipText("Select nodes from the initial query.");
 			highlightQuery.setFont(labelFont);
 
 			// See if we have anything in "query term"
@@ -287,6 +290,7 @@ public class StringNodePanel extends AbstractStringPanel {
 
 		{
 			JButton layoutNetwork = new JButton("Re-layout network");
+			layoutNetwork.setToolTipText("Apply force-directed layout on the whole network.");
 			layoutNetwork.setFont(labelFont);
 			layoutNetwork.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -307,6 +311,7 @@ public class StringNodePanel extends AbstractStringPanel {
 
 		{
 			JButton expandNetwork = new JButton("Expand network");
+			expandNetwork.setToolTipText("Retrieve further interactors of the nodes in the network.");
 			expandNetwork.setFont(labelFont);
 			expandNetwork.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -318,6 +323,7 @@ public class StringNodePanel extends AbstractStringPanel {
 
 		{
 			JButton getClusters = new JButton("Cluster network (MCL)");
+			getClusters.setToolTipText("Create and show a clustered version of the network using MCL.");
 			getClusters.setFont(labelFont);
 			getClusters.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -349,6 +355,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		}
 
 		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Tissue filters", tissuesPanel, true, 10);
+		collapsablePanel.setToolTipText("Hide nodes with a tissue score below the chosen value.");
 		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
 		return collapsablePanel;
 	}
@@ -375,6 +382,7 @@ public class StringNodePanel extends AbstractStringPanel {
 			          c.anchor("west").down().expandHoriz());
 		}
 		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Compartment filters", compartmentsPanel, true, 10);
+		collapsablePanel.setToolTipText("Hide nodes with a compartment score below the chosen value.");
 		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
 		return collapsablePanel;
 	}

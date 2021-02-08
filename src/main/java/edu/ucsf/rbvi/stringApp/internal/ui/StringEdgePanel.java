@@ -97,6 +97,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 		controlPanel.setLayout(layout);
 		{
 			fetchEdges = new JButton("Fetch extra edges");
+			fetchEdges.setToolTipText("Decrease the network confidence to the chosen score.");
 			fetchEdges.setFont(labelFont);
 			fetchEdges.setEnabled(false);
 			controlPanel.add(fetchEdges);
@@ -116,6 +117,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 		}
 		{
 			deleteEdges = new JButton("Delete hidden edges");
+			deleteEdges.setToolTipText("Increase the network confidence to the chosen score.");
 			deleteEdges.setFont(labelFont);
 			deleteEdges.setEnabled(false);
 			controlPanel.add(deleteEdges);
@@ -137,6 +139,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 
 		{
 			JButton changeNetworkType = new JButton("Change network type");
+			changeNetworkType.setToolTipText("Switch between functional association and physical interaction egdes.");
 			changeNetworkType.setFont(labelFont);
 			// controlPanel.add(changeNetworkType);
 			//if (ModelUtils.getNetworkType(currentNetwork) == null) {
@@ -168,6 +171,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 			colorPanel.setLayout(new GridBagLayout());
 			EasyGBC d = new EasyGBC();
 			JLabel lbl = new JLabel("Color");
+			lbl.setToolTipText("Color edges with this type of evidence.");
 			lbl.setFont(labelFont);
 			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 			colorPanel.add(lbl, d.anchor("north").noExpand());
@@ -204,6 +208,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 			filterPanel.setLayout(new GridBagLayout());
 			EasyGBC d = new EasyGBC();
 			JLabel lbl = new JLabel("Filters");
+			lbl.setToolTipText("Hide edges with a confidence score below the chosen subscore.");
 			lbl.setFont(labelFont);
 			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 			filterPanel.add(lbl, d.anchor("north").noExpand());
@@ -267,7 +272,8 @@ public class StringEdgePanel extends AbstractStringPanel {
 	
 	void doFilter(String type) {
 		Map<String, Double> filter = filters.get(currentNetwork).get(type);
-		double score_filter = 0.0;
+		double netConf = ModelUtils.getConfidence(currentNetwork);
+		double score_filter = netConf;
 		CyNetworkView view = manager.getCurrentNetworkView();
 		for (CyEdge edge: currentNetwork.getEdgeList()) {
 			CyRow edgeRow = currentNetwork.getRow(edge);
@@ -294,7 +300,6 @@ public class StringEdgePanel extends AbstractStringPanel {
 				view.getModel().getRow(edge).set(CyNetwork.SELECTED, false);
 			}
 		}
-		double netConf = ModelUtils.getConfidence(currentNetwork);
 		if (score_filter < netConf) { 
 			fetchEdges.setEnabled(true);
 			deleteEdges.setEnabled(false);
