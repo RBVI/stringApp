@@ -130,6 +130,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private boolean removeOverlap = false;
 	private Map<String, Color> channelColors;
 
+  private CyNetwork newNetwork = null;
+
 	public static String ShowStructureImages = "showStructureImages";
 	public static String ShowEnhancedLabels = "showEnhancedLabels";
 	public static String ShowGlassBallEffect = "showGlassBallEffect";
@@ -373,6 +375,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public void addStringNetwork(StringNetwork stringNet, CyNetwork network) {
 		stringNetworkMap.put(network, stringNet);
 		stringNet.setNetwork(network);
+    newNetwork = network; // Do this in case we don't have a "current" network
 	}
 
 	public StringNetwork getStringNetwork(CyNetwork network) {
@@ -407,7 +410,9 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	}
 	
 	public CyNetwork getCurrentNetwork() {
-		return registrar.getService(CyApplicationManager.class).getCurrentNetwork();
+		CyNetwork network = registrar.getService(CyApplicationManager.class).getCurrentNetwork();
+    if (network != null) return network;
+    return newNetwork;
 	}
 
 	public CyNetworkView getCurrentNetworkView() {
