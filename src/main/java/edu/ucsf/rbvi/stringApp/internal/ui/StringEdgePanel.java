@@ -256,6 +256,8 @@ public class StringEdgePanel extends AbstractStringPanel {
 
 	double initFilter(String type, String label) {
 		double minValue = 1.0;
+		if (currentNetwork == null)
+			return 0.0;
 		for (CyEdge edge: currentNetwork.getEdgeList()) {
 			CyRow edgeRow = currentNetwork.getRow(edge);
 			Double edgeScore = edgeRow.get(ModelUtils.SCORE, Double.class);

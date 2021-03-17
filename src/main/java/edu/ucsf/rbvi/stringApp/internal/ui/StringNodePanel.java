@@ -435,6 +435,8 @@ public class StringNodePanel extends AbstractStringPanel {
 
 	double initFilter(String type, String label) {
 		double minValue = 1.0;
+		if (currentNetwork == null) 
+			return 0.0;
 		for (CyNode node: currentNetwork.getNodeList()) {
 			CyRow nodeRow = currentNetwork.getRow(node);
 			String nodeType = nodeRow.get(ModelUtils.TYPE, String.class);
