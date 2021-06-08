@@ -1272,6 +1272,8 @@ public class ModelUtils {
 	public static <T> T getResultsFromJSON(JSONObject json, Class<? extends T> clazz) {
 		if (json == null || !json.containsKey(StringManager.RESULT))
 			return null;
+		
+		// System.out.println("json: " + json.toJSONString());
 
 		Object result = json.get(StringManager.RESULT);
 		if (!clazz.isAssignableFrom(result.getClass()))

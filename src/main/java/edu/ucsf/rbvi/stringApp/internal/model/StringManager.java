@@ -102,6 +102,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String RESULT = "QueryResult";
 	
 	public static String STRINGDevelopmentURI = "http://string-gamma.org/api/";
+	// public static String STRING_AGOTOOLenrichmentURI = "https://string-pythongamma.org/api/";
+	// public static String AGOTOOLenrichmentURI = "https://agotool.org/api/";
 	
 	public static boolean enableViruses = true;
 	public static boolean useSTRINGDevelopmentVersion = false; 
@@ -567,6 +569,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			return STITCHResolveURI;
 		else if (useDATABASE.equals(Databases.VIRUSES.getAPIName()))
 			return VIRUSESResolveURI;
+		// else if (useDATABASE.equals(Databases.AGOTOOL.getAPIName()))
+		//	return AGOTOOLenrichmentURI;
 		else if (useSTRINGDevelopmentVersion)
 			return STRINGDevelopmentURI;
 		

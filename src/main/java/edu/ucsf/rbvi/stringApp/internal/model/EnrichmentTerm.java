@@ -21,20 +21,42 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 
 	// Change to an enum?
 	public static enum TermCategory {
+		ALL("All", "All", "STRING Enrichment: All"),
+		ALLFILTERED("AllFilt", "All Filtered", "STRING Enrichment: All Filtered"),
+
 		GOPROCESS("Process", "GO Process", "STRING Enrichment: GO Biological Process"),
 		GOCOMPONENT("Component", "GO Component", "STRING Enrichment: GO Cellular Component"),
 		GOFUNCTION("Function", "GO Function", "STRING Enrichment: GO Molecular Function"),
-		INTERPRO("InterPro", "InterPro Domains", "STRING Enrichment: InterPro Protein Domains"),
+		
 		KEGG("KEGG", "KEGG Pathways", "STRING Enrichment: KEGG Pathways"),
-		PFAM("PFAM", "PFAM Domains", "STRING Enrichment: Pfam Protein Domains"),
 		REACTOME("RCTM", "Reactome Pathways", "STRING Enrichment: Reactome Pathways"),
+		// WIKIPATHWAYS("WikiPathways", "WikiPathways", "STRING Enrichment: WikiPathways"),
+		
 		STRINGCLUSTER("NetworkNeighborAL", "STRING Clusters", "STRING Enrichment: STRING network clusters"),
-		PMID("PMID", "Reference publications", "STRING Enrichment: PMID"),
-		SMART("SMART", "SMART Domains", "STRING Enrichment: SMART Protein Domains"),
-		UniProt("Keyword", "UniProt Keywords", "STRING Enrichment: UniProt Keywords"),
-		ALL("All", "All", "STRING Enrichment: All"),
-		ALLFILTERED("AllFilt", "All Filtered", "STRING Enrichment: All Filtered");
+		UniProt("Keyword", "UniProt Keywords", "STRING Enrichment: UniProt Keywords"),		
 
+		INTERPRO("InterPro", "InterPro Domains", "STRING Enrichment: InterPro Protein Domains"),
+		PFAM("PFAM", "PFAM Domains", "STRING Enrichment: Pfam Protein Domains"),
+		SMART("SMART", "SMART Domains", "STRING Enrichment: SMART Protein Domains"),
+		
+		PMID("PMID", "Reference publications", "STRING Enrichment: PMID");
+		
+		// COMPARTMENTS("COMPARTMENTS", "COMPARTMENTS", "STRING Enrichment: COMPARTMENTS"),
+		// TISSUES("TISSUES", "TISSUES", "STRING Enrichment: TISSUES"),
+		// DISEASES("DISEASES", "DISEASES", "STRING Enrichment: DISEASES"),
+		
+		// AGOTOOL_UNIPROT("UniProt keywords", "UniProt Keywords", "aGO tool Enrichment: "),
+		// AGOTOOL_PMID("PMID (PubMed IDentifier)", "Reference publications", "aGO tool Enrichment: "),
+		// AGOTOOL_COMPARTMENTS("Gene Ontology cellular component TEXTMINING", "COMPARTMENTS", "aGO tool Enrichment: "),
+		// AGOTOOL_TISSUES("Brenda Tissue Ontology", "TISSUES", "aGO tool Enrichment: "), 
+		// AGOTOOL_DISEASES("Disease Ontology", "DISEASES", "aGO tool Enrichment: "),
+		// AGOTOOL_KEGG("KEGG (Kyoto Encyclopedia of Genes and Genomes)", "KEGG Pathways", "aGO tool Enrichment: "),
+		// AGOTOOL_REACTOME("Reactome", "Reactome Pathways", "aGO tool Enrichment: "),
+		// AGOTOOL_WIKIPATHWAYS("WikiPathways", "WikiPathways", "aGO tool Enrichment: "),
+		// AGOTOOL_GOPROCESS("Gene Ontology biological process", "GO Process", "aGO tool Enrichment: "),
+		// AGOTOOL_GOCOMPONENT("Gene Ontology cellular component", "GO Component", "aGO tool Enrichment: "),
+		// AGOTOOL_GOFUNCTION("Gene Ontology molecular function", "GO Function", "aGO tool Enrichment: "),
+		
 		String key, name, table;
 		TermCategory(String key, String name, String table) {
 			this.key = key;
