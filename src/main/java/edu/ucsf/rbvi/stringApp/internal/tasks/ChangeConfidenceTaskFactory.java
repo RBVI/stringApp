@@ -46,17 +46,6 @@ public class ChangeConfidenceTaskFactory extends AbstractNetworkTaskFactory impl
 		}
 	}
 
-	public TaskIterator createTaskIterator(CyNetwork network, Double newConf) {
-		// check if we have a current STRING network and if not, notify user and ask to requery
-		if (!ModelUtils.isCurrentDataVersion(network) && JOptionPane.showConfirmDialog(null,
-				ModelUtils.REQUERY_MSG_USER, ModelUtils.REQUERY_TITLE, JOptionPane.OK_CANCEL_OPTION,
-				JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
-			return new TaskIterator(new RequeryTask(manager, network));
-		} else {
-			return new TaskIterator(new ChangeConfidenceTask(manager, network, null, newConf));
-		}
-	}
-
 	public boolean isReady(CyNetworkView netView) {
 		if (netView == null)
 			return false;

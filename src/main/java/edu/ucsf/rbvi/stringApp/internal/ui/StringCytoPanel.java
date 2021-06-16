@@ -84,6 +84,26 @@ public class StringCytoPanel extends JPanel
 		edgePanel.networkChanged(manager.getCurrentNetwork());
 	}
 
+	public void reinitCytoPanel() {
+		CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
+		CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.EAST);
+		if (!registered) {
+			manager.registerService(this, CytoPanelComponent.class, new Properties());
+			registered = true;
+		}
+		if (cytoPanel.getState() == CytoPanelState.HIDE)
+			cytoPanel.setState(CytoPanelState.DOCK);
+
+		// Tell tabs & remove/undo filters
+		CyNetwork current = manager.getCurrentNetwork();
+		nodePanel.removeFilters(current);
+		nodePanel.undoFilters();
+		nodePanel.networkChanged(current);
+		edgePanel.removeFilters(current);
+		edgePanel.undoFilters();
+		edgePanel.networkChanged(current);
+	}
+
 	public void hideCytoPanel() {
 		manager.unregisterService(this, CytoPanelComponent.class);
 		registered = false;

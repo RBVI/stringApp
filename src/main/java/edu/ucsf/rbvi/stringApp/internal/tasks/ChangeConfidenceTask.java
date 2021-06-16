@@ -68,11 +68,6 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 		}
 	}
 
-	public ChangeConfidenceTask(final StringManager manager, final CyNetwork network, CyNetworkView netView, Double newConf) {
-		this(manager, network, netView);
-		confidence.setValue(newConf.floatValue());
-	}
-
 	public void run(TaskMonitor monitor) {
 		monitor.setTitle("Change confidence");
 		
@@ -171,6 +166,8 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 			insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, "score"));
 			*/
 		}
+		// reset filters in the results panel
+		manager.reinitResultsPanel(network);
 	}
 
 	@ProvidesTitle

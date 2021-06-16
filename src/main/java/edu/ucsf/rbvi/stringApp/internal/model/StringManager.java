@@ -102,6 +102,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String RESULT = "QueryResult";
 	
 	public static String STRINGDevelopmentURI = "http://string-gamma.org/api/";
+	// public static String STRING_AGOTOOLenrichmentURI = "https://string-pythongamma.org/api/";
+	// public static String AGOTOOLenrichmentURI = "https://agotool.org/api/";
 	
 	public static boolean enableViruses = true;
 	public static boolean useSTRINGDevelopmentVersion = false; 
@@ -130,6 +132,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private ChartType chartType = ChartType.SPLIT;
 	private boolean removeOverlap = false;
 	private Map<String, Color> channelColors;
+
+  private CyNetwork newNetwork = null;
 
 	public static String ShowStructureImages = "showStructureImages";
 	public static String ShowEnhancedLabels = "showEnhancedLabels";
@@ -378,6 +382,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public void addStringNetwork(StringNetwork stringNet, CyNetwork network) {
 		stringNetworkMap.put(network, stringNet);
 		stringNet.setNetwork(network);
+    newNetwork = network; // Do this in case we don't have a "current" network
 	}
 
 	public StringNetwork getStringNetwork(CyNetwork network) {
@@ -412,7 +417,9 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	}
 	
 	public CyNetwork getCurrentNetwork() {
-		return registrar.getService(CyApplicationManager.class).getCurrentNetwork();
+		CyNetwork network = registrar.getService(CyApplicationManager.class).getCurrentNetwork();
+    if (network != null) return network;
+    return newNetwork;
 	}
 
 	public CyNetworkView getCurrentNetworkView() {
@@ -574,6 +581,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			return STITCHResolveURI;
 		else if (useDATABASE.equals(Databases.VIRUSES.getAPIName()))
 			return VIRUSESResolveURI;
+		// else if (useDATABASE.equals(Databases.AGOTOOL.getAPIName()))
+		//	return AGOTOOLenrichmentURI;
 		else if (useSTRINGDevelopmentVersion)
 			return STRINGDevelopmentURI;
 		
@@ -769,6 +778,15 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public void hideResultsPanel() {
 		if (cytoPanel != null) {
 			cytoPanel.hideCytoPanel();
+		}
+	}
+
+	public void reinitResultsPanel(CyNetwork network) {
+		if (cytoPanel == null) {
+			execute(resultsPanelTaskFactory.createTaskIterator(), true);
+		} else {
+			// Make sure we show it
+			cytoPanel.reinitCytoPanel();
 		}
 	}
 

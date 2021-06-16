@@ -258,6 +258,8 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			// experimental, layout only the new nodes
 			shiftAndLayoutGridSelectedOnly(newNodes);
 		}
+		// reset filters in the results panel
+		manager.reinitResultsPanel(network);
 	}
 
 	

@@ -33,13 +33,15 @@ public class NodeFilterEnrichmentTableTask extends AbstractTask implements Obser
 	private CyNetwork network;
 	
 	@Tunable(description = "Select nodes", 
+			context = "nogui", 
 	         //tooltip = "Select the enrichment categories to show in the table",
 	         //longDescription = "Select the enrichment categories to show in the table",
 	         //exampleStringValue = "GO Process",
 	         gravity = 1.0)
 	public ListMultipleSelection<CyNode> nodesToFilterBy = null;
 
-	@Tunable(description = "Term should annotate all selected", 
+	@Tunable(description = "Term should annotate all selected",
+			context = "nogui", 
 	         //tooltip = "Select the enrichment categories to show in the table",
 	         //longDescription = "Select the enrichment categories to show in the table",
 	         //exampleStringValue = "GO Process",
