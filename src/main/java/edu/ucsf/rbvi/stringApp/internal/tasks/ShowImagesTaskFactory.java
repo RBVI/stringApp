@@ -58,33 +58,33 @@ public class ShowImagesTaskFactory extends AbstractNetworkViewTaskFactory implem
 		return new TaskIterator(new ShowImagesTask(manager, show, this));
 	}
 
-	public void reregister() {
-		manager.unregisterService(this, NetworkViewTaskFactory.class);
-		Properties props = new Properties();
-		props.setProperty(PREFERRED_MENU, "Apps.STRING");
-		props.setProperty(COMMAND_NAMESPACE, "string");
-		if (manager.showImage()) {
-			props.setProperty(TITLE, "Don't show structure images");
-			props.setProperty(COMMAND, "hide images");
-			props.setProperty(COMMAND_DESCRIPTION, 
-			                  "Hide the structure images on the nodes");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, 
-			                  "Hide the structure images on the nodes.");
-		} else {
-			props.setProperty(TITLE, "Show structure images");
-			props.setProperty(COMMAND, "show images");
-			props.setProperty(COMMAND_DESCRIPTION, 
-			                  "Show the structure images on the nodes");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, 
-			                  "Show the structure images on the nodes.");
-
-		}
-		props.setProperty(MENU_GRAVITY, "7.0");
-		props.setProperty(IN_MENU_BAR, "true");
-		props.setProperty(INSERT_SEPARATOR_BEFORE, "true");
-		props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-		props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-		manager.registerService(this, NetworkViewTaskFactory.class, props);
-	}
+//	public void reregister() {
+//		manager.unregisterService(this, NetworkViewTaskFactory.class);
+//		Properties props = new Properties();
+//		props.setProperty(PREFERRED_MENU, "Apps.STRING");
+//		props.setProperty(COMMAND_NAMESPACE, "string");
+//		if (manager.showImage()) {
+//			props.setProperty(TITLE, "Don't show structure images");
+//			props.setProperty(COMMAND, "hide images");
+//			props.setProperty(COMMAND_DESCRIPTION, 
+//			                  "Hide the structure images on the nodes");
+//			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+//			                  "Hide the structure images on the nodes.");
+//		} else {
+//			props.setProperty(TITLE, "Show structure images");
+//			props.setProperty(COMMAND, "show images");
+//			props.setProperty(COMMAND_DESCRIPTION, 
+//			                  "Show the structure images on the nodes");
+//			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+//			                  "Show the structure images on the nodes.");
+//
+//		}
+//		props.setProperty(MENU_GRAVITY, "7.0");
+//		props.setProperty(IN_MENU_BAR, "true");
+//		props.setProperty(INSERT_SEPARATOR_BEFORE, "true");
+//		props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+//		props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
+//		manager.registerService(this, NetworkViewTaskFactory.class, props);
+//	}
 }
 

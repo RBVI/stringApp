@@ -34,16 +34,28 @@ public class ShowEnrichmentPanelTask extends AbstractTask {
 	}
 
 	public void run(TaskMonitor monitor) {
-		if (show)
-			monitor.setTitle("Show enrichment panel");
-		else
-			monitor.setTitle("Hide enrichment panel");
+		monitor.setTitle("Show/hide enrichment panel");
 
 		CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
 		CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.SOUTH);
 
-		// If the panel is not already registered, create it
-		if (show && cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment") < 0) {
+		// If the panel is already registered, but should not be shown, unregister it
+		if (!show && cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment") >= 0) {
+			int compIndex = cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment");
+			Component panel = cytoPanel.getComponentAt(compIndex);
+			if (panel instanceof CytoPanelComponent2) {
+				// Unregister it
+				manager.unregisterService(panel, CytoPanelComponent.class);
+				manager.unregisterService(panel, RowsSetListener.class);
+				manager.unregisterService(panel, SelectedNodesAndEdgesListener.class);
+			}
+		} else if (show && cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment") >= 0) {
+			// Special case...
+			EnrichmentCytoPanel panel = (EnrichmentCytoPanel) cytoPanel.getComponentAt(
+					cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment"));
+			panel.initPanel(noSignificant);
+		} else {
+			// If the panel is not already registered, create it
 			CytoPanelComponent2 panel = new EnrichmentCytoPanel(manager, noSignificant);
 
 			// Register it
@@ -56,23 +68,8 @@ public class ShowEnrichmentPanelTask extends AbstractTask {
 
 			cytoPanel.setSelectedIndex(
 					cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment"));
-
-		} else if (show && cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment") >= 0) {
-			EnrichmentCytoPanel panel = (EnrichmentCytoPanel) cytoPanel.getComponentAt(
-					cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment"));
-			panel.initPanel(noSignificant);
-		} else if (!show && cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment") >= 0) {
-			int compIndex = cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment");
-			Component panel = cytoPanel.getComponentAt(compIndex);
-			if (panel instanceof CytoPanelComponent2) {
-				// Unregister it
-				manager.unregisterService(panel, CytoPanelComponent.class);
-				manager.unregisterService(panel, RowsSetListener.class);
-				manager.unregisterService(panel, SelectedNodesAndEdgesListener.class);
-			}
 		}
-
-		factory.reregister();
+		// factory.reregister();
 	}
 
 	public static boolean isPanelRegistered(StringManager sman) {

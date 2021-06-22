@@ -85,7 +85,7 @@ public class ShowEnhancedLabelsTask extends AbstractTask {
 			}
 		}
 		netView.updateView();
-		if (reregister) factory.reregister();
+		// if (reregister) factory.reregister();
 		manager.updateControls();
 	}
 }

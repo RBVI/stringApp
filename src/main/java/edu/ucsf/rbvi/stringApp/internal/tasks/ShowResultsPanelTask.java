@@ -30,17 +30,13 @@ public class ShowResultsPanelTask extends AbstractTask {
 	}
 
 	public void run(TaskMonitor monitor) {
-
-		if (show)
-			monitor.setTitle("Show results panel");
-		else
-			monitor.setTitle("Hide results panel");
+		monitor.setTitle("Show/hide results panel");
 
 		CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
 		CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.EAST);
 
 		// If the panel is not already registered, create it
-		if (show && cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.String") < 0) {
+		if (cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.String") < 0) {
 			CytoPanelComponent2 panel = new StringCytoPanel(manager);
 
 			// Register it
@@ -49,7 +45,7 @@ public class ShowResultsPanelTask extends AbstractTask {
 			if (cytoPanel.getState() == CytoPanelState.HIDE)
 				cytoPanel.setState(CytoPanelState.DOCK);
 
-		} else if (!show && cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.String") >= 0) {
+		} else {
 			int compIndex = cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.String");
 			Component panel = cytoPanel.getComponentAt(compIndex);
 			if (panel instanceof CytoPanelComponent2) {
@@ -59,7 +55,7 @@ public class ShowResultsPanelTask extends AbstractTask {
 			}
 		}
 
-		factory.reregister();
+		// factory.reregister();
 	}
 
 	public static boolean isPanelRegistered(StringManager sman) {

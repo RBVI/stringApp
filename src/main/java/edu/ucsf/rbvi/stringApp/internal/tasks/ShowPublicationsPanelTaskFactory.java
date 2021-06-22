@@ -40,30 +40,30 @@ public class ShowPublicationsPanelTaskFactory extends AbstractTaskFactory {
 		return new TaskIterator(new ShowPublicationsPanelTask(manager, this, show, noSignificant));
 	}
 
-	public void reregister() {
-		manager.unregisterService(this, TaskFactory.class);
-		Properties props = new Properties();
-		props.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
-		props.setProperty(COMMAND_NAMESPACE, "string");
-		if (ShowPublicationsPanelTask.isPanelRegistered(manager)) {
-			props.setProperty(TITLE, "Hide publications panel");
-			props.setProperty(COMMAND, "hide publications");
-			props.setProperty(COMMAND_DESCRIPTION, "Hide the publications panel");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, "Hide the publications panel");
-			show = false;
-		} else {
-			props.setProperty(TITLE, "Show publications panel");
-			props.setProperty(COMMAND, "show publications");
-			props.setProperty(COMMAND_DESCRIPTION, "Show the publications panel");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, "Show the publications panel");
-			show = true;
-		}
-		props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-		props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-		props.setProperty(MENU_GRAVITY, "5.0");
-		props.setProperty(IN_MENU_BAR, "true");
-		manager.registerService(this, TaskFactory.class, props);
-	}
+//	public void reregister() {
+//		manager.unregisterService(this, TaskFactory.class);
+//		Properties props = new Properties();
+//		props.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
+//		props.setProperty(COMMAND_NAMESPACE, "string");
+//		if (ShowPublicationsPanelTask.isPanelRegistered(manager)) {
+//			props.setProperty(TITLE, "Hide publications panel");
+//			props.setProperty(COMMAND, "hide publications");
+//			props.setProperty(COMMAND_DESCRIPTION, "Hide the publications panel");
+//			props.setProperty(COMMAND_LONG_DESCRIPTION, "Hide the publications panel");
+//			show = false;
+//		} else {
+//			props.setProperty(TITLE, "Show publications panel");
+//			props.setProperty(COMMAND, "show publications");
+//			props.setProperty(COMMAND_DESCRIPTION, "Show the publications panel");
+//			props.setProperty(COMMAND_LONG_DESCRIPTION, "Show the publications panel");
+//			show = true;
+//		}
+//		props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+//		props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
+//		props.setProperty(MENU_GRAVITY, "5.0");
+//		props.setProperty(IN_MENU_BAR, "true");
+//		manager.registerService(this, TaskFactory.class, props);
+//	}
 
 	public boolean isReady() {
 		// We always want to be able to shut it off

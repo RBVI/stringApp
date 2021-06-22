@@ -33,22 +33,22 @@ public class ShowResultsPanelTaskFactory extends AbstractTaskFactory {
 		return new TaskIterator(new ShowResultsPanelTask(manager, this, show));
 	}
 
-	public void reregister() {
-		manager.unregisterService(this, TaskFactory.class);
-		Properties props = new Properties();
-		props.setProperty(PREFERRED_MENU, "Apps.STRING");
-
-		if (ShowResultsPanelTask.isPanelRegistered(manager)) {
-			props.setProperty(TITLE, "Hide results panel");
-			show = false;
-		} else {
-			props.setProperty(TITLE, "Show results panel");
-			show = true;
-		}
-		props.setProperty(MENU_GRAVITY, "4.0");
-		props.setProperty(IN_MENU_BAR, "true");
-		manager.registerService(this, TaskFactory.class, props);
-	}
+//	public void reregister() {
+//		manager.unregisterService(this, TaskFactory.class);
+//		Properties props = new Properties();
+//		props.setProperty(PREFERRED_MENU, "Apps.STRING");
+//
+//		if (ShowResultsPanelTask.isPanelRegistered(manager)) {
+//			props.setProperty(TITLE, "Hide results panel");
+//			show = false;
+//		} else {
+//			props.setProperty(TITLE, "Show results panel");
+//			show = true;
+//		}
+//		props.setProperty(MENU_GRAVITY, "4.0");
+//		props.setProperty(IN_MENU_BAR, "true");
+//		manager.registerService(this, TaskFactory.class, props);
+//	}
 
 	public boolean isReady() {
 		// We always want to be able to shut it off

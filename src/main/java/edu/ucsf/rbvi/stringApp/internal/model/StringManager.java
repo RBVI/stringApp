@@ -703,7 +703,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 				ModelUtils.setStringProperty(sessionProperties, ModelUtils.showEnhancedLabelsFlag,
 						new Boolean(showEnhancedLabels));
 			}
-			labelsTaskFactory.reregister();
+			//labelsTaskFactory.reregister();
 		}
 		
 		// check if glass ball effect should be shown or not
@@ -717,7 +717,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 				ModelUtils.setStringProperty(sessionProperties, ModelUtils.showGlassBallEffectFlag,
 						new Boolean(showGlassBallEffect));
 			}
-			glassBallTaskFactory.reregister();
+			//glassBallTaskFactory.reregister();
 		}
 
 		// check if structure images should be shown or not
@@ -798,7 +798,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 				taskIt2 = publicationsTaskFactory.createTaskIterator(false, false);
 			}
 			synchronousTaskManager.execute(taskIt2);
-			publicationsTaskFactory.reregister();
+			// publicationsTaskFactory.reregister();
 		}
 		if (enrichmentTaskFactory != null) {
 			TaskIterator taskIt = null;
@@ -808,7 +808,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 				taskIt = enrichmentTaskFactory.createTaskIterator(false, false);
 			}
 			synchronousTaskManager.execute(taskIt);
-			enrichmentTaskFactory.reregister();
+			// enrichmentTaskFactory.reregister();
 		}
 	}
 	

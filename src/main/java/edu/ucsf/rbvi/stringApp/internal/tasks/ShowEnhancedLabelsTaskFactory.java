@@ -57,31 +57,31 @@ public class ShowEnhancedLabelsTaskFactory extends AbstractNetworkViewTaskFactor
 		return new TaskIterator(new ShowEnhancedLabelsTask(manager, show, this));
 	}
 
-	public void reregister() {
-		manager.unregisterService(this, NetworkViewTaskFactory.class);
-		Properties props = new Properties();
-		props.setProperty(PREFERRED_MENU, "Apps.STRING");
-		props.setProperty(COMMAND_NAMESPACE, "string");
-		if (manager.showEnhancedLabels() && manager.haveEnhancedGraphics()) {
-			props.setProperty(TITLE, "Don't show STRING style labels");
-			props.setProperty(COMMAND, "hide labels");
-			props.setProperty(COMMAND_DESCRIPTION, 
-			                  "Hide the STRING style labels on the nodes");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, 
-			                  "Hide the STRING style labels on the nodes.");
-		} else if (manager.haveEnhancedGraphics()) {
-			props.setProperty(TITLE, "Show STRING style labels");
-			props.setProperty(COMMAND, "show labels");
-			props.setProperty(COMMAND_DESCRIPTION, 
-			                  "Show the STRING style labels on the nodes");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, 
-			                  "Show the STRING style labels on the nodes.");
-		}
-		props.setProperty(MENU_GRAVITY, "8.0");
-		props.setProperty(IN_MENU_BAR, "true");
-		props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-		props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-		manager.registerService(this, NetworkViewTaskFactory.class, props);
-	}
+//	public void reregister() {
+//		manager.unregisterService(this, NetworkViewTaskFactory.class);
+//		Properties props = new Properties();
+//		props.setProperty(PREFERRED_MENU, "Apps.STRING");
+//		props.setProperty(COMMAND_NAMESPACE, "string");
+//		if (manager.showEnhancedLabels() && manager.haveEnhancedGraphics()) {
+//			props.setProperty(TITLE, "Don't show STRING style labels");
+//			props.setProperty(COMMAND, "hide labels");
+//			props.setProperty(COMMAND_DESCRIPTION, 
+//			                  "Hide the STRING style labels on the nodes");
+//			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+//			                  "Hide the STRING style labels on the nodes.");
+//		} else if (manager.haveEnhancedGraphics()) {
+//			props.setProperty(TITLE, "Show STRING style labels");
+//			props.setProperty(COMMAND, "show labels");
+//			props.setProperty(COMMAND_DESCRIPTION, 
+//			                  "Show the STRING style labels on the nodes");
+//			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+//			                  "Show the STRING style labels on the nodes.");
+//		}
+//		props.setProperty(MENU_GRAVITY, "8.0");
+//		props.setProperty(IN_MENU_BAR, "true");
+//		props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+//		props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
+//		manager.registerService(this, NetworkViewTaskFactory.class, props);
+//	}
 
 }
