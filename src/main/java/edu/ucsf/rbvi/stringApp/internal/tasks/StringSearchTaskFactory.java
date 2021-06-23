@@ -191,12 +191,23 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 
 		final int taxon = annTask.getTaxon();
 		if (stringNetwork.getAnnotations() == null || stringNetwork.getAnnotations().size() == 0) {
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					JOptionPane.showMessageDialog(null, "Your query returned no results",
-								                        "No results", JOptionPane.ERROR_MESSAGE); 
-				}
-			});
+			if (annTask.getErrorMessage() != "") {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						JOptionPane.showMessageDialog(null,
+								"<html>Your query returned no results due to an error. <br />"
+										+ annTask.getErrorMessage() + "</html>",
+								"No results", JOptionPane.ERROR_MESSAGE);
+					}
+				});					
+			} else {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						JOptionPane.showMessageDialog(null, "Your query returned no results",
+								"No results", JOptionPane.ERROR_MESSAGE);
+					}
+				});
+			}
 			return;
 		}
 		boolean noAmbiguity = stringNetwork.resolveAnnotations();

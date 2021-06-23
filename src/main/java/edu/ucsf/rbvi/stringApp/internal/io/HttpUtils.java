@@ -118,10 +118,9 @@ public class HttpUtils {
 				} catch (Exception ioe) {
 					// ignore
 				}
-				manager.error("Exception reading JSON from STRING: "+ parseFailure.getMessage());
-				System.out.println("Exception reading JSON from STRING: "+ parseFailure.getMessage()+"\n Text: "+errorString);
-//				return null;
-				throw new ConnectionException("Exception reading JSON from STRING: "+ parseFailure.getMessage());
+				manager.error("Exception reading JSON from STRING server: <br/>"+ parseFailure.getMessage()+"\n Text: "+errorString);
+				System.out.println("Exception reading JSON from STRING server: <br/>"+ parseFailure.getMessage()+"\n Text: "+errorString);
+				throw new ConnectionException("Exception reading JSON from STRING server: <br/>"+ parseFailure.getMessage());
 			}
 
 	 	} catch(UnknownHostException e) {
@@ -129,9 +128,9 @@ public class HttpUtils {
 			throw new ConnectionException("Unknown host: " + e.getMessage());
 		} catch (Exception e) {
 			// e.printStackTrace();
-			manager.error("Unexpected error when parsing JSON from server: " + e.getMessage());
-//			return null;
-			throw new ConnectionException("Unexpected error when parsing JSON from server: " + e.getMessage());
+			manager.error("Unexpected error from server: <br/>" + e.getMessage());
+			System.out.println("Unexpected error from server: <br/>" + e.getMessage());
+			throw new ConnectionException("Unexpected error from server: <br/>" + e.getMessage());
 		} finally {
 		}
 		return jsonObject;
