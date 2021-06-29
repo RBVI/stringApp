@@ -477,8 +477,8 @@ public class CyActivator extends AbstractCyActivator {
 				Properties props = new Properties();
 				props.setProperty(COMMAND_NAMESPACE, "string");
 				props.setProperty(COMMAND, "show enrichment");
-				props.setProperty(COMMAND_DESCRIPTION, "Show the enrichment panel");
-				props.setProperty(COMMAND_LONG_DESCRIPTION, "Show the enrichment panel");
+				props.setProperty(COMMAND_DESCRIPTION, "Show or hide the enrichment panel");
+				props.setProperty(COMMAND_LONG_DESCRIPTION, "Show or hide the enrichment panel");
 				props.setProperty(COMMAND_SUPPORTS_JSON, "true");
 				props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 				registerService(bc, showEnrichment, TaskFactory.class, props);
@@ -509,8 +509,8 @@ public class CyActivator extends AbstractCyActivator {
 				Properties props = new Properties();
 				props.setProperty(COMMAND_NAMESPACE, "string");
 				props.setProperty(COMMAND, "show publications");
-				props.setProperty(COMMAND_DESCRIPTION, "Show the publications panel");
-				props.setProperty(COMMAND_LONG_DESCRIPTION, "Show the publications panel");
+				props.setProperty(COMMAND_DESCRIPTION, "Show or hide the publications panel");
+				props.setProperty(COMMAND_LONG_DESCRIPTION, "Show or hide the publications panel");
 				props.setProperty(COMMAND_SUPPORTS_JSON, "true");
 				props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 				registerService(bc, showPublications, TaskFactory.class, props);
@@ -615,9 +615,9 @@ public class CyActivator extends AbstractCyActivator {
 			// Create command version and register it
 			Properties props = new Properties();
 			props.setProperty(COMMAND_NAMESPACE, "string");
-			props.setProperty(COMMAND, "images");
-			props.setProperty(COMMAND_DESCRIPTION, "Show the structure images on the nodes");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, "Show the structure images on the nodes.");
+			props.setProperty(COMMAND, "show images");
+			props.setProperty(COMMAND_DESCRIPTION, "Show or hide the structure images on the nodes");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, "Show or hide the structure images on the nodes.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
 			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");						
 			registerService(bc, showImagesTF, NetworkViewTaskFactory.class, props);
@@ -637,8 +637,8 @@ public class CyActivator extends AbstractCyActivator {
 			Properties props = new Properties();
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "show labels");
-			props.setProperty(COMMAND_DESCRIPTION, "Show the STRING style labels on the nodes");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, "Show the STRING style labels on the nodes.");
+			props.setProperty(COMMAND_DESCRIPTION, "Show or hide the STRING style labels on the nodes");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, "Show or hide the STRING style labels on the nodes.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
 			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");						
 			registerService(bc, showEnhancedLabelsTF, NetworkViewTaskFactory.class, props);
@@ -656,9 +656,9 @@ public class CyActivator extends AbstractCyActivator {
 			// Create command version and register it
 			Properties props = new Properties();
 			props.setProperty(COMMAND_NAMESPACE, "string");
-			props.setProperty(COMMAND, "show glass");
-			props.setProperty(COMMAND_DESCRIPTION, "Show the STRING glass ball effect on the nodes");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, "Show the STRING glass ball effect on the nodes.");
+			props.setProperty(COMMAND, "enable glass");
+			props.setProperty(COMMAND_DESCRIPTION, "Enable or disable the STRING glass ball effect on the nodes");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, "Enable or disable the STRING glass ball effect on the nodes.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
 			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");						
 			registerService(bc, showGlassBallEffectTF, NetworkViewTaskFactory.class, props);
