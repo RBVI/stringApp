@@ -329,6 +329,8 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 				enrichmentResult.put(TermCategory.ALL.getKey(), termsAll);
 				saveEnrichmentTable(TermCategory.ALL.getTable(), TermCategory.ALL.getKey());
 			}
+			monitor.showMessage(Level.INFO,
+					"Enrichment retrieval successful.");
 		}
 	}
 
@@ -338,11 +340,11 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		args.put("identifiers", selected);
 		args.put("species", species);
 		if (ModelUtils.getConfidence(network) == null) {
-			monitor.showMessage(Level.ERROR,
+			monitor.showMessage(Level.WARN,
 					"PPI enrichment cannot be retrieved because of missing confidence values.");
 			return null;
 		} else if ( ModelUtils.getConfidence(network).compareTo(0.999d) > 0 ) {
-			monitor.showMessage(Level.ERROR,
+			monitor.showMessage(Level.WARN,
 					"PPI enrichment cannot be retrieved for a network with a confidence of 1.0.");
 			return null;	
 		}
@@ -586,29 +588,36 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		if (clzz.equals(CyTable.class)) {
 			return (R) enrichmentTable;
 		} else if (clzz.equals(String.class)) {
-			if (ppiSummary == null) return (R)"No results";
-			String result = "Enrichment results summary:";
-			result = addStringResult(result, ModelUtils.NET_PPI_ENRICHMENT);
-			result = addStringResult(result, ModelUtils.NET_ENRICHMENT_NODES);
-			result = addStringResult(result, ModelUtils.NET_ENRICHMENT_EXPECTED_EDGES);
-			result = addStringResult(result, ModelUtils.NET_ENRICHMENT_EDGES);
-			result = addStringResult(result, ModelUtils.NET_ENRICHMENT_CLSTR);
-			result = addStringResult(result, ModelUtils.NET_ENRICHMENT_DEGREE);
-			return (R)result;
+			if (ppiSummary == null && enrichmentTable == null) 
+				return (R)"No results";
+			if (enrichmentTable != null)
+				return (R)("\"EnrichmentTable\": "+enrichmentTable.getSUID());
+			if (ppiSummary != null) {
+				String result = "Enrichment results summary:";
+				result = addStringResult(result, ModelUtils.NET_PPI_ENRICHMENT);
+				result = addStringResult(result, ModelUtils.NET_ENRICHMENT_NODES);
+				result = addStringResult(result, ModelUtils.NET_ENRICHMENT_EXPECTED_EDGES);
+				result = addStringResult(result, ModelUtils.NET_ENRICHMENT_EDGES);
+				result = addStringResult(result, ModelUtils.NET_ENRICHMENT_CLSTR);
+				result = addStringResult(result, ModelUtils.NET_ENRICHMENT_DEGREE);
+				return (R)result;
+			}
 		} else if (clzz.equals(Long.class)) {
-			if (ppiSummary == null) return null; 
+			// if (ppiSummary == null) return null; 
 			return (R) enrichmentTable.getSUID();
 		} else if (clzz.equals(JSONResult.class)) {
 			JSONResult res = () -> {
-				if (enrichmentTable == null || ppiSummary == null) return "{}";
-        String result = "{\"EnrichmentTable\": "+enrichmentTable.getSUID();
-
-				result = addResult(result, ModelUtils.NET_PPI_ENRICHMENT);
-				result = addResult(result, ModelUtils.NET_ENRICHMENT_NODES);
-				result = addResult(result, ModelUtils.NET_ENRICHMENT_EXPECTED_EDGES);
-				result = addResult(result, ModelUtils.NET_ENRICHMENT_EDGES);
-				result = addResult(result, ModelUtils.NET_ENRICHMENT_CLSTR);
-				result = addResult(result, ModelUtils.NET_ENRICHMENT_DEGREE);
+				String result = "{";
+				if (enrichmentTable != null)
+					result = "\"EnrichmentTable\": "+enrichmentTable.getSUID();
+				if (ppiSummary != null) {
+					result = addResult(result, ModelUtils.NET_PPI_ENRICHMENT);
+					result = addResult(result, ModelUtils.NET_ENRICHMENT_NODES);
+					result = addResult(result, ModelUtils.NET_ENRICHMENT_EXPECTED_EDGES);
+					result = addResult(result, ModelUtils.NET_ENRICHMENT_EDGES);
+					result = addResult(result, ModelUtils.NET_ENRICHMENT_CLSTR);
+					result = addResult(result, ModelUtils.NET_ENRICHMENT_DEGREE);
+				}
 				result += "}";
 				return result;
       };
