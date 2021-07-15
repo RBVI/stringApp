@@ -609,7 +609,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			JSONResult res = () -> {
 				String result = "{";
 				if (enrichmentTable != null)
-					result = "\"EnrichmentTable\": "+enrichmentTable.getSUID();
+					result += "\"EnrichmentTable\": "+enrichmentTable.getSUID();
 				if (ppiSummary != null) {
 					result = addResult(result, ModelUtils.NET_PPI_ENRICHMENT);
 					result = addResult(result, ModelUtils.NET_ENRICHMENT_NODES);
@@ -619,6 +619,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 					result = addResult(result, ModelUtils.NET_ENRICHMENT_DEGREE);
 				}
 				result += "}";
+				// System.out.println(result);
 				return result;
       };
       return (R)res;
