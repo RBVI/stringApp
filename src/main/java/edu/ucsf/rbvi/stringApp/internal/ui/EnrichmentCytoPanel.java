@@ -824,16 +824,16 @@ public class EnrichmentCytoPanel extends JPanel
 		return filteredEnrichmentTable;
 	}
 
-	public void updateFilteredEnrichmentTable() {
+	public CyTable updateFilteredEnrichmentTable() {
 		if (filteredEnrichmentTable == null) 
 			getFilteredTable();
 
 		CyNetwork network = manager.getCurrentNetwork();
 		if (network == null || tableModel == null)
-			return;
+			return null;
 
 		CyTable currTable = ModelUtils.getEnrichmentTable(manager, network, TermCategory.ALL.getTable());
-		if (currTable == null) return;
+		if (currTable == null) return null;
 
 		filteredEnrichmentTable.deleteRows(filteredEnrichmentTable.getPrimaryKey().getValues(Long.class));
 
@@ -857,5 +857,6 @@ public class EnrichmentCytoPanel extends JPanel
 			// filtRow.set(EnrichmentTerm.colShowChart, false);
 			filtRow.set(EnrichmentTerm.colChartColor, "");
 		}
+		return filteredEnrichmentTable;
 	}
 }
