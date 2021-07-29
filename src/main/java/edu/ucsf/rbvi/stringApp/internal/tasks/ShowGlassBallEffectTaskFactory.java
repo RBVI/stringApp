@@ -56,32 +56,33 @@ public class ShowGlassBallEffectTaskFactory extends AbstractNetworkViewTaskFacto
 		return new TaskIterator(new ShowGlassBallEffectTask(manager, show, this));
 	}
 
-	public void reregister() {
-		manager.unregisterService(this, NetworkViewTaskFactory.class);
-		Properties props = new Properties();
-		props.setProperty(PREFERRED_MENU, "Apps.STRING");
-		props.setProperty(COMMAND_NAMESPACE, "string");
-		if (manager.showGlassBallEffect()) {
-			props.setProperty(TITLE, "Disable STRING glass ball effect");
-			props.setProperty(COMMAND, "hide glass");
-			props.setProperty(COMMAND_DESCRIPTION, 
-			                  "Hide the STRING glass ball effect on the nodes");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, 
-			                  "Hide the STRING glass ball effect on the nodes.");
-		} else {
-			props.setProperty(TITLE, "Enable STRING glass ball effect");
-			props.setProperty(COMMAND, "show glass");
-			props.setProperty(COMMAND_DESCRIPTION, 
-			                  "Show the STRING glass ball effect on the nodes");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, 
-			                  "Show the STRING glass ball effect on the nodes.");
 
-		}
-		props.setProperty(MENU_GRAVITY, "9.0");
-		props.setProperty(IN_MENU_BAR, "true");
-		props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-		props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-		manager.registerService(this, NetworkViewTaskFactory.class, props);
-	}
+//	public void reregister() {
+//		manager.unregisterService(this, NetworkViewTaskFactory.class);
+//		Properties props = new Properties();
+//		props.setProperty(PREFERRED_MENU, "Apps.STRING");
+//		props.setProperty(COMMAND_NAMESPACE, "string");
+//		if (manager.showGlassBallEffect()) {
+//			props.setProperty(TITLE, "Disable STRING glass balls effect");
+//			props.setProperty(COMMAND, "hide glass");
+//			props.setProperty(COMMAND_DESCRIPTION, 
+//			                  "Hide the STRING glass ball effect on the nodes");
+//			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+//			                  "Hide the STRING glass ball effect on the nodes.");
+//		} else {
+//			props.setProperty(TITLE, "Enable STRING glass balls effect");
+//			props.setProperty(COMMAND, "show glass");
+//			props.setProperty(COMMAND_DESCRIPTION, 
+//			                  "Show the STRING glass ball effect on the nodes");
+//			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+//			                  "Show the STRING glass ball effect on the nodes.");
+//
+//		}
+//		props.setProperty(MENU_GRAVITY, "9.0");
+//		props.setProperty(IN_MENU_BAR, "true");
+//		props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+//		props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
+//		manager.registerService(this, NetworkViewTaskFactory.class, props);
+//	}
 
 }

@@ -53,12 +53,17 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.SetConfidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.SetLabelAttributeTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.SettingsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowChartsTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowPublicationsPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowPublicationsPanelTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.StitchSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.StringifyTaskFactory;
@@ -481,11 +486,27 @@ public class CyActivator extends AbstractCyActivator {
 				propsEnrichment.setProperty(IN_MENU_BAR, "true");
 				// propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 				registerService(bc, getEnrichment, NetworkTaskFactory.class, propsEnrichment);
+			}
+			
+			{
+				ShowEnrichmentPanelAction sea = new ShowEnrichmentPanelAction("Show enrichment panel", manager);
+				registerService(bc, sea, CyAction.class);
 
 				ShowEnrichmentPanelTaskFactory showEnrichment = new ShowEnrichmentPanelTaskFactory(manager);
-				showEnrichment.reregister();
+				// showEnrichment.reregister();
 				getEnrichment.setShowEnrichmentPanelFactory(showEnrichment);
 				manager.setShowEnrichmentPanelTaskFactory(showEnrichment);
+				
+				// Create command version and register it
+				Properties props = new Properties();
+				props.setProperty(COMMAND_NAMESPACE, "string");
+				props.setProperty(COMMAND, "show enrichment");
+				props.setProperty(COMMAND_DESCRIPTION, "Show or hide the enrichment panel");
+				props.setProperty(COMMAND_LONG_DESCRIPTION, "Show or hide the enrichment panel");
+				props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+				props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
+				registerService(bc, showEnrichment, TaskFactory.class, props);
+
 			}
 			
 			GetPublicationsTaskFactory getPublications = new GetPublicationsTaskFactory(manager, true);
@@ -497,18 +518,36 @@ public class CyActivator extends AbstractCyActivator {
 				propsPublications.setProperty(IN_MENU_BAR, "true");
 				propsPublications.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 				registerService(bc, getPublications, NetworkTaskFactory.class, propsPublications);
-
-				ShowPublicationsPanelTaskFactory showPublications = new ShowPublicationsPanelTaskFactory(manager);
-				showPublications.reregister();
-				getPublications.setShowPublicationsPanelFactory(showPublications);
-				manager.setShowPublicationsPanelTaskFactory(showPublications);
 			}
 
 			{
-				ShowResultsPanelTaskFactory showResults = new ShowResultsPanelTaskFactory(manager);
-				showResults.reregister();
-				manager.setShowResultsPanelTaskFactory(showResults);
+				ShowPublicationsPanelAction spa = new ShowPublicationsPanelAction("Show publications panel", manager);
+				registerService(bc, spa, CyAction.class);
 
+				ShowPublicationsPanelTaskFactory showPublications = new ShowPublicationsPanelTaskFactory(manager);
+				// showPublications.reregister();
+				getPublications.setShowPublicationsPanelFactory(showPublications);
+				manager.setShowPublicationsPanelTaskFactory(showPublications);
+				
+				// Create command version and register it
+				Properties props = new Properties();
+				props.setProperty(COMMAND_NAMESPACE, "string");
+				props.setProperty(COMMAND, "show publications");
+				props.setProperty(COMMAND_DESCRIPTION, "Show or hide the publications panel");
+				props.setProperty(COMMAND_LONG_DESCRIPTION, "Show or hide the publications panel");
+				props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+				props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
+				registerService(bc, showPublications, TaskFactory.class, props);
+			}
+
+			{
+				ShowResultsPanelAction sra = new ShowResultsPanelAction("Show results panel", manager);
+				registerService(bc, sra, CyAction.class);
+
+				ShowResultsPanelTaskFactory showResults = new ShowResultsPanelTaskFactory(manager);				
+				//showResults.reregister();
+				manager.setShowResultsPanelTaskFactory(showResults);
+				
 				// Now bring up the side panel if the current network is a STRING network
 				CyNetwork current = manager.getCurrentNetwork();
 				if (ModelUtils.ifHaveStringNS(current)) {
@@ -530,7 +569,7 @@ public class CyActivator extends AbstractCyActivator {
 			                            "This includes enrichment for GO Process, GO Component, GO Function, "+
 			                            "InterPro, KEGG Pathways, and PFAM.");
 			propsEnrichment.setProperty(COMMAND_SUPPORTS_JSON, "true");
-    	propsEnrichment.setProperty(COMMAND_EXAMPLE_JSON, GetEnrichmentTaskFactory.EXAMPLE_JSON);
+			propsEnrichment.setProperty(COMMAND_EXAMPLE_JSON, GetEnrichmentTaskFactory.EXAMPLE_JSON);
 			// propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 			registerService(bc, getCommandEnrichment, NetworkTaskFactory.class, propsEnrichment);
 		}
@@ -559,7 +598,7 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(COMMAND_LONG_DESCRIPTION, 
 			                            "Retrieve the list of species known to the STRING database, including the taxonomy ID.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-    	props.setProperty(COMMAND_EXAMPLE_JSON, "[{\"taxonomyId\": 9606, \"scientificName\": \"Homo sapiens\", \"abbreviatedName\":\"Homo sapiens\"}]");
+			props.setProperty(COMMAND_EXAMPLE_JSON, "[{\"taxonomyId\": 9606, \"scientificName\": \"Homo sapiens\", \"abbreviatedName\":\"Homo sapiens\"}]");
 			// propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 			registerService(bc, getSpecies, TaskFactory.class, props);
 		}
@@ -600,27 +639,54 @@ public class CyActivator extends AbstractCyActivator {
 			// Create command version and register it
 			Properties props = new Properties();
 			props.setProperty(COMMAND_NAMESPACE, "string");
-			props.setProperty(COMMAND, "images");
-			props.setProperty(COMMAND_DESCRIPTION, "Show the structure images on the nodes");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, "Show the structure images on the nodes.");
+			props.setProperty(COMMAND, "show images");
+			props.setProperty(COMMAND_DESCRIPTION, "Show or hide the structure images on the nodes");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, "Show or hide the structure images on the nodes.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
 			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");						
-			manager.registerService(showImagesTF, NetworkViewTaskFactory.class, props);
+			registerService(bc, showImagesTF, NetworkViewTaskFactory.class, props);
 			
 		}
 
 		{
 			// Register our "show enhanced labels" toggle
+			ShowEnhancedLabelsPanelAction sela = new ShowEnhancedLabelsPanelAction("Show STRING style labels", manager);
+			registerService(bc, sela, CyAction.class);
+			
 			ShowEnhancedLabelsTaskFactory showEnhancedLabelsTF = new ShowEnhancedLabelsTaskFactory(manager);
-			showEnhancedLabelsTF.reregister();
 			manager.setShowEnhancedLabelsTaskFactory(showEnhancedLabelsTF);
+			//showEnhancedLabelsTF.reregister();
+			
+			// Create command version and register it
+			Properties props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "show labels");
+			props.setProperty(COMMAND_DESCRIPTION, "Show or hide the STRING style labels on the nodes");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, "Show or hide the STRING style labels on the nodes.");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");						
+			registerService(bc, showEnhancedLabelsTF, NetworkViewTaskFactory.class, props);
 		}
 		
 		{
 			// Register our "show glass ball effect" toggle
+			ShowGlassBallEffectPanelAction sgbea = new ShowGlassBallEffectPanelAction("Enable STRING glass balls effect", manager);
+			registerService(bc, sgbea, CyAction.class);
+			
 			ShowGlassBallEffectTaskFactory showGlassBallEffectTF = new ShowGlassBallEffectTaskFactory(manager);
-			showGlassBallEffectTF.reregister();
 			manager.setShowGlassBallEffectTaskFactory(showGlassBallEffectTF);
+			//showGlassBallEffectTF.reregister();
+			
+			// Create command version and register it
+			Properties props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "enable glass");
+			props.setProperty(COMMAND_DESCRIPTION, "Enable or disable the STRING glass ball effect on the nodes");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, "Enable or disable the STRING glass ball effect on the nodes.");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");						
+			registerService(bc, showGlassBallEffectTF, NetworkViewTaskFactory.class, props);
+
 		}
 
 		{

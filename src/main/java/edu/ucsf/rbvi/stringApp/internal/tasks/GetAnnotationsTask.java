@@ -18,6 +18,7 @@ public class GetAnnotationsTask extends AbstractTask implements ObservableTask {
 	final int taxon;
 	final String terms;
 	final String useDATABASE;
+	String errorMessage;
 	Map<String, List<Annotation>> annotations = null;
 
 	public GetAnnotationsTask(StringNetwork stringNetwork, int taxon, String terms, String useDATABASE) {
@@ -25,6 +26,7 @@ public class GetAnnotationsTask extends AbstractTask implements ObservableTask {
 		this.taxon = taxon;
 		this.terms = terms;
 		this.useDATABASE = useDATABASE;
+		errorMessage = "";
 	}
 
 	@Override
@@ -34,7 +36,8 @@ public class GetAnnotationsTask extends AbstractTask implements ObservableTask {
 			annotations = stringNetwork.getAnnotations(stringNetwork.getManager(), taxon, terms, useDATABASE, true);
 		} catch (ConnectionException e) {
 			e.printStackTrace();
-			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+			errorMessage = e.getMessage();
+			monitor.showMessage(Level.ERROR, e.getMessage());
 			return;
 		}
 		if (annotations == null || annotations.size() == 0) {
@@ -45,6 +48,8 @@ public class GetAnnotationsTask extends AbstractTask implements ObservableTask {
 	public Map<String, List<Annotation>> getAnnotations() { return annotations; }
 
 	public int getTaxon() { return taxon; }
+	
+	public String getErrorMessage() { return errorMessage; }
 
 	public StringNetwork getStringNetwork() { return stringNetwork; }
 

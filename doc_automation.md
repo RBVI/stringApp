@@ -24,22 +24,17 @@ Last update: 2020-10-12
 ### Visual properties
 
 - [Show structure images](#show-structure-images)
-- [Hide structure images](#hide-structure-images)
-- [Show glass ball effect](#show-glass-ball-effect)
-- [Hide glass ball effect](#hide-glass-ball-effect)
 - [Show STRING style labels](#show-string-style-labels)
-- [Hide STRING style labels](#hide-string-style-labels)
+- [Enable glass ball effect](#enable-glass-ball-effect)
 
 ### Functional enrichment
 - [Retrieve functional enrichment](#retrieve-functional-enrichment)
 - [Show enrichment panel](#show-enrichment-panel)
-- [Hide enrichment panel](#hide-enrichment-panel)
 - [Filter functional enrichment](#filter-functional-enrichment )
 - [Show enrichment charts](#show-enrichment-charts)
 - [Hide enrichment charts](#hide-enrichment-charts)
 - [Retrieve enriched publications](#retrieve-enriched-publications)
 - [Show publications panel](#show-publications-panel) 
-- [Hide publications panel](#hide-publications-panel) 
 
 ### Other
 - [Settings](#settings)
@@ -374,31 +369,7 @@ Sets the network as a STRING network recognizable by the stringApp. This assumes
 
 `string show images`
 
-Shows the structure images on the nodes.
-
-[List of commands](#list-of-commands) - [List of Visual properties commands](#visual-properties)
-
-## Hide structure images
-
-`string hide images`
-
-Hides the structure images on the nodes.
-
-[List of commands](#list-of-commands) - [List of Visual properties commands](#visual-properties)
-
-## Show glass ball effect
-
-`string show glass`
-
-Shows the glass ball effect on the nodes.
-
-[List of commands](#list-of-commands) - [List of Visual properties commands](#visual-properties)
-
-## Hide glass ball effect
-
-`string hide glass`
-
-Hides the glass ball effect on the nodes.
+Shows or hides the structure images on the nodes.
 
 [List of commands](#list-of-commands) - [List of Visual properties commands](#visual-properties)
 
@@ -406,18 +377,17 @@ Hides the glass ball effect on the nodes.
 
 `string show labels`
 
-Shows the STRING style labels on the nodes.
+Shows or hides the STRING style labels on the nodes.
 
 [List of commands](#list-of-commands) - [List of Visual properties commands](#visual-properties)
 
-## Hide STRING style labels
+## Enable glass ball effect
 
-`string hide labels`
+`string enable glass`
 
-Hides the STRING style labels on the nodes.
+Enables or disables the glass ball effect on the nodes.
 
 [List of commands](#list-of-commands) - [List of Visual properties commands](#visual-properties)
-
 
 
 
@@ -454,15 +424,7 @@ Retrieves functional enrichment for a set of `selected` nodes in the current net
 
 `string show enrichment`
 
-Shows the enrichment panel.
-
-[List of commands](#list-of-commands) - [List of Functional enrichment commands](#functional-enrichment)
-
-## Hide enrichment panel
-
-`string hide enrichment`
-
-Hides the enrichment panel.
+Shows or hides the enrichment panel.
 
 [List of commands](#list-of-commands) - [List of Functional enrichment commands](#functional-enrichment)
 
@@ -553,18 +515,9 @@ Retrieves enriched publications for a set of `selected` nodes in the current net
 
 `string show publications`
 
-Shows the enriched publications panel.
+Shows or hides the enriched publications panel.
 
 [List of commands](#list-of-commands) - [List of Functional enrichment commands](#functional-enrichment)
-
-## Hide publications panel
-
-`string hide publications`
-
-Hides the enriched publications panel.
-
-[List of commands](#list-of-commands) - [List of Functional enrichment commands](#functional-enrichment)
-
 
 
 ## Settings

@@ -9,6 +9,7 @@ import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyTable;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.ProvidesTitle;
@@ -28,6 +29,7 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 	private StringManager manager;
 	private EnrichmentCytoPanel enrichmentPanel;
 	private CyNetwork network;
+	private CyTable filteredEnrichmentTable;
 	
 	// @Tunable(description = "Enrichment cutoff", gravity = 1.0)
 	// public double cutoff = 0.05;
@@ -54,23 +56,25 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 
 	@Tunable(description = "Select categories", 
 	         tooltip = "Select the enrichment categories to show in the table",
-	         longDescription = "Select the enrichment categories to show in the table",
+	         longDescription = "Select the enrichment categories to show in the table. Use \"All\" to remove the filtering.",
 	         exampleStringValue = "GO Process",
 	         gravity = 1.0)
 	public ListMultipleSelection<TermCategory> categories = new ListMultipleSelection<>(TermCategory.getValues());
 
 	@Tunable(description = "Remove redundant terms", 
-	         tooltip = "Removes terms whose enriched genes significantly overlap with already selected terms",
-	         longDescription = "Removes terms whose enriched genes significantly overlap with already selected terms",
+	         tooltip = "Removes terms whose enriched genes significantly overlap with already selected terms.",
+	         longDescription = "Removes terms whose enriched genes significantly overlap with already selected terms.",
 	         exampleStringValue = "true",
 	         gravity = 8.0)
 	public boolean removeOverlapping = false;
 
 	@Tunable(description = "Redundancy cutoff", 
-	         tooltip = "<html>This is the maximum Jaccard similarity that will be allowed.<br/>"+
-	                   "Values larger than this cutoff will be excluded.</html>",
-	         longDescription = "This is the maximum Jaccard similarity that will be allowed. "
-	         		+ "Values larger than this cutoff will be excluded.",
+	         tooltip = "<html>This is the maximum Jaccard similarity that will be allowed <br/>"
+	                   + "between a less significant term and a more significant term such that <br/>"
+	                   + "the less significant term is kept in the list.</html>",
+	         longDescription = "This is the maximum Jaccard similarity that will be allowed "
+	         		+ "between a less significant term and a more significant term such that "
+	         		+ "the less significant term is kept in the list.",
 	         exampleStringValue="0.5",
 	         params="slider=true", dependsOn="removeOverlapping=true", gravity = 9.0)
 	public BoundedDouble overlapCutoff = new BoundedDouble(0.0, 0.5, 1.0, false, false);
@@ -88,16 +92,18 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 	public void run(TaskMonitor monitor) throws Exception {
 		monitor.setTitle("Filter STRING Enrichment table");
 	
-		List<TermCategory> categoryList = categories.getSelectedValues();
 		// Filter the current list
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
+		List<TermCategory> categoryList = categories.getSelectedValues();
+		//SwingUtilities.invokeLater(new Runnable() {
+			//public void run() {
 				// when using commands, we need to get the enrichment panel again
 				if (enrichmentPanel == null) { 
 					CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
 					CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.SOUTH);
-					enrichmentPanel = (EnrichmentCytoPanel) cytoPanel.getComponentAt(
-							cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment"));
+					if (cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment") != -1)
+						enrichmentPanel = (EnrichmentCytoPanel) cytoPanel.getComponentAt(
+								cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment"));
+					else return;
 				}
 				EnrichmentTableModel tableModel = enrichmentPanel.getTableModel();
 				tableModel.filter(categoryList, removeOverlapping, overlapCutoff.getValue());
@@ -106,18 +112,22 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 				manager.setOverlapCutoff(network,overlapCutoff.getValue());
 				manager.setCategoryFilter(network,categories.getSelectedValues());
 				manager.updateSettings();
-				enrichmentPanel.updateFilteredEnrichmentTable();
-			}
-		});
+				filteredEnrichmentTable = enrichmentPanel.updateFilteredEnrichmentTable();
+			//}
+		//});
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public <R> R getResults(Class<? extends R> clzz) {
 		if (clzz.equals(String.class)) {
+			if (filteredEnrichmentTable != null)
+				return (R)("\"EnrichmentTable\": "+filteredEnrichmentTable.getSUID());
 			return (R)"";
 		} else if (clzz.equals(JSONResult.class)) {
 			JSONResult res = () -> {
+				if (filteredEnrichmentTable != null)
+					return "{\"EnrichmentTable\": "+filteredEnrichmentTable.getSUID()+"}";
 				return "{}";
 			};
 			return (R)res;
