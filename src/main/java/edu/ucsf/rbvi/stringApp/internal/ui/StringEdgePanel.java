@@ -31,6 +31,7 @@ import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeNetTypeTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 /**
@@ -142,14 +143,14 @@ public class StringEdgePanel extends AbstractStringPanel {
 			JButton changeNetworkType = new JButton("Change network type");
 			changeNetworkType.setToolTipText("Switch between functional association and physical interaction egdes.");
 			changeNetworkType.setFont(labelFont);
-			// controlPanel.add(changeNetworkType);
-			//if (ModelUtils.getNetworkType(currentNetwork) == null) {
-			//	changeNetworkType.setEnabled(false);
-			//}
+			controlPanel.add(changeNetworkType);
+			if (ModelUtils.getNetworkType(currentNetwork) == null) {
+				changeNetworkType.setEnabled(false);
+			}
 			changeNetworkType.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					//ChangeNetTypeTaskFactory tf = new ChangeNetTypeTaskFactory(manager);
-					//manager.execute(tf.createTaskIterator(currentNetwork), false);
+					ChangeNetTypeTaskFactory tf = new ChangeNetTypeTaskFactory(manager);
+					manager.execute(tf.createTaskIterator(currentNetwork), false);
 				}
 			});
 		}
@@ -273,8 +274,9 @@ public class StringEdgePanel extends AbstractStringPanel {
 	
 	void doFilter(String type) {
 		Map<String, Double> filter = filters.get(currentNetwork).get(type);
-		double netConf = ModelUtils.getConfidence(currentNetwork);
-		double score_filter = netConf;
+		// hack needed in order to avoid mistakes in the comparison of the numbers
+		int netConf = (int)(ModelUtils.getConfidence(currentNetwork)*1000);
+		int score_filter = netConf;
 		CyNetworkView view = manager.getCurrentNetworkView();
 		for (CyEdge edge: currentNetwork.getEdgeList()) {
 			CyRow edgeRow = currentNetwork.getRow(edge);
@@ -284,10 +286,11 @@ public class StringEdgePanel extends AbstractStringPanel {
 			boolean show = true;
 			for (String lbl: filter.keySet()) {
 				Double v = edgeRow.get(ModelUtils.STRINGDB_NAMESPACE, lbl.toLowerCase(), Double.class);
-				double nv = filter.get(lbl);
+				// hack needed in order to avoid mistakes in the comparison of the numbers
+				int nv = (int)(filter.get(lbl)*1000);
 				if (lbl.equals("Score"))
 					score_filter = nv;
-				if ((v == null && nv > 0) || v < nv) {
+				if ((v == null && nv > 0) || (int)(v*1000) < nv) {
 					show = false;
 					break;
 				}
@@ -346,7 +349,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 		}
 	}
 
-	private void updateScore() {
+	public void updateScore() {
 		scorePanel.removeAll();
 		EasyGBC d = new EasyGBC();
 		JComponent scoreSlider = createFilterSlider("score", "Score", currentNetwork, true, 100.0);

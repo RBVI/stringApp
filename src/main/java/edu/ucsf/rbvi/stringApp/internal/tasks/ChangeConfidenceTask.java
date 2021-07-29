@@ -100,7 +100,8 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 			}
 		}
 
-		double newConfidence = confidence.getValue().doubleValue();
+		// convert confidence to an integer to avoid issues with number precision
+		int newConfidence = (int)(confidence.getValue()*1000);
 		List<CyEdge> newEdges = new ArrayList<>();
 
 		// See if we're actually increasing the cutoff
@@ -110,8 +111,9 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 			List<CyEdge> removeEdges = new ArrayList<>();
 			for (CyEdge edge: network.getEdgeList()) {
 				Double score = network.getRow(edge).get(ModelUtils.SCORE, Double.class);
-				if (score != null && score < newConfidence)
+				if (score != null && (int)(score*1000) < newConfidence) {
 					removeEdges.add(edge);
+				}
 			}
 			monitor.setStatusMessage("Removing "+removeEdges.size()+" edges");
 			network.removeEdges(removeEdges);
@@ -154,7 +156,7 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 
 		// If we have a view, re-apply the style and layout
 		if (netView != null) {
-			monitor.setStatusMessage("Laying out network");
+			// monitor.setStatusMessage("Laying out network");
 			ViewUtils.updateEdgeStyle(manager, netView, newEdges);
 			netView.updateView();
 

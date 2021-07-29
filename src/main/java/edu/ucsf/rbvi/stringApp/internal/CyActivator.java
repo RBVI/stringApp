@@ -337,13 +337,15 @@ public class CyActivator extends AbstractCyActivator {
 
 		{
 			ChangeConfidenceTaskFactory changeConfidence = new ChangeConfidenceTaskFactory(manager);
-			Properties props = new Properties();
-			props.setProperty(PREFERRED_MENU, "Apps.STRING");
-			props.setProperty(TITLE, "Change confidence");
-			props.setProperty(MENU_GRAVITY, "2.0");
-			props.setProperty(IN_MENU_BAR, "true");
-			registerService(bc, changeConfidence, NetworkTaskFactory.class, props);
+			// Move change confidence menu item to new menu item which also chnages network type
+			//Properties props = new Properties();
+			//props.setProperty(PREFERRED_MENU, "Apps.STRING");
+			//props.setProperty(TITLE, "Change confidence");
+			//props.setProperty(MENU_GRAVITY, "2.0");
+			//props.setProperty(IN_MENU_BAR, "true");
+			//registerService(bc, changeConfidence, NetworkTaskFactory.class, props);
 			
+			// keep the command
 			Properties props2 = new Properties();
 			props2.setProperty(COMMAND_NAMESPACE, "string");
 			props2.setProperty(COMMAND, "change confidence");
@@ -361,8 +363,8 @@ public class CyActivator extends AbstractCyActivator {
 			ChangeNetTypeTaskFactory changeNetType = new ChangeNetTypeTaskFactory(manager);
 			Properties props = new Properties();
 			props.setProperty(PREFERRED_MENU, "Apps.STRING");
-			props.setProperty(TITLE, "Change network type");
-			props.setProperty(MENU_GRAVITY, "2.5");
+			props.setProperty(TITLE, "Change confidence or type");
+			props.setProperty(MENU_GRAVITY, "2.0");
 			props.setProperty(IN_MENU_BAR, "true");
 			registerService(bc, changeNetType, NetworkTaskFactory.class, props);
 			

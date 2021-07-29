@@ -1,8 +1,8 @@
 package edu.ucsf.rbvi.stringApp.internal.model;
 
 public enum NetworkType {
-	FUNCTIONAL("Full STRING network", "functional"),
-	PHYSICAL("Physical network", "physical");
+	FUNCTIONAL("full STRING network", "functional"),
+	PHYSICAL("physical subnetwork", "physical");
 	
 	String name;
 	String apiName;

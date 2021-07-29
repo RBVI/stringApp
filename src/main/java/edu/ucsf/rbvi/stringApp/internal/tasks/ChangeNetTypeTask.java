@@ -19,6 +19,7 @@ import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.TaskMonitor.Level;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.json.JSONResult;
+import org.cytoscape.work.util.BoundedFloat;
 import org.cytoscape.work.util.ListSingleSelection;
 import org.json.simple.JSONObject;
 
@@ -33,11 +34,18 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 	CyNetworkView netView;
 	NetworkType currentType = NetworkType.FUNCTIONAL;
+	float currentConfidence = 0.4f;
 
-	@Tunable(description = "New network type",
+	@Tunable (description="Confidence cutoff", 
+			longDescription="Confidence score for the STRING interactions to be included in this network. ", 
+			exampleStringValue="0.4", 
+			gravity=1.0, params="slider=true", required=false)
+	public BoundedFloat confidence = new BoundedFloat(0.0f, currentConfidence, 1.0f, false, false);
+
+	@Tunable(description = "Network type",
 	         longDescription="Change the type of edges of the network between functional associations and physical interactions.",
 	         exampleStringValue="Functional associations",
-	         required=true)
+	         gravity=2.0, required=true)
 	public ListSingleSelection<NetworkType> networkType;
 
 	@Tunable(description="Network to change the type for", 
@@ -53,14 +61,18 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			this.network = network;
 		this.netView = netView;
 		if (this.network != null) {
-			String current = ModelUtils.getNetworkType(network); 
-			if (current == null)
-				current = NetworkType.FUNCTIONAL.toString();
-			currentType = NetworkType.getType(current);
-			if (currentType.equals(NetworkType.FUNCTIONAL))
-				networkType.setSelectedValue(NetworkType.PHYSICAL);
-			else
-				networkType.setSelectedValue(NetworkType.FUNCTIONAL);
+			String currentNetType = ModelUtils.getNetworkType(network); 
+			if (currentNetType == null)
+				currentNetType = NetworkType.FUNCTIONAL.toString();
+			currentType = NetworkType.getType(currentNetType);
+			networkType.setSelectedValue(currentType);
+			
+			Double currentNetConf = ModelUtils.getConfidence(network);
+			if (currentNetConf == null)
+				throw new RuntimeException("Network doesn't appear to be a STRING network");
+			currentConfidence = currentNetConf.floatValue();
+			confidence.setValue(currentNetConf.floatValue());
+	
 		}
 	}
 
@@ -78,12 +90,19 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			return;			
 		}
 
-//		// Always set the currentType after the network is set
-		String current = ModelUtils.getNetworkType(network); 
-		if (current == null)
-			throw new RuntimeException("Network doesn't appear to be a STRING network");
-		currentType = NetworkType.getType(current);
+		// Always set the currentType and confidence after the network is set
+		String currentNetType = ModelUtils.getNetworkType(network); 
+		if (currentNetType == null) {
+			monitor.showMessage(Level.WARN, "The network appears to not have a network type. stringApp will assume it is a functional network.");
+			currentNetType = NetworkType.FUNCTIONAL.toString();
+		}
+		currentType = NetworkType.getType(currentNetType);
 		
+		Double currentNetConf = ModelUtils.getConfidence(network);
+		if (currentNetConf == null)
+			throw new RuntimeException("Network doesn't appear to be a STRING network due to a missing confidence attribute.");
+		currentConfidence = currentNetConf.floatValue();
+
 		// First see if we've got a view
 		if (netView == null) {
 			Collection<CyNetworkView> views = 
@@ -98,17 +117,17 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 
 		// We're changing the network type, so we need to get new edges
 		List<CyEdge> newEdges = new ArrayList<>();
-		monitor.setStatusMessage("Fetching new edges");
+		monitor.setStatusMessage("Changing network type");
 		// Get all of the current nodes for our "existing" list
 		String existing = ModelUtils.getExisting(network);
 		// Get current database & confidence
 		String database = ModelUtils.getDatabase(network);
-		Double confidence = ModelUtils.getConfidence(network);
+		// Double confidence = ModelUtils.getConfidence(network);
 		Map<String, String> args = new HashMap<>();
 		args.put("existing", existing.trim());
 		// Get chosen network type
 		args.put("database", networkType.getSelectedValue().getAPIName());
-		args.put("score", confidence.toString());
+		args.put("score", confidence.getValue().toString());
 		// args.put("maxscore", Float.toString(currentConfidence));
 		JSONObject results;
 		try {
@@ -120,28 +139,27 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 		}
 
 		if (results != null) {
-			// This may change...
-			ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, database);
+			// remove old edges
+			List<CyEdge> removeEdges = network.getEdgeList();
+			monitor.setStatusMessage("Removing "+removeEdges.size()+" edges");
+			network.removeEdges(removeEdges);
 
+			// add new edges
+			ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, database);
 			monitor.setStatusMessage("Adding "+newEdges.size()+" edges");
 
+			// change network type attribute
 			ModelUtils.setNetworkType(network, networkType.getSelectedValue().toString());
 		}
 
 		// If we have a view, re-apply the style and layout
 		if (netView != null) {
-			monitor.setStatusMessage("Laying out network");
 			ViewUtils.updateEdgeStyle(manager, netView, newEdges);
 			netView.updateView();
-
-			// At some point, we want to change this to only restyle the edges
-			/* ViewUtils.reapplyStyle(manager, netView);
-			CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");
-			Object context = alg.createLayoutContext();
-			Set<View<CyNode>> nodeViews = new HashSet<>(netView.getNodeViews());
-			insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, "score"));
-			*/
 		}
+
+		// reset filters in the results panel
+		manager.reinitResultsPanel(network);
 	}
 
 	@ProvidesTitle
