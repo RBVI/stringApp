@@ -148,8 +148,10 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, database);
 			monitor.setStatusMessage("Adding "+newEdges.size()+" edges");
 
-			// change network type attribute
+			// change network attributes
+			ModelUtils.setConfidence(network, (double)Math.round(confidence.getValue()*1000)/1000);
 			ModelUtils.setNetworkType(network, networkType.getSelectedValue().toString());
+			
 		}
 
 		// If we have a view, re-apply the style and layout
@@ -164,7 +166,7 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 
 	@ProvidesTitle
 	public String getTitle() {
-		return "Change Network Type";
+		return "Change Network Confidence or Type";
 	}
 
 	@Override

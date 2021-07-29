@@ -118,7 +118,7 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 			monitor.setStatusMessage("Removing "+removeEdges.size()+" edges");
 			network.removeEdges(removeEdges);
 			// And set the new value
-			ModelUtils.setConfidence(network, confidence.getValue());
+			ModelUtils.setConfidence(network, (double)Math.round(confidence.getValue()*1000)/1000);
 		} else if (confidence.getValue() < currentConfidence) {
 			monitor.setStatusMessage("Decreased confidence: fetching new edges");
 			// We're decreasing the confidence, so we need to get new edges
@@ -150,7 +150,7 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 	
 				monitor.setStatusMessage("Adding "+newEdges.size()+" edges");
 	
-				ModelUtils.setConfidence(network, confidence.getValue());
+				ModelUtils.setConfidence(network, (double)Math.round(confidence.getValue()*1000)/1000);
 			}
 		}
 
