@@ -116,7 +116,7 @@ public class LoadInteractions extends AbstractTask {
 
 		// This may change...
 		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, species, results, 
-		                                                     queryTermMap, ids.trim(), netName, useDATABASE);
+		                                                     queryTermMap, ids.trim(), netName, useDATABASE, netType.getAPIName());
 
 		if (network == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results");

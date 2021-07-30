@@ -91,7 +91,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		// time = System.currentTimeMillis();
 
 		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, species, results, null,
-		                                                     null, netName, useDATABASE);
+		                                                     null, netName, useDATABASE, netType.getAPIName());
 		// System.out.println("createNetworkFromJSON method "
 		// + (System.currentTimeMillis() - time) / 1000 + " seconds.");
 		// time = System.currentTimeMillis();

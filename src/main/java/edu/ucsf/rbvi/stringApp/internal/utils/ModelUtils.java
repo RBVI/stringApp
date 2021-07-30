@@ -49,6 +49,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.EntityIdentifier;
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
@@ -59,6 +60,11 @@ public class ModelUtils {
 	// Namespaces
 	public static String STRINGDB_NAMESPACE = "stringdb";
 	public static String NAMESPACE_SEPARATOR = "::";
+	
+	// Network names
+	public static String DEFAULT_NAME_STRING = "STRING network";
+	public static String DEFAULT_NAME_STITCH = "STITCH network";
+	public static String DEFAULT_NAME_ADDON_PHYSICAL = "(physical)";
 	
 	// Node information
 	public static String CANONICAL = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "canonical name";
@@ -488,10 +494,10 @@ public class ModelUtils {
 
 	public static CyNetwork createNetworkFromJSON(StringNetwork stringNetwork, String species,
 			JSONObject object, Map<String, String> queryTermMap, String ids, String netName,
-			String useDATABASE) {
+			String useDATABASE, String netType) {
 		stringNetwork.getManager().ignoreAdd();
 		CyNetwork network = createNetworkFromJSON(stringNetwork.getManager(), species, object,
-				queryTermMap, ids, netName, useDATABASE);
+				queryTermMap, ids, netName, useDATABASE, netType);
 		stringNetwork.getManager().addStringNetwork(stringNetwork, network);
 		stringNetwork.getManager().listenToAdd();
 		stringNetwork.getManager().showResultsPanel();
@@ -500,7 +506,7 @@ public class ModelUtils {
 
 	public static CyNetwork createNetworkFromJSON(StringManager manager, String species,
 			JSONObject object, Map<String, String> queryTermMap, String ids, String netName,
-			String useDATABASE) {
+			String useDATABASE, String netType) {
 		JSONObject results = getResultsFromJSON(object, JSONObject.class);
 		if (results == null)
 			return null;
@@ -508,9 +514,12 @@ public class ModelUtils {
 		// Get a network name
 		String defaultName;
 		if (useDATABASE.equals(Databases.STITCH.getAPIName()))
-			defaultName = "Sitch Network";
-		else
-			defaultName = "String Network";
+			defaultName = DEFAULT_NAME_STITCH;
+		else	
+			defaultName = DEFAULT_NAME_STRING;
+
+		if (netType.equals(NetworkType.PHYSICAL.getAPIName()))
+			defaultName += " " + DEFAULT_NAME_ADDON_PHYSICAL;
 		if (netName != null && netName != "") {
 			netName = defaultName + " - " + netName;
 		} else if (queryTermMap != null && queryTermMap.size() == 1 && queryTermMap.containsKey(ids)) {

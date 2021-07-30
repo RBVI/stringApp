@@ -672,7 +672,9 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		} else if (getNetworkName(network).endsWith("--clustered") && ModelUtils.isMergedStringNetwork(network)) {
 			execute(new SetConfidenceTaskFactory(this).createTaskIterator(network));
 			showResultsPanel();
-		} else if (getRootNetworkName(network).startsWith("String Network") && ModelUtils.isMergedStringNetwork(network)) {
+		} else if ((getRootNetworkName(network).startsWith(ModelUtils.DEFAULT_NAME_STRING)
+				|| getRootNetworkName(network).startsWith(ModelUtils.DEFAULT_NAME_STITCH))
+				&& ModelUtils.isMergedStringNetwork(network)) {
 			execute(new SetConfidenceTaskFactory(this).createTaskIterator(network));
 			showResultsPanel();
 		}

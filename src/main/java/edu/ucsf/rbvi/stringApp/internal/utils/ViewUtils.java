@@ -893,7 +893,9 @@ public class ViewUtils {
 	private static String getStyleName(StringManager manager, CyNetwork network) {
 		String networkName = manager.getNetworkName(network);
 		String styleName = STYLE_NAME_NAMESPACES;
-		if (networkName.startsWith("String Network")) {
+		if (networkName.startsWith("String Network")
+				|| networkName.startsWith(ModelUtils.DEFAULT_NAME_STRING)
+				|| networkName.startsWith(ModelUtils.DEFAULT_NAME_STITCH)) {
 			String[] parts = networkName.split("_");
 			if (parts.length == 1) {
 				String[] parts2 = networkName.split(" - ");
