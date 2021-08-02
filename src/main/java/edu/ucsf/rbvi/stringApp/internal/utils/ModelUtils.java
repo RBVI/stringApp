@@ -660,7 +660,7 @@ public class ModelUtils {
 			if (nSpecies != null && !nSpecies.equals("") && !species.contains(nSpecies)) {
 				Species theSpecies = Species.getSpecies(nSpecies);
 				// TODO: This is kind of a hack for now and will be updated once we get the kingdom data from the server 
-				if (theSpecies != null && (theSpecies.getType().equals("core") || theSpecies.getType().equals("periphery")))
+				if (theSpecies != null && (theSpecies.getType().equals("core") || theSpecies.getType().equals("periphery") || theSpecies.getType().equals("mapped")))
 					species.add(nSpecies);
 			}
 		}
