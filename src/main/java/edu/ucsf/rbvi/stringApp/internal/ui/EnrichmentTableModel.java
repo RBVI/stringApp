@@ -48,6 +48,8 @@ public class EnrichmentTableModel extends AbstractTableModel {
 	}
 
 	public Object getValueAt(int row, int col) {
+		if (rowNames.length == 0)
+			return null;
 		final String colName = columnNames[col];
 		final Long rowName = rowNames[row];
 		// swingColumns = new String[] { colShowChart, colName, colDescription, colFDR,

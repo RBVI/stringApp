@@ -686,6 +686,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 		// Create string networks for any networks loaded by string
 		Set<CyNetwork> networks = arg0.getLoadedSession().getNetworks();
+		if (networks.size() == 0)
+			return;
 		Set<CyNetwork> networksToUpgrade = new HashSet<CyNetwork>();
 		for (CyNetwork network: networks) {
 			if (ModelUtils.isStringNetwork(network)) {
