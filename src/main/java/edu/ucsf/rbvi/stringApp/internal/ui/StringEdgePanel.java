@@ -30,6 +30,7 @@ import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeNetTypeTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
@@ -63,6 +64,11 @@ public class StringEdgePanel extends AbstractStringPanel {
 		{
 			EasyGBC c = new EasyGBC();
 			// add(new JSeparator(SwingConstants.HORIZONTAL), c.anchor("west").expandHoriz());
+			//String networkType = NetworkType.FUNCTIONAL.getAPIName();
+			//if (ModelUtils.getNetworkType(currentNetwork) != null)
+			//	networkType = NetworkType.getType(ModelUtils.getNetworkType(currentNetwork)).getAPIName();
+			// controlPanel.setBorder(BorderFactory.createTitledBorder(networkType));
+			// JComponent scoreSlider = createFilterSlider("score", "Score (" + networkType + ")", currentNetwork, true, 100.0);
 			JComponent scoreSlider = createFilterSlider("score", "Score", currentNetwork, true, 100.0);
 			{
 				scorePanel = new JPanel();

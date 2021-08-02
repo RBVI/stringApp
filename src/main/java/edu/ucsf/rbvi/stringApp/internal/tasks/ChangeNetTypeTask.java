@@ -117,7 +117,7 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 
 		// We're changing the network type, so we need to get new edges
 		List<CyEdge> newEdges = new ArrayList<>();
-		monitor.setStatusMessage("Changing network type");
+		monitor.setStatusMessage("Changing network type to " + networkType.getSelectedValue().getAPIName());
 		// Get all of the current nodes for our "existing" list
 		String existing = ModelUtils.getExisting(network);
 		// Get current database & confidence
