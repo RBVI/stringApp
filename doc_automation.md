@@ -1,8 +1,8 @@
 # stringApp Automation Documentation
 
-stringApp version 1.6.1
+stringApp version 1.7.0
 
-Last update: 2020-10-12
+Last update: 2020-08-02
 
 ## List of commands
 
@@ -18,6 +18,7 @@ Last update: 2020-10-12
 
 - [Expand network](#expand-network)
 - [Change confidence](#change-confidence)
+- [Change network type](#change-network-type)
 - [Add nodes](#add-nodes)
 - [Make STRING network](#make-string-network)
 
@@ -287,7 +288,7 @@ Changes the confidence of the network. If increased, the edges with a confidence
 
 ### Arguments
 
-- `confidence`**required** *Double* Default: `0.4`
+- `confidence` **required** *Double* Default: `0.4`
    
    Confidence score for the STRING interactions to be included in this network. It must be a value between 0.0 and 1.0.
 
@@ -300,6 +301,34 @@ Changes the confidence of the network. If increased, the edges with a confidence
 `string change confidence network="current" confidence=0.7`
 
 Requires all edges in the `current` network to have a confidence score equal or above `0.7`. If the confidence cutoff for the network has been `0.4`, some edges might disappear. On the other hand, if the cutoff has been higher, new edges might be added to the network. 
+
+[List of commands](#list-of-commands) - [List of Modify existing network commands](#modify-existing-network)
+
+## Change network type
+
+- `string change type`
+
+Changes the type of the network between functional associations (`full STRING network`) and physical interactions (`physical subnetwork`). 
+
+### Arguments
+
+- `type` **required** *String* Default: `full STRING network`
+
+   Type of the STRING interactions (edges) to be included in the network, either functional associations or physical interactions.
+
+- `confidence` **required** *Double* Default: `0.4`
+   
+   Confidence score for the STRING interactions to be included in this network. It must be a value between 0.0 and 1.0.
+
+- `network` **required** *String* Default: `current`
+   
+   Specifies a network by name, or by SUID if the prefix `SUID:` is used. The keyword `CURRENT`, or a blank value can also be used to specify the current network.
+ 
+### Example
+
+`string change type network="current" type="physical subnetwork"`
+
+All functional association edges in the `current` network will be replaced by physical interactions with a confidence score above the one of the current network. If the `current` network is already a `physical subnetwork`, nothing will happen.   
 
 [List of commands](#list-of-commands) - [List of Modify existing network commands](#modify-existing-network)
 

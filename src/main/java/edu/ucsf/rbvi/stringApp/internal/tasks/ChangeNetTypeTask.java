@@ -43,8 +43,8 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 	public BoundedFloat confidence = new BoundedFloat(0.0f, currentConfidence, 1.0f, false, false);
 
 	@Tunable(description = "Network type",
-	         longDescription="Change the type of edges of the network between functional associations and physical interactions.",
-	         exampleStringValue="Functional associations",
+	         longDescription="Type of the STRING interactions (edges) to be included in the network, either functional associations or physical interactions.",
+	         exampleStringValue="full STRING network",
 	         gravity=2.0, required=true)
 	public ListSingleSelection<NetworkType> networkType;
 
