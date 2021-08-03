@@ -332,10 +332,9 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		});
 	}
 
-	public CyNetwork createNetwork(String name) {
-		CyNetwork network = registrar.getService(CyNetworkFactory.class).createNetwork();
+	
+	public String adaptNetworkName(String name) {
 		CyNetworkManager netMgr = registrar.getService(CyNetworkManager.class);
-		
 		Set<CyNetwork> nets = netMgr.getNetworkSet();
 		Set<CyNetwork> allNets = new HashSet<CyNetwork>(nets);
 		for (CyNetwork net : nets) {
@@ -364,8 +363,12 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		} else if (index > 0) {
 			name = name + " - " + index;
 		}
-		network.getRow(network).set(CyNetwork.NAME, name);
-
+		return name;
+	}
+	
+	public CyNetwork createNetwork(String name) {
+		CyNetwork network = registrar.getService(CyNetworkFactory.class).createNetwork();		
+		network.getRow(network).set(CyNetwork.NAME, adaptNetworkName(name));
 		return network;
 	}
 

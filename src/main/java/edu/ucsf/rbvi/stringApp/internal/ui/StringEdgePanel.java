@@ -150,9 +150,6 @@ public class StringEdgePanel extends AbstractStringPanel {
 			changeNetworkType.setToolTipText("Switch between functional association and physical interaction egdes.");
 			changeNetworkType.setFont(labelFont);
 			controlPanel.add(changeNetworkType);
-			if (ModelUtils.getNetworkType(currentNetwork) == null) {
-				changeNetworkType.setEnabled(false);
-			}
 			changeNetworkType.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					ChangeNetTypeTaskFactory tf = new ChangeNetTypeTaskFactory(manager);

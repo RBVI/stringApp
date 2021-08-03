@@ -65,6 +65,7 @@ public class ModelUtils {
 	public static String DEFAULT_NAME_STRING = "STRING network";
 	public static String DEFAULT_NAME_STITCH = "STITCH network";
 	public static String DEFAULT_NAME_ADDON_PHYSICAL = "(physical)";
+	public static String DEFAULT_NAME_ADDON_PHYSICAL_REGEXP = " \\(physical\\)";
 	
 	// Node information
 	public static String CANONICAL = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "canonical name";

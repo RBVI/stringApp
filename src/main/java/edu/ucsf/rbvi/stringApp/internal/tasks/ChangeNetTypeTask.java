@@ -77,7 +77,7 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 	}
 
 	public void run(TaskMonitor monitor) {
-		monitor.setTitle("Change network type");
+		monitor.setTitle("Change confidence or type");
 		
 		if (network == null) {
 			network = manager.getCurrentNetwork();
@@ -115,49 +115,94 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			}
 		}
 
-		// We're changing the network type, so we need to get new edges
-		List<CyEdge> newEdges = new ArrayList<>();
-		monitor.setStatusMessage("Changing network type to " + networkType.getSelectedValue().getAPIName());
-		// Get all of the current nodes for our "existing" list
-		String existing = ModelUtils.getExisting(network);
-		// Get current database & confidence
-		String database = ModelUtils.getDatabase(network);
-		// Double confidence = ModelUtils.getConfidence(network);
-		Map<String, String> args = new HashMap<>();
-		args.put("existing", existing.trim());
-		// Get chosen network type
-		args.put("database", networkType.getSelectedValue().getAPIName());
-		args.put("score", confidence.getValue().toString());
-		// args.put("maxscore", Float.toString(currentConfidence));
-		JSONObject results;
-		try {
-			results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
-		} catch (ConnectionException e) {
-			e.printStackTrace();
-			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+		// Check if we change the type or only the confidence
+		if (networkType.getSelectedValue().equals(currentType) && confidence.getValue().floatValue() == currentConfidence) {
+			// everything stays the same, just ignore
+			System.out.println("change nothing");
 			return;
-		}
-
-		if (results != null) {
-			// remove old edges
-			List<CyEdge> removeEdges = network.getEdgeList();
+		} else if (networkType.getSelectedValue().equals(currentType) && confidence.getValue() > currentConfidence) {
+			monitor.setStatusMessage("Increased confidence: trimming edges");
+			// convert confidence to an integer to avoid issues with number precision
+			int newConfidence = (int)(confidence.getValue()*1000);
+				// Yes, just trim the network
+			List<CyEdge> removeEdges = new ArrayList<>();
+			for (CyEdge edge: network.getEdgeList()) {
+				Double score = network.getRow(edge).get(ModelUtils.SCORE, Double.class);
+				if (score != null && (int)(score*1000) < newConfidence) {
+					removeEdges.add(edge);
+				}
+			}
 			monitor.setStatusMessage("Removing "+removeEdges.size()+" edges");
 			network.removeEdges(removeEdges);
-
-			// add new edges
-			ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, database);
-			monitor.setStatusMessage("Adding "+newEdges.size()+" edges");
-
-			// change network attributes
+			// And set the new value
 			ModelUtils.setConfidence(network, (double)Math.round(confidence.getValue()*1000)/1000);
-			ModelUtils.setNetworkType(network, networkType.getSelectedValue().toString());
-			
-		}
+		} else {		
+			// choose proper message for the user
+			if (networkType.getSelectedValue().equals(currentType) && confidence.getValue() < currentConfidence)
+				monitor.setStatusMessage("Decreased confidence: fetching new edges");
+			else if (!networkType.getSelectedValue().equals(currentType))
+				monitor.setStatusMessage("Changing network type to " + networkType.getSelectedValue().getAPIName());
 
-		// If we have a view, re-apply the style and layout
-		if (netView != null) {
-			ViewUtils.updateEdgeStyle(manager, netView, newEdges);
-			netView.updateView();
+			// We're changing the network type or confidence, so we need to get new edges  and remove the old ones
+			List<CyEdge> newEdges = new ArrayList<>();
+			// Get all of the current nodes for our "existing" list
+			String existing = ModelUtils.getExisting(network);
+			// Get current database & confidence
+			String database = ModelUtils.getDatabase(network);
+			// Double confidence = ModelUtils.getConfidence(network);
+			Map<String, String> args = new HashMap<>();
+			args.put("existing", existing.trim());
+			// Get chosen network type
+			args.put("database", networkType.getSelectedValue().getAPIName());
+			args.put("score", confidence.getValue().toString());
+			// args.put("maxscore", Float.toString(currentConfidence));
+			JSONObject results;
+			try {
+				results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+			} catch (ConnectionException e) {
+				e.printStackTrace();
+				monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+				return;
+			}
+	
+			if (results != null) {
+				// remove old edges
+				List<CyEdge> removeEdges = network.getEdgeList();
+				monitor.setStatusMessage("Removing "+removeEdges.size()+" edges");
+				network.removeEdges(removeEdges);
+	
+				// add new edges
+				ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, database);
+				monitor.setStatusMessage("Adding "+newEdges.size()+" edges");
+	
+				// change network attributes
+				ModelUtils.setConfidence(network, (double)Math.round(confidence.getValue()*1000)/1000);
+				ModelUtils.setNetworkType(network, networkType.getSelectedValue().toString());
+				
+				// change network name in the special case of changing from physical to functional or the other way around 
+				if (!networkType.getSelectedValue().equals(currentType)) {
+					String currentName = manager.getNetworkName(network);
+					String newName = currentName;
+					if (networkType.getSelectedValue().equals(NetworkType.FUNCTIONAL) && currentName.contains(ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL)) {
+						// remove (physical) from the name
+						String[] currentNameParts = currentName.split(ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL_REGEXP);
+						newName = currentNameParts[0] + currentNameParts[currentNameParts.length-1];
+					} else if (networkType.getSelectedValue().equals(NetworkType.PHYSICAL)) {
+						// add (physical) to the name
+						if (currentName.startsWith(ModelUtils.DEFAULT_NAME_STRING))
+							newName = ModelUtils.DEFAULT_NAME_STRING + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL + currentName.split(ModelUtils.DEFAULT_NAME_STRING)[1];							
+						else if (currentName.startsWith(ModelUtils.DEFAULT_NAME_STITCH ))
+							newName = ModelUtils.DEFAULT_NAME_STITCH + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL + currentName.split(ModelUtils.DEFAULT_NAME_STITCH)[1];
+						}
+					network.getRow(network).set(CyNetwork.NAME, manager.adaptNetworkName(newName));
+				}
+			}
+
+			// If we have a view, re-apply the style and layout
+			if (netView != null) {
+				ViewUtils.updateEdgeStyle(manager, netView, newEdges);
+				netView.updateView();
+			}
 		}
 
 		// reset filters in the results panel
