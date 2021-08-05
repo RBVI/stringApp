@@ -114,13 +114,13 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 				}
 			}
 		}
-
+		
+		NetworkType newType = networkType.getSelectedValue();
 		// Check if we change the type or only the confidence
-		if (networkType.getSelectedValue().equals(currentType) && confidence.getValue().floatValue() == currentConfidence) {
+		if (newType.equals(currentType) && confidence.getValue().floatValue() == currentConfidence) {
 			// everything stays the same, just ignore
-			System.out.println("change nothing");
 			return;
-		} else if (networkType.getSelectedValue().equals(currentType) && confidence.getValue() > currentConfidence) {
+		} else if (newType.equals(currentType) && confidence.getValue() > currentConfidence) {
 			monitor.setStatusMessage("Increased confidence: trimming edges");
 			// convert confidence to an integer to avoid issues with number precision
 			int newConfidence = (int)(confidence.getValue()*1000);
@@ -138,9 +138,9 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			ModelUtils.setConfidence(network, (double)Math.round(confidence.getValue()*1000)/1000);
 		} else {		
 			// choose proper message for the user
-			if (networkType.getSelectedValue().equals(currentType) && confidence.getValue() < currentConfidence)
+			if (newType.equals(currentType) && confidence.getValue() < currentConfidence)
 				monitor.setStatusMessage("Decreased confidence: fetching new edges");
-			else if (!networkType.getSelectedValue().equals(currentType))
+			else if (!newType.equals(currentType))
 				monitor.setStatusMessage("Changing network type to " + networkType.getSelectedValue().getAPIName());
 
 			// We're changing the network type or confidence, so we need to get new edges  and remove the old ones
@@ -153,7 +153,7 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			Map<String, String> args = new HashMap<>();
 			args.put("existing", existing.trim());
 			// Get chosen network type
-			args.put("database", networkType.getSelectedValue().getAPIName());
+			args.put("database", newType.getAPIName());
 			args.put("score", confidence.getValue().toString());
 			// args.put("maxscore", Float.toString(currentConfidence));
 			JSONObject results;
@@ -172,7 +172,7 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 				network.removeEdges(removeEdges);
 	
 				// add new edges
-				ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, database);
+				ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, database, newType.getAPIName());
 				monitor.setStatusMessage("Adding "+newEdges.size()+" edges");
 	
 				// change network attributes
@@ -180,14 +180,14 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 				ModelUtils.setNetworkType(network, networkType.getSelectedValue().toString());
 				
 				// change network name in the special case of changing from physical to functional or the other way around 
-				if (!networkType.getSelectedValue().equals(currentType)) {
+				if (!newType.equals(currentType)) {
 					String currentName = manager.getNetworkName(network);
 					String newName = currentName;
-					if (networkType.getSelectedValue().equals(NetworkType.FUNCTIONAL) && currentName.contains(ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL)) {
+					if (newType.equals(NetworkType.FUNCTIONAL) && currentName.contains(ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL)) {
 						// remove (physical) from the name
 						String[] currentNameParts = currentName.split(ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL_REGEXP);
 						newName = currentNameParts[0] + currentNameParts[currentNameParts.length-1];
-					} else if (networkType.getSelectedValue().equals(NetworkType.PHYSICAL)) {
+					} else if (newType.equals(NetworkType.PHYSICAL)) {
 						// add (physical) to the name
 						if (currentName.startsWith(ModelUtils.DEFAULT_NAME_STRING))
 							newName = ModelUtils.DEFAULT_NAME_STRING + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL + currentName.split(ModelUtils.DEFAULT_NAME_STRING)[1];							

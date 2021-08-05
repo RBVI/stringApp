@@ -127,7 +127,7 @@ public class LoadTermsTask extends AbstractTask {
 
 		List<CyEdge> newEdges = new ArrayList<>();
 		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges,
-		                                                          results, queryTermMap, useDATABASE);
+		                                                          results, queryTermMap, useDATABASE, netType.getAPIName());
 
 		if (newEdges.size() > 0 || newNodes.size() > 0) {
 			monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");

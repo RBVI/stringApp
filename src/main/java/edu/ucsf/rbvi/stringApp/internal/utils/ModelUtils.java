@@ -463,7 +463,7 @@ public class ModelUtils {
 
 	public static List<CyNode> augmentNetworkFromJSON(StringManager manager, CyNetwork net,
 			List<CyEdge> newEdges, JSONObject object, Map<String, String> queryTermMap,
-			String useDATABASE) {
+			String useDATABASE, String netType) {
 		JSONObject results = getResultsFromJSON(object, JSONObject.class);
 		if (results == null)
 			return null;
@@ -489,7 +489,7 @@ public class ModelUtils {
 		setDatabase(net, useDATABASE);
 		
 		List<CyNode> nodes = getJSON(manager, species, net, nodeMap, nodeNameMap, queryTermMap,
-				newEdges, results, useDATABASE);
+				newEdges, results, useDATABASE, netType);
 		return nodes;
 	}
 
@@ -542,7 +542,7 @@ public class ModelUtils {
 		Map<String, String> nodeNameMap = new HashMap<>();
 
 		getJSON(manager, species, newNetwork, nodeMap, nodeNameMap, queryTermMap, null, results,
-				useDATABASE);
+				useDATABASE, netType);
 
 		manager.addNetwork(newNetwork);
 		return newNetwork;
@@ -712,7 +712,7 @@ public class ModelUtils {
 	private static List<CyNode> getJSON(StringManager manager, String species, CyNetwork network,
 			Map<String, CyNode> nodeMap, Map<String, String> nodeNameMap,
 			Map<String, String> queryTermMap, List<CyEdge> newEdges, JSONObject json,
-			String useDATABASE) {
+			String useDATABASE, String netType) {
 		
 		List<CyNode> newNodes = new ArrayList<>();
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, CANONICAL);
@@ -760,7 +760,7 @@ public class ModelUtils {
 			for (Object edgeObj : edges) {
 				if (edgeObj instanceof JSONObject)
 					createEdge(network, (JSONObject) edgeObj, nodeMap, nodeNameMap, newEdges,
-							useDATABASE);
+							useDATABASE, netType);
 			}
 		}
 		return newNodes;
@@ -1023,14 +1023,18 @@ public class ModelUtils {
 
 	private static void createEdge(CyNetwork network, JSONObject edgeObj,
 			Map<String, CyNode> nodeMap, Map<String, String> nodeNameMap, List<CyEdge> newEdges,
-			String useDATABASE) {
+			String useDATABASE, String netType) {
 		String source = (String) edgeObj.get("source");
 		String target = (String) edgeObj.get("target");
 		CyNode sourceNode = nodeMap.get(source);
 		CyNode targetNode = nodeMap.get(target);
 
 		CyEdge edge;
-		String interaction = "pp";
+		String physical = "";
+		if (netType.equals(NetworkType.PHYSICAL.getAPIName()))
+			physical = "p";
+
+		String interaction = physical+"pp";
 
 		// Don't create an edge if we already have one between these nodes
 		if (!network.containsEdge(sourceNode, targetNode)) {
@@ -1038,11 +1042,11 @@ public class ModelUtils {
 				boolean sourceType = isCompound(network, sourceNode);
 				boolean targetType = isCompound(network, targetNode);
 				if (sourceType == false && targetType == false)
-					interaction = "pp";
+					interaction = physical + "pp";
 				else if (sourceType == true && targetType == true)
 					interaction = "cc";
 				else
-					interaction = "pc";
+					interaction = physical + "pc";
 			}
 
 			edge = network.addEdge(sourceNode, targetNode, false);
