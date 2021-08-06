@@ -14,6 +14,7 @@ import static org.cytoscape.work.ServiceProperties.INSERT_SEPARATOR_BEFORE;
 
 import java.util.Properties;
 
+import org.cytoscape.application.events.SetCurrentNetworkListener;
 import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.search.NetworkSearchTaskFactory;
@@ -116,6 +117,8 @@ public class CyActivator extends AbstractCyActivator {
 			registerService(bc, manager, NetworkAddedListener.class, new Properties());
 			registerService(bc, manager, SessionLoadedListener.class, new Properties());
 			registerService(bc, manager, NetworkAboutToBeDestroyedListener.class, new Properties());
+			registerService(bc, manager, SetCurrentNetworkListener.class, new Properties());
+			
 		}
 
 		{

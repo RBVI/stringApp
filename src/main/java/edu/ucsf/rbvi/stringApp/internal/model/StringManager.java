@@ -16,6 +16,8 @@ import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.CyUserLog;
+import org.cytoscape.application.events.SetCurrentNetworkEvent;
+import org.cytoscape.application.events.SetCurrentNetworkListener;
 import org.cytoscape.command.AvailableCommands;
 import org.cytoscape.command.CommandExecutorTaskFactory;
 import org.cytoscape.event.CyEventHelper;
@@ -61,7 +63,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.ui.StringCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
-public class StringManager implements NetworkAddedListener, SessionLoadedListener, NetworkAboutToBeDestroyedListener {
+public class StringManager implements NetworkAddedListener, SessionLoadedListener, NetworkAboutToBeDestroyedListener, SetCurrentNetworkListener {
 	final CyServiceRegistrar registrar;
 	final CyEventHelper cyEventHelper;
 	final Logger logger = Logger.getLogger(CyUserLog.NAME);
@@ -661,10 +663,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		updateControls();
 	}
 
-	public void handleEvent(NetworkAddedEvent nae) {
-		CyNetwork network = nae.getNetwork();
-		if (ignore) return;
-
+	
+	public void processNewNetwork(CyNetwork network) {
 		// This is a string network only if we have a confidence score in the network table,
 		// "@id", "species", "canonical name", and "sequence" columns in the node table, and 
 		// a "score" column in the edge table
@@ -681,6 +681,20 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			execute(new SetConfidenceTaskFactory(this).createTaskIterator(network));
 			showResultsPanel();
 		}
+	}
+	
+	public void handleEvent(SetCurrentNetworkEvent event) {
+		CyNetwork network = event.getNetwork();
+		if (ignore || getStringNetwork(network) != null) return;
+		
+		processNewNetwork(network);
+	}
+	
+	public void handleEvent(NetworkAddedEvent nae) {
+		CyNetwork network = nae.getNetwork();
+		if (ignore) return;
+
+		processNewNetwork(network);
 	}
 
 	public void handleEvent(SessionLoadedEvent arg0) {
