@@ -94,7 +94,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String VIRUSESResolveURI = "http://viruses.string-db.org/cgi/webservice_handler.pl";
 	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
 	public static String URI = "https://api11.jensenlab.org/";
-	public static String DATAVERSION = "11";
+	public static String DATAVERSION = "11.5";
 	public static String OLD_DATAVERSION = "10";
 	public static String alternativeAPIProperty = "alternativeAPI";
 	public static String alternativeCONFIGURIProperty = "alternativeCONFIGURI";
@@ -368,21 +368,23 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		return name;
 	}
 	
-	public CyNetwork createNetwork(String name) {
+	public CyNetwork createNetwork(String name, String rootNetName) {
 		CyNetwork network = registrar.getService(CyNetworkFactory.class).createNetwork();		
 		network.getRow(network).set(CyNetwork.NAME, adaptNetworkName(name));
+		CyNetwork rootNetwork = ((CySubNetwork)network).getRootNetwork();
+		rootNetwork.getRow(rootNetwork).set(CyNetwork.NAME, adaptNetworkName(rootNetName));
 		return network;
 	}
 
-	public CyNetwork createStringNetwork(String name, StringNetwork stringNet, 
-	                                     String useDATABASE, String species, String netType) {
-		CyNetwork network = createNetwork(name);
-		ModelUtils.setDatabase(network, useDATABASE);
-		ModelUtils.setNetSpecies(network, species);
-		ModelUtils.setNetworkType(network, netType);
-		addStringNetwork(stringNet, network);
-		return network;
-	}
+//	public CyNetwork createStringNetwork(String name, StringNetwork stringNet, 
+//	                                     String useDATABASE, String species, String netType) {
+//		CyNetwork network = createNetwork(name);
+//		ModelUtils.setDatabase(network, useDATABASE);
+//		ModelUtils.setNetSpecies(network, species);
+//		ModelUtils.setNetworkType(network, netType);
+//		addStringNetwork(stringNet, network);
+//		return network;
+//	}
 
 	public void addStringNetwork(StringNetwork stringNet, CyNetwork network) {
 		stringNetworkMap.put(network, stringNet);
@@ -685,7 +687,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	
 	public void handleEvent(SetCurrentNetworkEvent event) {
 		CyNetwork network = event.getNetwork();
-		if (ignore || getStringNetwork(network) != null) return;
+		if (ignore || network == null || getStringNetwork(network) != null) return;
 		
 		processNewNetwork(network);
 	}

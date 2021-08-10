@@ -323,7 +323,7 @@ public class ModelUtils {
 			return null;
 
 		// Create the network
-		CyNetwork newNetwork = manager.createNetwork(query);
+		CyNetwork newNetwork = manager.createNetwork(query, query);
 		setDatabase(newNetwork, useDATABASE);
 		setNetSpecies(newNetwork, species.getName());
 
@@ -514,24 +514,30 @@ public class ModelUtils {
 
 		// Get a network name
 		String defaultName;
-		if (useDATABASE.equals(Databases.STITCH.getAPIName()))
+		String defaultNameRootNet;
+		if (useDATABASE.equals(Databases.STITCH.getAPIName())) {
 			defaultName = DEFAULT_NAME_STITCH;
-		else	
+			defaultNameRootNet = DEFAULT_NAME_STITCH;
+		} else {	
 			defaultName = DEFAULT_NAME_STRING;
-
+			defaultNameRootNet = DEFAULT_NAME_STRING;
+		}
+		// add physical to name if the network is physical
 		if (netType.equals(NetworkType.PHYSICAL.getAPIName()))
 			defaultName += " " + DEFAULT_NAME_ADDON_PHYSICAL;
+
+		// add user suggested name
 		if (netName != null && netName != "") {
-			netName = defaultName + " - " + netName;
+			defaultName = defaultName + " - " + netName;
+			defaultNameRootNet = defaultNameRootNet + " - " + netName;
+			//defaultNameRootNet = defaultNameRootNet + 
 		} else if (queryTermMap != null && queryTermMap.size() == 1 && queryTermMap.containsKey(ids)) {
-			netName = defaultName + " - " + queryTermMap.get(ids);
-		} else {
-			netName = defaultName;
-			// netName = manager.getNetworkName(ids);
-		}
+			defaultName = defaultName + " - " + queryTermMap.get(ids);
+			defaultNameRootNet = defaultNameRootNet + " - " + queryTermMap.get(ids);
+		} 
 
 		// Create the network
-		CyNetwork newNetwork = manager.createNetwork(netName);
+		CyNetwork newNetwork = manager.createNetwork(defaultName, defaultNameRootNet);
 		setDatabase(newNetwork, useDATABASE);
 		setNetSpecies(newNetwork, species);
 

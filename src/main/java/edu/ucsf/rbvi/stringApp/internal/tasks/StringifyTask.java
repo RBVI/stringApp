@@ -45,6 +45,7 @@ import org.cytoscape.work.util.ListSingleSelection;
 import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
@@ -110,6 +111,11 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	         context="nogui")
 	public BoundedDouble cutoff = new BoundedDouble(0.0, 1.0, 1.0, false, false);
 
+	@Tunable(description = "Network type",
+	         longDescription="Type of the STRING interactions (edges) to be included in the network, either functional associations or physical interactions.",
+	         exampleStringValue="full STRING network",
+	         context="nogui")
+	public ListSingleSelection<NetworkType> networkType = new ListSingleSelection<>(NetworkType.values());
 
 	
 	public StringifyTask(final StringManager manager, final CyNetwork net) {
@@ -126,10 +132,11 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		} else {
 			tableColumn = null;
 		}
+		networkType.setSelectedValue(manager.getDefaultNetworkType());
 		nodeMap = new HashMap<>();
 	}
 
-	public StringifyTask(final StringManager manager, final CyNetwork net, double confidence, Species sp, String nodeColumn) {
+	public StringifyTask(final StringManager manager, final CyNetwork net, double confidence, Species sp, String nodeColumn, NetworkType type) {
 		this.manager = manager;
 		this.net = net;
 		this.netName = "";
@@ -144,6 +151,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 			tableColumn = null;
 		}
 		cutoff.setValue(confidence);
+		networkType.setSelectedValue(type);
 		nodeMap = new HashMap<>();
 	}
 
@@ -203,7 +211,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		if (tableColumn != null) {
 			optionsPanel = new SearchOptionsPanel(manager);
 			optionsPanel.setConfidence((int)(cutoff.getValue()*100));
-			optionsPanel.setNetworkType(manager.getDefaultNetworkType());
+			optionsPanel.setNetworkType(networkType.getSelectedValue());
 			optionsPanel.setAdditionalNodes(additionalNodes);
 			optionsPanel.setSpecies(species.getSelectedValue());
 
@@ -242,7 +250,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
 		LoadInteractions load = 
 				new LoadInteractions(stringNetwork, species.toString(), taxon, 
-						(int)(cutoff.getValue()*100), additionalNodes, stringIds, queryTermMap, netName, useDatabase);
+						(int)(cutoff.getValue()*100), additionalNodes, stringIds, queryTermMap, netName, useDatabase, networkType.getSelectedValue());
 		manager.execute(new TaskIterator(load), true);
 		loadedNetwork = stringNetwork.getNetwork();
 		if (loadedNetwork == null) {
@@ -291,7 +299,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		boolean noAmbiguity = stringNetwork.resolveAnnotations();
 		if (noAmbiguity) {
 			// System.out.println("Calling importNetwork");
-			importNetwork(taxon, (int)(cutoff.getValue()*100), additionalNodes, useDatabase);
+			importNetwork(taxon, (int)(cutoff.getValue()*100), additionalNodes, useDatabase, networkType.getSelectedValue());
 
 			// Creating the copyTask
 			CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork, includeNotMapped);
@@ -326,12 +334,12 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		return "Homo sapiens"; // Homo sapiens
 	}
 
-	void importNetwork(int taxon, int confidence, int additionalNodes, String useDatabase) {
+	void importNetwork(int taxon, int confidence, int additionalNodes, String useDatabase, NetworkType netType) {
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
 		TaskFactory factory = new ImportNetworkTaskFactory(stringNetwork, getSpecies(), 
 		                                                   taxon, confidence, additionalNodes, stringIds,
-		                                                   queryTermMap, netName, useDatabase);
+		                                                   queryTermMap, netName, useDatabase, netType);
 		if (optionsPanel.getLoadEnrichment())
 			manager.execute(factory.createTaskIterator(), this, true);
 		else
