@@ -168,6 +168,16 @@ public class ViewUtils {
 			stringStyle.addVisualMappingFunction(pMapping);
 		}
 
+		// Set colors for edges based on the edge type
+		{
+			DiscreteMapping<String, Color> dMapping = 
+				(DiscreteMapping) discreteFactory.createVisualMappingFunction(CyEdge.INTERACTION, String.class,
+																BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT);
+			dMapping.putMapValue("pp", new Color(31,41,61));
+			dMapping.putMapValue("ppp", new Color(170, 41, 74));
+			stringStyle.addVisualMappingFunction(dMapping);
+		}
+
 		// Set the edge width to be dependent on the total score
 		{
 			ContinuousMapping<Double,Double> cMapping = 
@@ -295,6 +305,19 @@ public class ViewUtils {
 					(PassthroughMapping) passthroughFactory.createVisualMappingFunction(ModelUtils.CV_STYLE, 
 					                                                                    String.class, customGraphics);
 				stringStyle.addVisualMappingFunction(pMapping);
+			}
+
+			// Set colors for edges based on the edge type
+			{
+				DiscreteMapping<String, Color> dMapping = 
+					(DiscreteMapping) discreteFactory.createVisualMappingFunction(CyEdge.INTERACTION, String.class,
+																	BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT);
+				dMapping.putMapValue("pp", new Color(31,41,61));
+				dMapping.putMapValue("pc", new Color(31,41,61));
+				dMapping.putMapValue("cc", new Color(31,41,61));
+				dMapping.putMapValue("ppp", new Color(170, 41, 74));
+				dMapping.putMapValue("ppc", new Color(170, 41, 74));
+				stringStyle.addVisualMappingFunction(dMapping);
 			}
 
 			// Now, set colors for edges based on the edge type
