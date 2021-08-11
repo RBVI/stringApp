@@ -665,7 +665,7 @@ public class ViewUtils {
 			ViewUtils.updatePieCharts(manager, vmm.getVisualStyle(netView), network, true);
 
 			// Don't override the user if they have specifically disabled the glass ball effect
-			if (manager.showGlassBallEffect()) {
+			if (manager.showGlassBallEffect() && vmm.getVisualStyle(netView).getTitle().startsWith(ViewUtils.STYLE_NAME)) {
 				if (ChartType.PIE.equals(type) || ChartType.SPLIT_PIE.equals(type)) {
 					ViewUtils.updateGlassBallEffect(manager, vmm.getVisualStyle(netView), network, false);
 					// manager.setShowGlassBallEffect(false);
