@@ -49,6 +49,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.EntityIdentifier;
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
@@ -59,6 +60,12 @@ public class ModelUtils {
 	// Namespaces
 	public static String STRINGDB_NAMESPACE = "stringdb";
 	public static String NAMESPACE_SEPARATOR = "::";
+	
+	// Network names
+	public static String DEFAULT_NAME_STRING = "STRING network";
+	public static String DEFAULT_NAME_STITCH = "STITCH network";
+	public static String DEFAULT_NAME_ADDON_PHYSICAL = "(physical)";
+	public static String DEFAULT_NAME_ADDON_PHYSICAL_REGEXP = " \\(physical\\)";
 	
 	// Node information
 	public static String CANONICAL = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "canonical name";
@@ -112,6 +119,7 @@ public class ModelUtils {
 	
 	// Network information
 	public static String CONFIDENCE = "confidence score";
+	public static String NETWORK_TYPE = "network type";
 	public static String DATABASE = "database";
 	public static String NET_SPECIES = "species";
 	public static String NET_DATAVERSION = "data version";
@@ -315,7 +323,7 @@ public class ModelUtils {
 			return null;
 
 		// Create the network
-		CyNetwork newNetwork = manager.createNetwork(query);
+		CyNetwork newNetwork = manager.createNetwork(query, query);
 		setDatabase(newNetwork, useDATABASE);
 		setNetSpecies(newNetwork, species.getName());
 
@@ -455,7 +463,7 @@ public class ModelUtils {
 
 	public static List<CyNode> augmentNetworkFromJSON(StringManager manager, CyNetwork net,
 			List<CyEdge> newEdges, JSONObject object, Map<String, String> queryTermMap,
-			String useDATABASE) {
+			String useDATABASE, String netType) {
 		JSONObject results = getResultsFromJSON(object, JSONObject.class);
 		if (results == null)
 			return null;
@@ -481,16 +489,16 @@ public class ModelUtils {
 		setDatabase(net, useDATABASE);
 		
 		List<CyNode> nodes = getJSON(manager, species, net, nodeMap, nodeNameMap, queryTermMap,
-				newEdges, results, useDATABASE);
+				newEdges, results, useDATABASE, netType);
 		return nodes;
 	}
 
 	public static CyNetwork createNetworkFromJSON(StringNetwork stringNetwork, String species,
 			JSONObject object, Map<String, String> queryTermMap, String ids, String netName,
-			String useDATABASE) {
+			String useDATABASE, String netType) {
 		stringNetwork.getManager().ignoreAdd();
 		CyNetwork network = createNetworkFromJSON(stringNetwork.getManager(), species, object,
-				queryTermMap, ids, netName, useDATABASE);
+				queryTermMap, ids, netName, useDATABASE, netType);
 		stringNetwork.getManager().addStringNetwork(stringNetwork, network);
 		stringNetwork.getManager().listenToAdd();
 		stringNetwork.getManager().showResultsPanel();
@@ -499,28 +507,37 @@ public class ModelUtils {
 
 	public static CyNetwork createNetworkFromJSON(StringManager manager, String species,
 			JSONObject object, Map<String, String> queryTermMap, String ids, String netName,
-			String useDATABASE) {
+			String useDATABASE, String netType) {
 		JSONObject results = getResultsFromJSON(object, JSONObject.class);
 		if (results == null)
 			return null;
 
 		// Get a network name
 		String defaultName;
-		if (useDATABASE.equals(Databases.STITCH.getAPIName()))
-			defaultName = "STITCH Network";
-		else
-			defaultName = "String Network";
-		if (netName != null && netName != "") {
-			netName = defaultName + " - " + netName;
-		} else if (queryTermMap != null && queryTermMap.size() == 1 && queryTermMap.containsKey(ids)) {
-			netName = defaultName + " - " + queryTermMap.get(ids);
-		} else {
-			netName = defaultName;
-			// netName = manager.getNetworkName(ids);
+		String defaultNameRootNet;
+		if (useDATABASE.equals(Databases.STITCH.getAPIName())) {
+			defaultName = DEFAULT_NAME_STITCH;
+			defaultNameRootNet = DEFAULT_NAME_STITCH;
+		} else {	
+			defaultName = DEFAULT_NAME_STRING;
+			defaultNameRootNet = DEFAULT_NAME_STRING;
 		}
+		// add physical to name if the network is physical
+		if (netType.equals(NetworkType.PHYSICAL.getAPIName()))
+			defaultName += " " + DEFAULT_NAME_ADDON_PHYSICAL;
+
+		// add user suggested name
+		if (netName != null && netName != "") {
+			defaultName = defaultName + " - " + netName;
+			defaultNameRootNet = defaultNameRootNet + " - " + netName;
+			//defaultNameRootNet = defaultNameRootNet + 
+		} else if (queryTermMap != null && queryTermMap.size() == 1 && queryTermMap.containsKey(ids)) {
+			defaultName = defaultName + " - " + queryTermMap.get(ids);
+			defaultNameRootNet = defaultNameRootNet + " - " + queryTermMap.get(ids);
+		} 
 
 		// Create the network
-		CyNetwork newNetwork = manager.createNetwork(netName);
+		CyNetwork newNetwork = manager.createNetwork(defaultName, defaultNameRootNet);
 		setDatabase(newNetwork, useDATABASE);
 		setNetSpecies(newNetwork, species);
 
@@ -531,7 +548,7 @@ public class ModelUtils {
 		Map<String, String> nodeNameMap = new HashMap<>();
 
 		getJSON(manager, species, newNetwork, nodeMap, nodeNameMap, queryTermMap, null, results,
-				useDATABASE);
+				useDATABASE, netType);
 
 		manager.addNetwork(newNetwork);
 		return newNetwork;
@@ -546,6 +563,17 @@ public class ModelUtils {
 		if (network.getDefaultNetworkTable().getColumn(CONFIDENCE) == null)
 			return null;
 		return network.getRow(network).get(CONFIDENCE, Double.class);
+	}
+
+	public static void setNetworkType(CyNetwork network, String networkType) {
+		createColumnIfNeeded(network.getDefaultNetworkTable(), String.class, NETWORK_TYPE);
+		network.getRow(network).set(NETWORK_TYPE, networkType);
+	}
+
+	public static String getNetworkType(CyNetwork network) {
+		if (network.getDefaultNetworkTable().getColumn(NETWORK_TYPE) == null)
+			return null;
+		return network.getRow(network).get(NETWORK_TYPE, String.class);
 	}
 
 	public static void setDatabase(CyNetwork network, String database) {
@@ -639,7 +667,7 @@ public class ModelUtils {
 			if (nSpecies != null && !nSpecies.equals("") && !species.contains(nSpecies)) {
 				Species theSpecies = Species.getSpecies(nSpecies);
 				// TODO: This is kind of a hack for now and will be updated once we get the kingdom data from the server 
-				if (theSpecies != null && (theSpecies.getType().equals("core") || theSpecies.getType().equals("periphery")))
+				if (theSpecies != null && (theSpecies.getType().equals("core") || theSpecies.getType().equals("periphery") || theSpecies.getType().equals("mapped")))
 					species.add(nSpecies);
 			}
 		}
@@ -690,7 +718,7 @@ public class ModelUtils {
 	private static List<CyNode> getJSON(StringManager manager, String species, CyNetwork network,
 			Map<String, CyNode> nodeMap, Map<String, String> nodeNameMap,
 			Map<String, String> queryTermMap, List<CyEdge> newEdges, JSONObject json,
-			String useDATABASE) {
+			String useDATABASE, String netType) {
 		
 		List<CyNode> newNodes = new ArrayList<>();
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, CANONICAL);
@@ -738,7 +766,7 @@ public class ModelUtils {
 			for (Object edgeObj : edges) {
 				if (edgeObj instanceof JSONObject)
 					createEdge(network, (JSONObject) edgeObj, nodeMap, nodeNameMap, newEdges,
-							useDATABASE);
+							useDATABASE, netType);
 			}
 		}
 		return newNodes;
@@ -1001,14 +1029,18 @@ public class ModelUtils {
 
 	private static void createEdge(CyNetwork network, JSONObject edgeObj,
 			Map<String, CyNode> nodeMap, Map<String, String> nodeNameMap, List<CyEdge> newEdges,
-			String useDATABASE) {
+			String useDATABASE, String netType) {
 		String source = (String) edgeObj.get("source");
 		String target = (String) edgeObj.get("target");
 		CyNode sourceNode = nodeMap.get(source);
 		CyNode targetNode = nodeMap.get(target);
 
 		CyEdge edge;
-		String interaction = "pp";
+		String physical = "";
+		if (netType.equals(NetworkType.PHYSICAL.getAPIName()))
+			physical = "p";
+
+		String interaction = physical+"pp";
 
 		// Don't create an edge if we already have one between these nodes
 		if (!network.containsEdge(sourceNode, targetNode)) {
@@ -1016,11 +1048,11 @@ public class ModelUtils {
 				boolean sourceType = isCompound(network, sourceNode);
 				boolean targetType = isCompound(network, targetNode);
 				if (sourceType == false && targetType == false)
-					interaction = "pp";
+					interaction = physical + "pp";
 				else if (sourceType == true && targetType == true)
 					interaction = "cc";
 				else
-					interaction = "pc";
+					interaction = physical + "pc";
 			}
 
 			edge = network.addEdge(sourceNode, targetNode, false);

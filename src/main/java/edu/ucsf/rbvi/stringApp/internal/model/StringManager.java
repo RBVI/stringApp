@@ -16,6 +16,8 @@ import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.CyUserLog;
+import org.cytoscape.application.events.SetCurrentNetworkEvent;
+import org.cytoscape.application.events.SetCurrentNetworkListener;
 import org.cytoscape.command.AvailableCommands;
 import org.cytoscape.command.CommandExecutorTaskFactory;
 import org.cytoscape.event.CyEventHelper;
@@ -61,7 +63,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.ui.StringCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
-public class StringManager implements NetworkAddedListener, SessionLoadedListener, NetworkAboutToBeDestroyedListener {
+public class StringManager implements NetworkAddedListener, SessionLoadedListener, NetworkAboutToBeDestroyedListener, SetCurrentNetworkListener {
 	final CyServiceRegistrar registrar;
 	final CyEventHelper cyEventHelper;
 	final Logger logger = Logger.getLogger(CyUserLog.NAME);
@@ -92,7 +94,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String VIRUSESResolveURI = "http://viruses.string-db.org/cgi/webservice_handler.pl";
 	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
 	public static String URI = "https://api11.jensenlab.org/";
-	public static String DATAVERSION = "11";
+	public static String DATAVERSION = "11.5";
 	public static String OLD_DATAVERSION = "10";
 	public static String alternativeAPIProperty = "alternativeAPI";
 	public static String alternativeCONFIGURIProperty = "alternativeCONFIGURI";
@@ -123,6 +125,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private double defaultConfidence = 0.40;
 	private int additionalProteins = 0;
 	private int maximumProteins = 100;
+	private NetworkType networkType = NetworkType.FUNCTIONAL;
 
 	private int topTerms = 5;
 	private double overlapCutoff = 0.5;
@@ -220,6 +223,9 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 		if (ModelUtils.hasProperty(configProps, "species")) {
 			setDefaultSpecies(ModelUtils.getStringProperty(configProps,"species"));
+		}
+		if (ModelUtils.hasProperty(configProps, "networkType")) {
+			setDefaultNetworkType(ModelUtils.getStringProperty(configProps,"networkType"));
 		}
 		if (ModelUtils.hasProperty(configProps, "defaultConfidence")) {
 			setDefaultConfidence(ModelUtils.getDoubleProperty(configProps,"defaultConfidence"));
@@ -328,10 +334,9 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		});
 	}
 
-	public CyNetwork createNetwork(String name) {
-		CyNetwork network = registrar.getService(CyNetworkFactory.class).createNetwork();
+	
+	public String adaptNetworkName(String name) {
 		CyNetworkManager netMgr = registrar.getService(CyNetworkManager.class);
-		
 		Set<CyNetwork> nets = netMgr.getNetworkSet();
 		Set<CyNetwork> allNets = new HashSet<CyNetwork>(nets);
 		for (CyNetwork net : nets) {
@@ -360,19 +365,26 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		} else if (index > 0) {
 			name = name + " - " + index;
 		}
-		network.getRow(network).set(CyNetwork.NAME, name);
-
+		return name;
+	}
+	
+	public CyNetwork createNetwork(String name, String rootNetName) {
+		CyNetwork network = registrar.getService(CyNetworkFactory.class).createNetwork();		
+		network.getRow(network).set(CyNetwork.NAME, adaptNetworkName(name));
+		CyNetwork rootNetwork = ((CySubNetwork)network).getRootNetwork();
+		rootNetwork.getRow(rootNetwork).set(CyNetwork.NAME, adaptNetworkName(rootNetName));
 		return network;
 	}
 
-	public CyNetwork createStringNetwork(String name, StringNetwork stringNet, 
-	                                     String useDATABASE, String species) {
-		CyNetwork network = createNetwork(name);
-		ModelUtils.setDatabase(network, useDATABASE);
-		ModelUtils.setNetSpecies(network, species);
-		addStringNetwork(stringNet, network);
-		return network;
-	}
+//	public CyNetwork createStringNetwork(String name, StringNetwork stringNet, 
+//	                                     String useDATABASE, String species, String netType) {
+//		CyNetwork network = createNetwork(name);
+//		ModelUtils.setDatabase(network, useDATABASE);
+//		ModelUtils.setNetSpecies(network, species);
+//		ModelUtils.setNetworkType(network, netType);
+//		addStringNetwork(stringNet, network);
+//		return network;
+//	}
 
 	public void addStringNetwork(StringNetwork stringNet, CyNetwork network) {
 		stringNetworkMap.put(network, stringNet);
@@ -494,6 +506,13 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public int getDefaultMaxProteins() { return maximumProteins; }
 	public void setDefaultMaxProteins(int max) { maximumProteins = max; }
 
+	public NetworkType getDefaultNetworkType() { return networkType; }
+	public void setDefaultNetworkType(NetworkType type) { networkType = type; }
+	
+	public void setDefaultNetworkType(String type) { 
+		networkType = NetworkType.getType(type); 
+	}
+
 	public void flushEvents() {
 		cyEventHelper.flushPayloadEvents();
 	}
@@ -613,7 +632,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	}
 
 	public void updateSettings() {
-		ModelUtils.setStringProperty(configProps, "confidence", Double.toString(overlapCutoff));
+		// ModelUtils.setStringProperty(configProps, "confidence", Double.toString(overlapCutoff));
 		ModelUtils.setStringProperty(configProps, "showImage", Boolean.toString(showImage));
 		ModelUtils.setStringProperty(configProps, "showEnhancedLabels", Boolean.toString(showEnhancedLabels));
 		ModelUtils.setStringProperty(configProps, "showGlassBallEffect", Boolean.toString(showGlassBallEffect));
@@ -622,6 +641,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		ModelUtils.setStringProperty(configProps, "highlightNeighbors", Boolean.toString(highlightNeighbors));
 
 		ModelUtils.setStringProperty(configProps, "species", getDefaultSpecies().toString());
+		ModelUtils.setStringProperty(configProps, "networkType", getDefaultNetworkType().toString());
 		ModelUtils.setStringProperty(configProps, "defaultConfidence", Double.toString(getDefaultConfidence()));
 		ModelUtils.setStringProperty(configProps, "additionalProteins", Integer.toString(getDefaultAdditionalProteins()));
 		ModelUtils.setStringProperty(configProps, "maxProteins", Integer.toString(getDefaultMaxProteins()));
@@ -645,10 +665,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		updateControls();
 	}
 
-	public void handleEvent(NetworkAddedEvent nae) {
-		CyNetwork network = nae.getNetwork();
-		if (ignore) return;
-
+	
+	public void processNewNetwork(CyNetwork network) {
 		// This is a string network only if we have a confidence score in the network table,
 		// "@id", "species", "canonical name", and "sequence" columns in the node table, and 
 		// a "score" column in the edge table
@@ -659,10 +677,26 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		} else if (getNetworkName(network).endsWith("--clustered") && ModelUtils.isMergedStringNetwork(network)) {
 			execute(new SetConfidenceTaskFactory(this).createTaskIterator(network));
 			showResultsPanel();
-		} else if (getRootNetworkName(network).startsWith("String Network") && ModelUtils.isMergedStringNetwork(network)) {
+		} else if ((getRootNetworkName(network).startsWith(ModelUtils.DEFAULT_NAME_STRING)
+				|| getRootNetworkName(network).startsWith(ModelUtils.DEFAULT_NAME_STITCH))
+				&& ModelUtils.isMergedStringNetwork(network)) {
 			execute(new SetConfidenceTaskFactory(this).createTaskIterator(network));
 			showResultsPanel();
 		}
+	}
+	
+	public void handleEvent(SetCurrentNetworkEvent event) {
+		CyNetwork network = event.getNetwork();
+		if (ignore || network == null || getStringNetwork(network) != null) return;
+		
+		processNewNetwork(network);
+	}
+	
+	public void handleEvent(NetworkAddedEvent nae) {
+		CyNetwork network = nae.getNetwork();
+		if (ignore) return;
+
+		processNewNetwork(network);
 	}
 
 	public void handleEvent(SessionLoadedEvent arg0) {
@@ -671,6 +705,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 		// Create string networks for any networks loaded by string
 		Set<CyNetwork> networks = arg0.getLoadedSession().getNetworks();
+		if (networks.size() == 0)
+			return;
 		Set<CyNetwork> networksToUpgrade = new HashSet<CyNetwork>();
 		for (CyNetwork network: networks) {
 			if (ModelUtils.isStringNetwork(network)) {

@@ -17,6 +17,7 @@ import org.cytoscape.work.TaskMonitor.Level;
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
@@ -30,9 +31,16 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 	final int limit;
 	final int confidence;
 	final String query;
+	NetworkType netType; 
 	private List<TextMiningResult> tmResults;
 	String errorMsg;
 
+	public GetStringIDsFromPubmedTask(final StringNetwork stringNetwork, final Species species, final int limit, 
+            final int confidence, final String query, final NetworkType netType) {
+		this(stringNetwork, species, limit, confidence, query);
+		this.netType = netType;
+	}
+	
 	public GetStringIDsFromPubmedTask(final StringNetwork stringNetwork, final Species species, final int limit, 
 	                                    final int confidence, final String query) {
 		this.stringNetwork = stringNetwork;
@@ -138,7 +146,8 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 		if (query.length() > 18)
 			netName = query.substring(0, 15)+"...";
 		LoadInteractions liTask = new LoadInteractions(stringNetwork, species.getName(), species.getTaxId(), 
-			                                             confidence, 0, stringIds, queryTermMap, netName, Databases.STRING.getAPIName());
+			                                             confidence, 0, stringIds, queryTermMap, netName, 
+			                                             Databases.STRING.getAPIName(), netType);
 		AddTextMiningResultsTask atmTask = new AddTextMiningResultsTask(stringNetwork, tmResults);
 		insertTasksAfterCurrentTask(liTask, atmTask);
 	}

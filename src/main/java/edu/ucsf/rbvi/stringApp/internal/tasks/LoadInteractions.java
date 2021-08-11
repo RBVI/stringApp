@@ -25,6 +25,7 @@ import org.cytoscape.work.TunableSetter;
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
@@ -40,7 +41,19 @@ public class LoadInteractions extends AbstractTask {
 	final Map<String, String> queryTermMap;
 	final String netName;
 	final String useDATABASE;
+	NetworkType netType;
 
+	public LoadInteractions(final StringNetwork stringNet, final String species, final int taxonId, 
+            final int confidence, final int additionalNodes,
+									final List<String>stringIds,
+									final Map<String, String> queryTermMap,
+									final String netName,
+									final String useDATABASE,
+									final NetworkType netType) {
+		this(stringNet, species, taxonId, confidence, additionalNodes, stringIds, queryTermMap, netName, useDATABASE);
+		this.netType = netType;
+	}
+	
 	public LoadInteractions(final StringNetwork stringNet, final String species, final int taxonId, 
 	                        final int confidence, final int additionalNodes,
 													final List<String>stringIds,
@@ -62,9 +75,9 @@ public class LoadInteractions extends AbstractTask {
 		// make sure the list of resolved IDs is unique
 		Set<String> uniqueIds = new HashSet<String>(stringIds);
 		if (useDATABASE.equals(Databases.STRING.getAPIName()))
-			monitor.setTitle("Loading data from STRING for " + uniqueIds.size() + " identifiers.");
+			monitor.setTitle("Loading data from STRING for " + uniqueIds.size() + " identifier(s).");
 		else if (useDATABASE.equals(Databases.STITCH.getAPIName()))
-			monitor.setTitle("Loading data from STITCH for " + uniqueIds.size() + " identifiers.");
+			monitor.setTitle("Loading data from STITCH for " + uniqueIds.size() + " identifier(s).");
 		StringManager manager = stringNet.getManager();
 		String ids = null;
 		for (String id: uniqueIds) {
@@ -80,9 +93,7 @@ public class LoadInteractions extends AbstractTask {
 
 		// String url = "http://api.jensenlab.org/network?entities="+URLEncoder.encode(ids.trim())+"&score="+conf;
 		Map<String, String> args = new HashMap<>();
-		// args.put("database", useDATABASE);
-		// TODO: Is it OK to always use stitch?
-		args.put("database", Databases.STITCH.getAPIName());
+		args.put("database", netType.getAPIName());
 		args.put("entities",ids.trim());
 		args.put("score", conf);
 		args.put("caller_identity", StringManager.CallerIdentity);
@@ -105,7 +116,7 @@ public class LoadInteractions extends AbstractTask {
 
 		// This may change...
 		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, species, results, 
-		                                                     queryTermMap, ids.trim(), netName, useDATABASE);
+		                                                     queryTermMap, ids.trim(), netName, useDATABASE, netType.getAPIName());
 
 		if (network == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results");
@@ -120,6 +131,7 @@ public class LoadInteractions extends AbstractTask {
 		
 		// Set our confidence score
 		ModelUtils.setConfidence(network, ((double)confidence)/100.0);
+		ModelUtils.setNetworkType(network, netType.toString());
 		ModelUtils.setDatabase(network, useDATABASE);
 		ModelUtils.setNetSpecies(network, species);
 		ModelUtils.setDataVersion(network, manager.getDataVersion());

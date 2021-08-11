@@ -32,6 +32,7 @@ import org.cytoscape.work.util.BoundedFloat;
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
@@ -99,7 +100,8 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 			}
 		}
 
-		double newConfidence = confidence.getValue().doubleValue();
+		// convert confidence to an integer to avoid issues with number precision
+		int newConfidence = (int)(confidence.getValue()*1000);
 		List<CyEdge> newEdges = new ArrayList<>();
 
 		// See if we're actually increasing the cutoff
@@ -109,13 +111,14 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 			List<CyEdge> removeEdges = new ArrayList<>();
 			for (CyEdge edge: network.getEdgeList()) {
 				Double score = network.getRow(edge).get(ModelUtils.SCORE, Double.class);
-				if (score != null && score < newConfidence)
+				if (score != null && (int)(score*1000) < newConfidence) {
 					removeEdges.add(edge);
+				}
 			}
 			monitor.setStatusMessage("Removing "+removeEdges.size()+" edges");
 			network.removeEdges(removeEdges);
 			// And set the new value
-			ModelUtils.setConfidence(network, confidence.getValue());
+			ModelUtils.setConfidence(network, (double)Math.round(confidence.getValue()*1000)/1000);
 		} else if (confidence.getValue() < currentConfidence) {
 			monitor.setStatusMessage("Decreased confidence: fetching new edges");
 			// We're decreasing the confidence, so we need to get new edges
@@ -124,10 +127,14 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 			String database = ModelUtils.getDatabase(network);
 			Map<String, String> args = new HashMap<>();
 			args.put("existing", existing.trim());
-			// TODO: Is it OK to always use stitch?
-			args.put("database", Databases.STITCH.getAPIName());
 			args.put("score", confidence.getValue().toString());
 			args.put("maxscore", Float.toString(currentConfidence));
+			// set network type
+			NetworkType currentType = NetworkType.getType(ModelUtils.getNetworkType(network));
+			if (currentType != null)
+				args.put("database", currentType.getAPIName());
+			else
+				args.put("database", Databases.STRING.getAPIName());
 			JSONObject results;
 			try {
 				results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
@@ -139,17 +146,17 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 
 			if (results != null) {
 				// This may change...
-				List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, database);
+				List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, database, currentType.getAPIName());
 	
 				monitor.setStatusMessage("Adding "+newEdges.size()+" edges");
 	
-				ModelUtils.setConfidence(network, confidence.getValue());
+				ModelUtils.setConfidence(network, (double)Math.round(confidence.getValue()*1000)/1000);
 			}
 		}
 
 		// If we have a view, re-apply the style and layout
 		if (netView != null) {
-			monitor.setStatusMessage("Laying out network");
+			// monitor.setStatusMessage("Laying out network");
 			ViewUtils.updateEdgeStyle(manager, netView, newEdges);
 			netView.updateView();
 

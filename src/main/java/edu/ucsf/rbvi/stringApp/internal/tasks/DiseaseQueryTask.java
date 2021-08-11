@@ -26,6 +26,7 @@ import org.cytoscape.work.util.ListSingleSelection;
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
 import edu.ucsf.rbvi.stringApp.internal.model.EntityIdentifier;
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
@@ -63,6 +64,12 @@ public class DiseaseQueryTask extends AbstractTask implements ObservableTask {
 	         exampleStringValue="0.4")
 	public BoundedDouble cutoff = new BoundedDouble(0.0, 0.4, 1.0, false, false);
 
+	@Tunable(description = "Type of edges to retrieve",
+	         longDescription="By default, the query will retrieve functional associations from STRING, but "
+	         		+ "it can be set to physical interactions using this option. ",
+	         exampleStringValue="Functional associations")
+	public ListSingleSelection<NetworkType> networkType;
+
 	private List<Species> speciesList;
 
 	private CyNetwork loadedNetwork;
@@ -77,6 +84,8 @@ public class DiseaseQueryTask extends AbstractTask implements ObservableTask {
 				break;
 			}
 		}
+		networkType = new ListSingleSelection<>(NetworkType.values());
+		networkType.setSelectedValue(NetworkType.FUNCTIONAL);
 	}
 
 	public void run(TaskMonitor monitor)  {
@@ -116,7 +125,7 @@ public class DiseaseQueryTask extends AbstractTask implements ObservableTask {
 		AbstractTask getIds = 
 		        new GetStringIDsFromDiseasesTask(stringNetwork, sp, limit.getValue(),
 	                                           confidence, entity.getIdentifier(),
-		                                         entity.getPrimaryName());
+		                                         entity.getPrimaryName(), networkType.getSelectedValue());
 		manager.execute(new TaskIterator(getIds), true);
 		loadedNetwork = stringNetwork.getNetwork();
 		if (loadedNetwork == null)

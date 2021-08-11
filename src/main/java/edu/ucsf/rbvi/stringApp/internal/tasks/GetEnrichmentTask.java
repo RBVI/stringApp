@@ -103,9 +103,9 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		enrichmentResult = new HashMap<>();
 		stringNodesMap = new HashMap<>();
 		monitor = null;
-		// Get list of (selected) nodes
+		// Get list of (selected) nodes as a string!
 		selected = getSelected(network).trim();
-		if (selected.length() <= 1) {
+		if (selected.split("\n").length <= 1) {
 		 	selectedNodesOnly = false;
 		}
 		allNetSpecies = new ListSingleSelection<String>(ModelUtils.getEnrichmentNetSpecies(network));

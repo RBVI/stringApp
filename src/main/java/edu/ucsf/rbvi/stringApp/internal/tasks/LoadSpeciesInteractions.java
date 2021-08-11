@@ -21,6 +21,7 @@ import org.json.simple.JSONObject;
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
@@ -38,6 +39,14 @@ public class LoadSpeciesInteractions extends AbstractTask {
 	// final Map<String, String> queryTermMap;
 	final String netName;
 	final String useDATABASE;
+	NetworkType netType;
+	
+	public LoadSpeciesInteractions(final StringNetwork stringNet, final String species,
+			final int taxonId, final int confidence, final String netName,
+			final String useDATABASE, final NetworkType netType) {
+		this(stringNet, species, taxonId, confidence, netName, useDATABASE);
+		this.netType = netType;
+	}
 
 	public LoadSpeciesInteractions(final StringNetwork stringNet, final String species,
 			final int taxonId, final int confidence, final String netName,
@@ -63,7 +72,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 			conf = "1.0";
 
 		Map<String, String> args = new HashMap<>();
-		args.put("database", Databases.STITCH.getAPIName());
+		args.put("database", netType.getAPIName());
 		args.put("organism", String.valueOf(taxonId));
 		args.put("score", conf);
 		args.put("caller_identity", StringManager.CallerIdentity);
@@ -82,7 +91,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		// time = System.currentTimeMillis();
 
 		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, species, results, null,
-		                                                     null, netName, useDATABASE);
+		                                                     null, netName, useDATABASE, netType.getAPIName());
 		// System.out.println("createNetworkFromJSON method "
 		// + (System.currentTimeMillis() - time) / 1000 + " seconds.");
 		// time = System.currentTimeMillis();
@@ -94,6 +103,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 
 		// Set our confidence score
 		ModelUtils.setConfidence(network, ((double) confidence) / 100.0);
+		ModelUtils.setNetworkType(network, netType.toString());
 		ModelUtils.setDatabase(network, useDATABASE);
 		ModelUtils.setNetSpecies(network, species);
 		ModelUtils.setDataVersion(network, manager.getDataVersion());

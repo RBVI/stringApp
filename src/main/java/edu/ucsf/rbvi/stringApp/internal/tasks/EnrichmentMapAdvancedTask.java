@@ -75,7 +75,10 @@ public class EnrichmentMapAdvancedTask extends AbstractTask implements TaskObser
 		this.network = network;
 		String netName = network.getRow(network).get(CyNetwork.NAME, String.class);
 		mapName = "Enrichment Map - "+ netName;
-		if (netName.startsWith("String Network") && netName.length() > 15) {
+		if ((netName.startsWith("String Network")
+				|| netName.startsWith(ModelUtils.DEFAULT_NAME_STRING)
+				|| netName.startsWith(ModelUtils.DEFAULT_NAME_STITCH)) 
+				&& netName.length() > 15) {
 			mapName = "Enrichment Map "+netName.substring(15);
 		}
 		List<String> availableColumns = new ArrayList<String>();

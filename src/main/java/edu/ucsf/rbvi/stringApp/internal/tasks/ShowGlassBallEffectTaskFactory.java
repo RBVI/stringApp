@@ -56,6 +56,7 @@ public class ShowGlassBallEffectTaskFactory extends AbstractNetworkViewTaskFacto
 		return new TaskIterator(new ShowGlassBallEffectTask(manager, show, this));
 	}
 
+
 //	public void reregister() {
 //		manager.unregisterService(this, NetworkViewTaskFactory.class);
 //		Properties props = new Properties();

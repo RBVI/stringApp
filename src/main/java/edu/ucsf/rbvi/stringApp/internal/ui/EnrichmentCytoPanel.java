@@ -206,6 +206,9 @@ public class EnrichmentCytoPanel extends JPanel
 	@Override
 	public void handleEvent(SelectedNodesAndEdgesEvent event) {
 		//if (!registered) return;
+		if (!enrichmentTables.containsKey(showTable))
+			return;
+		
 		JTable table = enrichmentTables.get(showTable);
 		if (table.getSelectedRow() > -1 &&  
 				table.getSelectedColumnCount() == 1 && 

@@ -66,6 +66,7 @@ import org.cytoscape.work.TunableSetter;
 
 import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
@@ -113,6 +114,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		this.queryAddNodes = queryAddNodes;
 		optionsPanel = new SearchOptionsPanel(manager, false, false, false);
 		optionsPanel.setConfidence((int)(manager.getDefaultConfidence()*100));
+		optionsPanel.setNetworkType(manager.getDefaultNetworkType());
 		optionsPanel.setAdditionalNodes(manager.getDefaultAdditionalProteins());
 		if (!useDATABASE.equals(Databases.STITCH.getAPIName()))
 			optionsPanel.setUseSmartDelimiters(true);
@@ -158,6 +160,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		if (panel == null) {
 			panel = new SearchOptionsPanel(manager, false, false, false);
 			panel.setConfidence((int)(manager.getDefaultConfidence()*100));
+			panel.setNetworkType(manager.getDefaultNetworkType());
 			panel.setAdditionalNodes(manager.getDefaultAdditionalProteins());
 			if (!useDATABASE.equals(Databases.STITCH.getAPIName()))
 				panel.setUseSmartDelimiters(true);
@@ -219,12 +222,14 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 
 	JPanel createSearchPanel() {
 		JPanel searchPanel = new JPanel(new GridBagLayout());
-		searchPanel.setPreferredSize(new Dimension(600,400));
+		searchPanel.setPreferredSize(new Dimension(600,250));
 		EasyGBC c = new EasyGBC();
 
 		String label = "Enter protein names or identifiers:";
-		if (useDATABASE.equals(Databases.STITCH.getAPIName()))
+		if (useDATABASE.equals(Databases.STITCH.getAPIName())) {
+			searchPanel.setPreferredSize(new Dimension(600,300));
 			label = "Enter protein or compound names or identifiers:";
+		}
 		JLabel searchLabel = new JLabel(label);
 		c.noExpand().anchor("northwest").insets(0,5,0,5);
 		searchPanel.add(searchLabel, c);
@@ -366,7 +371,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		return buttonPanel;
 	}
 
-	void importNetwork(int taxon, int confidence, int additionalNodes, boolean wholeOrg) {
+	void importNetwork(int taxon, int confidence, int additionalNodes, boolean wholeOrg, NetworkType netType) {
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = null;
 		if (wholeOrg) {
@@ -381,11 +386,11 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		if (!queryAddNodes) {
 			factory = new ImportNetworkTaskFactory(stringNetwork, speciesCombo.getSelectedItem().toString(), 
 			                                       taxon, confidence, additionalNodes, stringIds,
-			                                       queryTermMap, netName, useDATABASE);
+			                                       queryTermMap, netName, useDATABASE, netType);
 		} else {
 			factory = new ImportNetworkTaskFactory(stringNetwork, (String)speciesPartnerCombo.getSelectedItem(), 
 			                                       taxon, confidence, additionalNodes, stringIds,
-			                                       queryTermMap, netName, useDATABASE);
+			                                       queryTermMap, netName, useDATABASE, netType);
 		}
 		cancel();
 		TaskIterator ti = factory.createTaskIterator();
@@ -592,7 +597,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 				stringNetwork = new StringNetwork(manager);
 
 			if (wholeOrgBox != null && wholeOrgBox.isSelected()) {
-				importNetwork(taxon, optionsPanel.getConfidence(), 0, wholeOrgBox.isSelected());
+				importNetwork(taxon, optionsPanel.getConfidence(), 0, wholeOrgBox.isSelected(), optionsPanel.getNetworkType());
 				return;
 			}
 
@@ -663,7 +668,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						importNetwork(taxon, optionsPanel.getConfidence(), addNodes, wholeOrgBox.isSelected());
+						importNetwork(taxon, optionsPanel.getConfidence(), addNodes, wholeOrgBox.isSelected(), optionsPanel.getNetworkType());
 					}
 				});
 			} else {
@@ -715,7 +720,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 				});
 			}
 
-			importNetwork(taxon, optionsPanel.getConfidence(), additionalNodes, wholeOrgBox.isSelected());
+			importNetwork(taxon, optionsPanel.getConfidence(), additionalNodes, wholeOrgBox.isSelected(), optionsPanel.getNetworkType());
 			optionsPanel.showSpeciesBox(true); // Turn this back on
 		}
 	}

@@ -60,18 +60,15 @@ import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskObserver;
 import org.cytoscape.work.TunableSetter;
 
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
-import edu.ucsf.rbvi.stringApp.internal.model.TextMiningResult;
 
-import edu.ucsf.rbvi.stringApp.internal.tasks.AddTextMiningResultsTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
-import edu.ucsf.rbvi.stringApp.internal.tasks.ImportNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetStringIDsFromPubmedTask;
 
-import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 // TODO: [Optional] Improve non-gui mode
 public class PubMedQueryPanel extends JPanel { 
@@ -91,6 +88,7 @@ public class PubMedQueryPanel extends JPanel {
 	private Species species;
 
 	private int confidence = 40;
+	private NetworkType networkType = NetworkType.FUNCTIONAL; 
 	private int additionalNodes = 100;
 
 	private boolean loadEnrichment = false;
@@ -100,6 +98,7 @@ public class PubMedQueryPanel extends JPanel {
 		this.manager = manager;
 		this.species = null;
 		this.confidence = (int)(manager.getDefaultConfidence()*100);
+		this.networkType = manager.getDefaultNetworkType();
 		this.additionalNodes = manager.getDefaultMaxProteins();
 		init();
 	}
@@ -111,6 +110,7 @@ public class PubMedQueryPanel extends JPanel {
 		this.initialStringNetwork = stringNetwork;
 		this.species = null;
 		this.confidence = (int)(manager.getDefaultConfidence()*100);
+		this.networkType =  manager.getDefaultNetworkType();
 		this.additionalNodes = manager.getDefaultMaxProteins();
 		init();
 	}
@@ -119,19 +119,20 @@ public class PubMedQueryPanel extends JPanel {
 	                        SearchOptionsPanel searchOptions) {
 		this(manager, stringNetwork, query, 
 		     searchOptions.getSpecies(),
-		     searchOptions.getConfidence(), searchOptions.getAdditionalNodes());
+		     searchOptions.getConfidence(), searchOptions.getAdditionalNodes(), searchOptions.getNetworkType());		
 		loadEnrichment = searchOptions.getLoadEnrichment();
 		optionsPanel.setLoadEnrichment(loadEnrichment);
 	}
 
 	public PubMedQueryPanel(final StringManager manager, StringNetwork stringNetwork, String query,
-	                        final Species species, int confidence, int additionalNodes) {
+	                        final Species species, int confidence, int additionalNodes, NetworkType netType) {
 		super(new GridBagLayout());
 		this.manager = manager;
 		this.stringNetwork = stringNetwork;
 		this.initialStringNetwork = stringNetwork;
 		this.species = species;
 		this.confidence = confidence;
+		this.networkType = netType;
 		this.additionalNodes = additionalNodes;
 		init();
 		pubmedQuery.setText(query);
@@ -167,6 +168,7 @@ public class PubMedQueryPanel extends JPanel {
 		optionsPanel = new SearchOptionsPanel(manager, true, false, false);
 		optionsPanel.setMinimumSize(new Dimension(400, 150));
 		optionsPanel.setConfidence(confidence);
+		optionsPanel.setNetworkType(networkType);
 		optionsPanel.setAdditionalNodes(additionalNodes);
 		add(optionsPanel, c.down().expandHoriz().insets(5,5,0,5));
 
@@ -268,12 +270,14 @@ public class PubMedQueryPanel extends JPanel {
 
 			confidence = optionsPanel.getConfidence();
 			additionalNodes = optionsPanel.getAdditionalNodes();
-
+			networkType = optionsPanel.getNetworkType();
+			
 			manager.info("Getting pubmed IDs for "+species.getName()+"query: "+query);
 
 			// Launch a task to get the annotations. 
 			manager.execute(new TaskIterator(new GetStringIDsFromPubmedTask(stringNetwork, species, 
-		                                                                  additionalNodes, confidence, query)), this);
+		                                                                  additionalNodes, confidence, 
+		                                                                  query, networkType)), this);
 			// cancel();
 			((Window)getRootPane().getParent()).dispose();
 		}

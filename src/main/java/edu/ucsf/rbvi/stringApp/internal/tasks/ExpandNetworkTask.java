@@ -37,6 +37,7 @@ import org.json.simple.JSONObject;
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
@@ -196,8 +197,13 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			if (taxonId != -1) 
 				args.put("filter", taxonId + ".%%");
 		}
-		// TODO: Is it OK to always use stitch?
-		args.put("database", Databases.STITCH.getAPIName());
+		// set network type
+		NetworkType currentType = NetworkType.getType(ModelUtils.getNetworkType(network));
+		if (currentType != null)
+			args.put("database", currentType.getAPIName());
+		else
+			args.put("database", Databases.STRING.getAPIName());
+		
 		monitor.setStatusMessage("Getting additional nodes from: "+manager.getNetworkURL());
 
 		JSONObject results;
@@ -213,7 +219,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 
 		// This may change...
 		List<CyEdge> newEdges = new ArrayList<>();
-		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, useDatabase);
+		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, useDatabase, currentType.getAPIName());
 
 		if (newNodes.size() == 0 && newEdges.size() == 0) {
 			if (conf == 1.0) { 

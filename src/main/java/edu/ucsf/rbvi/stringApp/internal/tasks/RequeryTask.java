@@ -10,6 +10,7 @@ import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
 
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
@@ -70,8 +71,11 @@ public class RequeryTask extends AbstractTask {
 		// confirmDialog.setVisible(true);
 		String sp = ModelUtils.getNetSpecies(network);
 		Double conf = ModelUtils.getConfidence(network);
+		NetworkType type = NetworkType.getType(ModelUtils.getNetworkType(network));
+		if (type == null)
+			type = manager.getDefaultNetworkType();
 		StringifyTask strTask = new StringifyTask(manager, network, conf.doubleValue(),
-				Species.getSpecies(sp), ModelUtils.CANONICAL);
+				Species.getSpecies(sp), ModelUtils.CANONICAL, type);
 		strTask.run(monitor);
 	}
 

@@ -14,6 +14,7 @@ import static org.cytoscape.work.ServiceProperties.INSERT_SEPARATOR_BEFORE;
 
 import java.util.Properties;
 
+import org.cytoscape.application.events.SetCurrentNetworkListener;
 import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.search.NetworkSearchTaskFactory;
@@ -35,6 +36,7 @@ import org.osgi.framework.Version;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.tasks.AddTermsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeConfidenceTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeNetTypeTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.DiseaseSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExpandNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTaskFactory;
@@ -115,6 +117,8 @@ public class CyActivator extends AbstractCyActivator {
 			registerService(bc, manager, NetworkAddedListener.class, new Properties());
 			registerService(bc, manager, SessionLoadedListener.class, new Properties());
 			registerService(bc, manager, NetworkAboutToBeDestroyedListener.class, new Properties());
+			registerService(bc, manager, SetCurrentNetworkListener.class, new Properties());
+			
 		}
 
 		{
@@ -341,13 +345,15 @@ public class CyActivator extends AbstractCyActivator {
 
 		{
 			ChangeConfidenceTaskFactory changeConfidence = new ChangeConfidenceTaskFactory(manager);
-			Properties props = new Properties();
-			props.setProperty(PREFERRED_MENU, "Apps.STRING");
-			props.setProperty(TITLE, "Change confidence");
-			props.setProperty(MENU_GRAVITY, "2.0");
-			props.setProperty(IN_MENU_BAR, "true");
-			registerService(bc, changeConfidence, NetworkTaskFactory.class, props);
+			// Move change confidence menu item to new menu item which also chnages network type
+			//Properties props = new Properties();
+			//props.setProperty(PREFERRED_MENU, "Apps.STRING");
+			//props.setProperty(TITLE, "Change confidence");
+			//props.setProperty(MENU_GRAVITY, "2.0");
+			//props.setProperty(IN_MENU_BAR, "true");
+			//registerService(bc, changeConfidence, NetworkTaskFactory.class, props);
 			
+			// keep the command
 			Properties props2 = new Properties();
 			props2.setProperty(COMMAND_NAMESPACE, "string");
 			props2.setProperty(COMMAND, "change confidence");
@@ -361,6 +367,27 @@ public class CyActivator extends AbstractCyActivator {
 			registerService(bc, changeConfidence, TaskFactory.class, props2);
 		}
 
+		{
+			ChangeNetTypeTaskFactory changeNetType = new ChangeNetTypeTaskFactory(manager);
+			Properties props = new Properties();
+			props.setProperty(PREFERRED_MENU, "Apps.STRING");
+			props.setProperty(TITLE, "Change confidence or type");
+			props.setProperty(MENU_GRAVITY, "2.0");
+			props.setProperty(IN_MENU_BAR, "true");
+			registerService(bc, changeNetType, NetworkTaskFactory.class, props);
+			
+			Properties props2 = new Properties();
+			props2.setProperty(COMMAND_NAMESPACE, "string");
+			props2.setProperty(COMMAND, "change type");
+			props2.setProperty(COMMAND_DESCRIPTION, 
+			                            "Change edge type of the network");
+			props2.setProperty(COMMAND_LONG_DESCRIPTION,
+					"Changes the type of edges of the network between functional associations and physical interactions.");
+			props2.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			props2.setProperty(COMMAND_EXAMPLE_JSON, "{}");
+			registerService(bc, changeNetType, TaskFactory.class, props2);
+		}
+		
 		{
 			AddTermsTaskFactory addTerms = new AddTermsTaskFactory(manager);
 			Properties props = new Properties();
