@@ -118,9 +118,9 @@ public class HttpUtils {
 				} catch (Exception ioe) {
 					// ignore
 				}
-				manager.error("Exception reading JSON from STRING server: <br/>"+ parseFailure.getMessage()+"\n Text: "+errorString);
-				System.out.println("Exception reading JSON from STRING server: <br/>"+ parseFailure.getMessage()+"\n Text: "+errorString);
-				throw new ConnectionException("Exception reading JSON from STRING server: <br/>"+ parseFailure.getMessage());
+				manager.error("Exception reading JSON from STRING server: \n"+ parseFailure.getMessage()+"\n Text: "+errorString);
+				System.out.println("Exception reading JSON from STRING server: \n"+ parseFailure.getMessage()+"\n Text: "+errorString);
+				throw new ConnectionException("Exception reading JSON from STRING server: \n"+ parseFailure.getMessage());
 			}
 
 	 	} catch(UnknownHostException e) {
@@ -128,9 +128,9 @@ public class HttpUtils {
 			throw new ConnectionException("Unknown host: " + e.getMessage());
 		} catch (Exception e) {
 			// e.printStackTrace();
-			manager.error("Unexpected error from server: <br/>" + e.getMessage());
-			System.out.println("Unexpected error from server: <br/>" + e.getMessage());
-			throw new ConnectionException("Unexpected error from server: <br/>" + e.getMessage());
+			manager.error("Unexpected error from server: \n" + e.getMessage());
+			System.out.println("Unexpected error from server: \n" + e.getMessage());
+			throw new ConnectionException("Unexpected error from server: \n" + e.getMessage());
 		} finally {
 		}
 		return jsonObject;
@@ -193,14 +193,14 @@ public class HttpUtils {
 			return executeWithRedirect(manager, connection.getHeaderField("Location"), queryMap);
 		case HttpURLConnection.HTTP_INTERNAL_ERROR:
 		case HttpURLConnection.HTTP_BAD_REQUEST:
-			readStream(connection.getErrorStream());
+			readStream(connection.getErrorStream(), manager);
 			return connection;
 		}
 		
 		return connection;
 	}
 
-	private static String readStream(InputStream stream) throws Exception {
+	private static String readStream(InputStream stream, StringManager manager) throws Exception {
 	    StringBuilder builder = new StringBuilder();
 	    try (BufferedReader in = new BufferedReader(new InputStreamReader(stream))) {
 	        String line;
@@ -210,6 +210,7 @@ public class HttpUtils {
 	        in.close();
 	    }
 	    System.out.println("JSON error response: " + builder.toString());
+	    manager.error("JSON error response: " + builder.toString());
 	    return builder.toString();
 	}
 	
