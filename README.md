@@ -1,11 +1,13 @@
 # GIT repository of the stringApp for Cytoscape
 
-*stringApp* imports protein-protein and protein-chemical interaction data from [STRING](https://string-db.org/), [Viruses.STRING](http://viruses.string-db.org/), [STITCH](http://stitch.embl.de/), [DISEASES](http://diseases.jensenlab.org/) and from PubMed text mining into Cytoscape. Users provide a list of one or more gene, protein, compound, disease, or PubMed queries, the species, and a confidence score and *stringApp* will query the database and return the matching network. Currently, four different queries are supported:
+*stringApp* imports functional associations or physical interactions between protein-protein and protein-chemical pairs from [STRING](https://string-db.org/), [Viruses.STRING](http://viruses.string-db.org/), [STITCH](http://stitch.embl.de/), [DISEASES](http://diseases.jensenlab.org/) and from PubMed text mining into Cytoscape. Users provide a list of one or more gene, protein, compound, disease, or PubMed queries, the species, the network type, and a confidence score and *stringApp* queries the database to return the matching network. Currently, four different queries are supported:
 
 - STRING: protein query - enter a list of protein names (e.g. gene symbols or UniProt identifiers/accession numbers) to obtain a STRING network for the proteins
 - STRING: PubMed query - enter a PubMed query and utilize text mining to get a STRING network for the top N proteins associated with the query
 - STRING: disease query - enter a disease name to retrieve a STRING network of the top N proteins associated with the specified disease
 - STITCH: protein/compound query - enter a list of protein or compound names to obtain a network for them from STITCH
+
+For each query, the user can choose to retrieve a *full STRING network* of functional associations or a *physical subnetwork*. 
 
 *stringApp* also allows users to change the confidence score and to expand the resulting network by adding an arbitrary number of nodes; this can be either proteins from the same organism, proteins involved in virus-host interactions, or chemical compounds. All STRING networks are visualized using a "String Style" custom graphic, which closely resembles the networks on the STRING web site.
 
