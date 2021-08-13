@@ -222,6 +222,10 @@ Creates a new network from the nodes and edges of the specified network by query
    
    The confidence score reflects the cumulated evidence that this interaction exists. Only interactions with scores greater than this cutoff will be returned. It must be a value betwene 0.0 and 1.0.
 
+- `type` (optional) *String* Default: `full STRING network`
+
+   Type of the STRING interactions (edges) to be included in the network, either functional associations or physical interactions.
+
 - `includeNotMapped` (optional) *boolean* Default: `true`
    
    Option for choosing whether nodes that cannot be mapped to STRING identifiers should be included in the new network or not.
@@ -316,7 +320,7 @@ Changes the type of the network between functional associations (`full STRING ne
 
    Type of the STRING interactions (edges) to be included in the network, either functional associations or physical interactions.
 
-- `confidence` **required** *Double* Default: `0.4`
+- `confidence` (optional) *Double* Default: `0.4`
    
    Confidence score for the STRING interactions to be included in this network. It must be a value between 0.0 and 1.0.
 
