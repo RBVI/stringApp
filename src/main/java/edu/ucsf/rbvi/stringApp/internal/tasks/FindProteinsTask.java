@@ -47,12 +47,7 @@ public class FindProteinsTask extends AbstractTask {
 		this.manager = manager;
 		species = new ListSingleSelection<>(Species.getSpecies());
 		// Set Human as the default
-		for (Species s: Species.getSpecies()) {
-			if (s.toString().equals("Homo sapiens")) {
-				species.setSelectedValue(s);
-				break;
-			}
-		}
+		species.setSelectedValue(Species.getHumanSpecies());
 	}
 
 	public void run(TaskMonitor monitor) {

@@ -481,12 +481,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public Species getDefaultSpecies() { 
 		if (species == null) {
 			// Set Human as the default
-			for (Species s: Species.getSpecies()) {
-				if (s.toString().equals("Homo sapiens")) {
-					species = s;
-					break;
-				}
-			}
+			return Species.getHumanSpecies();
 		}
 		return species; 
 	}

@@ -276,15 +276,9 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 
 		if (netSpecies == null)
 			speciesCombo.setSelectedItem(manager.getDefaultSpecies());
-		else {
-			for (Species s: speciesList) {
-				if (s.toString().equals(netSpecies)) {
-					speciesCombo.setSelectedItem(s);
-					break;
-				}
-			}
-		}
-		JComboBoxDecorator.decorate(speciesCombo, true, true); 
+		else
+			speciesCombo.setSelectedItem(Species.getSpecies(netSpecies));		
+		// JComboBoxDecorator.decorate(speciesCombo, true, true); 
 		c.right().expandHoriz().insets(0,5,0,5);
 		speciesPanel.add(speciesCombo, c);
 		return speciesPanel;

@@ -78,12 +78,7 @@ public class DiseaseQueryTask extends AbstractTask implements ObservableTask {
 		this.manager = manager;
 		speciesList = Species.getSpecies();
 		// Set Human as the default
-		for (Species s: speciesList) {
-			if (s.toString().equals("Homo sapiens")) {
-				species = s.toString();
-				break;
-			}
-		}
+		species = Species.getHumanSpecies().toString();
 		networkType = new ListSingleSelection<>(NetworkType.values());
 		networkType.setSelectedValue(NetworkType.FUNCTIONAL);
 	}

@@ -124,7 +124,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		this.netName = "";
 		this.useDatabase = Databases.STRING.getAPIName();
 		species = new ListSingleSelection<Species>(Species.getSpecies());
-		species.setSelectedValue(Species.getSpecies("Homo sapiens"));
+		species.setSelectedValue(Species.getHumanSpecies());
 		if (net != null) {
 			List<CyColumn> colList = new ArrayList<>(net.getDefaultNodeTable().getColumns());
 			tableColumn = new ListSingleSelection<CyColumn>(colList);

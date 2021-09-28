@@ -14,12 +14,14 @@ import java.util.Scanner;
 public class Species implements Comparable<Species> {
 	private static List<Species> allSpecies;
 	private static Map<Integer, Species> taxIdSpecies;
+	private static Map<String, Species> nameSpecies;
 	private int taxon_id;
 	private String type;
 	private String compactName;
 	private String officialName;
 	private String nodeColor;
 	private List<String> interactionPartners;
+	private static Species humanSpecies; 
 
 	public Species(int tax, String type, String name, String oName, String nodeColor, List<String> intPartners) {
 		init(tax, type, name, oName, nodeColor, intPartners);
@@ -83,9 +85,14 @@ public class Species implements Comparable<Species> {
 		return allSpecies;
 	}
 
+	public static Species getHumanSpecies() {
+		return humanSpecies;
+	}
+
 	public static List<Species> readSpecies(StringManager manager) throws Exception {
 		allSpecies = new ArrayList<Species>();
 		taxIdSpecies = new HashMap<Integer, Species>();
+		nameSpecies = new HashMap<String, Species>();
 
 		InputStream stream = null;
 		try {
@@ -105,6 +112,9 @@ public class Species implements Comparable<Species> {
 				if (s != null && s.toString() != null && s.toString().length() > 0) {
 					allSpecies.add(s);
 					taxIdSpecies.put(new Integer(s.getTaxId()), s);
+					nameSpecies.put(s.toString(), s);
+					if (s.toString().equals("Homo sapiens"))
+						humanSpecies = s;
 				}
 			}
  
@@ -119,6 +129,9 @@ public class Species implements Comparable<Species> {
 	}
 
 	public static Species getSpecies(String speciesName) {
+		if (nameSpecies.containsKey(speciesName))
+			return nameSpecies.get(speciesName);
+
 		for (Species s: allSpecies) {
 			if (s.getName().equalsIgnoreCase(speciesName))
 				return s;
