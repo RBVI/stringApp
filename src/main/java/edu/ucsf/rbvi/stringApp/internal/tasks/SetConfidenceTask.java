@@ -54,7 +54,7 @@ public class SetConfidenceTask extends AbstractTask implements ObservableTask {
 
 		// TODO: Find a better way to set the database, e.g. check certain node column
 		ModelUtils.setDatabase(net, Databases.STRING.getAPIName());
-		ModelUtils.setNetworkType(net, manager.getDefaultNetworkType().toString());
+		ModelUtils.setNetworkType(net, ModelUtils.inferNetworkType(net));
 		ModelUtils.setNetSpecies(net, ModelUtils.getMostCommonNetSpecies(net));
 		ModelUtils.setDataVersion(net, manager.getDataVersion());
 		ModelUtils.setNetURI(net, manager.getNetworkURL());
