@@ -179,21 +179,32 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 				ModelUtils.setConfidence(network, (double)Math.round(confidence.getValue()*1000)/1000);
 				ModelUtils.setNetworkType(network, networkType.getSelectedValue().toString());
 				
-				// change network name in the special case of changing from physical to functional or the other way around 
+				// change network name in the special case of changing from physical to functional or the other way around
+				monitor.setStatusMessage("Updating network name");
 				if (!newType.equals(currentType)) {
 					String currentName = manager.getNetworkName(network);
 					String newName = currentName;
 					if (newType.equals(NetworkType.FUNCTIONAL) && currentName.contains(ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL)) {
 						// remove (physical) from the name
 						String[] currentNameParts = currentName.split(ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL_REGEXP);
-						newName = currentNameParts[0] + currentNameParts[currentNameParts.length-1];
+						if (currentNameParts.length > 1)
+							newName = currentNameParts[0] + currentNameParts[currentNameParts.length-1];
+						else
+							newName = currentNameParts[0];
 					} else if (newType.equals(NetworkType.PHYSICAL)) {
 						// add (physical) to the name
-						if (currentName.startsWith(ModelUtils.DEFAULT_NAME_STRING))
-							newName = ModelUtils.DEFAULT_NAME_STRING + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL + currentName.split(ModelUtils.DEFAULT_NAME_STRING)[1];							
-						else if (currentName.startsWith(ModelUtils.DEFAULT_NAME_STITCH ))
-							newName = ModelUtils.DEFAULT_NAME_STITCH + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL + currentName.split(ModelUtils.DEFAULT_NAME_STITCH)[1];
+						if (currentName.startsWith(ModelUtils.DEFAULT_NAME_STRING)) {
+							if (currentName.split(ModelUtils.DEFAULT_NAME_STRING).length > 1)
+								newName = ModelUtils.DEFAULT_NAME_STRING + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL + currentName.split(ModelUtils.DEFAULT_NAME_STRING)[1];
+							else 
+								newName = ModelUtils.DEFAULT_NAME_STRING + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL;
+						} else if (currentName.startsWith(ModelUtils.DEFAULT_NAME_STITCH )) {
+							if (currentName.split(ModelUtils.DEFAULT_NAME_STITCH)[1].length() > 1)
+								newName = ModelUtils.DEFAULT_NAME_STITCH + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL + currentName.split(ModelUtils.DEFAULT_NAME_STITCH)[1];
+							else 
+								newName = ModelUtils.DEFAULT_NAME_STITCH + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL;
 						}
+					}
 					network.getRow(network).set(CyNetwork.NAME, manager.adaptNetworkName(newName));
 				}
 			}
