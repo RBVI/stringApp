@@ -54,6 +54,8 @@ public class ShowEnrichmentPanelTask extends AbstractTask {
 			EnrichmentCytoPanel panel = (EnrichmentCytoPanel) cytoPanel.getComponentAt(
 					cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment"));
 			panel.initPanel(noSignificant);
+			cytoPanel.setSelectedIndex(
+					cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment"));
 		} else {
 			// If the panel is not already registered, create it
 			CytoPanelComponent2 panel = new EnrichmentCytoPanel(manager, noSignificant);

@@ -53,6 +53,9 @@ public class ShowPublicationsPanelTask extends AbstractTask {
 			PublicationsCytoPanel panel = (PublicationsCytoPanel) cytoPanel.getComponentAt(
 					cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Publications"));
 			panel.initPanel(noSignificant);
+
+			cytoPanel.setSelectedIndex(
+					cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Publications"));
 		} else {
 			// If the panel is not already registered, create it
 			CytoPanelComponent2 panel = new PublicationsCytoPanel(manager, noSignificant);
