@@ -717,7 +717,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		// if there are old string networks, figure out what to do
 		if (networksToUpgrade.size() > 0) {
 			// System.out.println("found networks to upgrade");
-			synchronousTaskManager.execute(new AddNamespacesTaskFactory(this).createTaskIterator(networksToUpgrade));
+			execute(new AddNamespacesTaskFactory(this).createTaskIterator(networksToUpgrade), true);
 		}
 
 		// load enrichment
@@ -779,6 +779,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			tableManager.deleteTable(table.getSUID());
 		}
 		reloadEnrichmentPanel();
+		//synchronousTaskManager.execute(publicationsTaskFactory.createTaskIterator(false, false));
+		//synchronousTaskManager.execute(enrichmentTaskFactory.createTaskIterator(false, false));
 		// remove as string network
 		if (stringNetworkMap.containsKey(network))
 			stringNetworkMap.remove(network);
@@ -828,7 +830,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			} else {
 				taskIt2 = publicationsTaskFactory.createTaskIterator(false, false);
 			}
-			synchronousTaskManager.execute(taskIt2);
+			execute(taskIt2, true);
 			// publicationsTaskFactory.reregister();
 		}
 		if (enrichmentTaskFactory != null) {
@@ -838,7 +840,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			} else {
 				taskIt = enrichmentTaskFactory.createTaskIterator(false, false);
 			}
-			synchronousTaskManager.execute(taskIt);
+			execute(taskIt, true);
 			// enrichmentTaskFactory.reregister();
 		}
 	}

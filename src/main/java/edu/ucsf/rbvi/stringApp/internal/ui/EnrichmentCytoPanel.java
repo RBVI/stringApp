@@ -345,7 +345,7 @@ public class EnrichmentCytoPanel extends JPanel
 		Set<CyTable> currTables = ModelUtils.getEnrichmentTables(manager, network);
 		availableTables = new ArrayList<String>();
 		for (CyTable currTable : currTables) {
-			createJTable(currTable, ModelUtils.isCurrentDataVersion(network));
+			createJTable(currTable, ModelUtils.getDataVersion(network));
 			availableTables.add(currTable.getTitle());
 		}
 		if (noSignificant) {
@@ -507,11 +507,11 @@ public class EnrichmentCytoPanel extends JPanel
 		this.repaint();
 	}
 
-	private void createJTable(CyTable cyTable, boolean currentVersion) {
-		if (currentVersion)
-			tableModel = new EnrichmentTableModel(cyTable, EnrichmentTerm.swingColumnsEnrichment);
-		else
+	private void createJTable(CyTable cyTable, String currentVersion) {
+		if (currentVersion == null || currentVersion.equals(manager.getOldDataVersion()))
 			tableModel = new EnrichmentTableModel(cyTable, EnrichmentTerm.swingColumnsEnrichmentOld);
+		else
+			tableModel = new EnrichmentTableModel(cyTable, EnrichmentTerm.swingColumnsEnrichment);
 		JTable jTable = new JTable(tableModel);
 		TableColumnModel tcm = jTable.getColumnModel();
 		tcm.removeColumn(tcm.getColumn(EnrichmentTerm.nodeSUIDColumn));
