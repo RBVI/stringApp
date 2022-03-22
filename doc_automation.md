@@ -62,9 +62,9 @@ The protein query retrieves a STRING network for one or more proteins. [STRING](
 	
    The maximum number of proteins to return in addition to the query set. It must be a value between 0 and 10000.
 
-- `network` (optional) *String* Default: `current`
-   
-   Specifies a network by name, or by SUID if the prefix `SUID:` is used. The keyword `CURRENT`, or a blank value can also be used to specify the current network.
+- `networkType` (optional) *String* Default: `full STRING network`
+
+   By default, the query will retrieve functional associations from STRING, but it can be set to physical interactions by setting this option to `physical subnetwork`.
 
 - `newNetName` (optional) *String*
 	
@@ -110,6 +110,10 @@ The compound query retrieves a STITCH network for one or more proteins or compou
 	
    The maximum number of proteins and compounds to return in addition to the query set. It must be a value between 0 and 10000.
 
+- `networkType` (optional) *String* Default: `full STRING network`
+
+   By default, the query will retrieve functional associations from STRING, but it can be set to physical interactions by setting this option to `physical subnetwork`.
+
 - `newNetName` (optional) *String*
 	
    Name for the network to be created.
@@ -154,6 +158,10 @@ The disease query retrieves a STRING network for the top-N human proteins associ
 	
    The maximum number of proteins to return in addition to the query set. It must be a value between 0 and 10000.
 
+- `networkType` (optional) *String* Default: `full STRING network`
+
+   By default, the query will retrieve functional associations from STRING, but it can be set to physical interactions by setting this option to `physical subnetwork`.
+
 - `species` (optional) *String* Default: `Homo sapiens`
    
    Species name. This should be the actual taxonomic name (e.g. homo sapiens, not human).
@@ -181,6 +189,10 @@ The PubMed query retrieves a STRING network of the top-N proteins pertaining to 
 - `cutoff` (optional) *Double* Default: `0.4` 
    
    The confidence score reflects the cumulated evidence that this interaction exists. Only interactions with scores greater than this cutoff will be returned. It must be a value between 0.0 and 1.0. 
+
+- `networkType` (optional) *String* Default: `full STRING network`
+
+   By default, the query will retrieve functional associations from STRING, but it can be set to physical interactions by setting this option to `physical subnetwork`.
 
 - `limit` (optional) *int* Default: `100` 
 	
