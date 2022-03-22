@@ -78,7 +78,7 @@ public class ProteinQueryAdditionalTask extends AbstractTask implements Observab
 
 	@Tunable(description = "Type of edges to retrieve",
 	         longDescription="Choose to load functional associations or physical interactions from STRING.",
-	         exampleStringValue="Functional associations")
+	         exampleStringValue="full STRING network")
 	public ListSingleSelection<NetworkType> networkType;
 
 	private List<Species> speciesList;
