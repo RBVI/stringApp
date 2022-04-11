@@ -148,7 +148,7 @@ public class PubMedQueryPanel extends JPanel {
 		EasyGBC c = new EasyGBC();
 
 		// Create the species panel
-		List<Species> speciesList = Species.getSpecies();
+		List<Species> speciesList = Species.getCoreSpecies();
 		if (speciesList == null) {
 			try {
 				speciesList = Species.readSpecies(manager);

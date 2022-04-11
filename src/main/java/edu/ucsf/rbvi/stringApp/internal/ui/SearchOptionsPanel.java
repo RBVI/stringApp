@@ -158,7 +158,7 @@ public class SearchOptionsPanel extends JPanel {
 
 	List<Species> getSpeciesList() {
 		// Create the species panel
-		List<Species> speciesList = Species.getSpecies();
+		List<Species> speciesList = Species.getCoreSpecies();
 		if (speciesList == null) {
 			try {
 				speciesList = Species.readSpecies(manager);

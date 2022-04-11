@@ -35,7 +35,7 @@ public class GetSpeciesTask extends AbstractTask implements ObservableTask {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <R> R getResults(Class<? extends R> clzz) {
-		List<Species> speciesList = Species.getSpecies();
+		List<Species> speciesList = Species.getCoreSpecies();
 		if (clzz.equals(List.class)) {
 			List<Map<String,String>> speciesMap = new ArrayList<>();
 			for (Species species: speciesList) {

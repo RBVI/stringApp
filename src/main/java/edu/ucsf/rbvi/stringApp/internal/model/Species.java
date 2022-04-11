@@ -13,6 +13,7 @@ import java.util.Scanner;
 
 public class Species implements Comparable<Species> {
 	private static List<Species> allSpecies;
+	private static List<Species> coreSpecies;
 	private static Map<Integer, Species> taxIdSpecies;
 	private static Map<String, Species> nameSpecies;
 	private int taxon_id;
@@ -85,12 +86,17 @@ public class Species implements Comparable<Species> {
 		return allSpecies;
 	}
 
+	public static List<Species> getCoreSpecies() {
+		return coreSpecies;
+	}
+
 	public static Species getHumanSpecies() {
 		return humanSpecies;
 	}
 
 	public static List<Species> readSpecies(StringManager manager) throws Exception {
 		allSpecies = new ArrayList<Species>();
+		coreSpecies = new ArrayList<Species>();
 		taxIdSpecies = new HashMap<Integer, Species>();
 		nameSpecies = new HashMap<String, Species>();
 
@@ -115,6 +121,8 @@ public class Species implements Comparable<Species> {
 					nameSpecies.put(s.toString(), s);
 					if (s.toString().equals("Homo sapiens"))
 						humanSpecies = s;
+					if (s.getType().equals("core") || s.getType().equals("periphery")) 
+						coreSpecies.add(s);
 				}
 			}
  
@@ -125,7 +133,8 @@ public class Species implements Comparable<Species> {
 			throw e;
 		}
 		Collections.sort(allSpecies);
-		return allSpecies;
+		Collections.sort(coreSpecies);
+		return coreSpecies;
 	}
 
 	public static Species getSpecies(String speciesName) {
