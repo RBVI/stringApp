@@ -36,9 +36,9 @@ public class ShowEnrichmentPanelTaskFactory extends AbstractTaskFactory {
 		return new TaskIterator(new ShowEnrichmentPanelTask(manager, this, show, noSignificant));
 	}
 
-	public TaskIterator createTaskIterator(boolean show, boolean noSignificant) {
-		return new TaskIterator(new ShowEnrichmentPanelTask(manager, this, show, noSignificant));
-	}
+//	public TaskIterator createTaskIterator(boolean show, boolean noSignificant) {
+//		return new TaskIterator(new ShowEnrichmentPanelTask(manager, this, show, noSignificant));
+//	}
 
 //	public void reregister() {
 //		manager.unregisterService(this, TaskFactory.class);

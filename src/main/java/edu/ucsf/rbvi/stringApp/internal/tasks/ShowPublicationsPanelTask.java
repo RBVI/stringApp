@@ -40,39 +40,26 @@ public class ShowPublicationsPanelTask extends AbstractTask {
 		CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.SOUTH);
 
 		// If the panel is already registered, but should not be shown, unregister it
-		if (!show && cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Publications") >= 0) {
+		if (cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Publications") >= 0) {
 			int compIndex = cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Publications");
 			Component panel = cytoPanel.getComponentAt(compIndex);
 			if (panel instanceof CytoPanelComponent2) {
 				// Unregister it
 				manager.unregisterService(panel, CytoPanelComponent.class);
-				manager.unregisterService(panel, RowsSetListener.class);
+				manager.setPublPanel(null);
 			}
-		} else if (show && cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Publications") >= 0) {
-			// Special case...
-			PublicationsCytoPanel panel = (PublicationsCytoPanel) cytoPanel.getComponentAt(
-					cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Publications"));
-			panel.initPanel(noSignificant);
-
-			cytoPanel.setSelectedIndex(
-					cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Publications"));
 		} else {
 			// If the panel is not already registered, create it
 			CytoPanelComponent2 panel = new PublicationsCytoPanel(manager, noSignificant);
 
 			// Register it
 			manager.registerService(panel, CytoPanelComponent.class, new Properties());
-			manager.registerService(panel, RowsSetListener.class, new Properties());
 
 			if (cytoPanel.getState() == CytoPanelState.HIDE)
 				cytoPanel.setState(CytoPanelState.DOCK);
 
-			cytoPanel.setSelectedIndex(
-					cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Publications"));
-
+			cytoPanel.setSelectedIndex(cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Publications"));
 		}
-
-		// factory.reregister();
 	}
 
 	public static boolean isPanelRegistered(StringManager sman) {

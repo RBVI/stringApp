@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -52,8 +53,14 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import org.cytoscape.application.events.SetCurrentNetworkEvent;
+import org.cytoscape.application.events.SetCurrentNetworkListener;
+import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.application.swing.CytoPanel;
+import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelComponent2;
 import org.cytoscape.application.swing.CytoPanelName;
+import org.cytoscape.application.swing.CytoPanelState;
 import org.cytoscape.command.AvailableCommands;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkManager;
@@ -93,9 +100,10 @@ import edu.ucsf.rbvi.stringApp.internal.utils.TextIcon;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
 public class EnrichmentCytoPanel extends JPanel
-		implements CytoPanelComponent2, ListSelectionListener, ActionListener, RowsSetListener, TableModelListener, SelectedNodesAndEdgesListener {
+		implements CytoPanelComponent2, ListSelectionListener, ActionListener, RowsSetListener, TableModelListener, SelectedNodesAndEdgesListener, SetCurrentNetworkListener {
 
 	final StringManager manager;
+	private boolean registered = false;
 	Map<String, JTable> enrichmentTables;
 	JPanel topPanel;
 	JPanel mainPanel;
@@ -147,6 +155,11 @@ public class EnrichmentCytoPanel extends JPanel
 		IconManager iconManager = manager.getService(IconManager.class);
 		colorChooserFactory = manager.getService(CyColorPaletteChooserFactory.class);
 		iconFont = iconManager.getIconFont(22.0f);
+		manager.setEnrichPanel(this);
+		manager.registerService(this, SetCurrentNetworkListener.class, new Properties());
+		manager.registerService(this, RowsSetListener.class, new Properties());
+		manager.registerService(this, SelectedNodesAndEdgesListener.class, new Properties());
+		registered = true;
 		initPanel(noSignificant);
 	}
 
@@ -172,6 +185,43 @@ public class EnrichmentCytoPanel extends JPanel
 
 	public EnrichmentTableModel getTableModel() { return tableModel; }
 
+	// network selected listener
+	public void handleEvent(SetCurrentNetworkEvent event) {
+		CyNetwork network = event.getNetwork();
+		if (ModelUtils.ifHaveStringNS(network)) {
+			if (!registered) {
+				// System.out.println("found string network with unregistered enrich panel");
+				showCytoPanel();
+			} else {
+				initPanel(network, false);
+			}
+		} else {
+			hideCytoPanel();
+		}
+
+	}
+
+	public void showCytoPanel() {
+		CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
+		CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.SOUTH);
+		if (!registered) {
+			// System.out.println("panel: register enrichment panel");
+			manager.registerService(this, CytoPanelComponent.class, new Properties());
+			registered = true;
+		}
+		if (cytoPanel.getState() == CytoPanelState.HIDE)
+			cytoPanel.setState(CytoPanelState.DOCK);
+
+		initPanel(false);
+		cytoPanel.setSelectedIndex(cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment"));
+	}
+
+	public void hideCytoPanel() {
+		// System.out.println("panel: unregister enrichment panel");
+		manager.unregisterService(this, CytoPanelComponent.class);
+		registered = false;
+	}
+	
 	// table selection handler
 	public void valueChanged(ListSelectionEvent e) {
 		if (e.getValueIsAdjusting())
@@ -345,8 +395,10 @@ public class EnrichmentCytoPanel extends JPanel
 		Set<CyTable> currTables = ModelUtils.getEnrichmentTables(manager, network);
 		availableTables = new ArrayList<String>();
 		for (CyTable currTable : currTables) {
-			createJTable(currTable, ModelUtils.getDataVersion(network));
-			availableTables.add(currTable.getTitle());
+			if (currTable.getTitle().equals(TermCategory.ALL.getTable())) {
+				createJTable(currTable, ModelUtils.getDataVersion(network));
+				availableTables.add(currTable.getTitle());
+			}
 		}
 		if (noSignificant) {
 			mainPanel = new JPanel(new BorderLayout());
@@ -573,37 +625,38 @@ public class EnrichmentCytoPanel extends JPanel
 	}
 
 	public void handleEvent(RowsSetEvent rse) {
-		CyNetworkManager networkManager = manager.getService(CyNetworkManager.class);
-		CyNetwork selectedNetwork = null;
-		if (rse.containsColumn(CyNetwork.SELECTED)) {
-			Collection<RowSetRecord> columnRecords = rse.getColumnRecords(CyNetwork.SELECTED);
-			for (RowSetRecord rec : columnRecords) {
-				CyRow row = rec.getRow();
-				if (row.toString().indexOf("FACADE") >= 0)
-					continue;
-				Long networkID = row.get(CyNetwork.SUID, Long.class);
-				Boolean selectedValue = (Boolean) rec.getValue();
-				if (selectedValue && networkManager.networkExists(networkID)) {
-					selectedNetwork = networkManager.getNetwork(networkID);
-				}
-			}
-		}
-		if (selectedNetwork != null) {
-			initPanel(selectedNetwork, false);
-			return;
-		}
+//		System.out.println("row set event");
+//		CyNetworkManager networkManager = manager.getService(CyNetworkManager.class);
+//		CyNetwork selectedNetwork = null;
+//		if (rse.containsColumn(CyNetwork.SELECTED)) {
+//			Collection<RowSetRecord> columnRecords = rse.getColumnRecords(CyNetwork.SELECTED);
+//			for (RowSetRecord rec : columnRecords) {
+//				CyRow row = rec.getRow();
+//				if (row.toString().indexOf("FACADE") >= 0)
+//					continue;
+//				Long networkID = row.get(CyNetwork.SUID, Long.class);
+//				Boolean selectedValue = (Boolean) rec.getValue();
+//				if (selectedValue && networkManager.networkExists(networkID)) {
+//					selectedNetwork = networkManager.getNetwork(networkID);
+//				}
+//			}
+//		}
+//		if (selectedNetwork != null) {
+//			initPanel(selectedNetwork, false);
+//			return;
+//		}
 		// experimental: clear term selection when all network nodes are unselected
-		CyNetwork network = manager.getCurrentNetwork();
-		JTable currentTable = enrichmentTables.get(showTable);
-		if (!clearSelection && network != null && currentTable != null) {
-			List<CyNode> nodes = network.getNodeList();
-			for (CyNode node : nodes) {
-				if (network.getRow(node).get(CyNetwork.SELECTED, Boolean.class)) {
-					return;
-				}
-			}
-			currentTable.clearSelection();
-		}
+//		CyNetwork network = manager.getCurrentNetwork();
+//		JTable currentTable = enrichmentTables.get(showTable);
+//		if (!clearSelection && network != null && currentTable != null) {
+//			List<CyNode> nodes = network.getNodeList();
+//			for (CyNode node : nodes) {
+//				if (network.getRow(node).get(CyNetwork.SELECTED, Boolean.class)) {
+//					return;
+//				}
+//			}
+//			currentTable.clearSelection();
+//		}
 	}
 
 	static class DecimalFormatRenderer extends DefaultTableCellRenderer {

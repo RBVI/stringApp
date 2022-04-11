@@ -60,6 +60,8 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowPublicationsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
+import edu.ucsf.rbvi.stringApp.internal.ui.PublicationsCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.StringCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
@@ -86,6 +88,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private Map<CyNetwork, StringNetwork> stringNetworkMap;
 
 	private StringCytoPanel cytoPanel = null;
+	private EnrichmentCytoPanel enrichPanel = null;
+	private PublicationsCytoPanel publPanel = null;
 
 	public static String CONFIGURI = "https://jensenlab.org/assets/stringapp/";
 	
@@ -469,6 +473,14 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		highlightNeighbors = set; 
 	}
 
+	public void setEnrichPanel(EnrichmentCytoPanel panel) {
+		this.enrichPanel = panel;
+	}
+	
+	public void setPublPanel(PublicationsCytoPanel panel) {
+		this.publPanel = panel;
+	}
+
 	public void setCytoPanel(StringCytoPanel panel) {
 		this.cytoPanel = panel;
 	}
@@ -665,18 +677,25 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		// This is a string network only if we have a confidence score in the network table,
 		// "@id", "species", "canonical name", and "sequence" columns in the node table, and 
 		// a "score" column in the edge table
+		boolean foundStringNet = false;
 		if (ModelUtils.isStringNetwork(network)) {
 			StringNetwork stringNet = new StringNetwork(this);
 			addStringNetwork(stringNet, network);
-			showResultsPanel();
+			foundStringNet = true;
 		} else if (getNetworkName(network).endsWith("--clustered") && ModelUtils.isMergedStringNetwork(network)) {
 			execute(new SetConfidenceTaskFactory(this).createTaskIterator(network));
-			showResultsPanel();
+			foundStringNet = true;
 		} else if ((getRootNetworkName(network).startsWith(ModelUtils.DEFAULT_NAME_STRING)
 				|| getRootNetworkName(network).startsWith(ModelUtils.DEFAULT_NAME_STITCH))
 				&& ModelUtils.isMergedStringNetwork(network)) {
 			execute(new SetConfidenceTaskFactory(this).createTaskIterator(network));
+			foundStringNet = true;
+		}
+
+		if (foundStringNet) {
 			showResultsPanel();
+			showEnrichmentPanel();
+			showPublicationPanel();
 		}
 	}
 	
@@ -720,9 +739,6 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			execute(new AddNamespacesTaskFactory(this).createTaskIterator(networksToUpgrade), true);
 		}
 
-		// load enrichment
-		reloadEnrichmentPanel();
-		
 		// check if enhanced labels should be shown or not
 		if (labelsTaskFactory != null) {
 			String sessionValueLabels = ModelUtils.getStringProperty(sessionProperties,
@@ -764,10 +780,19 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			}
 			//imagesTaskFactory.reregister();
 		}
-		if (ModelUtils.ifHaveStringNS(getCurrentNetwork()))
+
+		// if string network, show results panel and enrichment if any enrichment found
+		if (ModelUtils.ifHaveStringNS(getCurrentNetwork())) {
 			showResultsPanel();
-		else
+			// load enrichment & publications if computed earlier
+			showEnrichmentPanel();
+			showPublicationPanel();
+		} else {
 			hideResultsPanel();
+			// TODO: Hide is not implemented yet, do we need it?
+			//hideEnrichmentPanel();
+			//hidePublicationPanel();
+		}
 	}
 
 	public void handleEvent(NetworkAboutToBeDestroyedEvent e) {
@@ -778,9 +803,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		for (CyTable table : oldTables) {
 			tableManager.deleteTable(table.getSUID());
 		}
-		reloadEnrichmentPanel();
-		//synchronousTaskManager.execute(publicationsTaskFactory.createTaskIterator(false, false));
-		//synchronousTaskManager.execute(enrichmentTaskFactory.createTaskIterator(false, false));
+		// TODO: are we sure that we don't need to reload?
+		// reloadEnrichmentPanel();
 		// remove as string network
 		if (stringNetworkMap.containsKey(network))
 			stringNetworkMap.remove(network);
@@ -810,38 +834,41 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		}
 	}
 
-	private void reloadEnrichmentPanel() {
+	public void showEnrichmentPanel() {
 		CyTableManager tableManager = getService(CyTableManager.class);
 		Set<CyTable> tables = tableManager.getAllTables(true);
-		boolean showEnrichment = false;
-		boolean showPublications = false;
+		for (CyTable table : tables) {
+			if (table.getTitle().equals(TermCategory.ALL.getTable())) {
+				// System.out.println("manager: found table ALL");
+				if (enrichPanel == null) {
+					// System.out.println("manager: showEnrichPanel -> createTaskIterator");
+					execute(enrichmentTaskFactory.createTaskIterator(), true);
+				}
+				else {
+					// System.out.println("manager: showEnrichPanel -> show panel");
+					enrichPanel.showCytoPanel();
+				}
+				break;
+			}
+		}
+	}
+	
+	public void showPublicationPanel() {
+		CyTableManager tableManager = getService(CyTableManager.class);
+		Set<CyTable> tables = tableManager.getAllTables(true);
 		for (CyTable table : tables) {
 			if (table.getTitle().equals(TermCategory.PMID.getTable())) {
-				showPublications = true;
-			} 
-			if (table.getTitle().equals(TermCategory.ALL.getTable())) {
-				showEnrichment = true;
+				// System.out.println("manager: found table PMID");
+				if (publPanel == null) {	
+					// System.out.println("manager: showPublPanel -> createTaskIterator");
+					execute(publicationsTaskFactory.createTaskIterator(), true);
+				}
+				else { 
+					// System.out.println("manager: showPublPanel -> show panel");
+					publPanel.showCytoPanel();
+				}
+				break;
 			}
-		}
-		if (publicationsTaskFactory != null) {
-			TaskIterator taskIt2 = null;
-			if (showPublications) {
-				taskIt2 = publicationsTaskFactory.createTaskIterator(true, false);
-			} else {
-				taskIt2 = publicationsTaskFactory.createTaskIterator(false, false);
-			}
-			execute(taskIt2, true);
-			// publicationsTaskFactory.reregister();
-		}
-		if (enrichmentTaskFactory != null) {
-			TaskIterator taskIt = null;
-			if (showEnrichment) {
-				taskIt = enrichmentTaskFactory.createTaskIterator(true, false);
-			} else {
-				taskIt = enrichmentTaskFactory.createTaskIterator(false, false);
-			}
-			execute(taskIt, true);
-			// enrichmentTaskFactory.reregister();
 		}
 	}
 	

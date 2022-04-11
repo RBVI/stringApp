@@ -37,7 +37,7 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 		UniProt("Keyword", "UniProt Keywords", "STRING Enrichment: UniProt Keywords"),		
 
 		INTERPRO("InterPro", "InterPro Domains", "STRING Enrichment: InterPro Protein Domains"),
-		PFAM("PFAM", "PFAM Domains", "STRING Enrichment: Pfam Protein Domains"),
+		PFAM("PFAM", "Pfam", "STRING Enrichment: Pfam Protein Domains"),
 		SMART("SMART", "SMART Domains", "STRING Enrichment: SMART Protein Domains"),
 		
 		COMPARTMENTS("COMPARTMENTS", "COMPARTMENTS", "STRING Enrichment: COMPARTMENTS"),

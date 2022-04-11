@@ -40,30 +40,20 @@ public class ShowEnrichmentPanelTask extends AbstractTask {
 		CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.SOUTH);
 
 		// If the panel is already registered, but should not be shown, unregister it
-		if (!show && cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment") >= 0) {
+		if (cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment") >= 0) {
 			int compIndex = cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment");
 			Component panel = cytoPanel.getComponentAt(compIndex);
 			if (panel instanceof CytoPanelComponent2) {
 				// Unregister it
 				manager.unregisterService(panel, CytoPanelComponent.class);
-				manager.unregisterService(panel, RowsSetListener.class);
-				manager.unregisterService(panel, SelectedNodesAndEdgesListener.class);
+				manager.setEnrichPanel(null);
 			}
-		} else if (show && cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment") >= 0) {
-			// Special case...
-			EnrichmentCytoPanel panel = (EnrichmentCytoPanel) cytoPanel.getComponentAt(
-					cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment"));
-			panel.initPanel(noSignificant);
-			cytoPanel.setSelectedIndex(
-					cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment"));
 		} else {
 			// If the panel is not already registered, create it
 			CytoPanelComponent2 panel = new EnrichmentCytoPanel(manager, noSignificant);
 
 			// Register it
 			manager.registerService(panel, CytoPanelComponent.class, new Properties());
-			manager.registerService(panel, RowsSetListener.class, new Properties());
-			manager.registerService(panel, SelectedNodesAndEdgesListener.class, new Properties());
 
 			if (cytoPanel.getState() == CytoPanelState.HIDE)
 				cytoPanel.setState(CytoPanelState.DOCK);
@@ -71,7 +61,6 @@ public class ShowEnrichmentPanelTask extends AbstractTask {
 			cytoPanel.setSelectedIndex(
 					cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment"));
 		}
-		// factory.reregister();
 	}
 
 	public static boolean isPanelRegistered(StringManager sman) {

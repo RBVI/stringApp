@@ -252,12 +252,14 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		}
 		SynchronousTaskManager<?> taskM = manager.getService(SynchronousTaskManager.class);
 		if (showFactoryPubl != null && publOnly) {
-			TaskIterator ti = showFactoryPubl.createTaskIterator(true, noSig);
-			taskM.execute(ti);
+			//TaskIterator ti = showFactoryPubl.createTaskIterator();
+			//taskM.execute(ti);
+			manager.showPublicationPanel();
 		}
 		if (showFactoryEnrich != null && !publOnly) {
-			TaskIterator ti = showFactoryEnrich.createTaskIterator(true, noSig);
-			taskM.execute(ti);
+			//TaskIterator ti = showFactoryEnrich.createTaskIterator();
+			//taskM.execute(ti);
+			manager.showEnrichmentPanel();
 		} 
 	}
 
@@ -567,6 +569,8 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 
 	@ProvidesTitle
 	public String getTitle() {
+		if (publOnly)
+			return "Retrieve enriched publications";
 		return "Retrieve functional enrichment";
 	}
 
