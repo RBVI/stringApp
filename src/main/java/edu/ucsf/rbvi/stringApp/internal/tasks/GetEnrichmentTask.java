@@ -210,6 +210,8 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 
 		// retrieve enrichment (new API)
 		getEnrichmentJSON(selected, species, bgNodes);
+		
+		// retrieve PPI enrichment
 		if (!isLargeNetwork && !publOnly) 
 			ppiSummary = getEnrichmentPPIJSON(selected, species, bgNodes);
 		else
@@ -242,11 +244,10 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		}
 		
 		// show enrichment results
-		boolean noSig = false;
 		if (enrichmentResult == null) {
 			return;
 		} else if (enrichmentResult.size() == 0) {
-			noSig = true;
+			// this should not happen anymore
 			monitor.showMessage(Level.WARN,
 					"Enrichment retrieval returned no results that met the criteria.");
 		}
@@ -311,7 +312,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			enrichmentResult = null;
 			return;
 			// throw new RuntimeException("Enrichment retrieval returned no results, possibly due to an error. " + errorMsg);
-		} else if (terms.size() > 0) {
+		} else {
 			Collections.sort(terms);
 			// separate terms into all and pmid
 			List<EnrichmentTerm> termsAll = new ArrayList<EnrichmentTerm>();
@@ -331,8 +332,11 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 				enrichmentResult.put(TermCategory.ALL.getKey(), termsAll);
 				saveEnrichmentTable(TermCategory.ALL.getTable(), TermCategory.ALL.getKey());
 			}
-			monitor.showMessage(Level.INFO,
-					"Enrichment retrieval successful.");
+			// info for the user
+			if ((publOnly && termsPubl.size() == 0) || (!publOnly && termsAll.size() == 0))
+				monitor.showMessage(Level.WARN, "Enrichment retrieval returned no results that met the criteria.");
+			else
+				monitor.showMessage(Level.INFO, "Enrichment retrieval successful.");
 		}
 	}
 

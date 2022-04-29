@@ -316,7 +316,10 @@ public class PublicationsCytoPanel extends JPanel
 		publicationsTable = null;
 		for (CyTable currTable : currTables) {
 			if (currTable.getTitle().equals(TermCategory.PMID.getTable())) {
-				publicationsTable = createJTable(currTable);
+				if (currTable.getRowCount() > 1)
+					publicationsTable = createJTable(currTable);
+				else
+					noSignificant = true;
 			}
 		}
 		if (noSignificant) {

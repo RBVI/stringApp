@@ -396,8 +396,12 @@ public class EnrichmentCytoPanel extends JPanel
 		availableTables = new ArrayList<String>();
 		for (CyTable currTable : currTables) {
 			if (currTable.getTitle().equals(TermCategory.ALL.getTable())) {
-				createJTable(currTable, ModelUtils.getDataVersion(network));
-				availableTables.add(currTable.getTitle());
+				if (currTable.getRowCount() > 1) {
+					createJTable(currTable, ModelUtils.getDataVersion(network));
+					availableTables.add(currTable.getTitle());
+				} else {
+					noSignificant = true;
+				}
 			}
 		}
 		if (noSignificant) {
