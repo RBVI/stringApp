@@ -158,7 +158,8 @@ public class SearchOptionsPanel extends JPanel {
 
 	List<Species> getSpeciesList() {
 		// Create the species panel
-		List<Species> speciesList = Species.getCoreSpecies();
+		// Retrieve only the list of main species for now, otherwise the dialogs are very slow
+		List<Species> speciesList = Species.getGUISpecies();
 		if (speciesList == null) {
 			try {
 				speciesList = Species.readSpecies(manager);

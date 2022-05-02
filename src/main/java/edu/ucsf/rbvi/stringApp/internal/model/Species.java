@@ -13,7 +13,11 @@ import java.util.Scanner;
 
 public class Species implements Comparable<Species> {
 	private static List<Species> allSpecies;
+	private static List<Species> guiSpecies;
 	private static List<Species> coreSpecies;
+	private static List<Species> peripherySpecies;
+	private static List<Species> mappedSpecies;
+	private static List<Species> virusSpecies;
 	private static Map<Integer, Species> taxIdSpecies;
 	private static Map<String, Species> nameSpecies;
 	private int taxon_id;
@@ -23,6 +27,8 @@ public class Species implements Comparable<Species> {
 	private String nodeColor;
 	private List<String> interactionPartners;
 	private static Species humanSpecies; 
+
+	public static String[] category = { "all", "core", "periphery", "mapped", "viral"};
 
 	public Species(int tax, String type, String name, String oName, String nodeColor, List<String> intPartners) {
 		init(tax, type, name, oName, nodeColor, intPartners);
@@ -86,8 +92,24 @@ public class Species implements Comparable<Species> {
 		return allSpecies;
 	}
 
+	public static List<Species> getGUISpecies() {
+		return guiSpecies;
+	}
+	
 	public static List<Species> getCoreSpecies() {
 		return coreSpecies;
+	}
+
+	public static List<Species> getPeripherySpecies() {
+		return peripherySpecies;
+	}
+
+	public static List<Species> getMappedSpecies() {
+		return mappedSpecies;
+	}
+
+	public static List<Species> getVirusSpecies() {
+		return virusSpecies;
 	}
 
 	public static Species getHumanSpecies() {
@@ -97,6 +119,10 @@ public class Species implements Comparable<Species> {
 	public static List<Species> readSpecies(StringManager manager) throws Exception {
 		allSpecies = new ArrayList<Species>();
 		coreSpecies = new ArrayList<Species>();
+		peripherySpecies = new ArrayList<Species>();
+		mappedSpecies = new ArrayList<Species>();
+		virusSpecies = new ArrayList<Species>();
+		guiSpecies = new ArrayList<Species>();
 		taxIdSpecies = new HashMap<Integer, Species>();
 		nameSpecies = new HashMap<String, Species>();
 
@@ -121,8 +147,14 @@ public class Species implements Comparable<Species> {
 					nameSpecies.put(s.toString(), s);
 					if (s.toString().equals("Homo sapiens"))
 						humanSpecies = s;
-					if (s.getType().equals("core") || s.getType().equals("periphery")) 
+					if (s.getType().equals("core")) 
 						coreSpecies.add(s);
+					if (s.getType().equals("periphery")) 
+						peripherySpecies.add(s);
+					if (s.getType().equals("mapped")) 
+						mappedSpecies.add(s);
+					if (!s.getType().equals("mapped") && !s.getType().equals("periphery") && !s.getType().equals("core")) 
+						virusSpecies.add(s);
 				}
 			}
  
@@ -132,9 +164,25 @@ public class Species implements Comparable<Species> {
 			e.printStackTrace();
 			throw e;
 		}
+		// add species that would be displayed in GUI
+		guiSpecies.addAll(coreSpecies);
+		guiSpecies.addAll(peripherySpecies);
+		guiSpecies.addAll(virusSpecies);
+
+		// sort all collections
 		Collections.sort(allSpecies);
+		//System.out.println("all species: " + allSpecies.size());
+		Collections.sort(guiSpecies);
+		//System.out.println("gui species: " + guiSpecies.size());
 		Collections.sort(coreSpecies);
-		return coreSpecies;
+		//System.out.println("core species: " + coreSpecies.size());
+		Collections.sort(peripherySpecies);
+		//System.out.println("periphery species: " + peripherySpecies.size());
+		Collections.sort(mappedSpecies);
+		//System.out.println("mapped species: " + mappedSpecies.size());
+		Collections.sort(virusSpecies);
+		//System.out.println("virus species: " + virusSpecies.size());
+		return guiSpecies;
 	}
 
 	public static Species getSpecies(String speciesName) {

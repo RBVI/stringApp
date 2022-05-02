@@ -122,7 +122,7 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 		this.network = manager.getCurrentNetwork();
 
 		enrichmentSettings = new EnrichmentSettings(manager, network);
-		species = new ListSingleSelection<Species>(Species.getCoreSpecies());
+		species = new ListSingleSelection<Species>(Species.getGUISpecies());
 		species.setSelectedValue(manager.getDefaultSpecies());
 		networkType = new ListSingleSelection<NetworkType>(NetworkType.values());
 		networkType.setSelectedValue(manager.getDefaultNetworkType());

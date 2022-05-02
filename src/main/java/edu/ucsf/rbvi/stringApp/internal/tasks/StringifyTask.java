@@ -123,7 +123,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		this.net = net;
 		this.netName = "";
 		this.useDatabase = Databases.STRING.getAPIName();
-		species = new ListSingleSelection<Species>(Species.getCoreSpecies());
+		species = new ListSingleSelection<Species>(Species.getGUISpecies());
 		species.setSelectedValue(Species.getHumanSpecies());
 		if (net != null) {
 			List<CyColumn> colList = new ArrayList<>(net.getDefaultNodeTable().getColumns());
@@ -141,7 +141,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		this.net = net;
 		this.netName = "";
 		this.useDatabase = Databases.STRING.getAPIName();
-		species = new ListSingleSelection<Species>(Species.getCoreSpecies());
+		species = new ListSingleSelection<Species>(Species.getGUISpecies());
 		species.setSelectedValue(sp);
 		if (net != null) {
 			List<CyColumn> colList = new ArrayList<>(net.getDefaultNodeTable().getColumns());

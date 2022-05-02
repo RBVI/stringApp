@@ -6,12 +6,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.cytoscape.model.CyColumn;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.Tunable;
 import org.cytoscape.work.json.JSONResult;
+import org.cytoscape.work.util.ListSingleSelection;
 
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
@@ -19,8 +22,17 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 public class GetSpeciesTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 
+	@Tunable(description="Category of species to list", 
+	         longDescription="Select which category to list from these: all, core, periphery, mapped, and viral species.",
+	         exampleStringValue="core",
+	         context="nogui", required=true)
+	public ListSingleSelection<String> category;
+
+	
 	public GetSpeciesTask(StringManager manager) {
 		this.manager = manager;
+		category = new ListSingleSelection<>(Species.category);
+		category.setSelectedValue("core");
 	}
 
 	public void run(TaskMonitor monitor) throws Exception {
@@ -35,7 +47,19 @@ public class GetSpeciesTask extends AbstractTask implements ObservableTask {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <R> R getResults(Class<? extends R> clzz) {
-		List<Species> speciesList = Species.getCoreSpecies();
+		List<Species> stringSpecies = new ArrayList<Species>();
+		if (category.getSelectedValue().equals("core"))
+			stringSpecies = Species.getCoreSpecies();
+		else if (category.getSelectedValue().equals("periphery"))
+			stringSpecies = Species.getPeripherySpecies();
+		else if (category.getSelectedValue().equals("mapped"))
+			stringSpecies = Species.getMappedSpecies();
+		else if (category.getSelectedValue().equals("viral"))
+			stringSpecies = Species.getVirusSpecies();
+		else 
+			stringSpecies = Species.getSpecies();
+		
+		List<Species> speciesList = stringSpecies;
 		if (clzz.equals(List.class)) {
 			List<Map<String,String>> speciesMap = new ArrayList<>();
 			for (Species species: speciesList) {
