@@ -1,8 +1,8 @@
 # stringApp Automation Documentation
 
-stringApp version 1.7.0
+stringApp version 1.7.1
 
-Last update: 2020-08-02
+Last update: 2020-05-02
 
 ## List of commands
 
@@ -639,6 +639,18 @@ Sets the default species for network queries to mouse (`Mus musculus`) and the d
 `string list species`
 
 Retrieves the list of species known to STRING, including the taxonomy ID.
+
+### Arguments
+
+- `category` **required** *String* Default: `core`
+   
+   Specify the category of STRING species to list. There are four categories currently (`core`, `periphery`, `mapped`, `viral`) and one can also choose to list `all`. Note that the last option is rarely recommended as it takes a long time for the app to output the list. 
+
+### Example 
+
+`string list species category=core`
+
+List all STRING core species.
 
 [List of Other commands](#other)
 
