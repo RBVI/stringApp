@@ -126,8 +126,10 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			int newConfidence = (int)(confidence.getValue()*1000);
 				// Yes, just trim the network
 			List<CyEdge> removeEdges = new ArrayList<>();
-			for (CyEdge edge: network.getEdgeList()) {
-				Double score = network.getRow(edge).get(ModelUtils.SCORE, Double.class);
+			List<CyEdge> stringEdges = ModelUtils.getStringNetEdges(network);
+			for (CyEdge edge: stringEdges) {
+				// get score of the interaction and check if the edge should be removed or not
+				Double score = network.getRow(edge).get(ModelUtils.SCORE, Double.class);					
 				if (score != null && (int)(score*1000) < newConfidence) {
 					removeEdges.add(edge);
 				}
@@ -143,7 +145,7 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			else if (!newType.equals(currentType))
 				monitor.setStatusMessage("Changing network type to " + networkType.getSelectedValue().getAPIName());
 
-			// We're changing the network type or confidence, so we need to get new edges  and remove the old ones
+			// We're changing the network type or confidence, so we need to get new edges and remove the old ones
 			List<CyEdge> newEdges = new ArrayList<>();
 			// Get all of the current nodes for our "existing" list
 			String existing = ModelUtils.getExisting(network);
@@ -167,7 +169,7 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 	
 			if (results != null) {
 				// remove old edges
-				List<CyEdge> removeEdges = network.getEdgeList();
+				List<CyEdge> removeEdges = ModelUtils.getStringNetEdges(network);;
 				monitor.setStatusMessage("Removing "+removeEdges.size()+" edges");
 				network.removeEdges(removeEdges);
 	

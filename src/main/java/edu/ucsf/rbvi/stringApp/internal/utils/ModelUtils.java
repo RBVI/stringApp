@@ -597,6 +597,22 @@ public class ModelUtils {
 			return NetworkType.FUNCTIONAL.toString();
 	}
 
+	
+	public static List<CyEdge> getStringNetEdges(CyNetwork network) {
+		List<CyEdge> stringNetEdges = new ArrayList<CyEdge>();
+		for (CyEdge edge: network.getEdgeList()) {
+			// check interaction type and save all edges that are string edges
+			String interactionType = network.getRow(edge).get(CyEdge.INTERACTION, String.class);
+			if (interactionType == null || (!interactionType.equals("pp")
+					&& !interactionType.equals("pc") && !interactionType.equals("cc")
+					&& !interactionType.equals("ppp") && !interactionType.equals("ppc"))) {
+				continue;
+			}
+			stringNetEdges.add(edge);
+		}
+		return stringNetEdges;
+	}
+	
 	public static void setDatabase(CyNetwork network, String database) {
 		createColumnIfNeeded(network.getDefaultNetworkTable(), String.class, DATABASE);
 		network.getRow(network).set(DATABASE, database);
