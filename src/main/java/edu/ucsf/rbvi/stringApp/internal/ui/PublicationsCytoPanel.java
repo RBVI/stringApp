@@ -136,7 +136,7 @@ public class PublicationsCytoPanel extends JPanel
 		colorChooserFactory = manager.getService(CyColorPaletteChooserFactory.class);
 		manager.setPublPanel(this);
 		manager.registerService(this, SetCurrentNetworkListener.class, new Properties());
-		manager.registerService(this, RowsSetListener.class, new Properties());
+		// manager.registerService(this, RowsSetListener.class, new Properties());
 		registered = true;
 		initPanel(noSignificant);
 	}

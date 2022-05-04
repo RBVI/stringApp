@@ -157,7 +157,7 @@ public class EnrichmentCytoPanel extends JPanel
 		iconFont = iconManager.getIconFont(22.0f);
 		manager.setEnrichPanel(this);
 		manager.registerService(this, SetCurrentNetworkListener.class, new Properties());
-		manager.registerService(this, RowsSetListener.class, new Properties());
+		// manager.registerService(this, RowsSetListener.class, new Properties());
 		manager.registerService(this, SelectedNodesAndEdgesListener.class, new Properties());
 		registered = true;
 		initPanel(noSignificant);
@@ -255,6 +255,9 @@ public class EnrichmentCytoPanel extends JPanel
 	// filter enrichment terms on node selection as long as no terms are selected
 	@Override
 	public void handleEvent(SelectedNodesAndEdgesEvent event) {
+		// only consider when nodes are selected
+		if (!event.nodesChanged()) 
+			return;
 		//if (!registered) return;
 		if (!enrichmentTables.containsKey(showTable))
 			return;
