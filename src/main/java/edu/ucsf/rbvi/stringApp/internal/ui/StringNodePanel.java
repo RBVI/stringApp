@@ -405,6 +405,10 @@ public class StringNodePanel extends AbstractStringPanel {
 		EasyGBC c = new EasyGBC();
 
 		List<CyNode> nodes = CyTableUtil.getNodesInState(currentNetwork, CyNetwork.SELECTED, true);
+		// TODO: test if this improves performance with large networks!
+		if (nodes.size() > 50) {
+			return;
+		}
 		for (CyNode node: nodes) {
 			JPanel newPanel = createNodePanel(node);
 			newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
