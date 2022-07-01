@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.cytoscape.model.CyColumn;
@@ -1219,7 +1220,7 @@ public class ModelUtils {
 		}
 		availableTypes.addAll(species);
 		availableTypes.add(COMPOUND);
-		List<String> spPartners = new ArrayList<String>();
+		Set<String> spPartners = new TreeSet<String>();
 		for (String sp : species) {
 			List<String> partners = Species.getSpeciesPartners(sp);
 			for (String spPartner : partners) {
@@ -1227,7 +1228,6 @@ public class ModelUtils {
 					spPartners.add(spPartner);
 			}
 		}
-		Collections.sort(spPartners);
 		if (spPartners.size() > 0) {
 			availableTypes.add(EMPTYLINE);
 			availableTypes.addAll(spPartners);
