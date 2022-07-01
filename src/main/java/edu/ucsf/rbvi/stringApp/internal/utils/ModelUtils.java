@@ -1101,7 +1101,7 @@ public class ModelUtils {
 
 			edge = network.addEdge(sourceNode, targetNode, false);
 			network.getRow(edge).set(CyNetwork.NAME,
-					nodeNameMap.get(source) + " (" + interaction + ") " + nodeNameMap.get(target));
+					source + " (" + interaction + ") " + target);
 			network.getRow(edge).set(CyEdge.INTERACTION, interaction);
 
 			String sourceSpecies = getNodeSpecies(network, sourceNode);
