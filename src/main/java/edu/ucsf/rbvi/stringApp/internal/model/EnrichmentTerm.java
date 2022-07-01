@@ -29,6 +29,7 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 		GOFUNCTION("Function", "GO Molecular Function", "STRING Enrichment: GO Molecular Function"),
 		
 		DISEASES("DISEASES", "DISEASES", "STRING Enrichment: DISEASES"),
+		MONARCH("HPO", "Monarch Phenotype", "STRING Enrichment: Monarch Phenotype"),
 
 		KEGG("KEGG", "KEGG Pathways", "STRING Enrichment: KEGG Pathways"),
 		REACTOME("RCTM", "Reactome Pathways", "STRING Enrichment: Reactome Pathways"),
