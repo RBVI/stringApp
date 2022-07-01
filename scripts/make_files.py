@@ -60,8 +60,10 @@ def main():
             continue
         if not source in pairs:
             pairs[source] = set()
-
         pairs[source].add(target)
+        if not target in pairs:
+            pairs[target] = set()
+        pairs[target].add(source)
 
     # Read in the Virus-Host pairs file
     for line in open(VirusHostPairs+Version+".tsv"):
@@ -70,10 +72,10 @@ def main():
         (source, target) = line.strip().split("\t")
         if (source == target):
             continue
-        if not source in pairs:
-            pairs[source] = set()
+        if not target in pairs:
+            pairs[target] = set()
 
-        pairs[source].add(target)
+        pairs[target].add(source)
 
     # Output the interacting pairs file
     output = open("../../src/main/resources/pairs_"+Version+".tsv", "w")
