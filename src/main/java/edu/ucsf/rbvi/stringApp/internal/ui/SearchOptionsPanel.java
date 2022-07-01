@@ -150,7 +150,6 @@ public class SearchOptionsPanel extends JPanel {
 	}
 
 	public void showSpeciesBox(boolean visible) {
-		// System.out.println("showSpeciesBox: "+visible);
 		if (speciesBox != null)
 			speciesBox.setVisible(visible);
 	}
@@ -159,10 +158,13 @@ public class SearchOptionsPanel extends JPanel {
 	List<Species> getSpeciesList() {
 		// Create the species panel
 		// Retrieve only the list of main species for now, otherwise the dialogs are very slow
-		List<Species> speciesList = Species.getGUISpecies();
+		List<Species> speciesList = Species.getModelSpecies();
 		if (speciesList == null) {
 			try {
-				speciesList = Species.readSpecies(manager);
+				Species.readSpecies(manager);
+				speciesList = Species.getModelSpecies();
+				if (speciesList == null || speciesList.size() == 0)
+					speciesList = Species.getGUISpecies();
 			} catch (Exception e) {
 				manager.error("Unable to get species: "+e.getMessage());
 				e.printStackTrace();

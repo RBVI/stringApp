@@ -36,12 +36,11 @@ public class JComboBoxDecorator {
 			final List<Species> entries) {
 
 		Species selectedSpecies = (Species)jcb.getSelectedItem();
-		// System.out.println("JComboBoxDecorator: selectedItem = "+selectedSpecies);
 		jcb.setEditable(editable);
 		jcb.setModel(new DefaultComboBoxModel(entries.toArray()));
 
 		final JTextField textField = (JTextField)jcb.getEditor().getEditorComponent();
-		// textField.setText(selectedSpecies.getName());
+		textField.setText(selectedSpecies.getName());
 		jcb.setSelectedItem(selectedSpecies);
 
 		textField.addKeyListener(new KeyAdapter() {
@@ -68,13 +67,12 @@ public class JComboBoxDecorator {
 
 		if (enteredText == null) {
 			return;
-		}
-
-		for (Species entry : entries) {
-			if (entry.getName().toLowerCase().contains(enteredText.toLowerCase())) {
-				entriesFiltered.add(entry);
-				// System.out.println(jcbModel.getIndexOf(entry));
-			}
+		} else if (enteredText.length() == 0) {
+			entriesFiltered = Species.getModelSpecies();
+		} else if (enteredText.length() < 4) {
+			return;
+		} else {
+			entriesFiltered = Species.search(enteredText);
 		}
 
 		if (previousEntries.size() == entriesFiltered.size()

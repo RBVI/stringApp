@@ -149,10 +149,11 @@ public class PubMedQueryPanel extends JPanel {
 
 		// Create the species panel
 		// Retrieve only the list of main species for now, otherwise the dialogs are very slow
-		List<Species> speciesList = Species.getGUISpecies();
+		List<Species> speciesList = Species.getModelSpecies();
 		if (speciesList == null) {
 			try {
-				speciesList = Species.readSpecies(manager);
+				Species.readSpecies(manager);
+				speciesList = Species.getModelSpecies();
 			} catch (Exception e) {
 				manager.error("Unable to get species: "+e.getMessage());
 				e.printStackTrace();

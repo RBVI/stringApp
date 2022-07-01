@@ -18,6 +18,7 @@ public class Species implements Comparable<Species> {
 	private static List<Species> peripherySpecies;
 	private static List<Species> mappedSpecies;
 	private static List<Species> virusSpecies;
+	private static List<Species> modelSpecies;
 	private static Map<Integer, Species> taxIdSpecies;
 	private static Map<String, Species> nameSpecies;
 	private int taxon_id;
@@ -25,37 +26,43 @@ public class Species implements Comparable<Species> {
 	private String compactName;
 	private String officialName;
 	private String nodeColor;
+	private String alias;
 	private List<String> interactionPartners;
 	private static Species humanSpecies; 
 
 	public static String[] category = { "all", "core", "periphery", "mapped", "viral"};
 
-	public Species(int tax, String type, String name, String oName, String nodeColor, List<String> intPartners) {
-		init(tax, type, name, oName, nodeColor, intPartners);
+	public Species(int tax, String type, String name, String oName, String nodeColor, List<String> intPartners, String alias) {
+		init(tax, type, name, oName, nodeColor, intPartners, alias);
 	}
 
 	public Species(String line) {
 		if (line.startsWith("#"))
 			return;
 		String columns[] = line.trim().split("\t");
+
+		// TODO: add synonyms (alias)
 		if (columns.length < 4)
 			throw new IllegalArgumentException("Can't parse line: "+line + "\n" + columns.length);
 		try {
 			int tax = Integer.parseInt(columns[0]);
 			List<String> intPartnersList = new ArrayList<String>();
 			String nodeColor = "#92B4AF";
-			if (columns.length == 6) {
+			if (columns.length == 6 || columns.length == 7) {
 				String[] intPartnersArray = columns[4].trim().split(",");
 				for (String intPartner : intPartnersArray) {
 					intPartnersList.add(intPartner.trim());
 				}
 				nodeColor = columns[5].trim();
+				if (columns.length == 7) {
+					alias = columns[6].trim();
+				}
 			}
-			init(tax, columns[1].trim(), columns[2].trim(), columns[3].trim(), nodeColor, intPartnersList);
+			init(tax, columns[1].trim(), columns[2].trim(), columns[3].trim(), nodeColor, intPartnersList, alias);
 		} catch (NumberFormatException nfe) {
 			nfe.printStackTrace();
 			init(0, columns[1].trim(), columns[2].trim(), columns[3].trim(), "#92B4AF",
-					new ArrayList<String>());
+					new ArrayList<String>(), null);
 		}
 	}
 
@@ -70,6 +77,8 @@ public class Species implements Comparable<Species> {
 	public String getOfficialName() { return officialName; }
 	
 	public String getColor() { return nodeColor; }
+
+	public String getAlias() { return alias; }
 	
 	public List<String> getInteractionPartners() { return interactionPartners; }
 
@@ -78,13 +87,25 @@ public class Species implements Comparable<Species> {
 		return this.toString().compareTo(t.toString());
 	}
 
-	private void init(int tax, String type, String name, String oName, String nodeColor, List<String> intPartners) {
+	public static List<Species> search(String str) {
+		List<Species> retValue = new ArrayList<Species>();
+		for (String s: nameSpecies.keySet()) {
+			if (s.regionMatches(true, 0, str, 0, str.length())) { 
+				retValue.add(nameSpecies.get(s));
+			}
+		}
+		return retValue;
+	}
+
+	private void init(int tax, String type, String name, String oName, String nodeColor, List<String> intPartners,
+									  String alias) {
 		this.taxon_id = tax;
 		this.type = type;
 		this.compactName = name;
 		this.officialName = oName;
 		this.nodeColor = nodeColor;
 		this.interactionPartners = intPartners;
+		this.alias = alias;
 		// System.out.println("Created species: "+taxon_id+" "+type+" "+compactName+" "+officialName);
 	}
 
@@ -116,6 +137,10 @@ public class Species implements Comparable<Species> {
 		return humanSpecies;
 	}
 
+	public static List<Species> getModelSpecies() {
+		return modelSpecies;
+	}
+
 	public static List<Species> readSpecies(StringManager manager) throws Exception {
 		allSpecies = new ArrayList<Species>();
 		coreSpecies = new ArrayList<Species>();
@@ -123,10 +148,12 @@ public class Species implements Comparable<Species> {
 		mappedSpecies = new ArrayList<Species>();
 		virusSpecies = new ArrayList<Species>();
 		guiSpecies = new ArrayList<Species>();
+		modelSpecies = new ArrayList<Species>();
 		taxIdSpecies = new HashMap<Integer, Species>();
 		nameSpecies = new HashMap<String, Species>();
 
 		InputStream stream = null;
+		// TODO: get this from the web, if possible
 		try {
 			URL resource = Species.class.getResource("/species_string11-5.txt");
 			if (manager.isVirusesEnabled())
@@ -145,6 +172,10 @@ public class Species implements Comparable<Species> {
 					allSpecies.add(s);
 					taxIdSpecies.put(new Integer(s.getTaxId()), s);
 					nameSpecies.put(s.toString(), s);
+					if (s.getAlias() != null) {
+						nameSpecies.put(s.getAlias(), s);
+						modelSpecies.add(s);
+					}
 					if (s.toString().equals("Homo sapiens"))
 						humanSpecies = s;
 					if (s.getType().equals("core")) 
