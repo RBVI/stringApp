@@ -3,9 +3,11 @@ package edu.ucsf.rbvi.stringApp.internal.utils;
 import java.awt.Color;
 import java.awt.Paint;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyEdge;
@@ -46,6 +48,8 @@ public class ViewUtils {
 	public static String STYLE_NAME_ORG_NAMESPACES = "Organism STRING style v1.5";
 	public static String STYLE_ORG = "Organism ";
 
+	public static List<String> organismColors = Arrays.asList("#BA5E5E", "#76A3A3", "#A8A86F", "#7676A3", "#76A376", "#A86FA8");
+	
 	// Our chart strings
 	static String PIE_CHART = "piechart: attributelist=\"enrichmentTermsIntegers\" showlabels=\"false\" colorlist=\"";
 	static String CIRCOS_CHART = "circoschart: firstarc=1.0 arcwidth=0.4 attributelist=\"enrichmentTermsIntegers\" showlabels=\"false\" colorlist=\"";
@@ -517,18 +521,18 @@ public class ViewUtils {
 		return true;
 	}
 
-	private static void updateColorMapHost(StringManager manager, VisualStyle style, CyNetwork net) {
+	private static void updateColorMapHost(StringManager manager, VisualStyle style, CyNetwork net, List<String> originalSpiecesList) {
 		VisualMappingFunctionFactory discreteFactory = manager
 				.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
 
 		// get previous mapping
 		DiscreteMapping<String, Color> dMapping = (DiscreteMapping) style
 				.getVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
-		List<String> species = ModelUtils.getAllNetSpecies(net);
 		// get network species
-		Map<String, Color> mapValues = new HashMap<String, Color>();
+		List<String> species = ModelUtils.getAllNetSpecies(net);
 
 		// save previous color mapping
+		Map<String, Color> mapValues = new HashMap<String, Color>();
 		if (dMapping != null) {
 			Map<String, Color> mappedValues = dMapping.getAll();
 			for (String spKey : mappedValues.keySet()) {
@@ -536,11 +540,42 @@ public class ViewUtils {
 					mapValues.put(spKey, mappedValues.get(spKey));
 				}
 			}
+			style.removeVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
+		} 
+		
+		// make the new mapping after removing the old one
+		dMapping = (DiscreteMapping) discreteFactory.createVisualMappingFunction(
+				ModelUtils.SPECIES, String.class, BasicVisualLexicon.NODE_FILL_COLOR);
+		if (mapValues.size() == 0) {
+			dMapping.putMapValue(originalSpiecesList.get(0), Color.decode(organismColors.get(0)));
+			dMapping.putMapValue(originalSpiecesList.get(1), Color.decode(organismColors.get(1)));
+		} else {
+			int colorNumber = mapValues.size();
+			// Set the species colors
+			for (String sp : species) {
+				if (mapValues.containsKey(sp)) {
+					dMapping.putMapValue(sp, mapValues.get(sp));
+				} else if (colorNumber < 6){
+					dMapping.putMapValue(sp, Color.decode(organismColors.get(colorNumber)));
+				} else {
+					dMapping.putMapValue(sp, getRandomColor());
+				}
+			}			
 		}
+		
+		style.addVisualMappingFunction(dMapping);
+	}
+
+	public static Color getRandomColor() {
+		Random rand = new Random();
+		float r = rand.nextFloat();
+		float g = rand.nextFloat();
+		float b = rand.nextFloat();
+		return new Color(r, g, b);
 	}
 	
-	public static void updateNodeColors(StringManager manager, 
-	                                    CyNetwork net, CyNetworkView view, boolean host) {
+	public static void updateNodeColors(StringManager manager, CyNetwork net, CyNetworkView view,
+			List<String> speciesList) {
 		// manager.flushEvents();
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
 		VisualMappingFunctionFactory discreteFactory = manager
@@ -560,7 +595,8 @@ public class ViewUtils {
 		}
 
 		// Worst case -- can't find a style, so er just bail
-		if (style == null) return;
+		if (style == null)
+			return;
 
 		if (!style.getTitle().startsWith(STYLE_NAME_ORG_NAMESPACES)) {
 			VisualStyleFactory vsf = manager.getService(VisualStyleFactory.class);
@@ -571,11 +607,8 @@ public class ViewUtils {
 			style = stringStyle;
 		}
 
-		if (host) {
-			updateColorMapHost(manager, style, net);
-		} else {
-			updateColorMap(manager, style, net);
-		}
+		updateColorMapHost(manager, style, net, speciesList);
+
 		if (view != null)
 			vmm.setVisualStyle(style, view);
 		vmm.setCurrentVisualStyle(style);

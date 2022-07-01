@@ -248,7 +248,10 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		if (netView != null)
 			ViewUtils.updateEdgeStyle(manager, netView, newEdges);
 		if (!selectedType.equals(species) && !selectedType.equals(ModelUtils.COMPOUND)) {
-			ViewUtils.updateNodeColors(manager, network, netView, true);
+			List<String> speciesList = new ArrayList<String>();
+			speciesList.add(species);
+			speciesList.add(selectedType);
+			ViewUtils.updateNodeColors(manager, network, netView, speciesList);
 		}
 		// System.out.println("Done");
 		if (netView != null) {
