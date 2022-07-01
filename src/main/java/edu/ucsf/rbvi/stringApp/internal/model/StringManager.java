@@ -93,9 +93,11 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	public static String CONFIGURI = "https://jensenlab.org/assets/stringapp/";
 	
-	public static String STRINGResolveURI = "http://version11.string-db.org/api/";
+	public static String STRINGResolveURI = "https://version11.string-db.org/api/";
 	public static String STITCHResolveURI = "http://stitch.embl.de/api/";
 	public static String VIRUSESResolveURI = "http://viruses.string-db.org/cgi/webservice_handler.pl";
+	public static String SpeciesURI = Species.class.getResource("/species_v11.5.tsv").toString();
+	public static String PairsURI = Species.class.getResource("/pairs_v11.5.tsv").toString();
 	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
 	public static String URI = "https://api11.jensenlab.org/";
 	public static String DATAVERSION = "11.5";
@@ -107,7 +109,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String APIVERSION = "String-api-version";
 	public static String RESULT = "QueryResult";
 	
-	public static String STRINGDevelopmentURI = "http://string-gamma.org/api/";
+	public static String STRINGDevelopmentURI = "https://string-gamma.org/api/";
 	// public static String STRING_AGOTOOLenrichmentURI = "https://string-pythongamma.org/api/";
 	// public static String AGOTOOLenrichmentURI = "https://agotool.org/api/";
 	
@@ -176,15 +178,6 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		PaletteProvider brewerProvider = pm.getPaletteProvider("ColorBrewer");
 		brewerPalette = brewerProvider.getPalette("Paired colors");
 
-		// Make sure we've read in our species
-		if (Species.getSpecies() == null) {
-			try {
-				Species.readSpecies(this);
-			} catch (Exception e) {
-				throw new RuntimeException("Can't read species information");
-			}
-		}
-
 		channelColors = new HashMap<>();
 		// Set up our default channel colors
 		channelColors.put("databases",Color.CYAN);
@@ -195,6 +188,16 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		channelColors.put("textmining",new Color(199,234,70)); // Lime green
 		channelColors.put("coexpression", Color.BLACK);
 		channelColors.put("similarity", new Color(163, 161, 255)); // Lila
+
+		// Make sure we've read in our species
+		if (Species.getSpecies() == null) {
+			try {
+				Species.readSpecies(this);
+				Species.readPairs(this);
+			} catch (Exception e) {
+				throw new RuntimeException("Can't read species information");
+			}
+		}
 
 		// Get our default settings
 		configProps = ModelUtils.getPropertyService(this, SavePolicy.CONFIG_DIR);
@@ -207,6 +210,20 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			ModelUtils.setStringProperty(configProps, alternativeCONFIGURIProperty, alternativeCONFIGURI);
 		}
 
+		// If we already have networks loaded, see if they are string networks
+		for (CyNetwork network: registrar.getService(CyNetworkManager.class).getNetworkSet()) {
+			if (ModelUtils.isStringNetwork(network)) {
+				StringNetwork stringNet = new StringNetwork(this);
+				addStringNetwork(stringNet, network);
+			}
+		}
+
+		// Get a session property file for the current session
+		sessionProperties = ModelUtils.getPropertyService(this, SavePolicy.SESSION_FILE);
+
+	}
+
+	public void updateProperties() {
 		// set all stringApp default proerties
 		if (ModelUtils.hasProperty(configProps, ShowStructureImages)) {
 			setShowImage(ModelUtils.getBooleanProperty(configProps,ShowStructureImages));
@@ -265,18 +282,6 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		if (ModelUtils.hasProperty(configProps, "channelColors")) {
 			setChannelColors(ModelUtils.getStringProperty(configProps,"channelColors"));
 		}
-
-		// If we already have networks loaded, see if they are string networks
-		for (CyNetwork network: registrar.getService(CyNetworkManager.class).getNetworkSet()) {
-			if (ModelUtils.isStringNetwork(network)) {
-				StringNetwork stringNet = new StringNetwork(this);
-				addStringNetwork(stringNet, network);
-			}
-		}
-
-		// Get a session property file for the current session
-		sessionProperties = ModelUtils.getPropertyService(this, SavePolicy.SESSION_FILE);
-
 	}
 
 	public void updateURIsFromConfig() {
@@ -316,6 +321,12 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 					} 
 					if (uris.containsKey("VIRUSESResolveURI")) {
 						VIRUSESResolveURI = uris.get("VIRUSESResolveURI").toString();
+					}
+					if (uris.containsKey("SpeciesURI")) {
+						SpeciesURI = uris.get("SpeciesURI").toString();
+					}
+					if (uris.containsKey("PairsURI")) {
+						PairsURI = uris.get("PairsURI").toString();
 					}
 					if (uris.containsKey("DataVersion")) {
 						DATAVERSION = uris.get("DataVersion").toString();

@@ -111,6 +111,9 @@ public class CyActivator extends AbstractCyActivator {
 		
 		// Get configuration and messages for user from server 
 		manager.updateURIsFromConfig();
+
+		// Update all of our default properties
+		manager.updateProperties();
 		
 		{
 			// Register our network added listener and session loaded listener

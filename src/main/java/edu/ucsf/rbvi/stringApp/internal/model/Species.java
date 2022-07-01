@@ -25,15 +25,14 @@ public class Species implements Comparable<Species> {
 	private String type;
 	private String compactName;
 	private String officialName;
-	private String nodeColor;
 	private String alias;
 	private List<String> interactionPartners;
 	private static Species humanSpecies; 
 
 	public static String[] category = { "all", "core", "periphery", "mapped", "viral"};
 
-	public Species(int tax, String type, String name, String oName, String nodeColor, List<String> intPartners, String alias) {
-		init(tax, type, name, oName, nodeColor, intPartners, alias);
+	public Species(int tax, String type, String name, String oName, String alias) {
+		init(tax, type, name, oName, alias);
 	}
 
 	public Species(String line) {
@@ -47,22 +46,16 @@ public class Species implements Comparable<Species> {
 		try {
 			int tax = Integer.parseInt(columns[0]);
 			List<String> intPartnersList = new ArrayList<String>();
-			String nodeColor = "#92B4AF";
-			if (columns.length == 6 || columns.length == 7) {
-				String[] intPartnersArray = columns[4].trim().split(",");
-				for (String intPartner : intPartnersArray) {
-					intPartnersList.add(intPartner.trim());
-				}
-				nodeColor = columns[5].trim();
-				if (columns.length == 7) {
-					alias = columns[6].trim();
+
+			if (columns.length == 4 || columns.length == 5) {
+				if (columns.length == 5) {
+					alias = columns[4].trim();
 				}
 			}
-			init(tax, columns[1].trim(), columns[2].trim(), columns[3].trim(), nodeColor, intPartnersList, alias);
+			init(tax, columns[1].trim(), columns[2].trim(), columns[3].trim(), alias);
 		} catch (NumberFormatException nfe) {
 			nfe.printStackTrace();
-			init(0, columns[1].trim(), columns[2].trim(), columns[3].trim(), "#92B4AF",
-					new ArrayList<String>(), null);
+			init(0, columns[1].trim(), columns[2].trim(), columns[3].trim(), null);
 		}
 	}
 
@@ -76,11 +69,10 @@ public class Species implements Comparable<Species> {
 
 	public String getOfficialName() { return officialName; }
 	
-	public String getColor() { return nodeColor; }
-
 	public String getAlias() { return alias; }
 	
 	public List<String> getInteractionPartners() { return interactionPartners; }
+	public void setInteractionPartners(List<String> partners) { interactionPartners = partners; }
 
 	public int compareTo(Species t) {
 		if (t.toString() == null) return 1;
@@ -97,14 +89,12 @@ public class Species implements Comparable<Species> {
 		return retValue;
 	}
 
-	private void init(int tax, String type, String name, String oName, String nodeColor, List<String> intPartners,
-									  String alias) {
+	private void init(int tax, String type, String name, String oName, String alias) {
 		this.taxon_id = tax;
 		this.type = type;
 		this.compactName = name;
 		this.officialName = oName;
-		this.nodeColor = nodeColor;
-		this.interactionPartners = intPartners;
+		this.interactionPartners = new ArrayList<String>();
 		this.alias = alias;
 		// System.out.println("Created species: "+taxon_id+" "+type+" "+compactName+" "+officialName);
 	}
@@ -141,6 +131,40 @@ public class Species implements Comparable<Species> {
 		return modelSpecies;
 	}
 
+	public static List<Species> readPairs(StringManager manager) throws Exception {
+		InputStream stream = null;
+		try {
+			URL pairsURL = new URL(StringManager.PairsURI);
+			stream = pairsURL.openConnection().getInputStream();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try (Scanner scanner = new Scanner(stream)) {
+ 
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				if (line.startsWith("#")) 
+					continue;
+				String[] ids = line.split("\t");
+				Integer sourceTax = Integer.valueOf(ids[0]);
+				List<String> pairs = Arrays.asList(ids[1].split(","));
+				if (taxIdSpecies.containsKey(sourceTax)) {
+					taxIdSpecies.get(sourceTax).setInteractionPartners(pairs);
+				}
+
+			}
+
+			scanner.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+
+		return allSpecies;
+	}
+
 	public static List<Species> readSpecies(StringManager manager) throws Exception {
 		allSpecies = new ArrayList<Species>();
 		coreSpecies = new ArrayList<Species>();
@@ -153,12 +177,9 @@ public class Species implements Comparable<Species> {
 		nameSpecies = new HashMap<String, Species>();
 
 		InputStream stream = null;
-		// TODO: get this from the web, if possible
 		try {
-			URL resource = Species.class.getResource("/species_string11-5.txt");
-			if (manager.isVirusesEnabled())
-				resource = Species.class.getResource("/species_viruses_string11-5.txt");				
-			stream = resource.openConnection().getInputStream();
+			URL speciesURL = new URL(StringManager.SpeciesURI);
+			stream = speciesURL.openConnection().getInputStream();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -213,6 +234,7 @@ public class Species implements Comparable<Species> {
 		//System.out.println("mapped species: " + mappedSpecies.size());
 		Collections.sort(virusSpecies);
 		//System.out.println("virus species: " + virusSpecies.size());
+		Collections.sort(modelSpecies);
 		return guiSpecies;
 	}
 
@@ -279,13 +301,4 @@ public class Species implements Comparable<Species> {
 		return -1;
 	}
 	
-	public static String getSpeciesColor(String speciesName) {
-		for (Species sp : allSpecies) {
-			if (sp.getName().equals(speciesName)) {
-				return sp.getColor();
-			}
-		}
-		return "#FFFFFF";
-	}
-
 }

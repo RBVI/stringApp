@@ -537,33 +537,6 @@ public class ViewUtils {
 				}
 			}
 		}
-		// make the new mapping after removing the old one
-		style.removeVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
-		dMapping = (DiscreteMapping) discreteFactory.createVisualMappingFunction(
-				ModelUtils.SPECIES, String.class, BasicVisualLexicon.NODE_FILL_COLOR);
-		// Set the species colors
-		for (String sp : species) {
-			if (!mapValues.containsKey(sp)) {
-				dMapping.putMapValue(sp, Color.decode(Species.getSpeciesColor(sp)));
-			} else {
-				dMapping.putMapValue(sp, mapValues.get(sp));
-			}
-		}
-
-		// DiscreteMapping<String,Color> dMapping =
-		// (DiscreteMapping) discreteFactory.createVisualMappingFunction("Name", String.class,
-		// BasicVisualLexicon.NODE_FILL_COLOR);
-		//
-		// // Set the node colors around the color wheel
-		// for (View<CyNode> nv: view.getNodeViews()) {
-		// Color c =
-		// Color.decode(view.getModel().getRow(nv.getModel()).get(ModelUtils.SPECIES_COLOR,
-		// String.class));
-		// String name = view.getModel().getRow(nv.getModel()).get(CyNetwork.NAME,
-		// String.class);
-		// dMapping.putMapValue(name, c);
-		// }
-		style.addVisualMappingFunction(dMapping);
 	}
 	
 	public static void updateNodeColors(StringManager manager, 

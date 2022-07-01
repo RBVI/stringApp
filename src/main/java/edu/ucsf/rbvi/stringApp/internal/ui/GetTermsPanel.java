@@ -18,6 +18,7 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -182,6 +183,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		// Create the species panel
 		// Retrieve only the list of main species for now, otherwise the dialogs are very slow
 		List<Species> speciesList = Species.getModelSpecies();
+		/*
 		if (speciesList == null) {
 			try {
 				Species.readSpecies(manager);
@@ -192,6 +194,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 				return;
 			}
 		}
+		*/
 		JPanel organismBox = createOrgBox();
 		if (!queryAddNodes) {
 			JPanel speciesBox = createSpeciesComboBox(speciesList);
@@ -276,10 +279,20 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		speciesPanel.add(speciesLabel, c);
 		speciesCombo = new JComboBox<Species>(speciesList.toArray(new Species[1]));
 
-		if (netSpecies == null)
-			speciesCombo.setSelectedItem(manager.getDefaultSpecies());
-		else
-			speciesCombo.setSelectedItem(Species.getSpecies(netSpecies));		
+		Species defaultSpecies;
+		if (netSpecies == null) {
+			defaultSpecies = manager.getDefaultSpecies();
+		} else {
+			defaultSpecies = Species.getSpecies(netSpecies);
+		}
+
+		if (!speciesList.contains(defaultSpecies)) {
+			speciesList.add(defaultSpecies);
+			Collections.sort(speciesList);
+		}
+		speciesCombo.setSelectedItem(defaultSpecies);
+
+
 		JComboBoxDecorator.decorate(speciesCombo, true, true); 
 		c.right().expandHoriz().insets(0,5,0,5);
 		speciesPanel.add(speciesCombo, c);
