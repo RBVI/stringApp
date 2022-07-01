@@ -7,7 +7,6 @@ import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.getIconFont;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -16,24 +15,18 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TreeMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -50,8 +43,6 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 
 import org.cytoscape.application.events.SetCurrentNetworkEvent;
 import org.cytoscape.application.events.SetCurrentNetworkListener;
@@ -62,24 +53,20 @@ import org.cytoscape.application.swing.CytoPanelComponent2;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.application.swing.CytoPanelState;
 import org.cytoscape.command.AvailableCommands;
+import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
-import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.model.CyTableFactory;
 import org.cytoscape.model.CyTableManager;
 import org.cytoscape.model.SavePolicy;
-import org.cytoscape.model.events.RowSetRecord;
 import org.cytoscape.model.events.RowsSetEvent;
 import org.cytoscape.model.events.RowsSetListener;
 import org.cytoscape.model.events.SelectedNodesAndEdgesEvent;
 import org.cytoscape.model.events.SelectedNodesAndEdgesListener;
 import org.cytoscape.util.swing.CyColorPaletteChooserFactory;
 import org.cytoscape.util.swing.IconManager;
-import org.cytoscape.view.model.CyNetworkView;
-import org.cytoscape.view.model.CyNetworkViewManager;
-import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 // import org.jcolorbrewer.ColorBrewer;
@@ -87,14 +74,10 @@ import org.cytoscape.work.TaskManager;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
-import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTableTask;
-import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTask;
-import edu.ucsf.rbvi.stringApp.internal.tasks.FilterEnrichmentTableTask;
-import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
-import edu.ucsf.rbvi.stringApp.internal.tasks.NodeFilterEnrichmentTableTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.EnrichmentMapAdvancedTask;
-import edu.ucsf.rbvi.stringApp.internal.tasks.EnrichmentMapTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.EnrichmentSettingsTask;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTableTask;
+import edu.ucsf.rbvi.stringApp.internal.tasks.FilterEnrichmentTableTask;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.TextIcon;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
@@ -123,6 +106,7 @@ public class EnrichmentCytoPanel extends JPanel
 	JLabel labelPPIEnrichment;
 	JLabel labelRows;
 	JMenuItem menuItemReset; 
+	JMenuItem menuItemAddToNet; 
 	JPopupMenu popupMenu;
 	EnrichmentTableModel tableModel;
 
@@ -382,6 +366,14 @@ public class EnrichmentCytoPanel extends JPanel
 			if (table.getSelectedRow() > -1) {
 				resetColor(table.getSelectedRow());
 			}
+		} else if (e.getSource().equals(menuItemAddToNet)) {
+			Component c = (Component)e.getSource();
+	        JPopupMenu popup = (JPopupMenu)c.getParent();
+	        JTable table = (JTable)popup.getInvoker();
+			if (table.getSelectedRow() > -1) {
+				// System.out.println(table.getSelectedRows().length);
+				addTermsToNetwork(table.getSelectedRows());
+			}
 		}
 	}
 
@@ -590,6 +582,9 @@ public class EnrichmentCytoPanel extends JPanel
 		menuItemReset = new JMenuItem("Remove color");
 		menuItemReset.addActionListener(this);
 		popupMenu.add(menuItemReset);
+		menuItemAddToNet = new JMenuItem("Add term(s) to network");
+		menuItemAddToNet.addActionListener(this);
+		popupMenu.add(menuItemAddToNet);
 		jTable.setComponentPopupMenu(popupMenu);
 		jTable.addMouseListener(new MouseAdapter() {
 			
@@ -683,6 +678,63 @@ public class EnrichmentCytoPanel extends JPanel
 		}
 	}
 
+	
+	public void addTermsToNetwork(int[] selectedRows) {
+		JTable currentTable = enrichmentTables.get(showTable);
+		// currentRow = currentTable.getSelectedRow();
+		CyNetwork network = manager.getCurrentNetwork();
+		if (network == null || tableModel == null)
+			return;
+		// create needed columns
+		ModelUtils.createColumnIfNeeded(network.getDefaultNodeTable(), String.class, ModelUtils.DISPLAY);
+		ModelUtils.createColumnIfNeeded(network.getDefaultNodeTable(), String.class, ModelUtils.TYPE);
+		ModelUtils.createColumnIfNeeded(network.getDefaultNodeTable(), Double.class, ModelUtils.NODE_ENRICHMENT_FDR);
+		ModelUtils.createColumnIfNeeded(network.getDefaultNodeTable(), String.class, ModelUtils.NODE_ENRICHMENT_CAT);
+		ModelUtils.createColumnIfNeeded(network.getDefaultNodeTable(), Integer.class, ModelUtils.NODE_ENRICHMENT_GENES);
+		ModelUtils.createColumnIfNeeded(network.getDefaultNodeTable(), Integer.class, ModelUtils.NODE_ENRICHMENT_BG);
+		// iterate over all selected row and create nodes and edges
+		for (int i : selectedRows) {
+			// extract term infos
+			String termName = (String) currentTable.getModel()
+					.getValueAt(currentTable.convertRowIndexToModel(i), EnrichmentTerm.nameColumn);
+			String termDesc = (String) currentTable.getModel()
+					.getValueAt(currentTable.convertRowIndexToModel(i), EnrichmentTerm.descColumn);
+			Double termFDR = (Double) currentTable.getModel()
+					.getValueAt(currentTable.convertRowIndexToModel(i), EnrichmentTerm.fdrColumn);
+			String termCat = (String) currentTable.getModel()
+					.getValueAt(currentTable.convertRowIndexToModel(i), EnrichmentTerm.catColumn);
+			Integer termGenes = (Integer) currentTable.getModel()
+					.getValueAt(currentTable.convertRowIndexToModel(i), EnrichmentTerm.genesColumn);
+			Integer termBG = (Integer) currentTable.getModel()
+					.getValueAt(currentTable.convertRowIndexToModel(i), EnrichmentTerm.bgColumn);
+			// create node
+			CyNode node = network.addNode();
+			// set node infos
+			CyRow row = network.getRow(node);
+			row.set(CyNetwork.NAME, termName);
+			row.set(ModelUtils.DISPLAY, termDesc);
+			row.set(ModelUtils.TYPE, "enriched_term");
+			row.set(ModelUtils.NODE_ENRICHMENT_FDR, termFDR);
+			row.set(ModelUtils.NODE_ENRICHMENT_CAT, termCat);
+			row.set(ModelUtils.NODE_ENRICHMENT_GENES, termGenes);
+			row.set(ModelUtils.NODE_ENRICHMENT_BG, termBG);
+			// get nodes associated with term
+			Object cellContent = currentTable.getModel().getValueAt(
+					currentTable.convertRowIndexToModel(i), EnrichmentTerm.nodeSUIDColumn);
+			// create edges for all associated nodes
+			if (cellContent instanceof List) {
+				List<Long> nodeIDs = (List<Long>) cellContent;
+				for (Long nodeID : nodeIDs) {
+					CyNode stringNode = network.getNode(nodeID);
+					CyEdge edge = network.addEdge(node, stringNode, false);
+					network.getRow(edge).set(CyNetwork.NAME,
+							termName + " (" + "annotates" + ") " + network.getRow(stringNode).get(CyNetwork.NAME, String.class));
+					network.getRow(edge).set(CyEdge.INTERACTION, "enrichment");
+				}
+			}
+		}
+	}
+	
 	public void resetColor(int currentRow) {
 		JTable currentTable = enrichmentTables.get(showTable);
 		// currentRow = currentTable.getSelectedRow();

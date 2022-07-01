@@ -147,6 +147,13 @@ public class ModelUtils {
 	public static int DEF_VIEW_THRESHOLD = 3000;
 	public static String VIEW_THRESHOLD = "viewThreshold";
 	
+	// Enrichment node information
+	public static String ENRICHMENT_NAMESPACE = "enrichment";
+	public static String NODE_ENRICHMENT_FDR = ENRICHMENT_NAMESPACE + NAMESPACE_SEPARATOR + "FDR value";
+	public static String NODE_ENRICHMENT_GENES = ENRICHMENT_NAMESPACE + NAMESPACE_SEPARATOR + "# genes";
+	public static String NODE_ENRICHMENT_BG = ENRICHMENT_NAMESPACE + NAMESPACE_SEPARATOR + "# background genes";
+	public static String NODE_ENRICHMENT_CAT = ENRICHMENT_NAMESPACE + NAMESPACE_SEPARATOR + "category";
+	
 	// Other stuff
 	public static String COMPOUND = "STITCH compounds";
 	public static String EMPTYLINE = "--------";

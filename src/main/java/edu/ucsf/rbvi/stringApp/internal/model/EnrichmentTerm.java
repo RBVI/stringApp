@@ -137,11 +137,15 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 			colGenesCount, colGenesBG, colGenes, colGenesSUID };
 	public static final String[] swingColumnsEnrichmentOld = new String[] { colCategory, colChartColor, colName, colDescription, colFDR,
 			colGenesCountOld, colGenesBG, colGenesOld, colGenesSUID };
-	public static final int nodeSUIDColumn = 8;
-	public static final int fdrColumn = 4;
 	// public static final int chartColumnSel = 1;
+	public static final int catColumn = 0;
 	public static final int chartColumnCol = 1;
 	public static final int nameColumn = 2;
+	public static final int descColumn = 3;
+	public static final int fdrColumn = 4;
+	public static final int genesColumn = 5;
+	public static final int bgColumn = 6;
+	public static final int nodeSUIDColumn = 8;
 	
 	public static final String[] swingColumnsPublications = new String[] { colIDPubl, colYear, colDescription, colFDR,
 			colGenesCount, colGenesBG, colGenes, colGenesSUID };

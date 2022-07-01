@@ -250,6 +250,8 @@ public class EnrichmentTableModel extends AbstractTableModel {
 	}
 
 	private Long[] removeRedundancy(Long[] rowArray, int length, double cutoff) {
+		if (rowArray.length == 0) 
+			return new Long[1];
 		// Sort by pValue
 		Long[] sortedArray = pValueSort(rowArray, length);
 
