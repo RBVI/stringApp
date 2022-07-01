@@ -25,14 +25,14 @@ public class GetSpeciesTask extends AbstractTask implements ObservableTask {
 	@Tunable(description="Category of species to list", 
 	         longDescription="Select which category to list from these: all, core, periphery, mapped, and viral species.",
 	         exampleStringValue="core",
-	         context="nogui", required=true)
+	         context="nogui", required=false)
 	public ListSingleSelection<String> category;
 
 	
 	public GetSpeciesTask(StringManager manager) {
 		this.manager = manager;
 		category = new ListSingleSelection<>(Species.category);
-		category.setSelectedValue("core");
+		category.setSelectedValue("all");
 	}
 
 	public void run(TaskMonitor monitor) throws Exception {
