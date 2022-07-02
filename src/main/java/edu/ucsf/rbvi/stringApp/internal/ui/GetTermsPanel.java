@@ -183,18 +183,6 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		// Create the species panel
 		// Retrieve only the list of main species for now, otherwise the dialogs are very slow
 		List<Species> speciesList = Species.getModelSpecies();
-		/*
-		if (speciesList == null) {
-			try {
-				Species.readSpecies(manager);
-				speciesList = Species.getModelSpecies();
-			} catch (Exception e) {
-				manager.error("Unable to get species: "+e.getMessage());
-				e.printStackTrace();
-				return;
-			}
-		}
-		*/
 		JPanel organismBox = createOrgBox();
 		if (!queryAddNodes) {
 			JPanel speciesBox = createSpeciesComboBox(speciesList);
@@ -281,7 +269,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 
 		Species defaultSpecies;
 		if (netSpecies == null) {
-			defaultSpecies = manager.getDefaultSpecies();
+			defaultSpecies = Species.getSpecies(manager.getDefaultSpecies());
 		} else {
 			defaultSpecies = Species.getSpecies(netSpecies);
 		}

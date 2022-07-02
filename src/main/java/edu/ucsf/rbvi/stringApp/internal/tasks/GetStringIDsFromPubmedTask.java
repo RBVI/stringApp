@@ -77,6 +77,9 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 			this.errorMsg = e.getMessage();
 			monitor.showMessage(TaskMonitor.Level.ERROR, this.errorMsg);
 			return;
+		} catch (Exception e) {
+			// Probably a timeout, but it shouldn't happen
+			return;
 		}
 		
 		if (object == null) {

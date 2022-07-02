@@ -51,6 +51,9 @@ public class GetDiseaseTermsTask extends AbstractTask implements ObservableTask 
 			this.errorMsg = e.getMessage();
 			monitor.showMessage(TaskMonitor.Level.ERROR, this.errorMsg);
 			return;
+		} catch (Exception e) {
+			// Probably a timeout, but it shouldn't happen
+			return;
 		}
 		// Object results = HttpUtils.testJSON(url, args, stringManager, response);
 		if (results == null) {

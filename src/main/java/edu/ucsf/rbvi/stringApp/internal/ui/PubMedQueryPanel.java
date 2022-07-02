@@ -85,7 +85,7 @@ public class PubMedQueryPanel extends JPanel {
 	NumberFormat intFormatter = new DecimalFormat("#0");
 
 	private boolean ignore = false;
-	private Species species;
+	private String species;
 
 	private int confidence = 40;
 	private NetworkType networkType = NetworkType.FUNCTIONAL; 
@@ -130,7 +130,7 @@ public class PubMedQueryPanel extends JPanel {
 		this.manager = manager;
 		this.stringNetwork = stringNetwork;
 		this.initialStringNetwork = stringNetwork;
-		this.species = species;
+		this.species = species.getName();
 		this.confidence = confidence;
 		this.networkType = netType;
 		this.additionalNodes = additionalNodes;
@@ -150,16 +150,6 @@ public class PubMedQueryPanel extends JPanel {
 		// Create the species panel
 		// Retrieve only the list of main species for now, otherwise the dialogs are very slow
 		List<Species> speciesList = Species.getModelSpecies();
-		if (speciesList == null) {
-			try {
-				Species.readSpecies(manager);
-				speciesList = Species.getModelSpecies();
-			} catch (Exception e) {
-				manager.error("Unable to get species: "+e.getMessage());
-				e.printStackTrace();
-				return;
-			}
-		}
 		JPanel speciesBox = createSpeciesComboBox(speciesList);
 		add(speciesBox, c.expandHoriz().insets(0,5,0,5));
 
@@ -210,9 +200,9 @@ public class PubMedQueryPanel extends JPanel {
 		speciesCombo = new JComboBox<Species>(speciesList.toArray(new Species[0]));
 
 		if (species == null) {
-			speciesCombo.setSelectedItem(manager.getDefaultSpecies());
+			speciesCombo.setSelectedItem(Species.getSpecies(manager.getDefaultSpecies()));
 		} else {
-			speciesCombo.setSelectedItem(species);
+			speciesCombo.setSelectedItem(Species.getSpecies(species));
 		}
 		JComboBoxDecorator.decorate(speciesCombo, true, true); 
 		c.right().expandHoriz().insets(0,5,0,5);
