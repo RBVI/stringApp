@@ -53,6 +53,7 @@ public class HttpUtils {
 		}
 
 		try {
+			manager.info("GETting JSON object from "+trueURL.toString());
 			URLConnection connection = manager.getService(StreamUtil.class).getURLConnection(trueURL);
 			if (timeout > 0) {
 				connection.setConnectTimeout(timeout);
@@ -182,6 +183,7 @@ public class HttpUtils {
 
 
 	private static URLConnection executeWithRedirect(StringManager manager, String url, Map<String, String> queryMap) throws Exception {
+		manager.info("POSTing JSON from "+url);
 		// Get the connection from Cytoscape
 		HttpURLConnection connection = (HttpURLConnection) manager.getService(StreamUtil.class).getURLConnection( new URL(url) );
 		
@@ -203,6 +205,7 @@ public class HttpUtils {
 		case HttpURLConnection.HTTP_SEE_OTHER: // code 303
 			// Got a redirect.
 			// Get the new location
+			manager.info("...but we were redirected to "+connection.getHeaderField("Location"));
 			return executeWithRedirect(manager, connection.getHeaderField("Location"), queryMap);
 		case HttpURLConnection.HTTP_INTERNAL_ERROR:
 		case HttpURLConnection.HTTP_BAD_REQUEST:
