@@ -63,7 +63,6 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	private int additionalNodes = 0;
 	private SearchOptionsPanel optionsPanel = null;
 	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
-	private final Map<String, CyNode> nodeMap;
 	private TaskMonitor monitor;
 
 	@Tunable(description="Network to set as a STRING network", 
@@ -133,7 +132,6 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 			tableColumn = null;
 		}
 		networkType.setSelectedValue(manager.getDefaultNetworkType());
-		nodeMap = new HashMap<>();
 	}
 
 	public StringifyTask(final StringManager manager, final CyNetwork net, double confidence, Species sp, String nodeColumn, NetworkType type) {
@@ -152,7 +150,6 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		}
 		cutoff.setValue(confidence);
 		networkType.setSelectedValue(type);
-		nodeMap = new HashMap<>();
 	}
 
 	public void run(TaskMonitor monitor) {
@@ -389,19 +386,23 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		StringManager manager;
 		boolean copyNotMappedNodes;
 
+		// Map of nodes in the old network to nodes in the new network.
+		private final Map<CyNode, CyNode> nodeMap;
+
 		CopyTask(StringManager manager, String col, CyNetwork network, StringNetwork stringNetwork, boolean includeNotMapped) {
 			this.manager = manager;
 			this.column = col;
 			this.network = network;
 			this.stringNetwork = stringNetwork;
 			this.copyNotMappedNodes = includeNotMapped;
+			this.nodeMap = new HashMap<CyNode, CyNode>();
 		}
 
 		public void run(TaskMonitor monitor) {
 			CyNetwork loadedNetwork = stringNetwork.getNetwork();
 
 			// Get all of the nodes in the network
-			ModelUtils.createNodeMap(loadedNetwork, nodeMap, ModelUtils.QUERYTERM);
+			ModelUtils.createNodeMap(network, loadedNetwork, nodeMap, column, ModelUtils.QUERYTERM);
 
 			List<String> cols = new ArrayList<String>();
 			cols.add(ModelUtils.QUERYTERM);

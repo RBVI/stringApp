@@ -1778,15 +1778,16 @@ public class ModelUtils {
 		}
 	}
 
-	public static void copyNodes(CyNetwork fromNetwork, CyNetwork toNetwork, Map<String, CyNode> nodeMap, 
+	public static void copyNodes(CyNetwork fromNetwork, CyNetwork toNetwork, Map<CyNode, CyNode> nodeMap, 
 	                             String keyColumn, List<String> toColumns) {
 		for (CyNode node: fromNetwork.getNodeList()) {
 			String key = fromNetwork.getRow(node).get(keyColumn, String.class);
 			// TODO: double-check what happens when key == null
-			if (key != null && !nodeMap.containsKey(key)) {
+			if (!nodeMap.containsKey(node)) {
 				CyNode newNode = toNetwork.addNode();
-				nodeMap.put(key, newNode);
-				toNetwork.getRow(newNode).set(CyNetwork.NAME, key);
+				nodeMap.put(node, newNode);
+				String name = fromNetwork.getRow(node).get(keyColumn, String.class);
+				toNetwork.getRow(newNode).set(CyNetwork.NAME, name);
 				for (String col: toColumns) {
 					toNetwork.getRow(newNode).set(col, key);
 				}
@@ -1794,11 +1795,19 @@ public class ModelUtils {
 		}
 	}
 
-	public static void createNodeMap(CyNetwork network, Map<String, CyNode> nodeMap, String column) {
-		// Get all of the nodes in the network
-		for (CyNode node: network.getNodeList()) {
-			String key = network.getRow(node).get(column, String.class);
-			nodeMap.put(key, node);
+	public static void createNodeMap(CyNetwork fromNetwork, CyNetwork toNetwork, Map<CyNode, CyNode> nodeMap, 
+	                                 String column, String targetColumn) {
+		Map<String, CyNode> keyMap = new HashMap<String, CyNode>();
+		// Get all of the nodes in the new network
+		for (CyNode node: toNetwork.getNodeList()) {
+			String key = toNetwork.getRow(node).get(targetColumn, String.class);
+			keyMap.put(key, node);
+		}
+
+		for (CyNode node: fromNetwork.getNodeList()) {
+			String keyColumn = fromNetwork.getRow(node).get(column, String.class);
+			if (keyMap.containsKey(keyColumn))
+				nodeMap.put(node, keyMap.get(keyColumn));
 		}
 	}
 
@@ -1840,16 +1849,16 @@ public class ModelUtils {
 	}
 
 	public static void copyNodePositions(StringManager manager, CyNetwork from, CyNetwork to, 
-	                                     Map<String, CyNode> nodeMap, String column) {
+	                                     Map<CyNode, CyNode> nodeMap, String column) {
 		CyNetworkView fromView = getNetworkView(manager, from);
 		CyNetworkView toView = getNetworkView(manager, to);
 		if (fromView == null || toView == null) return;
 		for (View<CyNode> nodeView: fromView.getNodeViews()) {
 			// Get the to node
-			String nodeKey = from.getRow(nodeView.getModel()).get(column, String.class);
-			if (!nodeMap.containsKey(nodeKey)) 
+			CyNode fromNode = nodeView.getModel();
+			if (!nodeMap.containsKey(fromNode))
 				continue;
-			View<CyNode> toNodeView = toView.getNodeView(nodeMap.get(nodeKey));
+			View<CyNode> toNodeView = toView.getNodeView(nodeMap.get(fromNode));
 			// Copy over the positions
 			Double x = nodeView.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION);
 			Double y = nodeView.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION);
@@ -1862,7 +1871,7 @@ public class ModelUtils {
 	}
 
 	public static void copyEdges(CyNetwork fromNetwork, CyNetwork toNetwork, 
-	                             Map<String, CyNode> nodeMap, String column) {
+	                             Map<CyNode, CyNode> nodeMap, String column) {
 		List<String> columnsCreated = copyColumns(fromNetwork.getDefaultEdgeTable(), toNetwork.getDefaultEdgeTable());
 		List<CyEdge> edgeList = fromNetwork.getEdgeList();
 		for (CyEdge edge: edgeList) {
@@ -1870,14 +1879,11 @@ public class ModelUtils {
 			CyNode targetNode = edge.getTarget();
 			boolean isDirected = edge.isDirected();
 
-			String source = fromNetwork.getRow(sourceNode).get(column, String.class);
-			String target = fromNetwork.getRow(targetNode).get(column, String.class);
-			
-			if (!nodeMap.containsKey(source) || !nodeMap.containsKey(target))
+			if (!nodeMap.containsKey(sourceNode) || !nodeMap.containsKey(targetNode))
 				continue;
 
-			CyNode newSource = nodeMap.get(source);
-			CyNode newTarget = nodeMap.get(target);
+			CyNode newSource = nodeMap.get(sourceNode);
+			CyNode newTarget = nodeMap.get(targetNode);
 
 			CyEdge newEdge = toNetwork.addEdge(newSource, newTarget, isDirected);
 			copyRow(fromNetwork.getDefaultEdgeTable(), toNetwork.getDefaultEdgeTable(), edge, newEdge, columnsCreated);
@@ -1896,14 +1902,13 @@ public class ModelUtils {
 	}
 
 	public static void copyNodeAttributes(CyNetwork from, CyNetwork to, 
-	                                      Map<String, CyNode> nodeMap, String column) {
+	                                      Map<CyNode, CyNode> nodeMap, String column) {
 		// System.out.println("copyNodeAttributes");
 		List<String> columnsCreated = copyColumns(from.getDefaultNodeTable(), to.getDefaultNodeTable());
 		for (CyNode node: from.getNodeList()) {
-			String nodeKey = from.getRow(node).get(column, String.class);
-			if (!nodeMap.containsKey(nodeKey))
+			if (!nodeMap.containsKey(node))
 				continue;
-			CyNode newNode = nodeMap.get(nodeKey);
+			CyNode newNode = nodeMap.get(node);
 			copyRow(from.getDefaultNodeTable(), to.getDefaultNodeTable(), node, newNode, columnsCreated);
 		}
 	}
