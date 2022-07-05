@@ -229,7 +229,7 @@
 8090	core	Oryzias latipes	Oryzias latipes
 8128	core	Oreochromis niloticus	Oreochromis niloticus
 8153	periphery	Haplochromis burtoni	Haplochromis burtoni
-8364	core	Xenopus (Silurana) tropicalis	Xenopus tropicalis	African clawed frog
+8364	core	Xenopus (Silurana) tropicalis	Xenopus tropicalis
 8469	periphery	Chelonia mydas	Chelonia mydas
 8479	core	Chrysemys picta	Chrysemys picta
 8496	periphery	Alligator mississippiensis	Alligator mississippiensis
@@ -5942,7 +5942,7 @@
 46731	mapped	Pocillopora damicornis	Pocillopora damicornis
 36022	mapped	Cyberlindnera fabianii	Cyberlindnera fabianii
 930089	mapped	Bipolaris zeicola 26-R-13	Bipolaris zeicola 26-R-13
-8355	mapped	Xenopus laevis	Xenopus laevis
+8355	mapped	Xenopus laevis	Xenopus laevis	African clawed frog
 6265	mapped	Toxocara canis	Toxocara canis
 70415	mapped	Trichuris muris	Trichuris muris
 337451	mapped	Cinnamomum micranthum f. kanehirae	Cinnamomum micranthum f. kanehirae
