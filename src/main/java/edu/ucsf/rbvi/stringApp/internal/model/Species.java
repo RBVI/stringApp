@@ -138,6 +138,8 @@ public class Species implements Comparable<Species> {
 			stream = pairsURL.openConnection().getInputStream();
 		} catch (Exception e) {
 			e.printStackTrace();
+			URL pairsURL = new URL(Species.class.getResource("/pairs_v11.5.tsv").toString());
+			stream = pairsURL.openConnection().getInputStream();	
 		}
 
 		try (Scanner scanner = new Scanner(stream)) {
@@ -182,6 +184,8 @@ public class Species implements Comparable<Species> {
 			stream = speciesURL.openConnection().getInputStream();
 		} catch (Exception e) {
 			e.printStackTrace();
+			URL speciesURL = new URL(Species.class.getResource("/species_v11.5.tsv").toString());
+			stream = speciesURL.openConnection().getInputStream();
 		}
 		
 		try (Scanner scanner = new Scanner(stream)) {
