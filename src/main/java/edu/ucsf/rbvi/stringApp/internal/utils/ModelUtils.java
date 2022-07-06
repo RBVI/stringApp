@@ -1870,6 +1870,20 @@ public class ModelUtils {
 		}
 	}
 
+	public static void overwriteDisplayName(StringManager manager, CyNetwork from, CyNetwork to,
+										Map<CyNode, CyNode> nodeMap, String column) {
+		for (CyNode fromNode: from.getNodeList()) {
+			if (!nodeMap.containsKey(fromNode))
+				continue;
+			CyNode toNode = nodeMap.get(fromNode);
+			String name_toNode = (String) to.getDefaultNodeTable().getRow(toNode.getSUID()).getRaw(ModelUtils.DISPLAY);
+			if (name_toNode == null || name_toNode == "") {
+				String name_fromNode = (String) from.getDefaultNodeTable().getRow(fromNode.getSUID()).getRaw(column);
+				to.getDefaultNodeTable().getRow(toNode.getSUID()).set(ModelUtils.DISPLAY, name_fromNode);
+			}
+		}
+	}
+	
 	public static void copyEdges(CyNetwork fromNetwork, CyNetwork toNetwork, 
 	                             Map<CyNode, CyNode> nodeMap, String column) {
 		List<String> columnsCreated = copyColumns(fromNetwork.getDefaultEdgeTable(), toNetwork.getDefaultEdgeTable());
