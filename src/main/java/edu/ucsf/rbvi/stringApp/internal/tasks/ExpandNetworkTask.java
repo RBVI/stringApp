@@ -67,7 +67,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 					+ "as the network's one or other species for which host-virus interactions are "
 					+ "available. Proteins are specified by the species name, for example, "
 					+ "'Homo Sapiens' for human proteins or 'Influenza A virus' for influenza A proteins.", 
-			exampleStringValue = "Homo Sapiens", 
+			exampleStringValue = "Homo Sapiens", params="lookup=begins",
 			gravity=2.0)
 	public ListSingleSelection<String> nodeTypes = new ListSingleSelection<String>();
 	

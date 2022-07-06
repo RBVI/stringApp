@@ -31,9 +31,11 @@ public class Species implements Comparable<Species> {
 
 	public static String[] category = { "all", "core", "periphery", "mapped", "viral"};
 
+	/*
 	public Species(int tax, String type, String name, String oName, String alias) {
-		init(tax, type, name, oName, alias);
+		init(tax, type, oName, name, alias);
 	}
+	*/
 
 	public Species(String line) {
 		if (line.startsWith("#"))
@@ -89,7 +91,7 @@ public class Species implements Comparable<Species> {
 		return retValue;
 	}
 
-	private void init(int tax, String type, String name, String oName, String alias) {
+	private void init(int tax, String type, String oName, String name, String alias) {
 		this.taxon_id = tax;
 		this.type = type;
 		this.compactName = name;
