@@ -77,6 +77,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetAnnotationsTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.LoadSpeciesInteractions;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ImportNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
@@ -97,7 +98,6 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 	JComboBox<String> speciesPartnerCombo;
 	JCheckBox wholeOrgBox;
 	JButton importButton;
-	JButton backButton;
 	SearchOptionsPanel optionsPanel;
 	NumberFormat formatter = new DecimalFormat("#0.00");
 	NumberFormat intFormatter = new DecimalFormat("#0");
@@ -130,18 +130,6 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 		}
 	}
 
-	/*
-	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, 
-	                     String useDATABASE, String aNetSpecies, boolean queryAddNodes,
-											 int confidence, int additionalNodes) {
-		optionsPanel = new SearchOptionsPanel(manager, false, false, false);
-		optionsPanel.setConfidence(confidence);
-		optionsPanel.setAdditionalNodes(additionalNodes);
-		optionsPanel.setSpecies(aNetSpecies);
-		this(manager, stringNetwork, useDATABASE, queryAddNodes, optionsPanel);
-	}
-	*/
-
 	public CrossSpeciesPanel(final StringManager manager, StringNetwork stringNetwork, 
 	                     String useDATABASE, boolean queryAddNodes, SearchOptionsPanel panel) {
 		this(manager, stringNetwork, useDATABASE, queryAddNodes, panel, "", null);
@@ -158,12 +146,9 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 		this.netName = netName;
 		this.useDATABASE = useDATABASE;
 		if (panel == null) {
-			panel = new SearchOptionsPanel(manager, false, false, false);
+			panel = new SearchOptionsPanel(manager, false, false, true, true);
 			panel.setConfidence((int)(manager.getDefaultConfidence()*100));
 			panel.setNetworkType(manager.getDefaultNetworkType());
-			panel.setAdditionalNodes(manager.getDefaultAdditionalProteins());
-			if (!useDATABASE.equals(Databases.STITCH.getAPIName()))
-				panel.setUseSmartDelimiters(true);
 		}
 		if (panel.getSpeciesText() != null) {
 			this.netSpecies = panel.getSpeciesText();
@@ -176,26 +161,20 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 
 	private void init() {
 		// Create the surrounding panel
-		setPreferredSize(new Dimension(800,600));
+		setPreferredSize(new Dimension(800,200));
 		EasyGBC c = new EasyGBC();
 
 		// Create the species panel
 		// Retrieve only the list of main species for now, otherwise the dialogs are very slow
 		List<Species> speciesList = Species.getModelSpecies();
-		JPanel organismBox = createOrgBox();
+		// JPanel organismBox = createOrgBox();
 
 		JPanel speciesBox = createSpeciesComboBox(speciesList);
 		add(speciesBox, c.expandHoriz().insets(0,5,0,5));
 
 		JPanel species2Box = createSpeciesPartnerComboBox(Species.getSpeciesPartners(Species.getHumanSpecies().toString()));
-		add(speciesBox, c.expandHoriz().insets(0,5,0,5));
+		add(species2Box, c.down().expandHoriz().insets(0,5,0,5));
 
-		// Create whole organism checkbox
-		add(organismBox, c.down().expandHoriz().insets(0, 5, 0, 5));
-
-		// optionsPanel = new SearchOptionsPanel(manager, false, false, false);
-		// if (!useDATABASE.equals(Databases.STITCH.getAPIName()))
-		// 	optionsPanel.setUseSmartDelimiters(true);
 		optionsPanel.setMinimumSize(new Dimension(400, 150));
 		optionsPanel.showSpeciesBox(false); // We don't want to show two of these
 		add(optionsPanel, c.down().expandHoriz().insets(5,5,0,5));
@@ -203,26 +182,6 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 		// Add Query/Cancel buttons
 		JPanel buttonPanel =  createControlButtons();
 		add(buttonPanel, c.down().expandHoriz().insets(0,5,5,5));
-	}
-
-	JPanel createSearchPanel() {
-		JPanel searchPanel = new JPanel(new GridBagLayout());
-		searchPanel.setPreferredSize(new Dimension(600,250));
-		EasyGBC c = new EasyGBC();
-
-		String label = "Enter protein names or identifiers:";
-		if (useDATABASE.equals(Databases.STITCH.getAPIName())) {
-			searchPanel.setPreferredSize(new Dimension(600,300));
-			label = "Enter protein or compound names or identifiers:";
-		}
-		JLabel searchLabel = new JLabel(label);
-		c.noExpand().anchor("northwest").insets(0,5,0,5);
-		searchPanel.add(searchLabel, c);
-		searchTerms = new JTextArea();
-		JScrollPane jsp = new JScrollPane(searchTerms);
-		c.down().expandBoth().insets(5,10,5,10);
-		searchPanel.add(jsp, c);
-		return searchPanel;
 	}
 
 	JPanel createSpeciesComboBox(List<Species> speciesList) {
@@ -257,6 +216,7 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 		JPanel speciesPanel = new JPanel(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
 		JLabel speciesLabel = new JLabel("Species 2:");
+		Collections.sort(speciesList);
 		c.noExpand().insets(0,5,0,5);
 		speciesPanel.add(speciesLabel, c);
 		speciesPartnerCombo = new JComboBox<String>(speciesList.toArray(new String[1]));
@@ -303,55 +263,28 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
         }
       });
 
-		backButton = new JButton(new AbstractAction("Back") {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-					stringNetwork.reset();
-					importButton.setEnabled(true);
-					backButton.setEnabled(false);
-					importButton.setAction(new InitialAction());
-					speciesCombo.setEnabled(true);
-					wholeOrgBox.setEnabled(true);
-					getParent().revalidate();
-        }
-			});
-		backButton.setEnabled(false);
-
 		importButton = new JButton(new InitialAction());
 
 		buttonPanel.add(Box.createRigidArea(new Dimension(10,0)));
 		buttonPanel.add(cancelButton);
 		buttonPanel.add(Box.createHorizontalGlue());
 		// buttonPanel.add(Box.createRigidArea(new Dimension(10,0)));
-		buttonPanel.add(backButton);
 		buttonPanel.add(Box.createRigidArea(new Dimension(10,0)));
 		buttonPanel.add(importButton);
 		return buttonPanel;
 	}
 
-	void importNetwork(int taxon, int confidence, int additionalNodes, boolean wholeOrg, NetworkType netType) {
+	void importNetwork(Species species1, Species species2, int confidence, NetworkType netType) {
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = null;
-		if (wholeOrg) {
-			// stringIds = ModelUtils.readOrganimsIDs(queryTermMap);
-			stringIds = null;
-			// stringIds = stringNetwork.combineIds(queryTermMap);
-		} else {
-			stringIds = stringNetwork.combineIds(queryTermMap);
-		}
 		// System.out.println("Importing "+stringIds);
 		TaskFactory factory = null;
-		if (!queryAddNodes) {
-			factory = new ImportNetworkTaskFactory(stringNetwork, speciesCombo.getSelectedItem().toString(), 
-			                                       taxon, confidence, additionalNodes, stringIds,
-			                                       queryTermMap, netName, useDATABASE, netType);
-		} else {
-			factory = new ImportNetworkTaskFactory(stringNetwork, (String)speciesPartnerCombo.getSelectedItem(), 
-			                                       taxon, confidence, additionalNodes, stringIds,
-			                                       queryTermMap, netName, useDATABASE, netType);
+		if (stringNetwork == null) {
+			stringNetwork = new StringNetwork(manager);
 		}
-		cancel();
-		TaskIterator ti = factory.createTaskIterator();
+		// public LoadSpeciesInteractions(final StringNetwork stringNet, final Species species1,
+	  //                                final Species species2, final int confidence, final NetworkType netType) {
+		TaskIterator ti = new TaskIterator(new LoadSpeciesInteractions(stringNetwork, species1, species2, confidence, netType));
 		if (additionalTask != null)
 			ti.append(additionalTask);
 
@@ -361,53 +294,12 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 			manager.execute(ti);
 	}
 
-	public void addResolvedStringID(String term, String id) {
-		stringNetwork.addResolvedStringID(term, id);
-		if (stringNetwork.haveResolvedNames()) {
-			importButton.setEnabled(true);
-		} else
-			importButton.setEnabled(false);
-	}
-
-	public void removeResolvedStringID(String term, String id) {
-		stringNetwork.removeResolvedStringID(term, id);
-		if (stringNetwork.haveResolvedNames()) {
-			importButton.setEnabled(true);
-		} else
-			importButton.setEnabled(false);
-	}
-
-	private void showTableRow(JTable table, String term, Map<String, ResolveTableModel> tableModelMap) {
-		TableRowSorter sorter = new TableRowSorter(tableModelMap.get(term));
-		sorter.setSortable(0, false);
-		sorter.setSortable(1, true);
-		sorter.setSortable(2, false);
-		table.setModel(tableModelMap.get(term));
-		table.setRowSorter(sorter);
-		table.setAutoResizeMode( JTable.AUTO_RESIZE_OFF );
-		table.getColumnModel().getColumn(2).setCellRenderer(new TextAreaRenderer());
-		table.getColumnModel().getColumn(0).setPreferredWidth(50);
-		table.getColumnModel().getColumn(1).setPreferredWidth(75);
-		table.getColumnModel().getColumn(2).setPreferredWidth(525);
-	}
-
 	public void cancel() {
 		stringNetwork = initialStringNetwork;
 		if (stringNetwork != null) stringNetwork.reset();
 		importButton.setEnabled(true);
-		backButton.setEnabled(false);
 		importButton.setAction(new InitialAction());
 		((Window)getRootPane().getParent()).dispose();
-	}
-
-	public Object[] getTermList() {
-			List<String> unresolvedTerms = new ArrayList<>();
-			Map<String, List<Annotation>> map = stringNetwork.getAnnotations();
-			for (String key: map.keySet()) {
-				if (map.get(key).size() > 1)
-					unresolvedTerms.add(key);
-			}
-			return unresolvedTerms.toArray();
 	}
 
 	@Override
@@ -439,6 +331,11 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+			Species species1 = ((Species)speciesCombo.getSelectedItem());
+			String sp2 = (String)speciesPartnerCombo.getSelectedItem();
+			Species species2 = Species.getSpecies(sp2);
+			cancel();
+			importNetwork(species1, species2, optionsPanel.getConfidence(), optionsPanel.getNetworkType());
 		}
 
 		@Override
@@ -448,54 +345,6 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 
 		@Override
 		public void taskFinished(ObservableTask task) {
-		}
-	}
-
-	class ResolvedAction extends AbstractAction {
-		public ResolvedAction() {
-			super("Import");
-		}
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-			int taxon = 0;
-			if (!queryAddNodes) 
-				taxon = ((Species)speciesCombo.getSelectedItem()).getTaxId();
-			else
-				taxon = Species.getSpeciesTaxId((String)speciesPartnerCombo.getSelectedItem());
-			
-			int additionalNodes = optionsPanel.getAdditionalNodes();
-
-			if (stringNetwork.getResolvedTerms() == 1 && additionalNodes == 0 && !queryAddNodes) {
-				/*
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						JOptionPane.showMessageDialog(null, 
-												"This will return only one node (Hint: increase maximum interactors slider?)",
-									       "Hint", JOptionPane.WARNING_MESSAGE); 
-					}
-				});
-				*/
-				additionalNodes = 10;
-				logger.warn("STRING: Only one protein or compound was selected -- additional interactions set to 10");
-
-			}
-
-			// if (stringNetwork.getResolvedTerms() == 1)
-			// 	additionalNodes = 10;
-
-			if (wholeOrgBox.isSelected()) {
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						JOptionPane.showMessageDialog(null, 
-												"This will return a network for the whole organims and might take a while!",
-									       "Hint", JOptionPane.WARNING_MESSAGE); 
-					}
-				});
-			}
-
-			importNetwork(taxon, optionsPanel.getConfidence(), additionalNodes, wholeOrgBox.isSelected(), optionsPanel.getNetworkType());
-			optionsPanel.showSpeciesBox(true); // Turn this back on
 		}
 	}
 

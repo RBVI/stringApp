@@ -74,7 +74,11 @@ public class LoadSpeciesInteractions extends AbstractTask {
 
 	public void run(TaskMonitor monitor) {
 		if (useDATABASE.equals(Databases.STRING.getAPIName()))
-			monitor.setTitle("Loading interactions from STRING for " + species);
+			if (species2 != null)
+				monitor.setTitle("Loading interactions from STRING for " + species + " and "
+												+species2);
+			else
+				monitor.setTitle("Loading interactions from STRING for " + species);
 		else if (useDATABASE.equals(Databases.STITCH.getAPIName()))
 			monitor.setTitle("Loading interactions from STITCH for " + species);
 		StringManager manager = stringNet.getManager();

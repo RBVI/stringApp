@@ -37,6 +37,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.tasks.AddTermsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeConfidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeNetTypeTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.CrossSpeciesSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.DiseaseSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExpandNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTaskFactory;
@@ -70,6 +71,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.StitchSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.StringifyTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.StringSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.VersionTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.ui.CrossSpeciesWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.ui.DiseaseNetworkWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.ui.StitchWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.ui.StringWebServiceClient;
@@ -133,6 +135,12 @@ public class CyActivator extends AbstractCyActivator {
 		{
 			// Register our text mining web service client
 			TextMiningWebServiceClient client = new TextMiningWebServiceClient(manager);
+			registerAllServices(bc, client, new Properties());
+		}
+		
+		{
+			// Register our disease network web service client
+			CrossSpeciesWebServiceClient client = new CrossSpeciesWebServiceClient(manager);
 			registerAllServices(bc, client, new Properties());
 		}
 		
@@ -691,6 +699,11 @@ public class CyActivator extends AbstractCyActivator {
     }
     {
       PubmedSearchTaskFactory stringSearch = new PubmedSearchTaskFactory(manager);
+      Properties propsSearch = new Properties();
+      registerService(bc, stringSearch, NetworkSearchTaskFactory.class, propsSearch);
+    }
+    {
+      CrossSpeciesSearchTaskFactory stringSearch = new CrossSpeciesSearchTaskFactory(manager);
       Properties propsSearch = new Properties();
       registerService(bc, stringSearch, NetworkSearchTaskFactory.class, propsSearch);
     }

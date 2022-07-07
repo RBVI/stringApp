@@ -110,6 +110,8 @@ public class SearchOptionsPanel extends JPanel {
 		// System.out.println("SearchOptionsPanel("+isPubMed+","+isDisease+","+showSpecies+")");
 		if (isDisease || isPubMed) 
 				additionalNodes = manager.getDefaultMaxProteins();
+		else if (isCrossSpecies)
+				additionalNodes = 0;
 		else
 				additionalNodes = manager.getDefaultAdditionalProteins();
 		confidence = (int)(manager.getDefaultConfidence()*100);
@@ -127,7 +129,7 @@ public class SearchOptionsPanel extends JPanel {
 	}
 
 	private void initOptions() {
-		setPreferredSize(new Dimension(700,200));
+		// setPreferredSize(new Dimension(700,200));
 		EasyGBC c = new EasyGBC();
 		if (showSpecies) {
 			List<Species> speciesList = getSpeciesList();
@@ -190,7 +192,7 @@ public class SearchOptionsPanel extends JPanel {
 		JLabel optionsLabel = new JLabel("<html><b>Options:</b></html>");
 		c.anchor("west").insets(0,5,0,5);
 		advancedPanel.add(optionsLabel, c);
-		if (!isDisease && !isPubMed) {
+		if (!isDisease && !isPubMed && !isCrossSpecies) {
 			c.right().noExpand().insets(0,10,0,5);
 			useSmartDelimiters = new JCheckBox("Use Smart Delimiters", false);
 			useSmartDelimiters.setToolTipText("<html>\"Smart\" delimiters attempts to provide flexibility "+
