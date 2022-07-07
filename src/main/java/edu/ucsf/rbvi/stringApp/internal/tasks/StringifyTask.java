@@ -5,6 +5,8 @@ import java.awt.Dialog;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +65,6 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	private int additionalNodes = 0;
 	private SearchOptionsPanel optionsPanel = null;
 	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
-	private final Map<String, CyNode> nodeMap;
 	private TaskMonitor monitor;
 
 	@Tunable(description="Network to set as a STRING network", 
@@ -72,7 +73,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	         context="nogui", required=true)
 	public CyNetwork networkNoGui = null;
 
-	@Tunable(description="Column to use for STRING query", 
+	@Tunable(description="Column for STRING query", 
 	         longDescription="Select the column to use to query for STRING nodes.",
 	         exampleStringValue="name",
 	         context="gui", required=true)
@@ -84,18 +85,32 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	         exampleStringValue="true")
 	public boolean includeNotMapped = true;
 
+	@Tunable(description="Column for unmappable node labels", 
+	         longDescription="Select the column to use for node labels of unmappable nodes in STRING style.",
+	         exampleStringValue="name",
+	         dependsOn="includeNotMapped=true",
+	         context="gui", required=true)
+	public ListSingleSelection<CyColumn> displayNameColumn = null;
+
 	@Tunable(description="Map nodes to compounds", 
 	         longDescription="Option for considering compounds when resolving the node "
 	         		+ "identifiers and consequently querying STITCH instead of STRING.",
 	         exampleStringValue="false")
 	public boolean compoundQuery = false;
 
-	@Tunable(description="Column to use for STRING query", 
+	@Tunable(description="Column for STRING query", 
 	         longDescription="Select the column to use to query for STRING nodes",
 	         exampleStringValue="name",
 	         context="nogui", required=true)
 	public String column = null;
 
+	@Tunable(description="Column for unmappable node labels", 
+	         longDescription="Select the column to use as node labels of unmappable nodes in STRING style.",
+	         exampleStringValue="name",
+	         dependsOn = "includeNotMapped=true", 
+	         context = "nogui", required = false)
+	public String colDisplayName = null;
+	
 	@Tunable(description="Species for the query", 
 	         longDescription="Species to use for the query.",
 	         exampleStringValue="name",
@@ -126,14 +141,15 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		species = new ListSingleSelection<Species>(Species.getGUISpecies());
 		species.setSelectedValue(Species.getHumanSpecies());
 		if (net != null) {
-			List<CyColumn> colList = new ArrayList<>(net.getDefaultNodeTable().getColumns());
-			tableColumn = new ListSingleSelection<CyColumn>(colList);
+			tableColumn = new ListSingleSelection<CyColumn>(getQueryColumns());
 			tableColumn.setSelectedValue(net.getDefaultNodeTable().getColumn("name"));
+			displayNameColumn = new ListSingleSelection<CyColumn>(getDisplayColumns());
+			displayNameColumn.setSelectedValue(net.getDefaultNodeTable().getColumn("name"));
 		} else {
 			tableColumn = null;
+			displayNameColumn = null;
 		}
 		networkType.setSelectedValue(manager.getDefaultNetworkType());
-		nodeMap = new HashMap<>();
 	}
 
 	public StringifyTask(final StringManager manager, final CyNetwork net, double confidence, Species sp, String nodeColumn, NetworkType type) {
@@ -144,15 +160,16 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		species = new ListSingleSelection<Species>(Species.getGUISpecies());
 		species.setSelectedValue(sp);
 		if (net != null) {
-			List<CyColumn> colList = new ArrayList<>(net.getDefaultNodeTable().getColumns());
-			tableColumn = new ListSingleSelection<CyColumn>(colList);
+			tableColumn = new ListSingleSelection<CyColumn>(getQueryColumns());
 			tableColumn.setSelectedValue(net.getDefaultNodeTable().getColumn(nodeColumn));
+			displayNameColumn = new ListSingleSelection<CyColumn>(getDisplayColumns());
+			displayNameColumn.setSelectedValue(net.getDefaultNodeTable().getColumn("name"));
 		} else {
 			tableColumn = null;
+			displayNameColumn = null;
 		}
 		cutoff.setValue(confidence);
 		networkType.setSelectedValue(type);
-		nodeMap = new HashMap<>();
 	}
 
 	public void run(TaskMonitor monitor) {
@@ -162,6 +179,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		if (networkNoGui != null) {
 			net = networkNoGui;
 			tableColumn = null;
+			displayNameColumn = null;
 		} else if (net == null) {
 			net = manager.getService(CyApplicationManager.class).getCurrentNetwork();
 		}
@@ -178,6 +196,13 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		}
 
 		netName = net.getDefaultNetworkTable().getRow(net.getSUID()).get(CyNetwork.NAME, String.class);
+		
+		
+		if (displayNameColumn != null) {
+			colDisplayName = displayNameColumn.getSelectedValue().getName();
+		} else {
+			colDisplayName = "name";	
+		}
 		
 		CyColumn col = null;
 		if (tableColumn != null)
@@ -257,7 +282,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 			throw new RuntimeException("Query '"+terms+"' returned no results");
 		}
 
-		CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork, includeNotMapped);
+		CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork, includeNotMapped, colDisplayName);
 		copyTask.run(monitor);
 	}
 
@@ -265,6 +290,31 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		if (str.length() > 1000)
 			return str.substring(0,1000)+"...";
 		return str;
+	}
+
+	private List<CyColumn> getQueryColumns() {
+		List<CyColumn> cols = new ArrayList<CyColumn>();
+		for (CyColumn col : net.getDefaultNodeTable().getColumns()) {
+			if (col.getType().equals(String.class)) {
+				cols.add(col);
+			}
+		}
+		Collections.sort(cols, new LexicographicComparator());
+		return cols;
+	}
+	
+	private List<CyColumn> getDisplayColumns() {
+		List<CyColumn> allCols = new ArrayList<CyColumn>(net.getDefaultNodeTable().getColumns()); 
+		allCols.remove(net.getDefaultNodeTable().getColumn(CyNetwork.SUID));
+		allCols.remove(net.getDefaultNodeTable().getColumn(CyNetwork.SELECTED));
+		Collections.sort(allCols, new LexicographicComparator());
+		return allCols;
+	}
+	
+	class LexicographicComparator implements Comparator<CyColumn> {
+	    public int compare(CyColumn a, CyColumn b) {
+	        return a.getName().compareToIgnoreCase(b.getName());
+	    }
 	}
 
 	@Override
@@ -302,7 +352,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 			importNetwork(taxon, (int)(cutoff.getValue()*100), additionalNodes, useDatabase, networkType.getSelectedValue());
 
 			// Creating the copyTask
-			CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork, includeNotMapped);
+			CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork, includeNotMapped, colDisplayName);
 			copyTask.run(monitor);
 		} else {
 			SwingUtilities.invokeLater(new Runnable() {
@@ -312,7 +362,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 					d.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 					// GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, Databases.STRING.getAPIName(), 
 					//                                         getSpecies(), false, getConfidence(), getAdditionalNodes());
-					CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork, includeNotMapped);
+					CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork, includeNotMapped, colDisplayName);
 					GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, 
 					                                        useDatabase, false, 
 					                                        optionsPanel, netName, copyTask);
@@ -384,24 +434,30 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 
 	private class CopyTask extends AbstractTask {
 		String column;
+		String columnDisplay;
 		CyNetwork network;
 		StringNetwork stringNetwork;
 		StringManager manager;
 		boolean copyNotMappedNodes;
 
-		CopyTask(StringManager manager, String col, CyNetwork network, StringNetwork stringNetwork, boolean includeNotMapped) {
+		// Map of nodes in the old network to nodes in the new network.
+		private final Map<CyNode, CyNode> nodeMap;
+
+		CopyTask(StringManager manager, String col, CyNetwork network, StringNetwork stringNetwork, boolean includeNotMapped, String colDisplay) {
 			this.manager = manager;
 			this.column = col;
+			this.columnDisplay = colDisplay;
 			this.network = network;
 			this.stringNetwork = stringNetwork;
 			this.copyNotMappedNodes = includeNotMapped;
+			this.nodeMap = new HashMap<CyNode, CyNode>();
 		}
 
 		public void run(TaskMonitor monitor) {
 			CyNetwork loadedNetwork = stringNetwork.getNetwork();
 
 			// Get all of the nodes in the network
-			ModelUtils.createNodeMap(loadedNetwork, nodeMap, ModelUtils.QUERYTERM);
+			ModelUtils.createNodeMap(network, loadedNetwork, nodeMap, column, ModelUtils.QUERYTERM);
 
 			List<String> cols = new ArrayList<String>();
 			cols.add(ModelUtils.QUERYTERM);
@@ -421,6 +477,8 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 			ModelUtils.copyNodeAttributes(network, loadedNetwork, nodeMap, column);
 
 			ModelUtils.copyNodePositions(manager, network, loadedNetwork, nodeMap, column);
+			
+			ModelUtils.overwriteDisplayName(manager, network, loadedNetwork, nodeMap, columnDisplay);
 		}
 
 	}
