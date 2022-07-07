@@ -89,7 +89,7 @@ public class SearchOptionsPanel extends JPanel {
 	private final boolean showSpecies;
 	private String netSpecies = "Homo sapiens";
 
-	private Species species = null;
+	private String defaultSpecies = null;
 	private int additionalNodes = 0;
 	private int confidence = 40;
 	private NetworkType networkType = null;
@@ -170,18 +170,6 @@ public class SearchOptionsPanel extends JPanel {
 		// Create the species panel
 		// Retrieve only the list of main species for now, otherwise the dialogs are very slow
 		List<Species> speciesList = Species.getModelSpecies();
-		if (speciesList == null) {
-			try {
-				Species.readSpecies(manager);
-				speciesList = Species.getModelSpecies();
-				if (speciesList == null || speciesList.size() == 0)
-					speciesList = Species.getGUISpecies();
-			} catch (Exception e) {
-				manager.error("Unable to get species: "+e.getMessage());
-				e.printStackTrace();
-				return null;
-			}
-		}
 		return speciesList;
 	}
 
@@ -269,10 +257,10 @@ public class SearchOptionsPanel extends JPanel {
 					break;
 				}
 			}
-		} else if (species == null ) {
-			speciesCombo.setSelectedItem(manager.getDefaultSpecies());
+		} else if (defaultSpecies == null ) {
+			speciesCombo.setSelectedItem(Species.getSpecies(manager.getDefaultSpecies()));
 		} else {
-			speciesCombo.setSelectedItem(species);
+			speciesCombo.setSelectedItem(Species.getSpecies(defaultSpecies));
 		}
 		JComboBoxDecorator.decorate(speciesCombo, true, true); 
 		c.right().expandHoriz().insets(0,5,0,5);
@@ -322,7 +310,7 @@ public class SearchOptionsPanel extends JPanel {
 		JButton closeButton = new JButton(new AbstractAction("Close") {
    	   @Override
    	   public void actionPerformed(ActionEvent e) {
-					species = getSpecies();
+					defaultSpecies = getSpecies().getName();
 					confidence = getConfidence();
 					additionalNodes = getAdditionalNodes();
 					networkType = getNetworkType();

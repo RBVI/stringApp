@@ -91,7 +91,7 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 
 	EntityIdentifier diseaseEntity = null;
 	List<EntityIdentifier> entityList;
-	Species species = Species.getHumanSpecies();
+	String species = "Homo sapiens";
 	// Species species;
 
 	private int confidence = 40;
@@ -235,7 +235,8 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 			stringNetwork = new StringNetwork(manager);
 		int confidence = optionsPanel.getConfidence();
 		int limit = optionsPanel.getAdditionalNodes();
-		manager.execute(new TaskIterator(new GetStringIDsFromDiseasesTask(stringNetwork, species, limit,
+		Species sp = Species.getSpecies(species);
+		manager.execute(new TaskIterator(new GetStringIDsFromDiseasesTask(stringNetwork, sp, limit,
 		                                                                  confidence, entity.getIdentifier(),
 		                                                                  entity.getPrimaryName(), 
 		                                                                  optionsPanel.getNetworkType())), this);
@@ -328,7 +329,8 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 			if (stringNetwork == null)
 				stringNetwork = new StringNetwork(manager);
 
-			int taxon = species.getTaxId(); // Only supported for human right now;
+			int taxon = Species.getSpecies(species).getTaxId();
+			// int taxon = species.getTaxId(); // Only supported for human right now;
 			String terms = searchTerms.getText();
 			if (terms == null || terms.length() == 0) {
 				JOptionPane.showMessageDialog(null, "No terms were entered -- nothing to search for",
@@ -399,7 +401,8 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-			int taxon = species.getTaxId();
+			// int taxon = species.getTaxId();
+			int taxon = Species.getSpecies(species).getTaxId();
 
 			diseaseEntity = model.getSelectedEntity();
 

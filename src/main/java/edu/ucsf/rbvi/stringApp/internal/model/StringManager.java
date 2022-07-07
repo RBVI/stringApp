@@ -1,6 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.model;
 
 import java.awt.Color;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,6 +19,7 @@ import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.CyUserLog;
 import org.cytoscape.application.events.SetCurrentNetworkEvent;
 import org.cytoscape.application.events.SetCurrentNetworkListener;
+import org.cytoscape.application.swing.search.NetworkSearchTaskFactory;
 import org.cytoscape.command.AvailableCommands;
 import org.cytoscape.command.CommandExecutorTaskFactory;
 import org.cytoscape.event.CyEventHelper;
@@ -60,6 +62,17 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowPublicationsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
+
+import edu.ucsf.rbvi.stringApp.internal.tasks.StringSearchTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.StitchSearchTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.DiseaseSearchTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.PubmedSearchTaskFactory;
+
+import edu.ucsf.rbvi.stringApp.internal.ui.DiseaseNetworkWebServiceClient;
+import edu.ucsf.rbvi.stringApp.internal.ui.StitchWebServiceClient;
+import edu.ucsf.rbvi.stringApp.internal.ui.StringWebServiceClient;
+import edu.ucsf.rbvi.stringApp.internal.ui.TextMiningWebServiceClient;
+
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.PublicationsCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.StringCytoPanel;
@@ -127,7 +140,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private boolean showStringColors = true;
 	private boolean showSingletons = true;
 	private boolean highlightNeighbors = false;
-	private Species species;
+	private String species;
 	private double defaultConfidence = 0.40;
 	private int additionalProteins = 0;
 	private int maximumProteins = 100;
@@ -189,16 +202,6 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		channelColors.put("coexpression", Color.BLACK);
 		channelColors.put("similarity", new Color(163, 161, 255)); // Lila
 
-		// Make sure we've read in our species
-		if (Species.getSpecies() == null) {
-			try {
-				Species.readSpecies(this);
-				Species.readPairs(this);
-			} catch (Exception e) {
-				throw new RuntimeException("Can't read species information");
-			}
-		}
-
 		// Get our default settings
 		configProps = ModelUtils.getPropertyService(this, SavePolicy.CONFIG_DIR);
 
@@ -221,6 +224,18 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		// Get a session property file for the current session
 		sessionProperties = ModelUtils.getPropertyService(this, SavePolicy.SESSION_FILE);
 
+	}
+
+	public void updateSpecies() {
+		if (Species.getSpecies() != null)
+			return;
+		// Make sure we've read in our species
+		try {
+			Species.readSpecies(this);
+			Species.readPairs(this);
+		} catch (Exception e) {
+			throw new RuntimeException("Can't read species information");
+		}
 	}
 
 	public void updateProperties() {
@@ -290,63 +305,123 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		String url = CONFIGURI +CallerIdentity+ ".json";
 		StringManager manager = this;
 
-		// Run this in the background in case we have a timeout
-		Executors.newCachedThreadPool().execute(new Runnable() {
-			@Override
-			public void run() {
-				JSONObject uris = null;
-				// use alternative config URI if available and otherwise retrieve the default one
-				// based on the app version
-				try {
-					if (alternativeCONFIGURI != null && alternativeCONFIGURI.length() > 0) {
-						uris = ModelUtils.getResultsFromJSON(
-								HttpUtils.getJSON(alternativeCONFIGURI, args, manager),
-								JSONObject.class);
-					} else {
-						uris = ModelUtils.getResultsFromJSON(HttpUtils.getJSON(url, args, manager),
-								JSONObject.class);
+			// Run this in the background in case we have a timeout
+			Executors.newCachedThreadPool().execute(new Runnable() {
+				@Override
+				public void run() {
+					JSONObject uris = null;
+					// use alternative config URI if available and otherwise retrieve the default one
+					// based on the app version
+					try {
+						if (alternativeCONFIGURI != null && alternativeCONFIGURI.length() > 0) {
+							uris = ModelUtils.getResultsFromJSON(
+									HttpUtils.getJSON(alternativeCONFIGURI, args, manager, 10000),
+									JSONObject.class);
+						} else {
+							uris = ModelUtils.getResultsFromJSON(HttpUtils.getJSON(url, args, manager, 10000), JSONObject.class);
+						}
+					} catch (ConnectionException e) {
+						e.printStackTrace();
+					} catch (SocketTimeoutException e) {
+						System.out.println("SocketTimeoutException");
+						updateSpecies();
+						registerSearchFactories();
+						registerWebServiceFactories();
+						return;
 					}
-				} catch (ConnectionException e) {
-					e.printStackTrace();
-				}
-				if (uris != null) {
-					if (uris.containsKey("URI")) {
-						URI = uris.get("URI").toString();
+					if (uris != null) {
+						if (uris.containsKey("URI")) {
+							URI = uris.get("URI").toString();
+						}
+						if (uris.containsKey("STRINGResolveURI")) {
+							STRINGResolveURI = uris.get("STRINGResolveURI").toString();
+						} 
+						if (uris.containsKey("STITCHResolveURI")) {
+							STITCHResolveURI = uris.get("STITCHResolveURI").toString();
+						} 
+						if (uris.containsKey("VIRUSESResolveURI")) {
+							VIRUSESResolveURI = uris.get("VIRUSESResolveURI").toString();
+						}
+						if (uris.containsKey("SpeciesURI")) {
+							SpeciesURI = uris.get("SpeciesURI").toString();
+						}
+						if (uris.containsKey("PairsURI")) {
+							PairsURI = uris.get("PairsURI").toString();
+						}
+						if (uris.containsKey("DataVersion")) {
+							DATAVERSION = uris.get("DataVersion").toString();
+						}
+						if (uris.containsKey("messageUserError")) {
+							error(uris.get("messageUserError").toString());
+						}
+						if (uris.containsKey("messageUserCriticalError")) {
+							critical(uris.get("messageUserCriticalError").toString());
+						}
+						if (uris.containsKey("messageUserWarning")) {
+							warn(uris.get("messageUserWarning").toString());
+						}
+						if (uris.containsKey("messageUserInfo")) {
+							info(uris.get("messageUserInfo").toString());
+						}
 					}
-					if (uris.containsKey("STRINGResolveURI")) {
-						STRINGResolveURI = uris.get("STRINGResolveURI").toString();
-					} 
-					if (uris.containsKey("STITCHResolveURI")) {
-						STITCHResolveURI = uris.get("STITCHResolveURI").toString();
-					} 
-					if (uris.containsKey("VIRUSESResolveURI")) {
-						VIRUSESResolveURI = uris.get("VIRUSESResolveURI").toString();
-					}
-					if (uris.containsKey("SpeciesURI")) {
-						SpeciesURI = uris.get("SpeciesURI").toString();
-					}
-					if (uris.containsKey("PairsURI")) {
-						PairsURI = uris.get("PairsURI").toString();
-					}
-					if (uris.containsKey("DataVersion")) {
-						DATAVERSION = uris.get("DataVersion").toString();
-					}
-					if (uris.containsKey("messageUserError")) {
-						error(uris.get("messageUserError").toString());
-					}
-					if (uris.containsKey("messageUserCriticalError")) {
-						critical(uris.get("messageUserCriticalError").toString());
-					}
-					if (uris.containsKey("messageUserWarning")) {
-						warn(uris.get("messageUserWarning").toString());
-					}
-					if (uris.containsKey("messageUserInfo")) {
-						info(uris.get("messageUserInfo").toString());
-					}
-				}
-				haveURIs = true;
-   		 }
-		});
+					haveURIs = true;
+					updateSpecies();
+					registerSearchFactories();
+					registerWebServiceFactories();
+ 	  		 }
+			});
+		}
+
+
+	void registerWebServiceFactories() {
+		{
+			// Register our web service client
+			StringWebServiceClient client = new StringWebServiceClient(this);
+			registrar.registerAllServices(client, new Properties());
+		}
+		
+		{
+			// Register our text mining web service client
+			TextMiningWebServiceClient client = new TextMiningWebServiceClient(this);
+			registrar.registerAllServices(client, new Properties());
+		}
+		
+		{
+			// Register our disease network web service client
+			DiseaseNetworkWebServiceClient client = new DiseaseNetworkWebServiceClient(this);
+			registrar.registerAllServices(client, new Properties());
+		}
+		
+		{
+			// Register our stitch network web service client
+			StitchWebServiceClient client = new StitchWebServiceClient(this);
+			registrar.registerAllServices(client, new Properties());
+		}
+
+	}
+
+	void registerSearchFactories() {
+		// Register our Network search factories
+    {
+      StringSearchTaskFactory stringSearch = new StringSearchTaskFactory(this);
+      Properties propsSearch = new Properties();
+      registrar.registerService(stringSearch, NetworkSearchTaskFactory.class, propsSearch);
+    }
+    {
+      StitchSearchTaskFactory stringSearch = new StitchSearchTaskFactory(this);
+      Properties propsSearch = new Properties();
+      registrar.registerService(stringSearch, NetworkSearchTaskFactory.class, propsSearch);
+    }
+    {
+      PubmedSearchTaskFactory stringSearch = new PubmedSearchTaskFactory(this);
+      Properties propsSearch = new Properties();
+      registrar.registerService(stringSearch, NetworkSearchTaskFactory.class, propsSearch);
+    }
+    {
+      DiseaseSearchTaskFactory stringSearch = new DiseaseSearchTaskFactory(this);
+      Properties propsSearch = new Properties();
+      registrar.registerService(stringSearch, NetworkSearchTaskFactory.class, propsSearch);
+    }
 	}
 
 	
@@ -501,18 +576,18 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			cytoPanel.updateControls();
 	}
 
-	public Species getDefaultSpecies() { 
+	public String getDefaultSpecies() { 
 		if (species == null) {
 			// Set Human as the default
-			return Species.getHumanSpecies();
+			return "Homo sapiens";
 		}
-		return species; 
+		return species;
 	}
 	public void setDefaultSpecies(Species defaultSpecies) {
-		species = defaultSpecies;
+		species = defaultSpecies.getName();
 	}
 	public void setDefaultSpecies(String defaultSpecies) {
-		species = Species.getSpecies(defaultSpecies);
+		species = defaultSpecies;
 	}
 
 	public double getDefaultConfidence() { return defaultConfidence; }
