@@ -23,7 +23,7 @@ import java.util.HashMap;
 /**
  * Uses the  builder pattern for filling fields of a {@link GridBagConstraints}.
  */
-class EasyGBC extends GridBagConstraints {
+public class EasyGBC extends GridBagConstraints {
 	static final Map<String,Integer> anchors = new HashMap<String,Integer>();
 	static {
 		anchors.put("north",     NORTH);

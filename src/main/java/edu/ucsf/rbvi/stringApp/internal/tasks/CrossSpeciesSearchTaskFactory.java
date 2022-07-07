@@ -6,27 +6,38 @@ import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.getIconFont;
 
 import java.awt.Color;
 import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -54,6 +65,8 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetAnnotationsTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ImportNetworkTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.ui.EasyGBC;
+import edu.ucsf.rbvi.stringApp.internal.ui.JComboBoxDecorator;
 import edu.ucsf.rbvi.stringApp.internal.ui.PubMedQueryPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.SearchOptionsPanel;
 import edu.ucsf.rbvi.stringApp.internal.utils.TextIcon;
@@ -72,8 +85,15 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 
 	private StringNetwork stringNetwork = null;
 	private SearchOptionsPanel optionsPanel = null;
-	private JComboBox<Species> queryComponent = null;
+	private MySearchComponent queryComponent = null;
 	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
+	private Font smallFont;
+	private JButton sp1Button;
+	private JButton sp2Button;
+	private JPanel speciesPanel1;
+	private JPanel speciesPanel2;
+	private JFrame speciesFrame1;
+	private JFrame speciesFrame2;
 
 	private static final Icon icon = new TextIcon(CROSS_SPECIES_LAYERS, getIconFont(32.0f), STRING_COLORS, 36, 36);
 
@@ -91,39 +111,22 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 	}
 
 	public boolean isReady() { 
-		if (manager.haveURIs() && queryComponent.getSelectedItem() != null)
+		System.out.println("isReady");
+		if (manager.haveURIs() && (queryComponent.getSpecies1() != null) && (queryComponent.getSpecies2() != null)) {
+			System.out.println("true");
 			return true; 
+		}
+		System.out.println("false");
 		return false;
 	}
 
 	public TaskIterator createTaskIterator() {
-		final Species species2 = (Species)queryComponent.getSelectedItem();
+		final Species species1 = (Species)queryComponent.getSpecies1();
+		final Species species2 = (Species)queryComponent.getSpecies2();
 
 		return new TaskIterator(new AbstractTask() {
 			@Override
 			public void run(TaskMonitor m) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run () {
-						Species species;
-						try {
-							species = optionsPanel.getSpecies();
-						} catch (ClassCastException e) {
-							String speciesText = optionsPanel.getSpeciesText();
-							m.showMessage(TaskMonitor.Level.ERROR, "Unknown species: '"+speciesText+"'");
-							return;
-						}
-						JDialog d = new JDialog();
-						d.setTitle("Resolve Ambiguous Terms");
-						d.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-						// CrossSpeciesQueryPanel panel = new CrossSpeciesQueryPanel(manager, stringNetwork, species2, optionsPanel);
-						// d.setContentPane(panel);
-						d.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-						d.pack();
-						// d.setVisible(true);
-						// panel.doImport();
-					}
-				});
 			}
 		});
 
@@ -168,30 +171,177 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 
 
 	// We want a private class so we can add our helper text
-	private class MySearchComponent extends JComboBox {
+	private class MySearchComponent extends JPanel {
 		Color msgColor;
 		final int vgap = 1;
 		final int hgap = 5;
 		private boolean haveFocus = false;
+		JComboBox<Species> species1;
+		JComboBox<String> species2;
+		DefaultComboBoxModel model1;
+		DefaultComboBoxModel model2;
 
 		public MySearchComponent() {
 			super();
 			init();
 		}
 
+		Species getSpecies1() {
+			return (Species)species1.getSelectedItem();
+		}
+
+		Species getSpecies2() {
+			return Species.getSpecies((String)species2.getSelectedItem());
+		}
+
 		private void init() {
 			msgColor = UIManager.getColor("Label.disabledForeground");
-			setMinimumSize(getPreferredSize());
-			setBorder(BorderFactory.createEmptyBorder(vgap, hgap, vgap, hgap));
-			setFont(getFont().deriveFont(LookAndFeelUtil.getSmallFontSize()));
+			setBackground(UIManager.getColor("TextField.background"));
+			setLayout(new GridBagLayout());
+			// setMinimumSize(getPreferredSize());
+			// setBorder(BorderFactory.createEmptyBorder(vgap, hgap, vgap, hgap));
+			smallFont = getFont().deriveFont(LookAndFeelUtil.getSmallFontSize());
+
+			speciesPanel2 = createSpeciesPartnerComboBox(Species.getSpeciesPartners(Species.getHumanSpecies().toString()));
+
+			EasyGBC c = new EasyGBC();
+
+			sp1Button = new JButton();
+			sp1Button.setFont(smallFont);
+			add(sp1Button, c.insets(0,0,0,0));
+			sp1Button.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					speciesFrame1.validate();
+					speciesFrame1.setVisible(true);
+					speciesFrame1.setLocationRelativeTo(sp1Button);
+				}
+			});
+
+			JLabel cross = new JLabel("X");
+			cross.setFont(smallFont);
+			add(cross, c.right().insets(0,10,0,0));
+
+			sp2Button = new JButton("Species 2");
+			sp2Button.setFont(smallFont);
+			add(sp2Button, c.right().insets(0,10,0,0));
+			sp2Button.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					speciesFrame2.validate();
+					speciesFrame2.setVisible(true);
+					speciesFrame2.setLocationRelativeTo(sp2Button);
+				}
+			});
+
+
+			// Get the current default species
+			{
+				speciesFrame1 = new JFrame();
+				speciesFrame1.setPreferredSize(new Dimension(400,80));
+				speciesPanel1 = createSpeciesComboBox();
+				String sp1 = getSpecies1().toString();
+				sp1 = sp1.substring(0, Math.min(sp1.length(), 20));
+				sp1Button.setText(sp1);
+				speciesFrame1.setTitle("First Species");
+				speciesFrame1.getContentPane().add(speciesPanel1);
+				speciesFrame1.setVisible(false);
+				speciesFrame1.pack();
+			}
+			
+			{
+				speciesFrame2 = new JFrame();
+				speciesFrame2.setPreferredSize(new Dimension(400,80));
+				speciesPanel2 = createSpeciesPartnerComboBox(Species.getSpeciesPartners(Species.getHumanSpecies().toString()));
+				speciesFrame2.setTitle("Second Species");
+				speciesFrame2.getContentPane().add(speciesPanel2);
+				speciesFrame2.setVisible(false);
+				speciesFrame2.pack();
+			}
+
 			return;
 		}
 
-		@Override
-		public void paint(Graphics g) {
-			super.paint(g);
+		JPanel createSpeciesComboBox() {
+			List<Species> speciesList = Species.getModelSpecies();
+			JPanel speciesPanel = new JPanel(new GridBagLayout());
+			speciesPanel.setPreferredSize(new Dimension(200, 40));
+			EasyGBC c = new EasyGBC();
+			JLabel speciesLabel = new JLabel("Species 1:");
+			speciesLabel.setFont(getFont().deriveFont(LookAndFeelUtil.getSmallFontSize()));
+			c.noExpand().insets(0,0,0,0);
+			speciesPanel.add(speciesLabel, c);
+			species1 = new JComboBox<Species>(speciesList.toArray(new Species[1]));
+			species1.setFont(getFont().deriveFont(LookAndFeelUtil.getSmallFontSize()));
+			model1 = (DefaultComboBoxModel)species1.getModel();
+	
+			Species defaultSpecies = Species.getHumanSpecies();
+			species1.setSelectedItem(defaultSpecies);
+	
+			JComboBoxDecorator.decorate(species1, true, true); 
+			c.right().expandHoriz().insets(0,0,0,0);
+			speciesPanel.add(species1, c);
+	
+			species1.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					System.out.println("Action performed");
+					DefaultComboBoxModel<String> model2 = (DefaultComboBoxModel)species2.getModel();
+					model2.removeAllElements();
+					List<String> crossList = Species.getSpeciesPartners(species1.getSelectedItem().toString());
+					Collections.sort(crossList);
+					model2.addAll(crossList);
+					speciesFrame1.setVisible(false);
+
+					Species sp1 = (Species)species1.getSelectedItem();
+					if (sp1 == null || sp1.toString() == "")
+						sp1Button.setText("Species 1");
+					else {
+						String sp1str = sp1.toString();
+						sp1str = sp1str.substring(0, Math.min(sp1str.length(), 20));
+						sp1Button.setText(sp1str);
+					}
+					fireQueryChanged();
+
+				}
+			});
+			return speciesPanel;
 		}
 
+		JPanel createSpeciesPartnerComboBox(List<String> speciesList) {
+			JPanel speciesPanel = new JPanel(new GridBagLayout());
+			EasyGBC c = new EasyGBC();
+			JLabel speciesLabel = new JLabel("Species 2:");
+			speciesLabel.setFont(getFont().deriveFont(LookAndFeelUtil.getSmallFontSize()));
+			Collections.sort(speciesList);
+			c.noExpand().insets(0,0,0,0);
+			speciesPanel.add(speciesLabel, c);
+			species2 = new JComboBox<String>(speciesList.toArray(new String[1]));
+			species2.setFont(getFont().deriveFont(LookAndFeelUtil.getSmallFontSize()));
+			model2 = (DefaultComboBoxModel)species2.getModel();
+	
+			if (speciesList.contains("Plasmodium falciparum"))
+				species2.setSelectedItem("Plasmodium falciparum");
+	
+			c.right().expandHoriz().insets(0,0,0,0);
+			speciesPanel.add(species2, c);
+
+			species2.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					speciesFrame2.setVisible(false);
+					String sp2 = (String)species2.getSelectedItem();
+					if (sp2 == null || sp2.toString() == "")
+						sp2Button.setText("Species 2");
+					else {
+						sp2 = sp2.substring(0, Math.min(sp2.length(), 20));
+						sp2Button.setText(sp2);
+					}
+					fireQueryChanged();
+				}
+			});
+			return speciesPanel;
+		}
 
 		private void fireQueryChanged() {
 			MySearchComponent.this.firePropertyChange(NetworkSearchTaskFactory.QUERY_PROPERTY, null, null);
