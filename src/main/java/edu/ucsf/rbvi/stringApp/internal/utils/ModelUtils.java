@@ -1757,13 +1757,11 @@ public class ModelUtils {
 			//	continue;
 			if (col.getName().equals(CyNetwork.SUID)) 
 				continue;
-			if (from.getClass().equals(CyNode.class) && col.getName().equals(CyNetwork.NAME)) 
-				continue;
 			if (col.getName().equals(CyNetwork.SELECTED)) 
 				continue;
 			if (from.getClass().equals(CyNode.class) && col.getName().equals(CyRootNetwork.SHARED_NAME)) 
 				continue;
-			if (col.getName().equals(ModelUtils.QUERYTERM) || col.getName().equals(ModelUtils.DISPLAY) || col.getName().equals(ModelUtils.ID)) {
+			if (col.getName().equals(ModelUtils.QUERYTERM) || col.getName().equals(ModelUtils.DISPLAY) || col.getName().equals(ModelUtils.ID) || col.getName().equals(CyNetwork.NAME)) {
 				Object v = fromTable.getRow(from.getSUID()).getRaw(col.getName());
 				toTable.getRow(to.getSUID()).set(col.getName() + ".copy", v);
 				continue;
@@ -1840,7 +1838,7 @@ public class ModelUtils {
 					toTable.createColumn(fqn, col.getType(), col.isImmutable(), col.getDefaultValue());
 					columns.add(fqn);
 				}
-			} else if (fqn.equals(ModelUtils.QUERYTERM) || fqn.equals(ModelUtils.DISPLAY) || fqn.equals(ModelUtils.ID)) {
+			} else if (fqn.equals(ModelUtils.QUERYTERM) || fqn.equals(ModelUtils.DISPLAY) || fqn.equals(ModelUtils.ID) || fqn.equals(CyNetwork.NAME)) {
 				toTable.createColumn(fqn + ".copy", col.getType(), col.isImmutable(), col.getDefaultValue());
 				columns.add(fqn + ".copy");
 			}
@@ -1877,7 +1875,7 @@ public class ModelUtils {
 				continue;
 			CyNode toNode = nodeMap.get(fromNode);
 			String name_toNode = (String) to.getDefaultNodeTable().getRow(toNode.getSUID()).getRaw(ModelUtils.DISPLAY);
-			if (name_toNode == null || name_toNode == "") {
+			if (name_toNode == null || name_toNode.equals("")) {
 				String name_fromNode = (String) from.getDefaultNodeTable().getRow(fromNode.getSUID()).getRaw(column);
 				to.getDefaultNodeTable().getRow(toNode.getSUID()).set(ModelUtils.DISPLAY, name_fromNode);
 			}

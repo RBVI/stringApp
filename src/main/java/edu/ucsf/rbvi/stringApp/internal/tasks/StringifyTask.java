@@ -5,6 +5,8 @@ import java.awt.Dialog;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +73,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	         context="nogui", required=true)
 	public CyNetwork networkNoGui = null;
 
-	@Tunable(description="Column to use for STRING query", 
+	@Tunable(description="Column for STRING query", 
 	         longDescription="Select the column to use to query for STRING nodes.",
 	         exampleStringValue="name",
 	         context="gui", required=true)
@@ -83,7 +85,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	         exampleStringValue="true")
 	public boolean includeNotMapped = true;
 
-	@Tunable(description="Column to use for unmappable node labels", 
+	@Tunable(description="Column for unmappable node labels", 
 	         longDescription="Select the column to use for node labels of unmappable nodes in STRING style.",
 	         exampleStringValue="name",
 	         dependsOn="includeNotMapped=true",
@@ -96,13 +98,13 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	         exampleStringValue="false")
 	public boolean compoundQuery = false;
 
-	@Tunable(description="Column to use for STRING query", 
+	@Tunable(description="Column for STRING query", 
 	         longDescription="Select the column to use to query for STRING nodes",
 	         exampleStringValue="name",
 	         context="nogui", required=true)
 	public String column = null;
 
-	@Tunable(description="Column to use for unmappable node labels", 
+	@Tunable(description="Column for unmappable node labels", 
 	         longDescription="Select the column to use as node labels of unmappable nodes in STRING style.",
 	         exampleStringValue="name",
 	         dependsOn = "includeNotMapped=true", 
@@ -139,9 +141,9 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		species = new ListSingleSelection<Species>(Species.getGUISpecies());
 		species.setSelectedValue(Species.getHumanSpecies());
 		if (net != null) {
-			tableColumn = new ListSingleSelection<CyColumn>(new ArrayList<>(net.getDefaultNodeTable().getColumns()));
+			tableColumn = new ListSingleSelection<CyColumn>(getQueryColumns());
 			tableColumn.setSelectedValue(net.getDefaultNodeTable().getColumn("name"));
-			displayNameColumn = new ListSingleSelection<CyColumn>(new ArrayList<>(net.getDefaultNodeTable().getColumns()));
+			displayNameColumn = new ListSingleSelection<CyColumn>(getDisplayColumns());
 			displayNameColumn.setSelectedValue(net.getDefaultNodeTable().getColumn("name"));
 		} else {
 			tableColumn = null;
@@ -158,9 +160,9 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		species = new ListSingleSelection<Species>(Species.getGUISpecies());
 		species.setSelectedValue(sp);
 		if (net != null) {
-			tableColumn = new ListSingleSelection<CyColumn>(new ArrayList<>(net.getDefaultNodeTable().getColumns()));
+			tableColumn = new ListSingleSelection<CyColumn>(getQueryColumns());
 			tableColumn.setSelectedValue(net.getDefaultNodeTable().getColumn(nodeColumn));
-			displayNameColumn = new ListSingleSelection<CyColumn>(new ArrayList<>(net.getDefaultNodeTable().getColumns()));
+			displayNameColumn = new ListSingleSelection<CyColumn>(getDisplayColumns());
 			displayNameColumn.setSelectedValue(net.getDefaultNodeTable().getColumn("name"));
 		} else {
 			tableColumn = null;
@@ -288,6 +290,31 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		if (str.length() > 1000)
 			return str.substring(0,1000)+"...";
 		return str;
+	}
+
+	private List<CyColumn> getQueryColumns() {
+		List<CyColumn> cols = new ArrayList<CyColumn>();
+		for (CyColumn col : net.getDefaultNodeTable().getColumns()) {
+			if (col.getType().equals(String.class)) {
+				cols.add(col);
+			}
+		}
+		Collections.sort(cols, new LexicographicComparator());
+		return cols;
+	}
+	
+	private List<CyColumn> getDisplayColumns() {
+		List<CyColumn> allCols = new ArrayList<CyColumn>(net.getDefaultNodeTable().getColumns()); 
+		allCols.remove(net.getDefaultNodeTable().getColumn(CyNetwork.SUID));
+		allCols.remove(net.getDefaultNodeTable().getColumn(CyNetwork.SELECTED));
+		Collections.sort(allCols, new LexicographicComparator());
+		return allCols;
+	}
+	
+	class LexicographicComparator implements Comparator<CyColumn> {
+	    public int compare(CyColumn a, CyColumn b) {
+	        return a.getName().compareToIgnoreCase(b.getName());
+	    }
 	}
 
 	@Override
