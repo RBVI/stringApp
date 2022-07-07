@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 public class Species implements Comparable<Species> {
 	private static List<Species> allSpecies;
@@ -178,7 +179,7 @@ public class Species implements Comparable<Species> {
 		guiSpecies = new ArrayList<Species>();
 		modelSpecies = new ArrayList<Species>();
 		taxIdSpecies = new HashMap<Integer, Species>();
-		nameSpecies = new HashMap<String, Species>();
+		nameSpecies = new TreeMap<String, Species>();
 
 		InputStream stream = null;
 		try {
