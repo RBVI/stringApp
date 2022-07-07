@@ -1,7 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
 import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.STRING_COLORS;
-import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.PUBMED_LAYERS;
+import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.CROSS_SPECIES_LAYERS;
 import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.getIconFont;
 
 import java.awt.Color;
@@ -24,6 +24,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -57,13 +58,13 @@ import edu.ucsf.rbvi.stringApp.internal.ui.PubMedQueryPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.SearchOptionsPanel;
 import edu.ucsf.rbvi.stringApp.internal.utils.TextIcon;
 
-public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
+public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	StringManager manager;
-	static String PUBMED_ID = "edu.ucsf.rbvi.pubmed";
-	static String PUBMED_URL = "http://string-db.org";
-	static String PUBMED_NAME = "STRING PubMed query";
-	static String PUBMED_DESC = "Search STRING for protein-protein interactions based on PubMed queries";
-	static String PUBMED_DESC_LONG =  "<html>The PubMed query retrieves a STRING network pertaining to any topic of interest <br />"
+	static String CROSS_SPECIES_ID = "edu.ucsf.rbvi.x-species";
+	static String CROSS_SPECIES_URL = "http://string-db.org";
+	static String CROSS_SPECIES_NAME = "STRING Cross Species query";
+	static String CROSS_SPECIES_DESC = "Search STRING for protein-protein interactions across species";
+	static String CROSS_SPECIES_DESC_LONG =  "<html>The PubMed query retrieves a STRING network pertaining to any topic of interest <br />"
 											+ "based on text mining of PubMed abstracts. STRING is a database of known and <br />"
 											+ "predicted protein interactions for thousands of organisms, which are integrated <br />"
 											+ "from several sources, scored, and transferred across orthologs. The network <br />"
@@ -71,32 +72,32 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 
 	private StringNetwork stringNetwork = null;
 	private SearchOptionsPanel optionsPanel = null;
-	private JTextField queryComponent = null;
+	private JComboBox<Species> queryComponent = null;
 	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
 
-	private static final Icon icon = new TextIcon(PUBMED_LAYERS, getIconFont(32.0f), STRING_COLORS, 36, 36);
+	private static final Icon icon = new TextIcon(CROSS_SPECIES_LAYERS, getIconFont(32.0f), STRING_COLORS, 36, 36);
 
 	private static URL stringURL() {
 		try {
-			return new URL(PUBMED_URL);
+			return new URL(CROSS_SPECIES_URL);
 		} catch (MalformedURLException e) {
 			return null;
 		}
 	}
 
-	public PubmedSearchTaskFactory(StringManager manager) {
-		super(PUBMED_ID, PUBMED_NAME, PUBMED_DESC, icon, PubmedSearchTaskFactory.stringURL());
+	public CrossSpeciesSearchTaskFactory(StringManager manager) {
+		super(CROSS_SPECIES_ID, CROSS_SPECIES_NAME, CROSS_SPECIES_DESC, icon, CrossSpeciesSearchTaskFactory.stringURL());
 		this.manager = manager;
 	}
 
 	public boolean isReady() { 
-		if (manager.haveURIs() && queryComponent.getText() != null && queryComponent.getText().length() > 0)
+		if (manager.haveURIs() && queryComponent.getSelectedItem() != null)
 			return true; 
 		return false;
 	}
 
 	public TaskIterator createTaskIterator() {
-		final String terms = queryComponent.getText();
+		final Species species2 = (Species)queryComponent.getSelectedItem();
 
 		return new TaskIterator(new AbstractTask() {
 			@Override
@@ -115,13 +116,12 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 						JDialog d = new JDialog();
 						d.setTitle("Resolve Ambiguous Terms");
 						d.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-						PubMedQueryPanel panel = new PubMedQueryPanel(manager, stringNetwork, terms, 
-						                                              optionsPanel);
-						d.setContentPane(panel);
+						// CrossSpeciesQueryPanel panel = new CrossSpeciesQueryPanel(manager, stringNetwork, species2, optionsPanel);
+						// d.setContentPane(panel);
 						d.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 						d.pack();
 						// d.setVisible(true);
-						panel.doImport();
+						// panel.doImport();
 					}
 				});
 			}
@@ -130,14 +130,14 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	}
 
 	@Override
-	public String getName() { return PUBMED_NAME; }
+	public String getName() { return CROSS_SPECIES_NAME; }
 
 	@Override
-	public String getId() { return PUBMED_ID; }
+	public String getId() { return CROSS_SPECIES_ID; }
 
 	@Override
 	public String getDescription() {
-		return PUBMED_DESC_LONG;
+		return CROSS_SPECIES_DESC_LONG;
 	}
 
 	@Override
@@ -147,7 +147,7 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 
 	@Override
 	public URL getWebsite() { 
-		return PubmedSearchTaskFactory.stringURL();
+		return CrossSpeciesSearchTaskFactory.stringURL();
 	}
 
 	// Create a JPanel that provides the species, confidence interval, and number of interactions
@@ -168,9 +168,8 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 
 
 	// We want a private class so we can add our helper text
-	private class MySearchComponent extends JTextField {
+	private class MySearchComponent extends JComboBox {
 		Color msgColor;
-		private static final String DEF_SEARCH_TEXT = "Enter one term per line.      Set species →";
 		final int vgap = 1;
 		final int hgap = 5;
 		private boolean haveFocus = false;
@@ -185,62 +184,12 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 			setMinimumSize(getPreferredSize());
 			setBorder(BorderFactory.createEmptyBorder(vgap, hgap, vgap, hgap));
 			setFont(getFont().deriveFont(LookAndFeelUtil.getSmallFontSize()));
-
-			getDocument().addDocumentListener(new DocumentListener() {
-				@Override
-				public void removeUpdate(DocumentEvent e) {
-					fireQueryChanged();
-				}
-				@Override
-				public void insertUpdate(DocumentEvent e) {
-					fireQueryChanged();
-				}
-				@Override
-				public void changedUpdate(DocumentEvent e) {
-					// Nothing to do here...
-				}
-			});
-
-			addActionListener( new AbstractAction() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					MySearchComponent.this.firePropertyChange(NetworkSearchTaskFactory.SEARCH_REQUESTED_PROPERTY, null, null);
-				}
-			});
-
-			addFocusListener(new FocusListener() {
-				@Override
-				public void focusLost(FocusEvent e) { haveFocus = false; }
-
-				@Override
-				public void focusGained(FocusEvent e) { haveFocus = true; }
-			});
-
 			return;
 		}
 
 		@Override
 		public void paint(Graphics g) {
 			super.paint(g);
-			Color msgColor = UIManager.getColor("Label.disabledForeground");
-
-			if ((getText() == null || getText().trim().isEmpty()) && !haveFocus) {
-				Graphics2D g2 = (Graphics2D) g.create();
-				g2.setRenderingHints(
-					new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON));
-				// Set the font
-				g2.setFont(getFont());
-				// Get the FontMetrics
-				FontMetrics metrics = g2.getFontMetrics(getFont());
-				// Determine the X coordinate for the text
-				int x = hgap;
-				// Determine the Y coordinate for the text (note we add the ascent, as in java 2d 0 is top of the screen)
-				int y = (metrics.getHeight() / 2) + metrics.getAscent() + vgap;
-				// Draw
-				g2.setColor(msgColor);
-				g2.drawString(DEF_SEARCH_TEXT, x, y);
-				g2.dispose();
-			}
 		}
 
 

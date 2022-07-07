@@ -85,6 +85,7 @@ public class SearchOptionsPanel extends JPanel {
 	private boolean ignore = false;
 	private final boolean isDisease;
 	private final boolean isPubMed;
+	private boolean isCrossSpecies = false;
 	private final boolean showSpecies;
 	private String netSpecies = "Homo sapiens";
 
@@ -95,10 +96,16 @@ public class SearchOptionsPanel extends JPanel {
 
 	public SearchOptionsPanel(final StringManager manager, final boolean isPubMed, 
 	                          final boolean isDisease, final boolean showSpecies) {
+		this(manager, isPubMed, isDisease, false, showSpecies);
+	}
+
+	public SearchOptionsPanel(final StringManager manager, final boolean isPubMed, 
+	                          final boolean isDisease, final boolean isCrossSpecies, final boolean showSpecies) {
 		super(new GridBagLayout());
 		this.manager = manager;
 		this.isDisease = isDisease;
 		this.isPubMed = isPubMed;
+		this.isCrossSpecies = isCrossSpecies;
 		this.showSpecies = showSpecies;
 		// System.out.println("SearchOptionsPanel("+isPubMed+","+isDisease+","+showSpecies+")");
 		if (isDisease || isPubMed) 
@@ -111,12 +118,12 @@ public class SearchOptionsPanel extends JPanel {
 	}
 
 	public SearchOptionsPanel(final StringManager manager, final boolean isPubMed, final boolean isDisease) {
-		this(manager, isPubMed, isDisease, true);
+		this(manager, isPubMed, isDisease, false, true);
 	}
 
 	// Special constructor used for new NetworkSearchTaskFactory options.
 	public SearchOptionsPanel(final StringManager manager) {
-		this(manager, false, false);
+		this(manager, false, false, false);
 	}
 
 	private void initOptions() {
@@ -136,9 +143,11 @@ public class SearchOptionsPanel extends JPanel {
 		JPanel confidenceSlider = createConfidenceSlider();
 		add(confidenceSlider, c.down().expandBoth().insets(5,5,0,5));
 
-		// Create the slider for the additional nodes
-		JPanel additionalNodesSlider = createAdditionalNodesSlider();
-		add(additionalNodesSlider, c.down().expandBoth().insets(5,5,0,5));
+		if (!isCrossSpecies) {
+			// Create the slider for the additional nodes
+			JPanel additionalNodesSlider = createAdditionalNodesSlider();
+			add(additionalNodesSlider, c.down().expandBoth().insets(5,5,0,5));
+		}
 
 		// Add some "advanced" options
 		advancedOptions = createAdvancedOptions();

@@ -32,7 +32,9 @@ public class LoadSpeciesInteractions extends AbstractTask {
 
 	final StringNetwork stringNet;
 	final String species;
+	String species2 = null;
 	final int taxonId;
+	int taxonId2 = -1;
 	final int confidence;
 	// final int additionalNodes;
 	// final List<String> stringIds;
@@ -40,6 +42,15 @@ public class LoadSpeciesInteractions extends AbstractTask {
 	final String netName;
 	final String useDATABASE;
 	NetworkType netType;
+	String errorMsg;
+
+	public LoadSpeciesInteractions(final StringNetwork stringNet, final Species species1,
+	                               final Species species2, final int confidence, final NetworkType netType) {
+		this(stringNet, species1.toString(), species1.getTaxId(), confidence, "", Databases.STRING.getAPIName());
+		this.species2 = species2.toString();
+		this.taxonId2 = species2.getTaxId();
+		this.netType = netType;
+	}
 	
 	public LoadSpeciesInteractions(final StringNetwork stringNet, final String species,
 			final int taxonId, final int confidence, final String netName,
@@ -58,6 +69,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		this.species = species;
 		this.netName = netName;
 		this.useDATABASE = useDATABASE;
+		this.errorMsg = null;
 	}
 
 	public void run(TaskMonitor monitor) {
@@ -74,6 +86,9 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		Map<String, String> args = new HashMap<>();
 		args.put("database", netType.getAPIName());
 		args.put("organism", String.valueOf(taxonId));
+		if (species2 != null) {
+			args.put("organism2", String.valueOf(taxonId2));
+		}
 		args.put("score", conf);
 		args.put("caller_identity", StringManager.CallerIdentity);
 
@@ -82,7 +97,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		try {
 			results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
 		} catch (ConnectionException e) {
-			e.printStackTrace();
+			this.errorMsg = e.getMessage();
 			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
 			return;
 		}
@@ -97,6 +112,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		// time = System.currentTimeMillis();
 
 		if (network == null) {
+			this.errorMsg = "String returned no results";
 			monitor.showMessage(TaskMonitor.Level.ERROR, "String returned no results");
 			return;
 		}
@@ -132,6 +148,14 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		} else {
 			ViewUtils.styleNetwork(manager, network, null);
 		}
+	}
+
+	public boolean hasError() {
+		return this.errorMsg != null;
+	}
+	
+	public String getErrorMessage() {
+		return this.errorMsg;
 	}
 
 	@ProvidesTitle

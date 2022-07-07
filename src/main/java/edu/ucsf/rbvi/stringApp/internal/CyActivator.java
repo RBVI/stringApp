@@ -609,30 +609,6 @@ public class CyActivator extends AbstractCyActivator {
 			registerService(bc, getSpecies, TaskFactory.class, props);
 		}
 
-		/*
-		{
-			OpenEvidenceTaskFactory openEvidence = new OpenEvidenceTaskFactory(manager);
-			Properties props = new Properties();
-			props.setProperty(PREFERRED_MENU, "Apps.String");
-			props.setProperty(TITLE, "Show evidence for association (if available)");
-			props.setProperty(MENU_GRAVITY, "2.0");
-			props.setProperty(IN_MENU_BAR, "true");
-			registerService(bc, openEvidence, NodeViewTaskFactory.class, props);
-		}
-		*/
-		
-		/*
-		{
-			FindProteinsTaskFactory findProteins = new FindProteinsTaskFactory(manager);
-			Properties props = new Properties();
-			props.setProperty(PREFERRED_MENU, "Apps.String");
-			props.setProperty(TITLE, "Find proteins using text mining");
-			props.setProperty(MENU_GRAVITY, "4.0");
-			props.setProperty(IN_MENU_BAR, "true");
-			registerService(bc, findProteins, TaskFactory.class, props);
-		}
-		*/
-
 		{
 			// Register our "show image" toggle
 			ShowImagesPanelAction sia = new ShowImagesPanelAction("Show structure images", manager);
