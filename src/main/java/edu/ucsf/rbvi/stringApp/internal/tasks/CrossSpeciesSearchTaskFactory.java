@@ -111,12 +111,9 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 	}
 
 	public boolean isReady() { 
-		System.out.println("isReady");
 		if (manager.haveURIs() && (queryComponent.getSpecies1() != null) && (queryComponent.getSpecies2() != null)) {
-			System.out.println("true");
 			return true; 
 		}
-		System.out.println("false");
 		return false;
 	}
 
@@ -127,6 +124,13 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 		return new TaskIterator(new AbstractTask() {
 			@Override
 			public void run(TaskMonitor m) {
+				StringNetwork stringNetwork = new StringNetwork(manager);
+				int confidence = optionsPanel.getConfidence();
+				LoadSpeciesInteractions loadInteractions = 
+								new LoadSpeciesInteractions(stringNetwork, species1, species2, 
+								                            confidence, optionsPanel.getNetworkType());
+
+				manager.execute(new TaskIterator(loadInteractions), true);
 			}
 		});
 
@@ -157,7 +161,7 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 	// NOTE: we need to use reasonable defaults since it's likely the user won't actually change it...
 	@Override
 	public JComponent getOptionsComponent() {
-		optionsPanel = new SearchOptionsPanel(manager, true, false);
+		optionsPanel = new SearchOptionsPanel(manager, false, false, true, false);
 		return optionsPanel;
 	}
 
@@ -191,7 +195,10 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 		}
 
 		Species getSpecies2() {
-			return Species.getSpecies((String)species2.getSelectedItem());
+			String sp2 = (String)species2.getSelectedItem();
+			if (sp2 == null || sp2.length() == 0)
+				return null;
+			return Species.getSpecies(sp2);
 		}
 
 		private void init() {
@@ -285,13 +292,16 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 			species1.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
-					System.out.println("Action performed");
+					// See if we actually selected something
+					if (Species.getSpecies(species1.getSelectedItem().toString()) == null)
+						return;
+
 					DefaultComboBoxModel<String> model2 = (DefaultComboBoxModel)species2.getModel();
 					model2.removeAllElements();
 					List<String> crossList = Species.getSpeciesPartners(species1.getSelectedItem().toString());
 					Collections.sort(crossList);
 					model2.addAll(crossList);
-					speciesFrame1.setVisible(false);
+					// speciesFrame1.setVisible(false);
 
 					Species sp1 = (Species)species1.getSelectedItem();
 					if (sp1 == null || sp1.toString() == "")
@@ -301,6 +311,7 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 						sp1str = sp1str.substring(0, Math.min(sp1str.length(), 20));
 						sp1Button.setText(sp1str);
 					}
+					speciesFrame1.setVisible(false);
 					fireQueryChanged();
 
 				}
