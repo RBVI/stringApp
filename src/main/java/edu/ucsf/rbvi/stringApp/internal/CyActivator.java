@@ -42,6 +42,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ExpandNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExportPublicationsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.FilterEnrichmentTableTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.GetClusterEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetPublicationsTaskFactory;
@@ -546,6 +547,17 @@ public class CyActivator extends AbstractCyActivator {
 				props.setProperty(COMMAND_SUPPORTS_JSON, "true");
 				props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 				registerService(bc, showPublications, TaskFactory.class, props);
+			}
+
+			{
+				GetClusterEnrichmentTaskFactory getClusterEnrichment = new GetClusterEnrichmentTaskFactory(manager, true);
+				Properties propsEnrichment = new Properties();
+				propsEnrichment.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
+				propsEnrichment.setProperty(TITLE, "Retrieve functional enrichment  per cluster");
+				propsEnrichment.setProperty(MENU_GRAVITY, "7.0");
+				propsEnrichment.setProperty(IN_MENU_BAR, "true");
+				propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
+				registerService(bc, getClusterEnrichment, NetworkTaskFactory.class, propsEnrichment);
 			}
 
 			{
