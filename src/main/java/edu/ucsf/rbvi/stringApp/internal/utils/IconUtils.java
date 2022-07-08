@@ -20,6 +20,7 @@ public abstract class IconUtils {
 	public static final String PUBMED_LAYER = "\uE90A";
 	public static final String STITCH_LAYER = "\uE90B";
 	public static final String STRING_LAYER = "\uE90C";
+	public static final String CROSS_SPECIES_LAYER = "\uE90D";
 	// EnrichmentMap Icon
 	public static final String EM_ICON_LAYER_1 = "\uE900";
 	public static final String EM_ICON_LAYER_2 = "\uE901";
@@ -33,6 +34,7 @@ public abstract class IconUtils {
 	public static final String[] PUBMED_LAYERS = new String[] { STRING_ICON_LAYER_1, STRING_ICON_LAYER_2, STRING_ICON_LAYER_3, STRING_ICON_LAYER_4, PUBMED_LAYER };
 	public static final String[] STITCH_LAYERS = new String[] { STRING_ICON_LAYER_1, STRING_ICON_LAYER_2, STRING_ICON_LAYER_3, STRING_ICON_LAYER_4, STITCH_LAYER };
 	public static final String[] STRING_LAYERS = new String[] { STRING_ICON_LAYER_1, STRING_ICON_LAYER_2, STRING_ICON_LAYER_3, STRING_ICON_LAYER_4, STRING_LAYER };
+	public static final String[] CROSS_SPECIES_LAYERS = new String[] { STRING_ICON_LAYER_1, STRING_ICON_LAYER_2, STRING_ICON_LAYER_3, STRING_ICON_LAYER_4, CROSS_SPECIES_LAYER };
 	
 	public static final String[] LAYERED_EM_ICON = new String[] { EM_ICON_LAYER_1, EM_ICON_LAYER_2, EM_ICON_LAYER_3 };
 	public static final Color[] EM_COLORS = new Color[] { Color.WHITE, new Color(31, 120, 180), new Color(52, 160, 44) };

@@ -246,9 +246,11 @@ public class Species implements Comparable<Species> {
 	}
 
 	public static Species getSpecies(String speciesName) {
+		if (nameSpecies == null || speciesName == null) return null;
 		if (nameSpecies.containsKey(speciesName))
 			return nameSpecies.get(speciesName);
 
+		if (allSpecies == null) return null;
 		for (Species s: allSpecies) {
 			if (s.getName().equalsIgnoreCase(speciesName))
 				return s;
@@ -270,8 +272,11 @@ public class Species implements Comparable<Species> {
 						// ignore
 					}
 				}
+        return partners;
 			}
 		}
+
+    // This will be empty
 		return partners;
 	}
 

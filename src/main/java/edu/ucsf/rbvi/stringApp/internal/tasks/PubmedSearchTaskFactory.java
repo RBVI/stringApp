@@ -46,9 +46,6 @@ import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.TaskObserver;
-import org.cytoscape.io.webservice.NetworkImportWebServiceClient;
-import org.cytoscape.io.webservice.SearchWebServiceClient;
-import org.cytoscape.io.webservice.swing.AbstractWebServiceGUIClient;
 
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;

@@ -63,11 +63,13 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowPublicationsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
 
+import edu.ucsf.rbvi.stringApp.internal.tasks.CrossSpeciesSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.StringSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.StitchSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.DiseaseSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.PubmedSearchTaskFactory;
 
+import edu.ucsf.rbvi.stringApp.internal.ui.CrossSpeciesWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.ui.DiseaseNetworkWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.ui.StitchWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.ui.StringWebServiceClient;
@@ -397,6 +399,12 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			StitchWebServiceClient client = new StitchWebServiceClient(this);
 			registrar.registerAllServices(client, new Properties());
 		}
+		
+		{
+			// Register our cross species network web service client
+			CrossSpeciesWebServiceClient client = new CrossSpeciesWebServiceClient(this);
+			registrar.registerAllServices(client, new Properties());
+		}
 
 	}
 
@@ -421,6 +429,12 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
       DiseaseSearchTaskFactory stringSearch = new DiseaseSearchTaskFactory(this);
       Properties propsSearch = new Properties();
       registrar.registerService(stringSearch, NetworkSearchTaskFactory.class, propsSearch);
+    }
+		
+		{
+      CrossSpeciesSearchTaskFactory xpSearch = new CrossSpeciesSearchTaskFactory(this);
+      Properties propsSearch = new Properties();
+      registrar.registerService(xpSearch, NetworkSearchTaskFactory.class, propsSearch);
     }
 	}
 

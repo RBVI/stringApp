@@ -139,6 +139,12 @@ public class CyActivator extends AbstractCyActivator {
 		
 		{
 			// Register our disease network web service client
+			CrossSpeciesWebServiceClient client = new CrossSpeciesWebServiceClient(manager);
+			registerAllServices(bc, client, new Properties());
+		}
+		
+		{
+			// Register our disease network web service client
 			DiseaseNetworkWebServiceClient client = new DiseaseNetworkWebServiceClient(manager);
 			registerAllServices(bc, client, new Properties());
 		}
@@ -233,6 +239,24 @@ public class CyActivator extends AbstractCyActivator {
 							+ "STITCH is a resource to explore known and predicted interactions of chemicals and <br />"
 							+ "proteins. Chemicals are linked to other chemicals and proteins by evidence derived <br />"
 							+ "from experiments, databases and the literature.</html>");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+    	props.setProperty(COMMAND_EXAMPLE_JSON, JSON_EXAMPLE);
+      registerService(bc, getNetwork, TaskFactory.class, props);
+    }
+		
+		{
+      GetNetworkTaskFactory getNetwork = new GetNetworkTaskFactory(manager, "cross-species");
+      Properties props = new Properties();
+      props.setProperty(COMMAND_NAMESPACE, "string");
+      props.setProperty(COMMAND, "cross-species query");
+			props.setProperty(COMMAND_DESCRIPTION, 
+										    "Create a STRING network from two interacting species");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+					"<html>The cross-species query retrieves a STRING network of interacting proteins across two species. <br />"
+								+ "STRING is a database of known and predicted protein interactions for <br />"
+								+ "thousands of organisms, which are integrated from several sources, <br />"
+								+ "scored, and transferred across orthologs. The network includes both <br />"
+								+ "physical interactions and functional associations.</html>");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
     	props.setProperty(COMMAND_EXAMPLE_JSON, JSON_EXAMPLE);
       registerService(bc, getNetwork, TaskFactory.class, props);
@@ -611,30 +635,6 @@ public class CyActivator extends AbstractCyActivator {
 			registerService(bc, getSpecies, TaskFactory.class, props);
 		}
 
-		/*
-		{
-			OpenEvidenceTaskFactory openEvidence = new OpenEvidenceTaskFactory(manager);
-			Properties props = new Properties();
-			props.setProperty(PREFERRED_MENU, "Apps.String");
-			props.setProperty(TITLE, "Show evidence for association (if available)");
-			props.setProperty(MENU_GRAVITY, "2.0");
-			props.setProperty(IN_MENU_BAR, "true");
-			registerService(bc, openEvidence, NodeViewTaskFactory.class, props);
-		}
-		*/
-		
-		/*
-		{
-			FindProteinsTaskFactory findProteins = new FindProteinsTaskFactory(manager);
-			Properties props = new Properties();
-			props.setProperty(PREFERRED_MENU, "Apps.String");
-			props.setProperty(TITLE, "Find proteins using text mining");
-			props.setProperty(MENU_GRAVITY, "4.0");
-			props.setProperty(IN_MENU_BAR, "true");
-			registerService(bc, findProteins, TaskFactory.class, props);
-		}
-		*/
-
 		{
 			// Register our "show image" toggle
 			ShowImagesPanelAction sia = new ShowImagesPanelAction("Show structure images", manager);
@@ -718,6 +718,11 @@ public class CyActivator extends AbstractCyActivator {
     }
     {
       PubmedSearchTaskFactory stringSearch = new PubmedSearchTaskFactory(manager);
+      Properties propsSearch = new Properties();
+      registerService(bc, stringSearch, NetworkSearchTaskFactory.class, propsSearch);
+    }
+    {
+      CrossSpeciesSearchTaskFactory stringSearch = new CrossSpeciesSearchTaskFactory(manager);
       Properties propsSearch = new Properties();
       registerService(bc, stringSearch, NetworkSearchTaskFactory.class, propsSearch);
     }
