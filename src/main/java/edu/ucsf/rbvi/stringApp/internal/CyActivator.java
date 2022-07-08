@@ -553,7 +553,7 @@ public class CyActivator extends AbstractCyActivator {
 				GetClusterEnrichmentTaskFactory getClusterEnrichment = new GetClusterEnrichmentTaskFactory(manager, true);
 				Properties propsEnrichment = new Properties();
 				propsEnrichment.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
-				propsEnrichment.setProperty(TITLE, "Retrieve functional enrichment  per cluster");
+				propsEnrichment.setProperty(TITLE, "Retrieve functional enrichment per group");
 				propsEnrichment.setProperty(MENU_GRAVITY, "7.0");
 				propsEnrichment.setProperty(IN_MENU_BAR, "true");
 				propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");

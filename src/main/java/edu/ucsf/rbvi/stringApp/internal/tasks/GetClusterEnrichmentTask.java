@@ -167,22 +167,22 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		monitor.setStatusMessage("Network contains " + groups.size() + " groups.");
 		
 		for (String group : groups) {
-			String groupName = colGroups.getName() + "_" + group;
+			String groupTableName = EnrichmentTerm.ENRICHMENT_TABLE_PREFIX + colGroups.getName() + " " + group;
 			
 			// clear old results
-			deleteEnrichmentTables(groupName);
+			deleteEnrichmentTables(groupTableName);
 
 			// get set of nodes to retrieve enrichment for
 			String selected = getGroupNodes(network, colGroups, group).trim(); // also inits the analyzedNodes
 			if (analyzedNodes.size() < limitGroupSize) {
-				System.out.println("ignore group " + groupName);
+				System.out.println("ignore group " + groupTableName);
 				continue;
 			}
-			System.out.println("Retrieving enrichment for group " + groupName + " with " + analyzedNodes.size() + " nodes.");
-			monitor.showMessage(Level.INFO, "Retrieving enrichment for group " + groupName);
+			System.out.println("Retrieving enrichment for group " + groupTableName + " with " + analyzedNodes.size() + " nodes.");
+			monitor.showMessage(Level.INFO, "Retrieving enrichment for group " + groupTableName);
 
 			// retrieve enrichment (new API)
-			getEnrichmentJSON(selected, species, bgNodes, groupName);
+			getEnrichmentJSON(selected, species, bgNodes, groupTableName);
 		}
 			
 		// show enrichment results
@@ -227,7 +227,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			groupColumn.setSelectedValue(mclCol);
     }
 
-	private void getEnrichmentJSON(String selected, String species, String backgroundNodes, String groupLabel) {
+	private void getEnrichmentJSON(String selected, String species, String backgroundNodes, String groupTableLabel) {
 		Map<String, String> args = new HashMap<String, String>();
 		String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/enrichment";
 		args.put("identifiers", selected);
@@ -276,11 +276,11 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			System.out.println("all: " + termsAll.size());
 			System.out.println("pmid: " + termsPubl.size());
 			if (publOnly) {
-				enrichmentResult.put(groupLabel + TermCategory.PMID.getKey(), termsPubl);
-				saveEnrichmentTable(groupLabel + TermCategory.PMID.getTable(), groupLabel + TermCategory.PMID.getKey());				
+				//enrichmentResult.put(groupLabel + TermCategory.PMID.getKey(), termsPubl);
+				//saveEnrichmentTable(groupLabel + TermCategory.PMID.getTable(), groupLabel + TermCategory.PMID.getKey());				
 			} else {
-				enrichmentResult.put(groupLabel + TermCategory.ALL.getKey(), termsAll);
-				saveEnrichmentTable(groupLabel + TermCategory.ALL.getTable(), groupLabel + TermCategory.ALL.getKey());
+				enrichmentResult.put(groupTableLabel, termsAll);
+				saveEnrichmentTable(groupTableLabel, groupTableLabel);
 			}
 			// info for the user
 			if ((publOnly && termsPubl.size() == 0) || (!publOnly && termsAll.size() == 0))
@@ -377,14 +377,12 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		return str.toString();
 	}
 
-	
-	private void deleteEnrichmentTables(String groupName) {
-		Set<CyTable> netTables = new HashSet<CyTable>();
+	// TODO: [N] not working yet?
+	private void deleteEnrichmentTables(String groupTableName) {
 		CyTableManager tableManager = manager.getService(CyTableManager.class); 
 		Set<CyTable> currTables = tableManager.getAllTables(true);
 		for (CyTable current : currTables) {
-			if ((current.getTitle().contains(groupName + TermCategory.ALL.getTable())
-					|| current.getTitle().contains(groupName + TermCategory.PMID.getTable()))
+			if (current.getTitle().contains(groupTableName)
 					&& current.getColumn(EnrichmentTerm.colNetworkSUID) != null
 					&& current.getAllRows().size() > 0) {
 				CyRow tempRow = current.getAllRows().get(0);

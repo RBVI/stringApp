@@ -112,7 +112,8 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 				manager.setOverlapCutoff(network,overlapCutoff.getValue());
 				manager.setCategoryFilter(network,categories.getSelectedValues());
 				manager.updateSettings();
-				filteredEnrichmentTable = enrichmentPanel.updateFilteredEnrichmentTable();
+				enrichmentPanel.getFilteredTable();
+				// enrichmentPanel.updateFilteredEnrichmentTable();
 			//}
 		//});
 	}

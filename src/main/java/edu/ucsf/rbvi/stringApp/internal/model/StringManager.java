@@ -924,7 +924,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		CyTableManager tableManager = getService(CyTableManager.class);
 		Set<CyTable> tables = tableManager.getAllTables(true);
 		for (CyTable table : tables) {
-			if (table.getTitle().equals(TermCategory.ALL.getTable())) {
+			if (table.getTitle().contains(EnrichmentTerm.ENRICHMENT_TABLE_PREFIX)) {
 				// System.out.println("manager: found table ALL");
 				if (enrichPanel == null) {
 					// System.out.println("manager: showEnrichPanel -> createTaskIterator");

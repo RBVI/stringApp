@@ -1383,6 +1383,24 @@ public class ModelUtils {
 		return netTables;
 	}
 
+	public static Set<CyTable> getAllEnrichmentTables(StringManager manager, CyNetwork network) {
+		Set<CyTable> netTables = new HashSet<CyTable>();
+		CyTableManager tableManager = manager.getService(CyTableManager.class); 
+		Set<CyTable> currTables = tableManager.getAllTables(true);
+		for (CyTable current : currTables) {
+			if ((current.getTitle().contains(EnrichmentTerm.ENRICHMENT_TABLE_PREFIX))
+					&& current.getColumn(EnrichmentTerm.colNetworkSUID) != null
+					&& current.getAllRows().size() > 0) {
+				CyRow tempRow = current.getAllRows().get(0);
+				if (tempRow.get(EnrichmentTerm.colNetworkSUID, Long.class) != null && tempRow
+						.get(EnrichmentTerm.colNetworkSUID, Long.class).equals(network.getSUID())) {
+					netTables.add(current);
+				}
+			}
+		}
+		return netTables;
+	}
+	
 	public static CyTable getEnrichmentTable(StringManager manager, CyNetwork network, String name) {
 		CyTableManager tableManager = manager.getService(CyTableManager.class);
 		Set<CyTable> currTables = tableManager.getAllTables(true);
