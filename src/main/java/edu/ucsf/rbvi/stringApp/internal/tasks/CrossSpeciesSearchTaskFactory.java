@@ -83,6 +83,7 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 											+ "from several sources, scored, and transferred across orthologs. The network <br />"
 											+ "includes both physical interactions and functional associations.</html>";
 
+	private JComboBoxDecorator species2Decorator;
 	private StringNetwork stringNetwork = null;
 	private SearchOptionsPanel optionsPanel = null;
 	private MySearchComponent queryComponent = null;
@@ -191,7 +192,9 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 		}
 
 		Species getSpecies1() {
-      return (Species)species1.getSelectedItem();
+			if (species1.getSelectedItem() instanceof Species)
+				return (Species)species1.getSelectedItem();
+			return null;
 		}
 
 		Species getSpecies2() {
@@ -238,6 +241,8 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 					speciesFrame2.validate();
 					speciesFrame2.setVisible(true);
 					speciesFrame2.setLocationRelativeTo(sp2Button);
+					if (species2Decorator != null)
+						species2Decorator.updateEntries(null);
 				}
 			});
 
@@ -306,6 +311,7 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
           String first = crossList.get(0);
 					Collections.sort(crossList);
 					model2.addAll(crossList);
+					species2Decorator.updateEntries(crossList);
           species2.setSelectedItem(first);
 					// speciesFrame1.setVisible(false);
 
@@ -339,6 +345,9 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 	
 			if (speciesList.contains("Plasmodium falciparum"))
 				species2.setSelectedItem("Plasmodium falciparum");
+
+    	species2Decorator = new JComboBoxDecorator(species2, true, false, speciesList);
+			species2Decorator.decorate(speciesList); 
 	
 			c.right().expandHoriz().insets(0,0,0,0);
 			speciesPanel.add(species2, c);
@@ -346,14 +355,17 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 			species2.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
-					speciesFrame2.setVisible(false);
 					String sp2 = (String)species2.getSelectedItem();
-					if (sp2 == null || sp2.toString() == "")
-						sp2Button.setText("Species 2");
-					else {
-						sp2 = sp2.substring(0, Math.min(sp2.length(), 20));
-						sp2Button.setText(sp2);
+					if (sp2 == null || sp2.toString() == "" || Species.getSpecies(sp2) == null) {
+						// sp2Button.setText("Species 2");
+						// System.out.println("Updating entries");
+						// species2Decorator.updateEntries(speciesList);
+						return;
 					}
+					Species sp = Species.getSpecies(sp2);
+					speciesFrame2.setVisible(false);
+					sp2 = sp2.substring(0, Math.min(sp.toString().length(), 20));
+					sp2Button.setText(sp2);
 					fireQueryChanged();
 				}
 			});

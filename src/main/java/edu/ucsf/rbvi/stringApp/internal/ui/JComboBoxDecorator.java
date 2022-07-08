@@ -57,8 +57,15 @@ public class JComboBoxDecorator {
   }
 
   public void updateEntries(final List entries) {
-    allEntries = entries;
+		if (entries != null)
+			allEntries = entries;
     previousEntries.clear();
+		final JTextField textField = (JTextField)jcb.getEditor().getEditorComponent();
+		if (jcb.getSelectedItem() != null)
+			textField.setText(jcb.getSelectedItem().toString());
+		else {
+			textField.setText("");
+		}
   }
 
 	/**
@@ -116,8 +123,11 @@ public class JComboBoxDecorator {
     List ret = new ArrayList();
     enteredText = enteredText.toUpperCase();
     for (Object o: allEntries) {
-      if (o.toString().toUpperCase().startsWith(enteredText))
-        ret.add(o);
+      if (o.toString().toUpperCase().startsWith(enteredText)) {
+				Species sp = Species.getSpecies(o.toString());
+				if (sp != null)
+					ret.add(sp.toString());
+			}
     }
     return ret;
   }
