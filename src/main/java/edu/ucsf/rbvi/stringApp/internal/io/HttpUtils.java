@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -24,7 +25,13 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 public class HttpUtils {
 	@SuppressWarnings("unchecked")
 	public static JSONObject getJSON(String url, Map<String, String> queryMap,
-			StringManager manager) throws ConnectionException {
+			StringManager manager) throws ConnectionException, SocketTimeoutException {
+		return getJSON(url, queryMap, manager, 0);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static JSONObject getJSON(String url, Map<String, String> queryMap,
+			StringManager manager, int timeout) throws ConnectionException, SocketTimeoutException {
 		
 		JSONObject jsonObject = new JSONObject();
 
@@ -46,7 +53,12 @@ public class HttpUtils {
 		}
 
 		try {
+			manager.info("GETting JSON object from "+trueURL.toString());
 			URLConnection connection = manager.getService(StreamUtil.class).getURLConnection(trueURL);
+			if (timeout > 0) {
+				connection.setConnectTimeout(timeout);
+				connection.setReadTimeout(timeout);
+			}
 			
 			InputStream entityStream = connection.getInputStream();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(entityStream));
@@ -57,6 +69,8 @@ public class HttpUtils {
 		} catch(UnknownHostException e) {
 			e.printStackTrace();
 			throw new ConnectionException("Unknown host: " + e.getMessage());
+		} catch (SocketTimeoutException e) {
+			throw e;
 		} catch(IOException e) {
 			e.printStackTrace();
 			throw new ConnectionException(e.getMessage());
@@ -169,6 +183,7 @@ public class HttpUtils {
 
 
 	private static URLConnection executeWithRedirect(StringManager manager, String url, Map<String, String> queryMap) throws Exception {
+		manager.info("POSTing JSON from "+url);
 		// Get the connection from Cytoscape
 		HttpURLConnection connection = (HttpURLConnection) manager.getService(StreamUtil.class).getURLConnection( new URL(url) );
 		
@@ -190,6 +205,7 @@ public class HttpUtils {
 		case HttpURLConnection.HTTP_SEE_OTHER: // code 303
 			// Got a redirect.
 			// Get the new location
+			manager.info("...but we were redirected to "+connection.getHeaderField("Location"));
 			return executeWithRedirect(manager, connection.getHeaderField("Location"), queryMap);
 		case HttpURLConnection.HTTP_INTERNAL_ERROR:
 		case HttpURLConnection.HTTP_BAD_REQUEST:

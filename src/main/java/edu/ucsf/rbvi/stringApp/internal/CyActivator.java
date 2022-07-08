@@ -124,6 +124,7 @@ public class CyActivator extends AbstractCyActivator {
 			
 		}
 
+		/*
 		{
 			// Register our web service client
 			StringWebServiceClient client = new StringWebServiceClient(manager);
@@ -147,6 +148,7 @@ public class CyActivator extends AbstractCyActivator {
 			StitchWebServiceClient client = new StitchWebServiceClient(manager);
 			registerAllServices(bc, client, new Properties());
 		}
+		*/
 
 		{
 			GetNetworkTaskFactory getNetwork = new GetNetworkTaskFactory(manager, "protein");
@@ -702,6 +704,7 @@ public class CyActivator extends AbstractCyActivator {
 			registerService(bc, stringLookFactory, CyCustomGraphicsFactory.class, stringProps);
 		}
 
+		/*
 		    // Register our Network search factories
     {
       StringSearchTaskFactory stringSearch = new StringSearchTaskFactory(manager);
@@ -723,6 +726,7 @@ public class CyActivator extends AbstractCyActivator {
       Properties propsSearch = new Properties();
       registerService(bc, stringSearch, NetworkSearchTaskFactory.class, propsSearch);
     }
+		*/
 
 		manager.info("stringApp " + version + " initialized.");
 		System.out.println("stringApp " + version + " initialized.");

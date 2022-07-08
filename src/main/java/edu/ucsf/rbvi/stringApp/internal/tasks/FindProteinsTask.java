@@ -65,6 +65,9 @@ public class FindProteinsTask extends AbstractTask {
 		} catch(ConnectionException e) {
 			monitor.showMessage(TaskMonitor.Level.ERROR, e.getMessage());
 			return;
+		} catch (Exception e) {
+			// Probably a timeout, but it shouldn't happen
+			return;
 		}
 		if (object == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR, "Error trying to fetch results.");

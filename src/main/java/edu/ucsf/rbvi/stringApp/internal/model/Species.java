@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 public class Species implements Comparable<Species> {
 	private static List<Species> allSpecies;
@@ -140,6 +141,8 @@ public class Species implements Comparable<Species> {
 			stream = pairsURL.openConnection().getInputStream();
 		} catch (Exception e) {
 			e.printStackTrace();
+			URL pairsURL = new URL(Species.class.getResource("/pairs_v11.5.tsv").toString());
+			stream = pairsURL.openConnection().getInputStream();	
 		}
 
 		try (Scanner scanner = new Scanner(stream)) {
@@ -176,7 +179,7 @@ public class Species implements Comparable<Species> {
 		guiSpecies = new ArrayList<Species>();
 		modelSpecies = new ArrayList<Species>();
 		taxIdSpecies = new HashMap<Integer, Species>();
-		nameSpecies = new HashMap<String, Species>();
+		nameSpecies = new TreeMap<String, Species>();
 
 		InputStream stream = null;
 		try {
@@ -184,6 +187,8 @@ public class Species implements Comparable<Species> {
 			stream = speciesURL.openConnection().getInputStream();
 		} catch (Exception e) {
 			e.printStackTrace();
+			URL speciesURL = new URL(Species.class.getResource("/species_v11.5.tsv").toString());
+			stream = speciesURL.openConnection().getInputStream();
 		}
 		
 		try (Scanner scanner = new Scanner(stream)) {

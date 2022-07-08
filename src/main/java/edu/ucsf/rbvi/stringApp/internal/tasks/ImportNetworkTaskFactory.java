@@ -51,7 +51,7 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 		if (stringIds == null) {
 			return new TaskIterator(
 					new LoadSpeciesInteractions(stringNet, species, taxon, confidence,
-					                            Species.getSpeciesOfficialName(String.valueOf(taxon)),
+					                            Species.getSpeciesName(String.valueOf(taxon)),
 					                            useDATABASE, netType));
 		} else if (stringNet.getNetwork() == null) {
 			return new TaskIterator(new LoadInteractions(stringNet, species, taxon,
