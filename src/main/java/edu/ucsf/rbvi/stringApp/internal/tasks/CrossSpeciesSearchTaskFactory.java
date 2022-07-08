@@ -253,7 +253,7 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 				speciesFrame1.setPreferredSize(new Dimension(400,80));
 				speciesPanel1 = createSpeciesComboBox();
 				String sp1 = species1.getSelectedItem().toString();
-				sp1 = sp1.substring(0, Math.min(sp1.length(), 20));
+				sp1 = Species.abbreviate(sp1);
 				sp1Button.setText(sp1);
 				speciesFrame1.setTitle("First Species");
 				speciesFrame1.getContentPane().add(speciesPanel1);
@@ -305,8 +305,18 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 					DefaultComboBoxModel<String> model2 = (DefaultComboBoxModel)species2.getModel();
 					model2.removeAllElements();
 					List<String> crossList = Species.getSpeciesPartners(species1.getSelectedItem().toString());
-          if (crossList == null || crossList.size() == 0)
+          if (crossList == null || crossList.size() == 0) {
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								JOptionPane.showMessageDialog(null,
+									"<html><i>"+species1.getSelectedItem()+"</i> has no cross-species interactions.</html>",
+												"No partners", JOptionPane.ERROR_MESSAGE);
+								}
+							});
+						speciesFrame1.setVisible(false);
+
             return;
+					}
 
           String first = crossList.get(0);
 					Collections.sort(crossList);
@@ -320,7 +330,7 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 						sp1Button.setText("Species 1");
 					else {
 						String sp1str = sp1.toString();
-						sp1str = sp1str.substring(0, Math.min(sp1str.length(), 20));
+						sp1str = Species.abbreviate(sp1str);
 						sp1Button.setText(sp1str);
 					}
 					speciesFrame1.setVisible(false);
@@ -363,9 +373,9 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 						return;
 					}
 					Species sp = Species.getSpecies(sp2);
-					sp2 = sp.toString();
 					speciesFrame2.setVisible(false);
-					sp2 = sp2.substring(0, Math.min(sp2.length(), 20));
+					sp2 = sp.toString();
+					sp2 = Species.abbreviate(sp2);
 					sp2Button.setText(sp2);
 					fireQueryChanged();
 				}

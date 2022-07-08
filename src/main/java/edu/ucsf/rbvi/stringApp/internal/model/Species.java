@@ -312,5 +312,13 @@ public class Species implements Comparable<Species> {
 		}
 		return -1;
 	}
+
+	public static String abbreviate(String speciesName) {
+		if (speciesName.length() <= 20) return speciesName;
+		String[] names = speciesName.split(" ", 2);
+		String newName = names[0].substring(0,1)+". "+names[1];
+		newName = newName.substring(0, Math.min(newName.length(), 20));
+		return newName;
+	}
 	
 }

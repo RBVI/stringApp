@@ -205,10 +205,22 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 		speciesCombo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
+				if (Species.getSpecies(speciesCombo.getSelectedItem().toString()) == null)
+					return;
 				DefaultComboBoxModel<String> model = (DefaultComboBoxModel)speciesPartnerCombo.getModel();
 				model.removeAllElements();
 				List<String> crossList = Species.getSpeciesPartners(speciesCombo.getSelectedItem().toString());
-        if (crossList == null || crossList.size() == 0) return;
+        if (crossList == null || crossList.size() == 0)  {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							JOptionPane.showMessageDialog(null,
+								"<html><i>"+speciesCombo.getSelectedItem()+"</i> has no cross-species interactions.</html>",
+											"No partners", JOptionPane.ERROR_MESSAGE);
+							speciesCombo.setSelectedItem(defaultSpecies);
+						}
+					});
+					return;
+				}
         String first = crossList.get(0);
         Collections.sort(crossList);
 				model.addAll(crossList);
@@ -224,13 +236,13 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 		JPanel speciesPanel = new JPanel(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
 		JLabel speciesLabel = new JLabel("Species 2:");
+		String first = speciesList.get(0);
 		Collections.sort(speciesList);
 		c.noExpand().insets(0,5,0,5);
 		speciesPanel.add(speciesLabel, c);
 		speciesPartnerCombo = new JComboBox<String>(speciesList.toArray(new String[1]));
 
-		if (speciesList.contains("Plasmodium falciparum"))
-			speciesPartnerCombo.setSelectedItem("Plasmodium falciparum");
+		speciesPartnerCombo.setSelectedItem(first);
 
     speciesPartnerDecorator = new JComboBoxDecorator(speciesPartnerCombo, true, false, speciesList);
 		speciesPartnerDecorator.decorate(speciesList); 
