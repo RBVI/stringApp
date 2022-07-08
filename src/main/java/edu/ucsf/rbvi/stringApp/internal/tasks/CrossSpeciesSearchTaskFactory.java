@@ -363,8 +363,9 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 						return;
 					}
 					Species sp = Species.getSpecies(sp2);
+					sp2 = sp.toString();
 					speciesFrame2.setVisible(false);
-					sp2 = sp2.substring(0, Math.min(sp.toString().length(), 20));
+					sp2 = sp2.substring(0, Math.min(sp2.length(), 20));
 					sp2Button.setText(sp2);
 					fireQueryChanged();
 				}

@@ -15,7 +15,7 @@ public class CrossSpeciesWebServiceClient extends AbstractWebServiceGUIClient
 
 	public CrossSpeciesWebServiceClient(StringManager manager) {
 		super(manager.getNetworkURL(), "STRING: cross-species interactions", 
-										"<html>The protein query retrieves a STRING network for one or more proteins. <br />"
+										"<html>The cross-species query retrieves a STRING network for two interacting species.<br />"
 										+ "STRING is a database of known and predicted protein interactions for <br />"
 										+ "thousands of organisms, which are integrated from several sources, <br />"
 										+ "scored, and transferred across orthologs. The network includes both <br />"

@@ -243,6 +243,24 @@ public class CyActivator extends AbstractCyActivator {
     	props.setProperty(COMMAND_EXAMPLE_JSON, JSON_EXAMPLE);
       registerService(bc, getNetwork, TaskFactory.class, props);
     }
+		
+		{
+      GetNetworkTaskFactory getNetwork = new GetNetworkTaskFactory(manager, "cross-species");
+      Properties props = new Properties();
+      props.setProperty(COMMAND_NAMESPACE, "string");
+      props.setProperty(COMMAND, "cross-species query");
+			props.setProperty(COMMAND_DESCRIPTION, 
+										    "Create a STRING network from two interacting species");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+					"<html>The cross-species query retrieves a STRING network of interacting proteins across two species. <br />"
+								+ "STRING is a database of known and predicted protein interactions for <br />"
+								+ "thousands of organisms, which are integrated from several sources, <br />"
+								+ "scored, and transferred across orthologs. The network includes both <br />"
+								+ "physical interactions and functional associations.</html>");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+    	props.setProperty(COMMAND_EXAMPLE_JSON, JSON_EXAMPLE);
+      registerService(bc, getNetwork, TaskFactory.class, props);
+    }
 
 
 		{
