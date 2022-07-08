@@ -20,59 +20,69 @@ import edu.ucsf.rbvi.stringApp.internal.model.Species;
  */
 public class JComboBoxDecorator {
 
-	public static List<Species> previousEntries = new ArrayList<Species>();
+	private List<Species> previousEntries = new ArrayList<Species>();
+	private List allEntries;
+  private JComboBox jcb;
+  private boolean editable;
+  private boolean species;
 
-	public static void decorate(final JComboBox<Species> jcb, boolean editable, boolean species) {
-		List<Species> entries = new ArrayList<Species>();
-		for (int i = 0; i < jcb.getItemCount(); i++) {
-			if (species) {
-				entries.add(jcb.getItemAt(i));
-			}
-		}
-		decorate(jcb, editable, entries);
-	}
+  public JComboBoxDecorator(final JComboBox jcb, final boolean editable, final boolean species, final List entries) {
+    this.jcb = jcb;
+    this.editable = editable;
+    this.species = species;
+    this.allEntries = entries;
 
-	public static void decorate(final JComboBox<Species> jcb, boolean editable,
-			final List<Species> entries) {
+  }
 
-		Species selectedSpecies = (Species)jcb.getSelectedItem();
+  public void decorate(final List entries) {
+		String selectedEntry = jcb.getSelectedItem().toString();
 		jcb.setEditable(editable);
 		jcb.setModel(new DefaultComboBoxModel(entries.toArray()));
 
 		final JTextField textField = (JTextField)jcb.getEditor().getEditorComponent();
-		textField.setText(selectedSpecies.getName());
-		jcb.setSelectedItem(selectedSpecies);
+		textField.setText(selectedEntry.toString());
+		jcb.setSelectedItem(selectedEntry);
 
 		textField.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
 				SwingUtilities.invokeLater(new Runnable() {
 				 	public void run() {
 						int currentCaretPosition=textField.getCaretPosition();
-						comboFilter(textField.getText(), jcb, entries);
+						comboFilter(textField.getText(), entries);
 						textField.setCaretPosition(currentCaretPosition);
 				 	}
 				});
 			}
 		});
-	}
+  }
+
+  public void updateEntries(final List entries) {
+    allEntries = entries;
+    previousEntries.clear();
+  }
 
 	/**
 	 * Create a list of entries that match the user's entered text.
 	 */
-	private static void comboFilter(String enteredText, JComboBox<Species> jcb,
-			List<Species> entries) {
-		List<Species> entriesFiltered = new ArrayList<Species>();
+	private void comboFilter(String enteredText, List entries) {
+		List entriesFiltered = new ArrayList();
 		boolean changed = true;
-		DefaultComboBoxModel<Species> jcbModel = (DefaultComboBoxModel<Species>) jcb.getModel();
+		DefaultComboBoxModel jcbModel = (DefaultComboBoxModel) jcb.getModel();
 
 		if (enteredText == null) {
 			return;
 		} else if (enteredText.length() == 0) {
-			entriesFiltered = Species.getModelSpecies();
+      if (species)
+			  entriesFiltered = Species.getModelSpecies();
+      else
+        entriesFiltered = allEntries;
 		} else if (enteredText.length() < 4) {
 			return;
 		} else {
-			entriesFiltered = Species.search(enteredText);
+      if (species)
+        entriesFiltered = Species.search(enteredText);
+      else
+        entriesFiltered = entrySearch(enteredText);
 		}
 
 		if (previousEntries.size() == entriesFiltered.size()
@@ -87,7 +97,7 @@ public class JComboBoxDecorator {
 			jcb.showPopup();
 		} else if (entriesFiltered.size() == 1) {
 			if (entriesFiltered.get(0).toString().equalsIgnoreCase(enteredText)) {
-				previousEntries = new ArrayList<Species>();
+				previousEntries = new ArrayList<>();
 				jcb.setSelectedItem(entriesFiltered.get(0));
 				jcb.hidePopup();
 			} else {
@@ -97,9 +107,19 @@ public class JComboBoxDecorator {
 				jcb.showPopup();
 			}
 		} else if (entriesFiltered.size() == 0) {
-			previousEntries = new ArrayList<Species>();
+			previousEntries = new ArrayList<>();
 			jcb.hidePopup();
 		}
 	}
+
+  private List entrySearch(String enteredText) {
+    List ret = new ArrayList();
+    enteredText = enteredText.toUpperCase();
+    for (Object o: allEntries) {
+      if (o.toString().toUpperCase().startsWith(enteredText))
+        ret.add(o);
+    }
+    return ret;
+  }
 
 }

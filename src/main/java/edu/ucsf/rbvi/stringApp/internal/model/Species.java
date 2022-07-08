@@ -270,8 +270,11 @@ public class Species implements Comparable<Species> {
 						// ignore
 					}
 				}
+        return partners;
 			}
 		}
+
+    // This will be empty
 		return partners;
 	}
 

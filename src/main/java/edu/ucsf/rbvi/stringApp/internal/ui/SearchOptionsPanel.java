@@ -262,7 +262,8 @@ public class SearchOptionsPanel extends JPanel {
 		} else {
 			speciesCombo.setSelectedItem(Species.getSpecies(defaultSpecies));
 		}
-		JComboBoxDecorator.decorate(speciesCombo, true, true); 
+    JComboBoxDecorator decorator = new JComboBoxDecorator(speciesCombo, true, true, speciesList);
+		decorator.decorate(speciesList); 
 		c.right().expandHoriz().insets(0,5,0,5);
 		if (isDisease)
 			speciesCombo.setEnabled(false);

@@ -191,7 +191,7 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 		}
 
 		Species getSpecies1() {
-			return (Species)species1.getSelectedItem();
+      return (Species)species1.getSelectedItem();
 		}
 
 		Species getSpecies2() {
@@ -247,7 +247,7 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 				speciesFrame1 = new JFrame();
 				speciesFrame1.setPreferredSize(new Dimension(400,80));
 				speciesPanel1 = createSpeciesComboBox();
-				String sp1 = getSpecies1().toString();
+				String sp1 = species1.getSelectedItem().toString();
 				sp1 = sp1.substring(0, Math.min(sp1.length(), 20));
 				sp1Button.setText(sp1);
 				speciesFrame1.setTitle("First Species");
@@ -285,7 +285,8 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 			Species defaultSpecies = Species.getHumanSpecies();
 			species1.setSelectedItem(defaultSpecies);
 	
-			JComboBoxDecorator.decorate(species1, true, true); 
+      JComboBoxDecorator decorator = new JComboBoxDecorator(species1, true, true, speciesList);
+		  decorator.decorate(speciesList); 
 			c.right().expandHoriz().insets(0,0,0,0);
 			speciesPanel.add(species1, c);
 	
@@ -299,8 +300,13 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 					DefaultComboBoxModel<String> model2 = (DefaultComboBoxModel)species2.getModel();
 					model2.removeAllElements();
 					List<String> crossList = Species.getSpeciesPartners(species1.getSelectedItem().toString());
+          if (crossList == null || crossList.size() == 0)
+            return;
+
+          String first = crossList.get(0);
 					Collections.sort(crossList);
 					model2.addAll(crossList);
+          species2.setSelectedItem(first);
 					// speciesFrame1.setVisible(false);
 
 					Species sp1 = (Species)species1.getSelectedItem();

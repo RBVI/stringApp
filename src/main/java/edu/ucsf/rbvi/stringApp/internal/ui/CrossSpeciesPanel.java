@@ -101,6 +101,7 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 	SearchOptionsPanel optionsPanel;
 	NumberFormat formatter = new DecimalFormat("#0.00");
 	NumberFormat intFormatter = new DecimalFormat("#0");
+  JComboBoxDecorator speciesPartnerDecorator = null;
 	private boolean ignore = false;
 	private String useDATABASE = Databases.STRING.getAPIName();
 	private String netSpecies = null;
@@ -196,7 +197,8 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 		speciesCombo.setSelectedItem(defaultSpecies);
 
 
-		JComboBoxDecorator.decorate(speciesCombo, true, true); 
+    JComboBoxDecorator decorator = new JComboBoxDecorator(speciesCombo, true, true, speciesList);
+		decorator.decorate(speciesList); 
 		c.right().expandHoriz().insets(0,5,0,5);
 		speciesPanel.add(speciesCombo, c);
 
@@ -206,7 +208,13 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 				DefaultComboBoxModel<String> model = (DefaultComboBoxModel)speciesPartnerCombo.getModel();
 				model.removeAllElements();
 				List<String> crossList = Species.getSpeciesPartners(speciesCombo.getSelectedItem().toString());
+        if (crossList == null || crossList.size() == 0) return;
+        String first = crossList.get(0);
+        Collections.sort(crossList);
 				model.addAll(crossList);
+        if (speciesPartnerDecorator != null)
+          speciesPartnerDecorator.updateEntries(crossList);
+        speciesPartnerCombo.setSelectedItem(first);
 			}
 		});
 		return speciesPanel;
@@ -223,6 +231,9 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 
 		if (speciesList.contains("Plasmodium falciparum"))
 			speciesPartnerCombo.setSelectedItem("Plasmodium falciparum");
+
+    speciesPartnerDecorator = new JComboBoxDecorator(speciesPartnerCombo, true, false, speciesList);
+		speciesPartnerDecorator.decorate(speciesList); 
 
 		c.right().expandHoriz().insets(0,5,0,5);
 		speciesPanel.add(speciesPartnerCombo, c);

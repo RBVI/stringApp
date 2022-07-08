@@ -204,7 +204,8 @@ public class PubMedQueryPanel extends JPanel {
 		} else {
 			speciesCombo.setSelectedItem(Species.getSpecies(species));
 		}
-		JComboBoxDecorator.decorate(speciesCombo, true, true); 
+    JComboBoxDecorator decorator = new JComboBoxDecorator(speciesCombo, true, true, speciesList);
+		decorator.decorate(speciesList); 
 		c.right().expandHoriz().insets(0,5,0,5);
 		speciesPanel.add(speciesCombo, c);
 		return speciesPanel;
