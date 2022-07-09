@@ -650,6 +650,8 @@ public class ViewUtils {
 		if (network == null || selectedTerms.size() == 0)
 			return;
 
+		// TODO: [N] not reset other ones? so that I can have charts for several clusters at the same time 
+		System.out.println("draw charts");
 		CyTable nodeTable = network.getDefaultNodeTable();
 		createColumns(nodeTable);
 

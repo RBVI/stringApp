@@ -66,9 +66,13 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 	TaskMonitor monitor;
 	private List<CyTable> enrichmentTables = new ArrayList<CyTable>();
 
+	// TODO: [N] limit this to the top X with a default 
 	private static int limitUniqueAttributes = 50; 
+	// TODO: [N] have that as an advanced option
 	private static int limitGroupSize = 4;	
-
+	// TODO: [N] check if the number of unique values == number of values and don't show such columns
+	// TODO: [N] take suggested column name from network attribute __clusterSomething? 
+	
 	@Tunable(description="Network to be used as background"
 		// longDescription = StringToModel.CY_NETWORK_VIEW_LONG_DESCRIPTION,
 		// exampleStringValue = StringToModel.CY_NETWORK_VIEW_EXAMPLE_STRING,

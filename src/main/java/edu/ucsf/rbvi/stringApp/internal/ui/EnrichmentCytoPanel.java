@@ -84,6 +84,10 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.TextIcon;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
+// TODO: [N] everything that we save in the network table should be cluster specific
+// TODO: [N] find a different place for the enrichment settings and analyzed terms, etc. columns -> either a global CyTable or network-specific ones
+// TODO: [N] check for backwards compatibility of old sessions, copy the info from the network table to the enrichment info table and delete the columns
+
 public class EnrichmentCytoPanel extends JPanel
 		implements CytoPanelComponent2, ListSelectionListener, ActionListener,
 		TableModelListener, SelectedNodesAndEdgesListener, SetCurrentNetworkListener {
@@ -592,6 +596,7 @@ public class EnrichmentCytoPanel extends JPanel
 				new ColorEditor(manager, this, colorChooserFactory, network));
 		popupMenu = new JPopupMenu();
 		menuItemReset = new JMenuItem("Remove color");
+		// TODO: [N] Add an anonymous action listener
 		menuItemReset.addActionListener(this);
 		popupMenu.add(menuItemReset);
 		menuItemAddToNet = new JMenuItem("Add term(s) to network");

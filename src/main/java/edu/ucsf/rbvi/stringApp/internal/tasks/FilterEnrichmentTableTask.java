@@ -26,6 +26,8 @@ import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentTableModel;
 
 public class FilterEnrichmentTableTask extends AbstractTask implements ObservableTask {
 
+	// TODO: [N] Make filtering table specific 
+	
 	private StringManager manager;
 	private EnrichmentCytoPanel enrichmentPanel;
 	private CyNetwork network;
