@@ -22,6 +22,7 @@ public class Species implements Comparable<Species> {
 	private static List<Species> modelSpecies;
 	private static Map<Integer, Species> taxIdSpecies;
 	private static Map<String, Species> nameSpecies;
+  private static boolean haveSpecies = false;
 	private int taxon_id;
 	private String type;
 	private String compactName;
@@ -134,6 +135,8 @@ public class Species implements Comparable<Species> {
 		return modelSpecies;
 	}
 
+  public static boolean haveSpecies() { return haveSpecies; }
+
 	public static List<Species> readPairs(StringManager manager) throws Exception {
 		InputStream stream = null;
 		try {
@@ -171,6 +174,7 @@ public class Species implements Comparable<Species> {
 	}
 
 	public static List<Species> readSpecies(StringManager manager) throws Exception {
+    haveSpecies = false;
 		allSpecies = new ArrayList<Species>();
 		coreSpecies = new ArrayList<Species>();
 		peripherySpecies = new ArrayList<Species>();
@@ -242,6 +246,8 @@ public class Species implements Comparable<Species> {
 		Collections.sort(virusSpecies);
 		//System.out.println("virus species: " + virusSpecies.size());
 		Collections.sort(modelSpecies);
+
+    haveSpecies = true;
 		return guiSpecies;
 	}
 
