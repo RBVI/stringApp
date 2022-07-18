@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -65,26 +67,31 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 	List<CyNode> analyzedNodes;
 	TaskMonitor monitor;
 	private List<CyTable> enrichmentTables = new ArrayList<CyTable>();
+	// private static int limitUniqueAttributes = 50; 
 
-	// TODO: [N] limit this to the top X with a default 
-	private static int limitUniqueAttributes = 50; 
-	// TODO: [N] have that as an advanced option
-	private static int limitGroupSize = 4;	
+	// [N] limit this to the top X with a default -> done, list of values is sorted and only the top X groups are considered
+	// [N] have that as an advanced option -> adavanced witgether with a bunch of others
 	// TODO: [N] check if the number of unique values == number of values and don't show such columns
-	// TODO: [N] take suggested column name from network attribute __clusterSomething? 
-	
-	@Tunable(description="Network to be used as background"
-		// longDescription = StringToModel.CY_NETWORK_VIEW_LONG_DESCRIPTION,
-		// exampleStringValue = StringToModel.CY_NETWORK_VIEW_EXAMPLE_STRING,
-	        )
-	public ListSingleSelection<String> background = null;
-	
+	// [N] take suggested column name from network attribute __clusterSomething? 
+		
 	@Tunable(description = "Column for groups", gravity = 2.0)
 	public ListSingleSelection<CyColumn> groupColumn = new ListSingleSelection<CyColumn>();
 
 	@Tunable(description = "Retrieve for species", gravity = 3.0)
 	public ListSingleSelection<String> allNetSpecies = new ListSingleSelection<String>();
 	
+	@Tunable(description = "Number of groups ", groups={"Advanced"}, params="displayState=collapsed", gravity = 5.0)
+	public int limitGroupNumber = 12;	
+
+	@Tunable(description = "Group size limit", groups={"Advanced"}, params="displayState=collapsed", gravity = 6.0)
+	public int limitGroupSize = 4;	
+	
+	@Tunable(description="Network to be used as background", groups={"Advanced"}, params="displayState=collapsed", gravity = 7.0
+			// longDescription = StringToModel.CY_NETWORK_VIEW_LONG_DESCRIPTION,
+			// exampleStringValue = StringToModel.CY_NETWORK_VIEW_EXAMPLE_STRING,
+		        )
+		public ListSingleSelection<String> background = null;
+
 	public GetClusterEnrichmentTask(StringManager manager, CyNetwork network, CyNetworkView netView,
 			ShowEnrichmentPanelTaskFactory showEnrichmentFactory, ShowPublicationsPanelTaskFactory showFactoryPubl, boolean publOnly) {
 		this.manager = manager;
@@ -157,7 +164,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		// get groups 
 		CyColumn colGroups = groupColumn.getSelectedValue();
 		Class<?> colGroupClass = colGroups.getType();
-		Set<String> groups = new HashSet<String>(); 
+		Set<String> groups = new TreeSet<String>(); 
 		if (colGroupClass.equals(String.class)) {
 			groups.addAll(colGroups.getValues(String.class));
 		} else if (colGroupClass.equals(Integer.class)) {
@@ -170,7 +177,12 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		}
 		monitor.setStatusMessage("Network contains " + groups.size() + " groups.");
 		
+		int counter = 0;
 		for (String group : groups) {
+			if (counter > limitGroupNumber) 
+				break;
+
+			// define name of enrichment tables
 			String groupTableName = EnrichmentTerm.ENRICHMENT_TABLE_PREFIX + colGroups.getName() + " " + group;
 			
 			// clear old results
@@ -187,6 +199,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 
 			// retrieve enrichment (new API)
 			getEnrichmentJSON(selected, species, bgNodes, groupTableName);
+			counter += 1;
 		}
 			
 		// show enrichment results
@@ -197,7 +210,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			monitor.showMessage(Level.WARN,
 					"Enrichment retrieval returned no results that met the criteria.");
 		}
-		SynchronousTaskManager<?> taskM = manager.getService(SynchronousTaskManager.class);
+
 		if (showFactoryPubl != null && publOnly) {
 			manager.showPublicationPanel();
 		}
@@ -214,21 +227,50 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		for (CyColumn col : colList) {
 			// System.out.println(col.getName());
 			Set<?> colValues = new HashSet();
+			List<?> colValuesList = new ArrayList<>();
+			int numValues = 0; 
 			if (col.getType().equals(String.class)) {
 				colValues = new HashSet<String>(col.getValues(String.class));
+				colValuesList = new ArrayList<String>(col.getValues(String.class));
+				numValues = col.getValues(String.class).size();
 			} else if (col.getType().equals(Integer.class)) {
 				colValues = new HashSet<Integer>(col.getValues(Integer.class));
+				colValuesList = new ArrayList<Integer>(col.getValues(Integer.class));
+				numValues = col.getValues(Integer.class).size();
+			} else if (col.getType().equals(Boolean.class)) {
+				colValues = new HashSet<Boolean>(col.getValues(Boolean.class));
+				colValuesList = new ArrayList<Boolean>(col.getValues(Boolean.class));
+				numValues = col.getValues(Boolean.class).size();
+			} else if (col.getType().equals(Double.class)) {
+				colValues = new HashSet<Double>(col.getValues(Double.class));
+				colValuesList = new ArrayList<Double>(col.getValues(Double.class));
+				numValues = col.getValues(Double.class).size();
 			}
 			// TODO: filter for empty strings
+			// for (Object listEl : )
 			// System.out.println(colValues.size());
-			if (colValues.size() > 1 && colValues.size() <= limitUniqueAttributes) {
-					showList.add(col);
+			if (colValues.size() == numValues) {
+				// skip column if it only contains unique values
+				System.out.println("skip: " + col.getName());
+				continue;
+			}
+			//if (colValues.size() > 1 && colValues.size() <= limitUniqueAttributes) {
+			showList.add(col);
+			//}
+		}
+		Collections.sort(showList, new Comparator<CyColumn>() {
+		    public int compare(CyColumn a, CyColumn b) {
+		        return a.getName().compareToIgnoreCase(b.getName());
+		    }
+		});
+		groupColumn = new ListSingleSelection<CyColumn>(showList);
+		CyColumn mclColNet = network.getDefaultNetworkTable().getColumn("__clusterAttribute");
+		if (mclColNet != null) {
+			String clusterName = network.getRow(network).get("__clusterAttribute", String.class);
+			if (clusterName != null && network.getDefaultNodeTable().getColumn(clusterName) != null) {
+				groupColumn.setSelectedValue(network.getDefaultNodeTable().getColumn(clusterName));
 			}
 		}
-		groupColumn = new ListSingleSelection<CyColumn>(showList);
-		CyColumn mclCol = network.getDefaultNodeTable().getColumn("__mclCluster");
-		if (mclCol != null) 
-			groupColumn.setSelectedValue(mclCol);
     }
 
 	private void getEnrichmentJSON(String selected, String species, String backgroundNodes, String groupTableLabel) {
@@ -381,7 +423,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		return str.toString();
 	}
 
-	// TODO: [N] not working yet?
+	// [N] not working yet? -> seems to work
 	private void deleteEnrichmentTables(String groupTableName) {
 		CyTableManager tableManager = manager.getService(CyTableManager.class); 
 		Set<CyTable> currTables = tableManager.getAllTables(true);
@@ -392,11 +434,9 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 				CyRow tempRow = current.getAllRows().get(0);
 				if (tempRow.get(EnrichmentTerm.colNetworkSUID, Long.class) != null && tempRow
 						.get(EnrichmentTerm.colNetworkSUID, Long.class).equals(network.getSUID())) {
-					System.out.println("old table for current network");
 					if (publOnly && !current.getTitle().contains(TermCategory.PMID.getTable())) {
 						continue;
 					}
-					System.out.println("delete it");
 					tableManager.deleteTable(current.getSUID());
 					manager.flushEvents();
 				}
@@ -408,8 +448,8 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 	@ProvidesTitle
 	public String getTitle() {
 		if (publOnly)
-			return "Retrieve enriched publications";
-		return "Retrieve functional enrichment";
+			return "Retrieve enriched publications per group";
+		return "Retrieve functional enrichment per group";
 	}
 
 	public static String EXAMPLE_JSON = 
