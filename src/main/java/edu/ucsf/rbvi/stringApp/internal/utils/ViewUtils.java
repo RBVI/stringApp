@@ -651,7 +651,6 @@ public class ViewUtils {
 			return;
 
 		// TODO: [N] not reset other ones? so that I can have charts for several clusters at the same time 
-		System.out.println("draw charts");
 		CyTable nodeTable = network.getDefaultNodeTable();
 		createColumns(nodeTable);
 
@@ -663,7 +662,7 @@ public class ViewUtils {
 							nodeTable.getRow(node.getSUID()).getList(EnrichmentTerm.colEnrichmentTermsIntegers,Integer.class);
 			String nodeColor = nodeColors(colorList, nodeTermsIntegers, type);
 			nodeTable.getRow(node.getSUID()).set(EnrichmentTerm.colEnrichmentPassthrough, nodeColor);
-			nodeTable.getRow(node.getSUID()).set(EnrichmentTerm.colEnrichmentTermsIntegers,nodeTermsIntegers);
+			nodeTable.getRow(node.getSUID()).set(EnrichmentTerm.colEnrichmentTermsIntegers, nodeTermsIntegers);
 		}
 
 		// System.out.println(selectedTerms);

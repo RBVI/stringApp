@@ -497,6 +497,17 @@ public class CyActivator extends AbstractCyActivator {
 				registerService(bc, getEnrichment, NetworkTaskFactory.class, propsEnrichment);
 			}
 			
+			GetClusterEnrichmentTaskFactory getClusterEnrichment = new GetClusterEnrichmentTaskFactory(manager, true);
+			{
+				Properties propsEnrichment = new Properties();
+				propsEnrichment.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
+				propsEnrichment.setProperty(TITLE, "Retrieve functional enrichment per group");
+				propsEnrichment.setProperty(MENU_GRAVITY, "7.0");
+				propsEnrichment.setProperty(IN_MENU_BAR, "true");
+				propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
+				registerService(bc, getClusterEnrichment, NetworkTaskFactory.class, propsEnrichment);
+			}
+
 			{
 				ShowEnrichmentPanelAction sea = new ShowEnrichmentPanelAction("Show enrichment panel", manager);
 				registerService(bc, sea, CyAction.class);
@@ -504,6 +515,7 @@ public class CyActivator extends AbstractCyActivator {
 				ShowEnrichmentPanelTaskFactory showEnrichment = new ShowEnrichmentPanelTaskFactory(manager);
 				// showEnrichment.reregister();
 				getEnrichment.setShowEnrichmentPanelFactory(showEnrichment);
+				getClusterEnrichment.setShowEnrichmentPanelFactory(showEnrichment);
 				manager.setShowEnrichmentPanelTaskFactory(showEnrichment);
 				
 				// Create command version and register it
@@ -547,17 +559,6 @@ public class CyActivator extends AbstractCyActivator {
 				props.setProperty(COMMAND_SUPPORTS_JSON, "true");
 				props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 				registerService(bc, showPublications, TaskFactory.class, props);
-			}
-
-			{
-				GetClusterEnrichmentTaskFactory getClusterEnrichment = new GetClusterEnrichmentTaskFactory(manager, true);
-				Properties propsEnrichment = new Properties();
-				propsEnrichment.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
-				propsEnrichment.setProperty(TITLE, "Retrieve functional enrichment per group");
-				propsEnrichment.setProperty(MENU_GRAVITY, "7.0");
-				propsEnrichment.setProperty(IN_MENU_BAR, "true");
-				propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
-				registerService(bc, getClusterEnrichment, NetworkTaskFactory.class, propsEnrichment);
 			}
 
 			{
