@@ -227,23 +227,18 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		for (CyColumn col : colList) {
 			// System.out.println(col.getName());
 			Set<?> colValues = new HashSet();
-			List<?> colValuesList = new ArrayList<>();
 			int numValues = 0; 
 			if (col.getType().equals(String.class)) {
 				colValues = new HashSet<String>(col.getValues(String.class));
-				colValuesList = new ArrayList<String>(col.getValues(String.class));
 				numValues = col.getValues(String.class).size();
 			} else if (col.getType().equals(Integer.class)) {
 				colValues = new HashSet<Integer>(col.getValues(Integer.class));
-				colValuesList = new ArrayList<Integer>(col.getValues(Integer.class));
 				numValues = col.getValues(Integer.class).size();
 			} else if (col.getType().equals(Boolean.class)) {
 				colValues = new HashSet<Boolean>(col.getValues(Boolean.class));
-				colValuesList = new ArrayList<Boolean>(col.getValues(Boolean.class));
 				numValues = col.getValues(Boolean.class).size();
 			} else if (col.getType().equals(Double.class)) {
 				colValues = new HashSet<Double>(col.getValues(Double.class));
-				colValuesList = new ArrayList<Double>(col.getValues(Double.class));
 				numValues = col.getValues(Double.class).size();
 			}
 			// TODO: filter for empty strings
