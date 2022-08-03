@@ -125,7 +125,7 @@ public class SearchOptionsPanel extends JPanel {
 
 	// Special constructor used for new NetworkSearchTaskFactory options.
 	public SearchOptionsPanel(final StringManager manager) {
-		this(manager, false, false, false);
+		this(manager, false, false, true);
 	}
 
 	private void initOptions() {
@@ -242,6 +242,7 @@ public class SearchOptionsPanel extends JPanel {
 	}
 
 	JPanel createSpeciesComboBox(List<Species> speciesList) {
+    // System.out.println("createSpeciesComboBox");
 		JPanel speciesPanel = new JPanel(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
 		JLabel speciesLabel = new JLabel("Species:");
