@@ -1,5 +1,6 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -136,7 +137,9 @@ public class LoadSpeciesInteractions extends AbstractTask {
 			// Now style the network
 			CyNetworkView networkView = manager.createNetworkView(network);
 			ViewUtils.styleNetwork(manager, network, networkView);
-
+			if (species2 != null) {
+				ViewUtils.updateNodeColors(manager, network, networkView, Arrays.asList(species2, species));
+			}
 			// And lay it out
 			CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class)
 					.getLayout("force-directed");
@@ -151,6 +154,10 @@ public class LoadSpeciesInteractions extends AbstractTask {
 
 		} else {
 			ViewUtils.styleNetwork(manager, network, null);
+			if (species2 != null) {
+				ViewUtils.updateNodeColors(manager, network, null, Arrays.asList(species2, species));
+			}
+
 		}
 	}
 

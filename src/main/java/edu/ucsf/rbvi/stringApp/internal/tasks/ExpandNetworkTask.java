@@ -1,6 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -248,10 +249,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		if (netView != null)
 			ViewUtils.updateEdgeStyle(manager, netView, newEdges);
 		if (!selectedType.equals(species) && !selectedType.equals(ModelUtils.COMPOUND)) {
-			List<String> speciesList = new ArrayList<String>();
-			speciesList.add(species);
-			speciesList.add(selectedType);
-			ViewUtils.updateNodeColors(manager, network, netView, speciesList);
+			ViewUtils.updateNodeColors(manager, network, netView, Arrays.asList(species, selectedType));
 		}
 		// System.out.println("Done");
 		if (netView != null) {
