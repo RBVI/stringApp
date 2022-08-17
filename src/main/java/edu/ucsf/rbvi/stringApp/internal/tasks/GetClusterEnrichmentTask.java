@@ -70,9 +70,9 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 	// private static int limitUniqueAttributes = 50; 
 
 	// [N] limit this to the top X with a default -> done, list of values is sorted and only the top X groups are considered
-	// [N] have that as an advanced option -> adavanced witgether with a bunch of others
-	// TODO: [N] check if the number of unique values == number of values and don't show such columns
-	// [N] take suggested column name from network attribute __clusterSomething? 
+	// [N] have that as an advanced option -> advanced together with a bunch of others
+	// [N] check if the number of unique values == number of values and don't show such columns -> 
+	// [N] take suggested column name from network attribute __clusterSomething -> done
 		
 	@Tunable(description = "Column for groups", gravity = 2.0)
 	public ListSingleSelection<CyColumn> groupColumn = new ListSingleSelection<CyColumn>();
@@ -164,6 +164,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		// get groups 
 		CyColumn colGroups = groupColumn.getSelectedValue();
 		Class<?> colGroupClass = colGroups.getType();
+		// TODO: [N] decide if this is the best sorting, especially given that we will only do enrichment for the top x groups. Should we sort them by size or by name?
 		Set<String> groups = new TreeSet<String>(); 
 		if (colGroupClass.equals(String.class)) {
 			groups.addAll(colGroups.getValues(String.class));
@@ -224,41 +225,35 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		colList.remove(network.getDefaultNodeTable().getColumn(CyNetwork.SELECTED));
 		colList.remove(network.getDefaultNodeTable().getColumn(CyNetwork.SUID));
 		List<CyColumn> showList = new ArrayList<CyColumn>();
+		int numValues = network.getNodeCount();
 		for (CyColumn col : colList) {
-			// System.out.println(col.getName());
-			Set<?> colValues = new HashSet();
-			int numValues = 0; 
+			Set<?> colValues = new HashSet();			 
 			if (col.getType().equals(String.class)) {
 				colValues = new HashSet<String>(col.getValues(String.class));
-				numValues = col.getValues(String.class).size();
 			} else if (col.getType().equals(Integer.class)) {
 				colValues = new HashSet<Integer>(col.getValues(Integer.class));
-				numValues = col.getValues(Integer.class).size();
 			} else if (col.getType().equals(Boolean.class)) {
 				colValues = new HashSet<Boolean>(col.getValues(Boolean.class));
-				numValues = col.getValues(Boolean.class).size();
 			} else if (col.getType().equals(Double.class)) {
 				colValues = new HashSet<Double>(col.getValues(Double.class));
-				numValues = col.getValues(Double.class).size();
 			}
-			// TODO: filter for empty strings
-			// for (Object listEl : )
-			// System.out.println(colValues.size());
-			if (colValues.size() == numValues) {
-				// skip column if it only contains unique values
-				System.out.println("skip: " + col.getName());
+			// skip column if it only contains unique values or only one value or unique values for more than half the nodes in the network 
+			// filter for empty strings -> maybe enough to put a cutoff here?
+			// TODO: [N] is this cutoff OK?
+			if (colValues.size() < 2 || colValues.size() == numValues || colValues.size() > numValues/2) {
+				// System.out.println("skip: " + col.getName());
 				continue;
 			}
-			//if (colValues.size() > 1 && colValues.size() <= limitUniqueAttributes) {
 			showList.add(col);
-			//}
 		}
+		// sort attribute list
 		Collections.sort(showList, new Comparator<CyColumn>() {
 		    public int compare(CyColumn a, CyColumn b) {
 		        return a.getName().compareToIgnoreCase(b.getName());
 		    }
 		});
 		groupColumn = new ListSingleSelection<CyColumn>(showList);
+		// check if clustering has been done and if find out which one to pre-select the column
 		CyColumn mclColNet = network.getDefaultNetworkTable().getColumn("__clusterAttribute");
 		if (mclColNet != null) {
 			String clusterName = network.getRow(network).get("__clusterAttribute", String.class);
