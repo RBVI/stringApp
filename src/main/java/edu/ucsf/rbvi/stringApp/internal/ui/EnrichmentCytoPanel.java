@@ -176,6 +176,11 @@ public class EnrichmentCytoPanel extends JPanel
 		return enrichmentTableModels.get(showTable);
 	}
 
+	// TODO: [N] Test thoroughly if it works to use showTable as the group 
+	public String getTable() {
+		return showTable;
+	}
+
 	// network selected listener
 	public void handleEvent(SetCurrentNetworkEvent event) {
 		CyNetwork network = event.getNetwork();
@@ -267,8 +272,8 @@ public class EnrichmentCytoPanel extends JPanel
 			nodesToFilterSUID.add(node.getSUID());
 		}
 		EnrichmentTableModel tableModel = enrichmentTableModels.get(showTable);
-		tableModel.filterByNodeSUID(nodesToFilterSUID, true, manager.getCategoryFilter(network),
-				manager.getRemoveOverlap(network), manager.getOverlapCutoff(network));
+		tableModel.filterByNodeSUID(nodesToFilterSUID, true, manager.getCategoryFilter(network, showTable),
+				manager.getRemoveOverlap(network, showTable), manager.getOverlapCutoff(network, showTable));
 		updateLabelRows();
 	}
 
@@ -284,7 +289,7 @@ public class EnrichmentCytoPanel extends JPanel
 		if (column == EnrichmentTerm.chartColumnCol) {
 			Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
 			if (preselectedTerms.size() > 0) {
-				ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network));
+				ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network, showTable));
 			}
 		}
 
@@ -317,7 +322,7 @@ public class EnrichmentCytoPanel extends JPanel
 			// piechart: attributelist="test3" colorlist="modulated" showlabels="false"
 			Map<EnrichmentTerm, String> preselectedTerms = getAllUserSelectedTerms();
 			if (preselectedTerms.size() == 0) {
-				preselectedTerms = getAutoSelectedTopTerms(manager.getTopTerms(network));
+				preselectedTerms = getAutoSelectedTopTerms(manager.getTopTerms(network, showTable));
 			}
 			AvailableCommands availableCommands = (AvailableCommands) manager
 					.getService(AvailableCommands.class);
@@ -327,7 +332,7 @@ public class EnrichmentCytoPanel extends JPanel
 						"No results", JOptionPane.WARNING_MESSAGE);
 				return;
 			}
-			ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network));
+			ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network, showTable));
 		} else if (e.getSource().equals(butResetCharts)) {
 			// reset colors and selection
 			resetCharts();
@@ -349,7 +354,7 @@ public class EnrichmentCytoPanel extends JPanel
 			// // filter table based on node selection
 			// tm.execute(new TaskIterator(new NodeFilterEnrichmentTableTask(manager, this)));
 		} else if (e.getSource().equals(butSettings)) {
-			tm.execute(new TaskIterator(new EnrichmentSettingsTask(manager)));
+			tm.execute(new TaskIterator(new EnrichmentSettingsTask(manager, showTable)));
 		} else if (e.getSource().equals(butExportTable)) {
 			EnrichmentTableModel tableModel = enrichmentTableModels.get(showTable);
 			if (network != null && tableModel != null) {
@@ -510,8 +515,8 @@ public class EnrichmentCytoPanel extends JPanel
 			EnrichmentTableModel tableModel = enrichmentTableModels.get(showTable);
 			// System.out.println("show table: " + showTable);
 			if (tableModel != null) {
-				tableModel.filter(manager.getCategoryFilter(network),
-						manager.getRemoveOverlap(network), manager.getOverlapCutoff(network));
+				tableModel.filter(manager.getCategoryFilter(network, showTable),
+						manager.getRemoveOverlap(network, showTable), manager.getOverlapCutoff(network, showTable));
 				getFilteredTable();
 			}
 
@@ -572,8 +577,9 @@ public class EnrichmentCytoPanel extends JPanel
 		jTable.getModel().addTableModelListener(this);
 		jTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
 		CyNetwork network = manager.getCurrentNetwork();
+		// TODO: [N] Should we use showTable or cyTable title here?
 		jTable.setDefaultEditor(Color.class,
-				new ColorEditor(manager, this, colorChooserFactory, network));
+				new ColorEditor(manager, this, colorChooserFactory, network, cyTable.getTitle()));
 		popupMenu = new JPopupMenu();
 		JMenuItem menuItemReset = new JMenuItem("Remove color");
 		menuItemReset.addActionListener(new ActionListener() {			
@@ -752,7 +758,7 @@ public class EnrichmentCytoPanel extends JPanel
 		// re-draw charts if the user changed the color
 		Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
 		if (preselectedTerms.size() > 0)
-			ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network));
+			ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network, showTable));
 	}
 
 	public void resetCharts() {
@@ -794,9 +800,9 @@ public class EnrichmentCytoPanel extends JPanel
 		// resetCharts();
 		Map<EnrichmentTerm, String> preselectedTerms = getAllUserSelectedTerms();
 		if (preselectedTerms.size() == 0) {
-			preselectedTerms = getAutoSelectedTopTerms(manager.getTopTerms(network));
+			preselectedTerms = getAutoSelectedTopTerms(manager.getTopTerms(network, showTable));
 		}
-		ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network));
+		ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network, showTable));
 	}
 
 	public void drawEnrichmentMap() {
@@ -806,10 +812,10 @@ public class EnrichmentCytoPanel extends JPanel
 			return;
 		if (tableModel.getAllRowCount() != tableModel.getRowCount())
 			manager.execute(new TaskIterator(
-					new EnrichmentMapAdvancedTask(manager, network, getFilteredTable(), true)));
+					new EnrichmentMapAdvancedTask(manager, network, getFilteredTable(), true, showTable)));
 		else
 			manager.execute(new TaskIterator(
-					new EnrichmentMapAdvancedTask(manager, network, getFilteredTable(), false)));
+					new EnrichmentMapAdvancedTask(manager, network, getFilteredTable(), false, showTable)));
 		// TODO: [N] check why we do that?
 	}
 
@@ -912,9 +918,9 @@ public class EnrichmentCytoPanel extends JPanel
 		}
 
 		// List<CyRow> rows = currTable.getAllRows();
-		Color[] colors = manager.getEnrichmentPalette(network).getColors(manager.getTopTerms(network));
+		Color[] colors = manager.getEnrichmentPalette(network, showTable).getColors(manager.getTopTerms(network, showTable));
 		Long[] rowNames = tableModel.getRowNames();
-		for (int i = 0; i < manager.getTopTerms(network); i++) {
+		for (int i = 0; i < manager.getTopTerms(network, showTable); i++) {
 			if (i >= rowNames.length)
 				continue;
 			CyRow row = currTable.getRow(rowNames[i]);

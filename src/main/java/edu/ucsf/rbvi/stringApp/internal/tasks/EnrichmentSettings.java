@@ -34,6 +34,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 public class EnrichmentSettings implements ActionListener, RequestsUIHelper {
 	private StringManager manager;
 	private CyNetwork network;
+	private String group;
 	private Component parent;
 
 	@Tunable(description = "Type of chart to draw",
@@ -75,9 +76,11 @@ public class EnrichmentSettings implements ActionListener, RequestsUIHelper {
 	         params="slider=true", gravity = 109.0)
 	public BoundedDouble overlapCutoff = new BoundedDouble(0.0, 0.5, 1.0, false, false);
 
-	public EnrichmentSettings(StringManager manager, CyNetwork network) {
+	// TODO: [N] is it ok to just add the group here?
+	public EnrichmentSettings(StringManager manager, CyNetwork network, String group) {
 		this.manager = manager;
 		this.network = network;
+		this.group = group;
 
 		PaletteProviderManager pm = manager.getService(PaletteProviderManager.class);
 		List<PaletteProvider> providers = pm.getPaletteProviders(BrewerType.QUALITATIVE, false);
@@ -91,21 +94,21 @@ public class EnrichmentSettings implements ActionListener, RequestsUIHelper {
 		}
 		// ColorBrewer[] palettes = ColorBrewer.getQualitativeColorPalettes(false);
 		defaultEnrichmentPalette = new ListSingleSelection<Palette>(palettes);
-		defaultEnrichmentPalette.setSelectedValue(manager.getEnrichmentPalette(network));
+		defaultEnrichmentPalette.setSelectedValue(manager.getEnrichmentPalette(network, group));
 		
-		nTerms.setValue(manager.getTopTerms(network));
-		overlapCutoff.setValue(manager.getOverlapCutoff(network));
+		nTerms.setValue(manager.getTopTerms(network, group));
+		overlapCutoff.setValue(manager.getOverlapCutoff(network, group));
 		chartType = new ListSingleSelection<ChartType>(ChartType.values());
-		chartType.setSelectedValue(manager.getChartType(network));
+		chartType.setSelectedValue(manager.getChartType(network, group));
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		CyColorPaletteChooser paletteChooser = 
 			manager.getService(CyColorPaletteChooserFactory.class).getColorPaletteChooser(BrewerType.QUALITATIVE, true);
 		Palette palette = paletteChooser.showDialog(parent, "Palette for Enrichment Colors", 
-				manager.getEnrichmentPalette(network), nTerms.getValue());
+				manager.getEnrichmentPalette(network, group), nTerms.getValue());
 		if (palette != null) {
-			manager.setEnrichmentPalette(network, palette);
+			manager.setEnrichmentPalette(network, palette, group);
 			defaultEnrichmentPalette.setSelectedValue(palette);
 		}
 

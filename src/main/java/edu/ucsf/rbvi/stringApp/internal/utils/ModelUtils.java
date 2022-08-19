@@ -25,6 +25,7 @@ import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
+import org.cytoscape.model.CyTableFactory;
 import org.cytoscape.model.CyTableManager;
 import org.cytoscape.model.CyTableUtil;
 import org.cytoscape.model.subnetwork.CyRootNetwork;
@@ -133,6 +134,10 @@ public class ModelUtils {
 	public static String NET_ENRICHMENT_CLSTR = "enrichmentClusteringCoeff";
 	public static String NET_ENRICHMENT_DEGREE = "enrichmentAvgDegree";
 	public static String NET_ENRICHMENT_SETTINGS = "enrichmentSettings";
+	public static String NET_ENRICHMENT_SETTINGS_TABLE = "Enrichment Settings Table";
+	public static String NET_ENRICHMENT_SETTINGS_TABLE_SUID = "enrichmentSettingsTable.SUID";
+	public static String NET_ENRICHMENT_GROUP = "enrichmentGroup";
+	public static String NET_ENRICHMENT_TABLES = "enrichmentTables";
 
 	public static String NET_ENRICHMENT_VISTEMRS = "visualizedTerms";
 	public static String NET_ENRICHMENT_VISCOLORS = "visualizedTermsColors";
@@ -1671,23 +1676,85 @@ public class ModelUtils {
 		return Arrays.asList(arr);
 	}
 
-	public static void updateEnrichmentSettings(CyNetwork network, Map<String, String> settings) {
+//	public static void updateEnrichmentSettings(CyNetwork network, Map<String, String> settings) {
+//		String setting = "";
+//		int index = 0;
+//		for (String key: settings.keySet()) {
+//			if (index > 0) {
+//				setting += ";";
+//			}
+//			setting += key+"="+settings.get(key);
+//			index ++;
+//		}
+//		createColumnIfNeeded(network.getDefaultNetworkTable(), String.class, NET_ENRICHMENT_SETTINGS);
+//		network.getRow(network).set(NET_ENRICHMENT_SETTINGS, setting);
+//	}
+
+//	public static Map<String, String> getEnrichmentSettings(CyNetwork network) {
+//		Map<String, String> settings = new HashMap<String, String>();
+//		String setting = network.getRow(network).get(NET_ENRICHMENT_SETTINGS, String.class);
+//		if (setting == null || setting.length() == 0)
+//			return settings;
+//
+//		String[] settingArray = setting.split(";");
+//		for (String s: settingArray) {
+//			String[] pair = s.split("=");
+//			if (pair.length == 2) {
+//				settings.put(pair[0], pair[1]);
+//			}
+//		}
+//		return settings;
+//	}
+
+	// TODO: [N] These two need to be deleted once the others are tested. 
+//	public static void updateEnrichmentSettingsGroup(CyNetwork network, String group, Map<String, String> groupSettings) {
+//		String setting = "";
+//		int index = 0;
+//		for (String key: groupSettings.keySet()) {
+//			if (index > 0) {
+//				setting += ";";
+//			}
+//			setting += key+"="+groupSettings.get(key);
+//			index ++;
+//		}
+//		createColumnIfNeeded(network.getDefaultNetworkTable(), String.class, NET_ENRICHMENT_SETTINGS+group);
+//		network.getRow(network).set(NET_ENRICHMENT_SETTINGS+group, setting);
+//	}
+//
+//	public static Map<String, String> getEnrichmentSettingsGroup(CyNetwork network, String group) {
+//		Map<String, String> settings = new HashMap<String, String>();
+//		String setting = network.getRow(network).get(NET_ENRICHMENT_SETTINGS+group, String.class);
+//		if (setting == null || setting.length() == 0)
+//			return settings;
+//
+//		String[] settingArray = setting.split(";");
+//		for (String s: settingArray) {
+//			String[] pair = s.split("=");
+//			if (pair.length == 2) {
+//				settings.put(pair[0], pair[1]);
+//			}
+//		}
+//		return settings;
+//	}
+
+	public static void updateEnrichmentSettingsTableGroup(StringManager manager, CyNetwork network, String group, Map<String, String> groupSettings) {
 		String setting = "";
 		int index = 0;
-		for (String key: settings.keySet()) {
+		for (String key: groupSettings.keySet()) {
 			if (index > 0) {
 				setting += ";";
 			}
-			setting += key+"="+settings.get(key);
+			setting += key+"="+groupSettings.get(key);
 			index ++;
 		}
-		createColumnIfNeeded(network.getDefaultNetworkTable(), String.class, NET_ENRICHMENT_SETTINGS);
-		network.getRow(network).set(NET_ENRICHMENT_SETTINGS, setting);
+		CyTable settingsTable = getEnrichmentSettingsTable(manager, network);
+		settingsTable.getRow(group).set(NET_ENRICHMENT_SETTINGS, setting);
 	}
 
-	public static Map<String, String> getEnrichmentSettings(CyNetwork network) {
+	public static Map<String, String> getEnrichmentSettingsTableGroup(StringManager manager, CyNetwork network, String group) {
 		Map<String, String> settings = new HashMap<String, String>();
-		String setting = network.getRow(network).get(NET_ENRICHMENT_SETTINGS, String.class);
+		CyTable settingsTable = getEnrichmentSettingsTable(manager, network);
+		String setting = settingsTable.getRow(group).get(NET_ENRICHMENT_SETTINGS, String.class);
 		if (setting == null || setting.length() == 0)
 			return settings;
 
@@ -1701,6 +1768,32 @@ public class ModelUtils {
 		return settings;
 	}
 
+	public static CyTable getEnrichmentSettingsTable(StringManager manager, CyNetwork network) {
+		CyTableManager tableManager = manager.getService(CyTableManager.class);
+		Long tableSUID = network.getRow(network).get(NET_ENRICHMENT_SETTINGS_TABLE_SUID, Long.class);
+		if (tableSUID != null) {
+			return tableManager.getTable(tableSUID.longValue());
+		} else {
+			CyTable settingsTable = createEnrichmentSettingsTable(manager, network);
+			network.getRow(network).set(NET_ENRICHMENT_SETTINGS_TABLE_SUID, settingsTable.getSUID());						
+			return settingsTable;
+		}
+	}
+
+	public static CyTable createEnrichmentSettingsTable(StringManager manager, CyNetwork network) {
+		CyTableFactory tableFactory = manager.getService(CyTableFactory.class);
+		CyTableManager tableManager = manager.getService(CyTableManager.class);
+
+		CyTable settingsTable = tableFactory.createTable(NET_ENRICHMENT_SETTINGS_TABLE, NET_ENRICHMENT_GROUP, String.class, true, true);
+		// settingsTable.setSavePolicy(SavePolicy.SESSION_FILE);
+		tableManager.addTable(settingsTable);
+		createColumnIfNeeded(settingsTable, String.class, NET_ENRICHMENT_SETTINGS);
+		createListColumnIfNeeded(settingsTable, Long.class, NET_ANALYZED_NODES);
+		createListColumnIfNeeded(settingsTable, String.class, NET_ENRICHMENT_VISTEMRS);
+		createListColumnIfNeeded(settingsTable, String.class, NET_ENRICHMENT_VISCOLORS);
+		return settingsTable;
+	}
+	
 	public static CyProperty<Properties> getPropertyService(StringManager manager,
 			SavePolicy policy) {
 			String name = "stringApp";

@@ -68,10 +68,11 @@ public class ColorEditor extends AbstractCellEditor
 		final Component parent;
 		final StringManager manager;
 		final CyNetwork network;
+		final String group;
     protected static final String EDIT = "edit";
 
     public ColorEditor(final StringManager manager, final Component parent, 
-		                   final CyColorPaletteChooserFactory chooserFactory, final CyNetwork network) {
+		                   final CyColorPaletteChooserFactory chooserFactory, final CyNetwork network, final String group) {
         //Set up the editor (from the table's point of view),
         //which is a button.
         //This button brings up the color chooser dialog,
@@ -79,6 +80,7 @@ public class ColorEditor extends AbstractCellEditor
 				this.chooserFactory = chooserFactory;
 				this.parent = parent;
 				this.network = network;
+				this.group = group;
 				this.manager = manager;
         button = new JButton();
         button.setActionCommand(EDIT);
@@ -94,7 +96,8 @@ public class ColorEditor extends AbstractCellEditor
     public void actionPerformed(ActionEvent e) {
         if (EDIT.equals(e.getActionCommand())) {
 					// button.setBackground(currentColor);
-					Palette currentPalette = manager.getEnrichmentPalette(network);
+        			// TODO: [N] is it ok to just add the group here?
+					Palette currentPalette = manager.getEnrichmentPalette(network, group);
 					CyColorPaletteChooser chooser = chooserFactory.getColorPaletteChooser(BrewerType.QUALITATIVE, false);
 					chooser.showDialog(parent, "Pick a color", currentPalette, currentColor, 10);
 					currentPalette = chooser.getSelectedPalette();

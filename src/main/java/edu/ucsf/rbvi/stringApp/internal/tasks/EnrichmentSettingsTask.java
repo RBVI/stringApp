@@ -16,12 +16,14 @@ import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 
 import edu.ucsf.rbvi.stringApp.internal.model.ChartType;
+import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
 public class EnrichmentSettingsTask extends AbstractTask {
 
 	private StringManager manager;
 	private CyNetwork network;
+	private String group;
 
 	@ContainsTunables
 	public EnrichmentSettings enrichmentSettings;
@@ -31,27 +33,38 @@ public class EnrichmentSettingsTask extends AbstractTask {
 	         tooltip = "<html>Unless this is set to true, these settings only apply to the current network.</html>")
 	public boolean makeDefault = false;
 
+	// TOOD: [N] remove this one or not?
+	// TOOD: [N] is it ok to use all here?
 	public EnrichmentSettingsTask(StringManager manager) {
 		this.network = manager.getCurrentNetwork();
 		this.manager = manager;
-		enrichmentSettings = new EnrichmentSettings(manager, network);
+		this.group = TermCategory.ALL.getTable();
+		enrichmentSettings = new EnrichmentSettings(manager, network, group);
+	}
+
+	// TODO: [N] is it ok to just add the group here?
+	public EnrichmentSettingsTask(StringManager manager, String group) {
+		this.network = manager.getCurrentNetwork();
+		this.manager = manager;
+		this.group = group;
+		enrichmentSettings = new EnrichmentSettings(manager, network, group);
 	}
 
 	@Override
 	public void run(TaskMonitor arg0) throws Exception {
 		arg0.setTitle("Enrichment settings");
 		if (makeDefault) {
-			manager.setTopTerms(null,enrichmentSettings.nTerms.getValue());
-			manager.setOverlapCutoff(null,enrichmentSettings.overlapCutoff.getValue());
-			manager.setEnrichmentPalette(null,enrichmentSettings.defaultEnrichmentPalette.getSelectedValue());
-			manager.setChartType(null,enrichmentSettings.chartType.getSelectedValue());
+			manager.setTopTerms(null,enrichmentSettings.nTerms.getValue(), group);
+			manager.setOverlapCutoff(null,enrichmentSettings.overlapCutoff.getValue(), group);
+			manager.setEnrichmentPalette(null,enrichmentSettings.defaultEnrichmentPalette.getSelectedValue(), group);
+			manager.setChartType(null,enrichmentSettings.chartType.getSelectedValue(), group);
 			manager.updateSettings();
 		}
 
-		manager.setTopTerms(network,enrichmentSettings.nTerms.getValue());
-		manager.setOverlapCutoff(network,enrichmentSettings.overlapCutoff.getValue());
-		manager.setEnrichmentPalette(network,enrichmentSettings.defaultEnrichmentPalette.getSelectedValue());
-		manager.setChartType(network,enrichmentSettings.chartType.getSelectedValue());
+		manager.setTopTerms(network,enrichmentSettings.nTerms.getValue(), group);
+		manager.setOverlapCutoff(network,enrichmentSettings.overlapCutoff.getValue(), group);
+		manager.setEnrichmentPalette(network,enrichmentSettings.defaultEnrichmentPalette.getSelectedValue(), group);
+		manager.setChartType(network,enrichmentSettings.chartType.getSelectedValue(), group);
 
 		// TODO: maybe this is a way to automatically apply settings?
 		TaskManager<?, ?> tm = (TaskManager<?, ?>) manager.getService(TaskManager.class);

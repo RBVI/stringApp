@@ -218,13 +218,24 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			ppiSummary = null;
 
 		// save analyzed nodes in network table
+		// TODO: [N] Test this after changing it for group enrichment
 		CyTable netTable = network.getDefaultNetworkTable();
-		ModelUtils.createListColumnIfNeeded(netTable, Long.class, ModelUtils.NET_ANALYZED_NODES);
+		String defaultGroup = TermCategory.ALL.getTable();
+		ModelUtils.createListColumnIfNeeded(netTable, String.class, ModelUtils.NET_ENRICHMENT_TABLES);
+		List<String> enrichmentGroups = netTable.getRow(network.getSUID()).getList(ModelUtils.NET_ENRICHMENT_TABLES, String.class);
+		if (enrichmentGroups == null) 
+			enrichmentGroups = new ArrayList<String>();
+		enrichmentGroups.add(defaultGroup);
+		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_TABLES, enrichmentGroups);
+		
+		ModelUtils.createColumnIfNeeded(netTable, Long.class, ModelUtils.NET_ENRICHMENT_SETTINGS_TABLE_SUID);
+		CyTable settignsTable = ModelUtils.getEnrichmentSettingsTable(manager, network);
+		ModelUtils.createListColumnIfNeeded(settignsTable, Long.class, ModelUtils.NET_ANALYZED_NODES);
 		List<Long> analyzedNodesSUID = new ArrayList<Long>();
 		for (CyNode node : analyzedNodes) {
 			analyzedNodesSUID.add(node.getSUID());
 		}
-		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ANALYZED_NODES, analyzedNodesSUID);
+		settignsTable.getRow(defaultGroup).set(ModelUtils.NET_ANALYZED_NODES, analyzedNodesSUID);
 
 		// save ppi enrichment in network table
 		if (ppiSummary != null) {

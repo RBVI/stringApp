@@ -177,10 +177,18 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			}
 		}
 		monitor.setStatusMessage("Network contains " + groups.size() + " groups.");
-		
+
+		// setup enrichment settings tables
+		CyTable netTable = network.getDefaultNetworkTable();
+		ModelUtils.createListColumnIfNeeded(netTable, String.class, ModelUtils.NET_ENRICHMENT_TABLES);
+		ModelUtils.createColumnIfNeeded(netTable, Long.class, ModelUtils.NET_ENRICHMENT_SETTINGS_TABLE_SUID);
+		CyTable settignsTable = ModelUtils.getEnrichmentSettingsTable(manager, network);
+		ModelUtils.createListColumnIfNeeded(settignsTable, Long.class, ModelUtils.NET_ANALYZED_NODES);
+
+		// do enrichment for each group
 		int counter = 0;
 		for (String group : groups) {
-			if (counter > limitGroupNumber) 
+			if (counter >= limitGroupNumber) 
 				break;
 
 			// define name of enrichment tables
@@ -201,6 +209,19 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			// retrieve enrichment (new API)
 			getEnrichmentJSON(selected, species, bgNodes, groupTableName);
 			counter += 1;
+			
+			List<String> enrichmentGroups = netTable.getRow(network.getSUID()).getList(ModelUtils.NET_ENRICHMENT_TABLES, String.class);
+			if (enrichmentGroups == null)
+				enrichmentGroups = new ArrayList<String>();
+			enrichmentGroups.add(groupTableName);
+			netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_TABLES, enrichmentGroups);
+
+			List<Long> analyzedNodesSUID = new ArrayList<Long>();
+			for (CyNode node : analyzedNodes) {
+				analyzedNodesSUID.add(node.getSUID());
+			}
+			settignsTable.getRow(groupTableName).set(ModelUtils.NET_ANALYZED_NODES, analyzedNodesSUID);
+
 		}
 			
 		// show enrichment results

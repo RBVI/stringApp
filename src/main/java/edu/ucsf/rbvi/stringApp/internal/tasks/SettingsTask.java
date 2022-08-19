@@ -41,11 +41,13 @@ import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringChannelPaletteProvider;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 
 public class SettingsTask extends AbstractTask implements ObservableTask, ActionListener, RequestsUIHelper {
 
 	private StringManager manager;
 	private CyNetwork network;
+	private String group;
 	private Palette channelPalette = null;
 	private Component parent;
 	private PaletteProvider stringProvider = null;
@@ -120,8 +122,10 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 	public SettingsTask(StringManager manager) {
 		this.manager = manager;
 		this.network = manager.getCurrentNetwork();
-
-		enrichmentSettings = new EnrichmentSettings(manager, network);
+		// TODO: [N] decide what to do here, currently using the default group (all)
+		this.group = TermCategory.ALL.getTable();
+		
+		enrichmentSettings = new EnrichmentSettings(manager, network, group);
 		species = new ListSingleSelection<Species>(Species.getGUISpecies());
 		species.setSelectedValue(Species.getSpecies(manager.getDefaultSpecies()));
 		networkType = new ListSingleSelection<NetworkType>(NetworkType.values());
@@ -188,17 +192,18 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 		manager.setDefaultMaxProteins(maxProteins.getValue());
 		manager.setChannelColors(getChannelColorMap());
 
-		manager.setTopTerms(null,enrichmentSettings.nTerms.getValue());
-		manager.setOverlapCutoff(null,enrichmentSettings.overlapCutoff.getValue());
-		manager.setEnrichmentPalette(null,enrichmentSettings.defaultEnrichmentPalette.getSelectedValue());
-		manager.setChartType(null,enrichmentSettings.chartType.getSelectedValue());
+		// TODO: [N] is it ok to use null here?
+		manager.setTopTerms(null,enrichmentSettings.nTerms.getValue(), null);
+		manager.setOverlapCutoff(null,enrichmentSettings.overlapCutoff.getValue(), null);
+		manager.setEnrichmentPalette(null,enrichmentSettings.defaultEnrichmentPalette.getSelectedValue(), null);
+		manager.setChartType(null,enrichmentSettings.chartType.getSelectedValue(), null);
 		manager.updateSettings();
 
 		if (network != null) {
-			manager.setTopTerms(network,enrichmentSettings.nTerms.getValue());
-			manager.setOverlapCutoff(network,enrichmentSettings.overlapCutoff.getValue());
-			manager.setEnrichmentPalette(network,enrichmentSettings.defaultEnrichmentPalette.getSelectedValue());
-			manager.setChartType(network,enrichmentSettings.chartType.getSelectedValue());			
+			manager.setTopTerms(network,enrichmentSettings.nTerms.getValue(), group);
+			manager.setOverlapCutoff(network,enrichmentSettings.overlapCutoff.getValue(), group);
+			manager.setEnrichmentPalette(network,enrichmentSettings.defaultEnrichmentPalette.getSelectedValue(), group);
+			manager.setChartType(network,enrichmentSettings.chartType.getSelectedValue(), group);			
 		}
 		
 	}
