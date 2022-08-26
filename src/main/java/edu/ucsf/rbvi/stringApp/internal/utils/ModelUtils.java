@@ -1240,12 +1240,12 @@ public class ModelUtils {
 		return availableTypes;
 	}	
 
-	public static List<CyNode> getEnrichmentNodes(CyNetwork net) {
+	public static List<CyNode> getEnrichmentNodes(StringManager manager, CyNetwork net, String tableName) {
 		List<CyNode> analyzedNodes = new ArrayList<CyNode>();
 		if (net != null) {
-			CyTable netTable = net.getDefaultNetworkTable();
-			if (netTable.getColumn(ModelUtils.NET_ANALYZED_NODES) != null) {
-				List<Long> nodesSUID = (List<Long>) netTable.getRow(net.getSUID())
+			CyTable settignsTable = ModelUtils.getEnrichmentSettingsTable(manager, net);
+			if (settignsTable.getColumn(ModelUtils.NET_ANALYZED_NODES) != null) {
+				List<Long> nodesSUID = (List<Long>) settignsTable.getRow(tableName)
 						.get(ModelUtils.NET_ANALYZED_NODES, List.class);
 				if (nodesSUID != null) {
 					for (CyNode netNode : net.getNodeList()) {

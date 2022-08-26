@@ -206,6 +206,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		}
 
 		// clear old results
+		// TODO: [N] revise this for groups and see if we also need to delete some attributes in the network table
 		ModelUtils.deleteEnrichmentTables(network, manager, publOnly);
 
 		// retrieve enrichment (new API)
@@ -221,15 +222,20 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		// TODO: [N] Test this after changing it for group enrichment
 		CyTable netTable = network.getDefaultNetworkTable();
 		String defaultGroup = TermCategory.ALL.getTable();
+		// Add enrichment table All to the groups
 		ModelUtils.createListColumnIfNeeded(netTable, String.class, ModelUtils.NET_ENRICHMENT_TABLES);
 		List<String> enrichmentGroups = netTable.getRow(network.getSUID()).getList(ModelUtils.NET_ENRICHMENT_TABLES, String.class);
 		if (enrichmentGroups == null) 
 			enrichmentGroups = new ArrayList<String>();
-		enrichmentGroups.add(defaultGroup);
+		if (!enrichmentGroups.contains(defaultGroup))
+			enrichmentGroups.add(defaultGroup);
 		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_TABLES, enrichmentGroups);
-		
+
+		// Create settings table if needed and save its SUID in the network table
 		ModelUtils.createColumnIfNeeded(netTable, Long.class, ModelUtils.NET_ENRICHMENT_SETTINGS_TABLE_SUID);
 		CyTable settignsTable = ModelUtils.getEnrichmentSettingsTable(manager, network);
+		netTable.getRow(network).set(ModelUtils.NET_ENRICHMENT_SETTINGS_TABLE_SUID, settignsTable.getSUID());
+		// Save analyzed nodes into the new settings table
 		ModelUtils.createListColumnIfNeeded(settignsTable, Long.class, ModelUtils.NET_ANALYZED_NODES);
 		List<Long> analyzedNodesSUID = new ArrayList<Long>();
 		for (CyNode node : analyzedNodes) {

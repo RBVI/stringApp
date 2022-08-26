@@ -273,7 +273,8 @@ public class PublicationsCytoPanel extends JPanel
 		// resetCharts();
 		// } else
 		if (e.getSource().equals(butAnalyzedNodes)) {
-			List<CyNode> analyzedNodes = ModelUtils.getEnrichmentNodes(network);
+			// TODO: [N] Fix analyzed nodes for enriched publications
+			List<CyNode> analyzedNodes = ModelUtils.getEnrichmentNodes(manager, network, "");
 			if (network == null || analyzedNodes == null)
 				return;
 			for (CyNode node : analyzedNodes) {

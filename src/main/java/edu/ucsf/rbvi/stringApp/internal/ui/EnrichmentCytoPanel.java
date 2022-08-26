@@ -340,7 +340,7 @@ public class EnrichmentCytoPanel extends JPanel
 			// create enrichment map network
 			drawEnrichmentMap();
 		} else if (e.getSource().equals(butAnalyzedNodes)) {
-			List<CyNode> analyzedNodes = ModelUtils.getEnrichmentNodes(network);
+			List<CyNode> analyzedNodes = ModelUtils.getEnrichmentNodes(manager, network, showTable);
 			if (network == null || analyzedNodes == null)
 				return;
 			for (CyNode node : analyzedNodes) {

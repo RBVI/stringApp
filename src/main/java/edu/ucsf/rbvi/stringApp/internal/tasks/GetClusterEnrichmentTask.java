@@ -178,6 +178,9 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		}
 		monitor.setStatusMessage("Network contains " + groups.size() + " groups.");
 
+		// TODO: [N] revise this for groups and see if we also need to delete some attributes in the network table
+		// ModelUtils.deleteEnrichmentTables(network, manager, publOnly);
+		
 		// setup enrichment settings tables
 		CyTable netTable = network.getDefaultNetworkTable();
 		ModelUtils.createListColumnIfNeeded(netTable, String.class, ModelUtils.NET_ENRICHMENT_TABLES);
@@ -210,10 +213,12 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			getEnrichmentJSON(selected, species, bgNodes, groupTableName);
 			counter += 1;
 			
+			// TODO: [N] move this outside of the loop
 			List<String> enrichmentGroups = netTable.getRow(network.getSUID()).getList(ModelUtils.NET_ENRICHMENT_TABLES, String.class);
 			if (enrichmentGroups == null)
 				enrichmentGroups = new ArrayList<String>();
-			enrichmentGroups.add(groupTableName);
+			if (!enrichmentGroups.contains(groupTableName))
+				enrichmentGroups.add(groupTableName);
 			netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_TABLES, enrichmentGroups);
 
 			List<Long> analyzedNodesSUID = new ArrayList<Long>();
