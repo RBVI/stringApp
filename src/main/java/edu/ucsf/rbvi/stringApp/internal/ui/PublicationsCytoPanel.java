@@ -274,7 +274,7 @@ public class PublicationsCytoPanel extends JPanel
 		// } else
 		if (e.getSource().equals(butAnalyzedNodes)) {
 			// TODO: [N] Fix analyzed nodes for enriched publications
-			List<CyNode> analyzedNodes = ModelUtils.getEnrichmentNodes(manager, network, "");
+			List<CyNode> analyzedNodes = ModelUtils.getEnrichmentNodes(manager, network, TermCategory.PMID.getTable());
 			if (network == null || analyzedNodes == null)
 				return;
 			for (CyNode node : analyzedNodes) {

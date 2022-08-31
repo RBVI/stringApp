@@ -10,16 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-
-import org.cytoscape.application.swing.CySwingApplication;
-import org.cytoscape.application.swing.CytoPanel;
-import org.cytoscape.application.swing.CytoPanelName;
-import org.cytoscape.command.StringToModel;
-import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
@@ -27,15 +18,11 @@ import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.model.CyTableFactory;
 import org.cytoscape.model.CyTableManager;
-import org.cytoscape.model.CyTableUtil;
 import org.cytoscape.model.SavePolicy;
-import org.cytoscape.task.analyze.AnalyzeNetworkCollectionTaskFactory;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.ProvidesTitle;
-import org.cytoscape.work.SynchronousTaskManager;
-import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.TaskMonitor.Level;
 import org.cytoscape.work.Tunable;
@@ -43,7 +30,6 @@ import org.cytoscape.work.json.JSONResult;
 import org.cytoscape.work.util.ListSingleSelection;
 import org.json.simple.JSONObject;
 
-import edu.ucsf.rbvi.stringApp.internal.io.EnrichmentSAXHandler;
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
@@ -64,6 +50,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 	final Map<String, CyNetwork> stringNetworkMap;
 	final ShowEnrichmentPanelTaskFactory showFactoryEnrich;
 	final ShowPublicationsPanelTaskFactory showFactoryPubl;
+	// TODO: [N] maybe change this not to be global
 	List<CyNode> analyzedNodes;
 	TaskMonitor monitor;
 	private List<CyTable> enrichmentTables = new ArrayList<CyTable>();
@@ -84,7 +71,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 	public int limitGroupNumber = 12;	
 
 	@Tunable(description = "Group size limit", groups={"Advanced"}, params="displayState=collapsed", gravity = 6.0)
-	public int limitGroupSize = 4;	
+	public int limitGroupSize = 7;	
 	
 	@Tunable(description="Network to be used as background", groups={"Advanced"}, params="displayState=collapsed", gravity = 7.0
 			// longDescription = StringToModel.CY_NETWORK_VIEW_LONG_DESCRIPTION,
@@ -135,6 +122,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		}
 		
 		// get background nodes
+		// TODO: [N] test if this still works
 		String bgNodes = null;
 		if (!background.getSelectedValue().equals("genome")) {
 			bgNodes = getBackground(stringNetworkMap.get(background.getSelectedValue()), network);
@@ -164,19 +152,20 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		// get groups 
 		CyColumn colGroups = groupColumn.getSelectedValue();
 		Class<?> colGroupClass = colGroups.getType();
-		// TODO: [N] decide if this is the best sorting, especially given that we will only do enrichment for the top x groups. Should we sort them by size or by name?
-		Set<String> groups = new TreeSet<String>(); 
-		if (colGroupClass.equals(String.class)) {
-			groups.addAll(colGroups.getValues(String.class));
-		} else if (colGroupClass.equals(Integer.class)) {
-			Set<Integer> colValuesInt = new HashSet<Integer>(colGroups.getValues(Integer.class));
-			for (Integer colValue : colValuesInt) {
-				if (colValue == null) 
-					continue;
-				groups.add(colValue.toString());
-			}
+		// Sort groups by size 
+		// TODO: [N] something bizarre happening here... if sorting by size and doing for all 18 groups, it only saves 16 of them. 	
+		List<Group> groups = new ArrayList<Group>();
+		List<?> colValues = colGroups.getValues(colGroupClass);
+		Set<?> colValuesUnique = new HashSet(colValues);
+		for (Object colval : colValuesUnique) {
+			if (colval == null || colval.toString().equals(""))
+				continue;
+			int valfreq = Collections.frequency(colValues, colval);
+			groups.add(new Group(colval.toString(), valfreq));
 		}
 		monitor.setStatusMessage("Network contains " + groups.size() + " groups.");
+		Collections.sort(groups, Collections.reverseOrder());
+		System.out.println(groups);
 
 		// TODO: [N] revise this for groups and see if we also need to delete some attributes in the network table
 		// ModelUtils.deleteEnrichmentTables(network, manager, publOnly);
@@ -189,19 +178,23 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		ModelUtils.createListColumnIfNeeded(settignsTable, Long.class, ModelUtils.NET_ANALYZED_NODES);
 
 		// do enrichment for each group
+		List<String> enrichmentGroups = netTable.getRow(network.getSUID()).getList(ModelUtils.NET_ENRICHMENT_TABLES, String.class);
+		if (enrichmentGroups == null)
+			enrichmentGroups = new ArrayList<String>();
 		int counter = 0;
-		for (String group : groups) {
+		for (Group group : groups) {
 			if (counter >= limitGroupNumber) 
 				break;
 
+			// System.out.println(group);
 			// define name of enrichment tables
-			String groupTableName = EnrichmentTerm.ENRICHMENT_TABLE_PREFIX + colGroups.getName() + " " + group;
+			String groupTableName = EnrichmentTerm.ENRICHMENT_TABLE_PREFIX + colGroups.getName() + " " + group.getName();
 			
 			// clear old results
 			deleteEnrichmentTables(groupTableName);
 
 			// get set of nodes to retrieve enrichment for
-			String selected = getGroupNodes(network, colGroups, group).trim(); // also inits the analyzedNodes
+			String selected = getGroupNodes(network, colGroups, group.getName()).trim(); // also inits the analyzedNodes
 			if (analyzedNodes.size() < limitGroupSize) {
 				System.out.println("ignore group " + groupTableName);
 				continue;
@@ -213,22 +206,17 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			getEnrichmentJSON(selected, species, bgNodes, groupTableName);
 			counter += 1;
 			
-			// TODO: [N] move this outside of the loop
-			List<String> enrichmentGroups = netTable.getRow(network.getSUID()).getList(ModelUtils.NET_ENRICHMENT_TABLES, String.class);
-			if (enrichmentGroups == null)
-				enrichmentGroups = new ArrayList<String>();
-			if (!enrichmentGroups.contains(groupTableName))
-				enrichmentGroups.add(groupTableName);
-			netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_TABLES, enrichmentGroups);
-
 			List<Long> analyzedNodesSUID = new ArrayList<Long>();
 			for (CyNode node : analyzedNodes) {
 				analyzedNodesSUID.add(node.getSUID());
 			}
 			settignsTable.getRow(groupTableName).set(ModelUtils.NET_ANALYZED_NODES, analyzedNodesSUID);
-
+			if (!enrichmentGroups.contains(groupTableName))
+				enrichmentGroups.add(groupTableName);
 		}
-			
+		// save all new enrichment tables in the network table
+		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_TABLES, enrichmentGroups);
+	
 		// show enrichment results
 		if (enrichmentResult == null) {
 			return;
@@ -460,7 +448,42 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		}
 	}
 	
+	private class Group implements Comparable {
+		private String name;
+		private int size;
 
+		public Group(String _n, int _m) {
+			setName(_n);
+			size = _m;
+		}
+
+		@Override
+		public int compareTo(Object o) {
+			Group other = (Group) o;
+
+			if (other.size > size) {
+				return -1;
+			} else if (other.size < size) {
+				return 1;
+			}
+			return 0;
+			// return other.name.compareTo(name);
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+		
+		@Override
+		public String toString() {
+			return name + ":" + size;
+		}
+	}
+	
 	@ProvidesTitle
 	public String getTitle() {
 		if (publOnly)

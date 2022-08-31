@@ -1,7 +1,5 @@
 package edu.ucsf.rbvi.stringApp.internal.model;
 
-import java.net.URLEncoder;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,7 +11,9 @@ import java.util.Set;
 import org.json.simple.JSONObject;
 
 import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
+import org.cytoscape.model.CyTableManager;
 import org.cytoscape.util.color.Palette;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
@@ -80,26 +80,48 @@ public class StringNetwork {
 		List<String> groups = netTable.getRow(network.getSUID()).getList(ModelUtils.NET_ENRICHMENT_TABLES, String.class);
 		// TODO: [N] Test handling of old sessions here
 		if (groups == null) {
-			List<Long> analyzedNodes = network.getRow(network).getList(ModelUtils.NET_ANALYZED_NODES, Long.class);
-			if (analyzedNodes == null) // this means there is no enrichment done for this network
+			List<Long> analyzedNodes = netTable.getRow(network.getSUID()).getList(ModelUtils.NET_ANALYZED_NODES, Long.class);
+			if (analyzedNodes == null) // this means there is no enrichment/publications done for this network
 				return;
 			// otherwise we have an old session with settings for the Enrichment: All
-			String defaultGroup = TermCategory.ALL.getTable();
-			// add table name to the groups
 			groups = new ArrayList<String>();
-			groups.add(defaultGroup);
-			netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_TABLES, groups);
-			// Create settings table and add it to this network's attributes 
-			ModelUtils.createColumnIfNeeded(netTable, Long.class, ModelUtils.NET_ENRICHMENT_SETTINGS_TABLE_SUID);
-			CyTable settignsTable = ModelUtils.getEnrichmentSettingsTable(manager, network);
-			netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_SETTINGS_TABLE_SUID, settignsTable.getSUID());
-			// Copy analyzed nodes and enrichment settings to new settings table for this network
-			// ModelUtils.createListColumnIfNeeded(settignsTable, Long.class, ModelUtils.NET_ANALYZED_NODES);
-			settignsTable.getRow(defaultGroup).set(ModelUtils.NET_ANALYZED_NODES, analyzedNodes);
-			String enrichmentSettings = network.getRow(network).get(ModelUtils.NET_ENRICHMENT_SETTINGS, String.class);
-			if (enrichmentSettings != null) {
-				// ModelUtils.createListColumnIfNeeded(settignsTable, String.class, ModelUtils.NET_ENRICHMENT_SETTINGS);
-				settignsTable.getRow(defaultGroup).set(ModelUtils.NET_ENRICHMENT_SETTINGS, enrichmentSettings);
+			CyTableManager tableManager = manager.getService(CyTableManager.class);
+			Set<CyTable> currTables = tableManager.getAllTables(true);
+			for (CyTable current : currTables) {
+				// ignore if not one of our enrichment tables
+				if (!current.getTitle().startsWith(EnrichmentTerm.ENRICHMENT_TABLE_PREFIX) 
+						|| current.getColumn(EnrichmentTerm.colNetworkSUID) == null
+						|| current.getAllRows().size() == 0) {
+					continue;
+				}
+				// ignore if not associated with this network 
+				CyRow tempRow = current.getAllRows().get(0);
+				if (tempRow.get(EnrichmentTerm.colNetworkSUID, Long.class) == null || !tempRow
+						.get(EnrichmentTerm.colNetworkSUID, Long.class).equals(network.getSUID())) {
+					continue;
+				}				
+				// do things differently depending on if publication or enrichemnt table
+				if (current.getTitle().equals(TermCategory.ALL.getTable())) {
+					String defaultGroup = TermCategory.ALL.getTable();
+					// add table name to the groups
+					groups.add(defaultGroup);
+					netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_TABLES, groups);
+					// Create settings table and add it to this network's attributes 
+					ModelUtils.createColumnIfNeeded(netTable, Long.class, ModelUtils.NET_ENRICHMENT_SETTINGS_TABLE_SUID);
+					CyTable settignsTable = ModelUtils.getEnrichmentSettingsTable(manager, network);
+					netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_SETTINGS_TABLE_SUID, settignsTable.getSUID());
+					// Copy analyzed nodes and enrichment settings to new settings table for this network
+					// ModelUtils.createListColumnIfNeeded(settignsTable, Long.class, ModelUtils.NET_ANALYZED_NODES);
+					settignsTable.getRow(defaultGroup).set(ModelUtils.NET_ANALYZED_NODES, analyzedNodes);
+					String enrichmentSettings = network.getRow(network).get(ModelUtils.NET_ENRICHMENT_SETTINGS, String.class);
+					if (enrichmentSettings != null) {
+						// ModelUtils.createListColumnIfNeeded(settignsTable, String.class, ModelUtils.NET_ENRICHMENT_SETTINGS);
+						settignsTable.getRow(defaultGroup).set(ModelUtils.NET_ENRICHMENT_SETTINGS, enrichmentSettings);
+					}					
+				} else if (current.getTitle().equals(TermCategory.PMID.getTable())) {
+					ModelUtils.createListColumnIfNeeded(netTable, Long.class, ModelUtils.NET_ANALYZED_NODES_PUBL);
+					netTable.getRow(network.getSUID()).set(ModelUtils.NET_ANALYZED_NODES_PUBL, analyzedNodes);
+				}
 			}
 		}
 		for (String group : groups) {

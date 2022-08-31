@@ -381,10 +381,12 @@ public class EnrichmentCytoPanel extends JPanel
 		Set<CyTable> currTables = ModelUtils.getAllEnrichmentTables(manager, network);
 		availableTables = new ArrayList<String>();
 		for (CyTable currTable : currTables) {
+			// System.out.println("found table " + currTable.getTitle());
 			if (currTable.getTitle().contains(EnrichmentTerm.ENRICHMENT_TABLE_PREFIX)
 					&& !currTable.getTitle().equals(TermCategory.PMID.getTable())
 					&& !currTable.getTitle().contains(EnrichmentTerm.ENRICHMENT_TABLE_FILTERED_SUFFIX)) {
 				if (currTable.getRowCount() > 0) {
+					// System.out.println("adding table: " + currTable.getTitle());
 					createJTable(currTable, ModelUtils.getDataVersion(network));
 					availableTables.add(currTable.getTitle());
 				} else {

@@ -886,7 +886,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		CyNetwork network = e.getNetwork();
 		// delete enrichment tables
 		CyTableManager tableManager = getService(CyTableManager.class);
-		Set<CyTable> oldTables = ModelUtils.getEnrichmentTables(this, network);
+		Set<CyTable> oldTables = ModelUtils.getAllEnrichmentTables(this, network);
 		for (CyTable table : oldTables) {
 			tableManager.deleteTable(table.getSUID());
 		}
