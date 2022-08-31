@@ -111,6 +111,8 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 					else return;
 				}
 				EnrichmentTableModel tableModel = enrichmentPanel.getTableModel();
+				// TODO: [N] FIgure out filtering 
+				System.out.println("filter table model");
 				tableModel.filter(categoryList, removeOverlapping, overlapCutoff.getValue());
 				// enrichmentPanel.updateLabelRows();
 				manager.setRemoveOverlap(network,removeOverlapping, group);

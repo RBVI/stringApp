@@ -206,8 +206,8 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		}
 
 		// clear old results
-		// TODO: [N] revise this for groups and see if we also need to delete some attributes in the network table
-		ModelUtils.deleteEnrichmentTables(network, manager, publOnly);
+		// TODO: [N] test deletion of old tables
+		ModelUtils.deleteMainEnrichmentTables(network, manager, publOnly);
 
 		// retrieve enrichment (new API)
 		getEnrichmentJSON(selected, species, bgNodes);
@@ -219,7 +219,6 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			ppiSummary = null;
 
 		// save analyzed nodes in network table
-		// TODO: [N] Test this after changing it for group enrichment
 		CyTable netTable = network.getDefaultNetworkTable();
 		// create list of anlayzed nodes
 		List<Long> analyzedNodesSUID = new ArrayList<Long>();

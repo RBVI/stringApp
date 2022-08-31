@@ -273,7 +273,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			setDefaultMaxProteins(ModelUtils.getIntegerProperty(configProps,"maxProteins"));
 		}
 
-		// TODO: [N] Is it ok to set the group to null here? or should we set it to "All"
+		// TODO: [N] Is it ok to set the group to null here
 		if (ModelUtils.hasProperty(configProps, "overlapCutoff")) {
 			setOverlapCutoff(null, ModelUtils.getDoubleProperty(configProps,"overlapCutoff"), null);
 		}
@@ -886,7 +886,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		CyNetwork network = e.getNetwork();
 		// delete enrichment tables
 		CyTableManager tableManager = getService(CyTableManager.class);
-		Set<CyTable> oldTables = ModelUtils.getAllEnrichmentTables(this, network);
+		Set<CyTable> oldTables = ModelUtils.getAllEnrichmentTables(this, network, EnrichmentTerm.ENRICHMENT_TABLE_PREFIX);
 		for (CyTable table : oldTables) {
 			tableManager.deleteTable(table.getSUID());
 		}

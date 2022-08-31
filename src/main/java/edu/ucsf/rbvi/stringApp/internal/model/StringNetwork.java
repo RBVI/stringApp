@@ -78,11 +78,13 @@ public class StringNetwork {
 		CyTable netTable = network.getDefaultNetworkTable();
 		ModelUtils.createListColumnIfNeeded(netTable, String.class, ModelUtils.NET_ENRICHMENT_TABLES);
 		List<String> groups = netTable.getRow(network.getSUID()).getList(ModelUtils.NET_ENRICHMENT_TABLES, String.class);
-		// TODO: [N] Test handling of old sessions here
+		// TODO: [N] Test handling of old sessions here, possibly revise later on
+		// TODO: [N] do we need to delete old columns, e.g. anlayzedNodes and vsiualizedTerms..?
 		if (groups == null) {
-			List<Long> analyzedNodes = netTable.getRow(network.getSUID()).getList(ModelUtils.NET_ANALYZED_NODES, Long.class);
-			if (analyzedNodes == null) // this means there is no enrichment/publications done for this network
+			// this means there is no enrichment/publications done for this network
+			if (netTable.getColumn(ModelUtils.NET_ANALYZED_NODES) == null)
 				return;
+			List<Long> analyzedNodes = netTable.getRow(network.getSUID()).getList(ModelUtils.NET_ANALYZED_NODES, Long.class);
 			// otherwise we have an old session with settings for the Enrichment: All
 			groups = new ArrayList<String>();
 			CyTableManager tableManager = manager.getService(CyTableManager.class);
@@ -168,7 +170,7 @@ public class StringNetwork {
 					brewerPalette = Enum.valueOf(ColorBrewer.class, settings.get("brewerPalette"));
 				}
 				*/
-				// TODO: [N] why do we set this one here and none of the others? Can it be null?
+				// TODO: why do we set this one here and none of the others?
 				if (settings.containsKey("brewerPalette")) {
 					System.out.println(settings.get("brewerPalette"));
 					manager.setBrewerPalette(network, settings.get("brewerPalette"), group);

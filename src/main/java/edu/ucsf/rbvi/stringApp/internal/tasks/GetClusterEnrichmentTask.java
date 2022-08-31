@@ -50,7 +50,6 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 	final Map<String, CyNetwork> stringNetworkMap;
 	final ShowEnrichmentPanelTaskFactory showFactoryEnrich;
 	final ShowPublicationsPanelTaskFactory showFactoryPubl;
-	// TODO: [N] maybe change this not to be global
 	List<CyNode> analyzedNodes;
 	TaskMonitor monitor;
 	private List<CyTable> enrichmentTables = new ArrayList<CyTable>();
@@ -122,7 +121,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		}
 		
 		// get background nodes
-		// TODO: [N] test if this still works
+		// TODO: [N] test if background network still works
 		String bgNodes = null;
 		if (!background.getSelectedValue().equals("genome")) {
 			bgNodes = getBackground(stringNetworkMap.get(background.getSelectedValue()), network);
@@ -167,8 +166,8 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		Collections.sort(groups, Collections.reverseOrder());
 		System.out.println(groups);
 
-		// TODO: [N] revise this for groups and see if we also need to delete some attributes in the network table
-		// ModelUtils.deleteEnrichmentTables(network, manager, publOnly);
+		// TODO: [N] test deletion of old tables
+		ModelUtils.deleteGroupEnrichmentTables(network, manager, EnrichmentTerm.ENRICHMENT_TABLE_PREFIX + colGroups.getName());
 		
 		// setup enrichment settings tables
 		CyTable netTable = network.getDefaultNetworkTable();
@@ -253,7 +252,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			}
 			// skip column if it only contains unique values or only one value or unique values for more than half the nodes in the network 
 			// filter for empty strings -> maybe enough to put a cutoff here?
-			// TODO: [N] is this cutoff OK?
+			// TODO: [N] is colValues.size() > numValues/2 good to use to remove columns with many values?
 			if (colValues.size() < 2 || colValues.size() == numValues || colValues.size() > numValues/2) {
 				// System.out.println("skip: " + col.getName());
 				continue;
@@ -500,7 +499,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 	@Override
 	@SuppressWarnings("unchecked")
 	public <R> R getResults(Class<? extends R> clzz) {
-		// TODO: [N] See what we need to return here
+		// TODO: [N] What do we need to return in getResults
 		if (clzz.equals(CyTable.class)) {
 			return (R) enrichmentTables.get(0);
 		} else if (clzz.equals(String.class)) {

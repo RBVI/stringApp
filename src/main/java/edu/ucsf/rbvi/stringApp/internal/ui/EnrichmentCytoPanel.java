@@ -84,13 +84,13 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.TextIcon;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
-// TODO: [N] everything that we save in the network table should be cluster specific
-// TODO: [N] find a different place for the enrichment settings and analyzed terms, etc. columns -> either a global CyTable or network-specific ones
-// TODO: [N] check for backwards compatibility of old sessions, copy the info from the network table to the enrichment info table and delete the columns
-
 public class EnrichmentCytoPanel extends JPanel
 		implements CytoPanelComponent2, ListSelectionListener, ActionListener,
 		TableModelListener, SelectedNodesAndEdgesListener, SetCurrentNetworkListener {
+
+	// TODO: [N] everything that we save in the network table should be cluster specific -> not done yet for visualized terms
+	// find a different place for the enrichment settings and analyzed terms, etc. columns -> either a global CyTable or network-specific ones -> done
+	// TODO: [N] check for backwards compatibility of old sessions, copy the info from the network table to the enrichment info table and delete the columns
 
 	final StringManager manager;
 	private boolean registered = false;
@@ -315,8 +315,7 @@ public class EnrichmentCytoPanel extends JPanel
 		TaskManager<?, ?> tm = manager.getService(TaskManager.class);
 		CyNetwork network = manager.getCurrentNetwork();
 		if (e.getSource().equals(butDrawCharts)) {
-			// TODO: [N] draw charts currently only works on the main network, why?
-			// TODO: [N] instead of resetting, do something else or not?
+			// TODO: [N] draw charts currently only works on the main network, why? do something else instead of resetting or not?
 			resetCharts();
 			// do something fancy here...
 			// piechart: attributelist="test3" colorlist="modulated" showlabels="false"
@@ -357,6 +356,7 @@ public class EnrichmentCytoPanel extends JPanel
 			tm.execute(new TaskIterator(new EnrichmentSettingsTask(manager, showTable)));
 		} else if (e.getSource().equals(butExportTable)) {
 			EnrichmentTableModel tableModel = enrichmentTableModels.get(showTable);
+			// System.out.println(showTable);
 			if (network != null && tableModel != null) {
 				if (tableModel.getAllRowCount() != tableModel.getRowCount())
 					tm.execute(new TaskIterator(new ExportEnrichmentTableTask(manager, network,
@@ -378,12 +378,11 @@ public class EnrichmentCytoPanel extends JPanel
 	public void initPanel(CyNetwork network, boolean noSignificant) {
 		this.removeAll();
 
-		Set<CyTable> currTables = ModelUtils.getAllEnrichmentTables(manager, network);
+		Set<CyTable> currTables = ModelUtils.getAllEnrichmentTables(manager, network, EnrichmentTerm.ENRICHMENT_TABLE_PREFIX);
 		availableTables = new ArrayList<String>();
 		for (CyTable currTable : currTables) {
 			// System.out.println("found table " + currTable.getTitle());
-			if (currTable.getTitle().contains(EnrichmentTerm.ENRICHMENT_TABLE_PREFIX)
-					&& !currTable.getTitle().equals(TermCategory.PMID.getTable())
+			if (!currTable.getTitle().equals(TermCategory.PMID.getTable())
 					&& !currTable.getTitle().contains(EnrichmentTerm.ENRICHMENT_TABLE_FILTERED_SUFFIX)) {
 				if (currTable.getRowCount() > 0) {
 					// System.out.println("adding table: " + currTable.getTitle());
@@ -818,7 +817,6 @@ public class EnrichmentCytoPanel extends JPanel
 		else
 			manager.execute(new TaskIterator(
 					new EnrichmentMapAdvancedTask(manager, network, getFilteredTable(), false, showTable)));
-		// TODO: [N] check why we do that?
 	}
 
 	public void updateLabelRows() {
@@ -878,7 +876,8 @@ public class EnrichmentCytoPanel extends JPanel
 		if (network == null)
 			return selectedTerms;
 
-		Set<CyTable> currTables = ModelUtils.getEnrichmentTables(manager, network);
+		// TODO: [N] decide what to do with getAllUserSelectedTerms() 
+		Set<CyTable> currTables = ModelUtils.getMainEnrichmentTables(manager, network);
 		for (CyTable currTable : currTables) {
 			// currTable = ModelUtils.getEnrichmentTable(manager, network, showTable);
 			// currTable.getColumn(EnrichmentTerm.colShowChart) == null ||
@@ -953,11 +952,15 @@ public class EnrichmentCytoPanel extends JPanel
 			//return selectedTerms;
 			return null;
 
+		// TODO: [N] Figure out filtering of tables
 		String filteredTableName = showTable + EnrichmentTerm.ENRICHMENT_TABLE_FILTERED_SUFFIX;
+		System.out.println("filtered table name to look for " + filteredTableName);
 		CyTable filteredEnrichmentTable = ModelUtils.getEnrichmentTable(manager, network, filteredTableName);
-		if (filteredEnrichmentTable != null)
+		if (filteredEnrichmentTable != null) {
+			System.out.println("found filtered table " + filteredEnrichmentTable.getRowCount());
 			return filteredEnrichmentTable;
-
+		}
+		System.out.println("create filtered table");
 		CyTable currTable = ModelUtils.getEnrichmentTable(manager, network, showTable);
 
 		if (currTable == null || currTable.getRowCount() == 0) {
@@ -983,6 +986,7 @@ public class EnrichmentCytoPanel extends JPanel
 		if (network == null)
 			return;
 		
+		System.out.println("update filtered enrichment table");
 		CyTable currTable = ModelUtils.getEnrichmentTable(manager, network, showTable);
 		EnrichmentTableModel tableModel = enrichmentTableModels.get(showTable);
 		if (currTable == null || tableModel == null) return;

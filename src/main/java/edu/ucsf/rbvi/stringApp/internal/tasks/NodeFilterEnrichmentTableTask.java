@@ -34,17 +34,11 @@ public class NodeFilterEnrichmentTableTask extends AbstractTask implements Obser
 	
 	@Tunable(description = "Select nodes", 
 			context = "nogui", 
-	         //tooltip = "Select the enrichment categories to show in the table",
-	         //longDescription = "Select the enrichment categories to show in the table",
-	         //exampleStringValue = "GO Process",
 	         gravity = 1.0)
 	public ListMultipleSelection<CyNode> nodesToFilterBy = null;
 
 	@Tunable(description = "Term should annotate all selected",
 			context = "nogui", 
-	         //tooltip = "Select the enrichment categories to show in the table",
-	         //longDescription = "Select the enrichment categories to show in the table",
-	         //exampleStringValue = "GO Process",
 	         gravity = 1.0)
 	public boolean annotateAllNodes = false;
 
@@ -54,7 +48,6 @@ public class NodeFilterEnrichmentTableTask extends AbstractTask implements Obser
 		this.enrichmentPanel = panel;
 		nodesToFilterBy = new ListMultipleSelection<CyNode>(network.getNodeList());
 		nodesToFilterBy.setSelectedValues(CyTableUtil.getNodesInState(network, CyNetwork.SELECTED, true));
-		//categories.setSelectedValues(manager.getCategoryFilter(network));
 	}
 
 	@Override
@@ -77,7 +70,6 @@ public class NodeFilterEnrichmentTableTask extends AbstractTask implements Obser
 							cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment"));
 				}
 				EnrichmentTableModel tableModel = enrichmentPanel.getTableModel();
-				// TODO: [N] we don't use this class or?
 				// tableModel.filterByNodeSUID(nodesToFilter, annotateAllNodes, manager.getCategoryFilter(network), manager.getRemoveOverlap(network), manager.getOverlapCutoff(network));
 				enrichmentPanel.updateLabelRows();
 				// manager.setCategoryFilter(network,categories.getSelectedValues());

@@ -18,7 +18,7 @@ public class ExportPublicationsTaskFactory extends AbstractNetworkTaskFactory {
 	}
 
 	public boolean isReady(CyNetwork network) {
-		if (ModelUtils.getEnrichmentTables(manager, network).size() > 0)
+		if (ModelUtils.getAllEnrichmentTables(manager, network, TermCategory.PMID.getTable()).size() > 0)
 			return true;
 		else
 			return false;

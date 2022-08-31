@@ -106,14 +106,8 @@ public class PublicationsCytoPanel extends JPanel
 	// public final static String showTable = TermCategory.PMID.getTable();
 	boolean clearSelection = false;
 	// List<String> availableTables;
-	// JButton butSettings;
-	// JButton butDrawCharts;
-	// JButton butResetCharts;
 	JButton butAnalyzedNodes;
 	JButton butExportTable;
-	// JButton butFilter;
-	// JLabel labelPPIEnrichment;
-	// JMenuItem menuItemReset;
 	JPopupMenu popupMenu;
 	EnrichmentTableModel tableModel;
 	final CyColorPaletteChooserFactory colorChooserFactory;
@@ -234,46 +228,10 @@ public class PublicationsCytoPanel extends JPanel
 		}
 	}
 
-	// @Override
-	// public void tableChanged(TableModelEvent e) {
-	// int column = e.getColumn();
-	// if (column != EnrichmentTerm.chartColumnCol)
-	// return;
-	// Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
-	// if (preselectedTerms.size() > 0) {
-	// CyNetwork network = manager.getCurrentNetwork();
-	// ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network));
-	// }
-	// }
-
-	// TODO: make this network-specific
 	public void actionPerformed(ActionEvent e) {
 		TaskManager<?, ?> tm = manager.getService(TaskManager.class);
 		CyNetwork network = manager.getCurrentNetwork();
-		// if (e.getSource().equals(butDrawCharts)) {
-		// resetCharts();
-		// // do something fancy here...
-		// // piechart: attributelist="test3" colorlist="modulated" showlabels="false"
-		// Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
-		// if (preselectedTerms.size() == 0) {
-		// preselectedTerms = getAutoSelectedTopTerms(manager.getTopTerms(network));
-		// }
-		// AvailableCommands availableCommands = (AvailableCommands) manager
-		// .getService(AvailableCommands.class);
-		// if (!availableCommands.getNamespaces().contains("enhancedGraphics")) {
-		// JOptionPane.showMessageDialog(null,
-		// "Charts will not be displayed. You need to install enhancedGraphics from the App Manager
-		// or Cytoscape App Store.",
-		// "No results", JOptionPane.WARNING_MESSAGE);
-		// return;
-		// }
-		// ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network));
-		// } else if (e.getSource().equals(butResetCharts)) {
-		// // reset colors and selection
-		// resetCharts();
-		// } else
 		if (e.getSource().equals(butAnalyzedNodes)) {
-			// TODO: [N] Fix analyzed nodes for enriched publications
 			List<CyNode> analyzedNodes = ModelUtils.getEnrichmentNodes(manager, network, TermCategory.PMID.getTable());
 			if (network == null || analyzedNodes == null)
 				return;
@@ -281,25 +239,11 @@ public class PublicationsCytoPanel extends JPanel
 				network.getDefaultNodeTable().getRow(node.getSUID()).set(CyNetwork.SELECTED, true);
 				// System.out.println("select node: " + nodeID);
 			}
-			// } else if (e.getSource().equals(butFilter)) {
-			// tm.execute(new TaskIterator(new FilterEnrichmentTableTask(manager, this)));
-			// } else if (e.getSource().equals(butSettings)) {
-			// tm.execute(new TaskIterator(new EnrichmentSettingsTask(manager)));
 		} else if (e.getSource().equals(butExportTable)) {
 			if (network != null)
 				tm.execute(new TaskIterator(new ExportEnrichmentTableTask(manager, network, null,
 						ModelUtils.getEnrichmentTable(manager, network,
 								TermCategory.PMID.getTable()), false)));
-			// } else if (e.getSource().equals(menuItemReset)) {
-			// // System.out.println("reset color now");
-			// Component c = (Component)e.getSource();
-			// JPopupMenu popup = (JPopupMenu)c.getParent();
-			// JTable table = (JTable)popup.getInvoker();
-			// // System.out.println("action listener: " + table.getSelectedRow() + " : " +
-			// table.getSelectedColumn());
-			// if (table.getSelectedRow() > -1) {
-			// resetColor(table.getSelectedRow());
-			// }
 		}
 	}
 
@@ -313,7 +257,7 @@ public class PublicationsCytoPanel extends JPanel
 	public void initPanel(CyNetwork network, boolean noSignificant) {
 		this.removeAll();
 
-		Set<CyTable> currTables = ModelUtils.getEnrichmentTables(manager, network);
+		Set<CyTable> currTables = ModelUtils.getMainEnrichmentTables(manager, network);
 		publicationsTable = null;
 		for (CyTable currTable : currTables) {
 			if (currTable.getTitle().equals(TermCategory.PMID.getTable())) {
@@ -338,38 +282,6 @@ public class PublicationsCytoPanel extends JPanel
 			this.add(mainPanel, BorderLayout.CENTER);
 			// return;
 		} else {
-			// JPanel buttonsPanelLeft = new JPanel(new GridLayout(1, 3));
-			// butFilter = new JButton(IconManager.ICON_FILTER);
-			// butFilter.setFont(iconFont);
-			// butFilter.addActionListener(this);
-			// butFilter.setToolTipText(butFilterName);
-			// butFilter.setBorderPainted(false);
-			// butFilter.setContentAreaFilled(false);
-			// butFilter.setFocusPainted(false);
-			// butFilter.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
-			//
-			// butDrawCharts = new JButton(chartIcon);
-			// butDrawCharts.addActionListener(this);
-			// butDrawCharts.setToolTipText(butDrawChartsName);
-			// butDrawCharts.setBorderPainted(false);
-			// butDrawCharts.setContentAreaFilled(false);
-			// butDrawCharts.setFocusPainted(false);
-			// butDrawCharts.setBorder(BorderFactory.createEmptyBorder(2,0,2,2));
-			//
-			//
-			// butResetCharts = new JButton(IconManager.ICON_CIRCLE_O);
-			// butResetCharts.setFont(iconFont);
-			// butResetCharts.addActionListener(this);
-			// butResetCharts.setToolTipText(butResetChartsName);
-			// butResetCharts.setBorderPainted(false);
-			// butResetCharts.setContentAreaFilled(false);
-			// butResetCharts.setFocusPainted(false);
-			// butResetCharts.setBorder(BorderFactory.createEmptyBorder(2,2,2,20));
-			//
-			// buttonsPanelLeft.add(butFilter);
-			// buttonsPanelLeft.add(butDrawCharts);
-			// buttonsPanelLeft.add(butResetCharts);
-
 			JPanel buttonsPanelRight = new JPanel(new GridLayout(1, 2));
 			butAnalyzedNodes = new JButton(IconManager.ICON_CHECK_SQUARE_O);
 			butAnalyzedNodes.addActionListener(this);
@@ -389,35 +301,10 @@ public class PublicationsCytoPanel extends JPanel
 			butExportTable.setFocusPainted(false);
 			butExportTable.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 20));
 
-			// butSettings = new JButton(IconManager.ICON_COG);
-			// butSettings.setFont(iconFont);
-			// butSettings.addActionListener(this);
-			// butSettings.setToolTipText(butSettingsName);
-			// butSettings.setBorderPainted(false);
-			// butSettings.setContentAreaFilled(false);
-			// butSettings.setFocusPainted(false);
-			// butSettings.setBorder(BorderFactory.createEmptyBorder(2,2,2,20));
-
 			buttonsPanelRight.add(butAnalyzedNodes);
 			buttonsPanelRight.add(butExportTable);
-			// buttonsPanelRight.add(butSettings);
-
-			// Double ppiEnrichment = ModelUtils.getPPIEnrichment(network);
-			// labelPPIEnrichment = new JLabel();
-			// if (ppiEnrichment != null) {
-			// labelPPIEnrichment = new JLabel("PPI Enrichment: " + ppiEnrichment.toString());
-			// labelPPIEnrichment.setToolTipText(
-			// "<html>If the PPI enrichment is less or equal 0.05, your proteins have more
-			// interactions among themselves <br />"
-			// + "than what would be expected for a random set of proteins of similar size, drawn
-			// from the genome. Such <br />"
-			// + "an enrichment indicates that the proteins are at least partially biologically
-			// connected, as a group.</html>");
-			// }
 
 			topPanel = new JPanel(new BorderLayout());
-			// topPanel.add(buttonsPanelLeft, BorderLayout.WEST);
-			// topPanel.add(labelPPIEnrichment, BorderLayout.CENTER);
 			topPanel.add(buttonsPanelRight, BorderLayout.EAST);
 			// topPanel.add(boxTables, BorderLayout.EAST);
 			this.add(topPanel, BorderLayout.NORTH);
@@ -430,9 +317,6 @@ public class PublicationsCytoPanel extends JPanel
 
 		}
 
-		//if (tableModel != null)
-			//tableModel.filter(manager.getCategoryFilter(network), manager.getRemoveOverlap(network),
-			//		manager.getOverlapCutoff(network));
 		this.revalidate();
 		this.repaint();
 	}
@@ -454,14 +338,6 @@ public class PublicationsCytoPanel extends JPanel
 		// jTable.getModel().addTableModelListener(this);
 		jTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
 		
-		// TODO: [N] Double check this: seems we don't use the color editor for publications anyway
-		// CyNetwork network = manager.getCurrentNetwork();
-		// jTable.setDefaultEditor(Color.class, new ColorEditor(manager, this, colorChooserFactory, network));
-		// popupMenu = new JPopupMenu();
-		// menuItemReset = new JMenuItem("Remove color");
-		// menuItemReset.addActionListener(this);
-		// popupMenu.add(menuItemReset);
-		// jTable.setComponentPopupMenu(popupMenu);
 		jTable.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				JTable source = (JTable) e.getSource();
