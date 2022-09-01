@@ -88,9 +88,9 @@ public class EnrichmentCytoPanel extends JPanel
 		implements CytoPanelComponent2, ListSelectionListener, ActionListener,
 		TableModelListener, SelectedNodesAndEdgesListener, SetCurrentNetworkListener {
 
-	// TODO: [N] everything that we save in the network table should be cluster specific -> not done yet for visualized terms
-	// find a different place for the enrichment settings and analyzed terms, etc. columns -> either a global CyTable or network-specific ones -> done
-	// TODO: [N] check for backwards compatibility of old sessions, copy the info from the network table to the enrichment info table and delete the columns
+	// enrichment settings and analyzed nodes are now saved in a network-specific table
+	// TODO: [N] find out what to do with visualized terms
+	// implemented backwards compatibility for old sessions, the info is copied from the network table to the enrichment info table
 
 	final StringManager manager;
 	private boolean registered = false;
@@ -383,7 +383,7 @@ public class EnrichmentCytoPanel extends JPanel
 		for (CyTable currTable : currTables) {
 			// System.out.println("found table " + currTable.getTitle());
 			if (!currTable.getTitle().equals(TermCategory.PMID.getTable())
-					&& !currTable.getTitle().contains(EnrichmentTerm.ENRICHMENT_TABLE_FILTERED_SUFFIX)) {
+					&& !currTable.getTitle().endsWith(EnrichmentTerm.ENRICHMENT_TABLE_FILTERED_SUFFIX)) {
 				if (currTable.getRowCount() > 0) {
 					// System.out.println("adding table: " + currTable.getTitle());
 					createJTable(currTable, ModelUtils.getDataVersion(network));
@@ -431,24 +431,26 @@ public class EnrichmentCytoPanel extends JPanel
 			butFilter.setContentAreaFilled(false);
 			butFilter.setFocusPainted(false);
 			butFilter.setBorder(BorderFactory.createEmptyBorder(2, 10, 2, 10));
-
-			butDrawCharts = new JButton(chartIcon);
-			butDrawCharts.addActionListener(this);
-			butDrawCharts.setToolTipText(butDrawChartsName);
-			butDrawCharts.setBorderPainted(false);
-			butDrawCharts.setContentAreaFilled(false);
-			butDrawCharts.setFocusPainted(false);
-			butDrawCharts.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 10));
-
-			butResetCharts = new JButton(IconManager.ICON_CIRCLE_O);
-			butResetCharts.setFont(iconFont);
-			butResetCharts.addActionListener(this);
-			butResetCharts.setToolTipText(butResetChartsName);
-			butResetCharts.setBorderPainted(false);
-			butResetCharts.setContentAreaFilled(false);
-			butResetCharts.setFocusPainted(false);
-			butResetCharts.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 10));
-
+			
+			if (showTable.equals(TermCategory.ALL.getTable())) {
+				butDrawCharts = new JButton(chartIcon);
+				butDrawCharts.addActionListener(this);
+				butDrawCharts.setToolTipText(butDrawChartsName);
+				butDrawCharts.setBorderPainted(false);
+				butDrawCharts.setContentAreaFilled(false);
+				butDrawCharts.setFocusPainted(false);
+				butDrawCharts.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 10));
+	
+				butResetCharts = new JButton(IconManager.ICON_CIRCLE_O);
+				butResetCharts.setFont(iconFont);
+				butResetCharts.addActionListener(this);
+				butResetCharts.setToolTipText(butResetChartsName);
+				butResetCharts.setBorderPainted(false);
+				butResetCharts.setContentAreaFilled(false);
+				butResetCharts.setFocusPainted(false);
+				butResetCharts.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 10));
+			}
+			
 			// Add enrichment map button here if EnrichmentMap is loaded
 			butEnrichmentMap = new JButton(
 					new ImageIcon(getClass().getClassLoader().getResource("/images/em_logo.png")));
@@ -460,8 +462,10 @@ public class EnrichmentCytoPanel extends JPanel
 			butEnrichmentMap.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 20));
 
 			buttonsPanelLeft.add(butFilter);
-			buttonsPanelLeft.add(butDrawCharts);
-			buttonsPanelLeft.add(butResetCharts);
+			if (showTable.equals(TermCategory.ALL.getTable())) {
+				buttonsPanelLeft.add(butDrawCharts);
+				buttonsPanelLeft.add(butResetCharts);
+			}
 			if (manager.haveEnrichmentMap())
 				buttonsPanelLeft.add(butEnrichmentMap);
 
@@ -578,7 +582,7 @@ public class EnrichmentCytoPanel extends JPanel
 		jTable.getModel().addTableModelListener(this);
 		jTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
 		CyNetwork network = manager.getCurrentNetwork();
-		// TODO: [N] Should we use showTable or cyTable title here?
+		// TODO: [N] Should we use showTable or cyTable title here? -> seems to work as it is
 		jTable.setDefaultEditor(Color.class,
 				new ColorEditor(manager, this, colorChooserFactory, network, cyTable.getTitle()));
 		popupMenu = new JPopupMenu();

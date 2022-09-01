@@ -79,7 +79,7 @@ public class StringNetwork {
 		ModelUtils.createListColumnIfNeeded(netTable, String.class, ModelUtils.NET_ENRICHMENT_TABLES);
 		List<String> groups = netTable.getRow(network.getSUID()).getList(ModelUtils.NET_ENRICHMENT_TABLES, String.class);
 		// TODO: [N] Test handling of old sessions here, possibly revise later on
-		// TODO: [N] do we need to delete old columns, e.g. anlayzedNodes and vsiualizedTerms..?
+		// TODO: [N] do we need to delete old columns, e.g. anlayzedNodes and vsiualizedTerms and enrichmentSettings..?
 		if (groups == null) {
 			// this means there is no enrichment/publications done for this network
 			if (netTable.getColumn(ModelUtils.NET_ANALYZED_NODES) == null)

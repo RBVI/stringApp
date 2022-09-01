@@ -163,7 +163,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		}
 		monitor.setStatusMessage("Network contains " + groups.size() + " groups.");
 		Collections.sort(groups, Collections.reverseOrder());
-		System.out.println(groups);
+		// System.out.println(groups);
 
 		// TODO: [N] test deletion of old tables
 		ModelUtils.deleteGroupEnrichmentTables(network, manager, EnrichmentTerm.ENRICHMENT_TABLE_PREFIX + colGroups.getName());
@@ -321,15 +321,15 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 					termsAll.add(term);
 				}
 			}
-			System.out.println("all: " + termsAll.size());
-			System.out.println("pmid: " + termsPubl.size());
-			if (publOnly) {
+			// System.out.println("all: " + termsAll.size());
+			// System.out.println("pmid: " + termsPubl.size());
+			// if (publOnly) {
 				//enrichmentResult.put(groupLabel + TermCategory.PMID.getKey(), termsPubl);
 				//saveEnrichmentTable(groupLabel + TermCategory.PMID.getTable(), groupLabel + TermCategory.PMID.getKey());				
-			} else {
-				enrichmentResult.put(groupTableLabel, termsAll);
-				saveEnrichmentTable(groupTableLabel, groupTableLabel);
-			}
+			// } else {
+			enrichmentResult.put(groupTableLabel, termsAll);
+			saveEnrichmentTable(groupTableLabel, groupTableLabel);
+			// }
 			// info for the user
 			if ((publOnly && termsPubl.size() == 0) || (!publOnly && termsAll.size() == 0))
 				monitor.showMessage(Level.WARN, "Enrichment retrieval returned no results that met the criteria.");
