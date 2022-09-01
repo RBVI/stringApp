@@ -1399,7 +1399,7 @@ public class ModelUtils {
 		return netTables;
 	}
 
-	// THis method now returns all enrichment tables that start with the given suffix and are associated with the given network
+	// THis method now returns all enrichment tables that start with the given prefix and are associated with the given network
 	// If the prefix is EnrichmentTerm.ENRICHMENT_TABLE_PREFIX, it returns all enrichment tables
 	// If the prefix is the name of the table it returns that table
 	// If the prefix is the enrichment table prefix + group name, it returns all tables for a given group
@@ -1408,7 +1408,7 @@ public class ModelUtils {
 		CyTableManager tableManager = manager.getService(CyTableManager.class); 
 		Set<CyTable> currTables = tableManager.getAllTables(true);
 		for (CyTable current : currTables) {
-			if ((current.getTitle().contains(tablePrefix))
+			if ((current.getTitle().startsWith(tablePrefix))
 					&& current.getColumn(EnrichmentTerm.colNetworkSUID) != null
 					&& current.getAllRows().size() > 0) {
 				CyRow tempRow = current.getAllRows().get(0);

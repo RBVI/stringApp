@@ -151,8 +151,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		// get groups 
 		CyColumn colGroups = groupColumn.getSelectedValue();
 		Class<?> colGroupClass = colGroups.getType();
-		// Sort groups by size 
-		// TODO: [N] something bizarre happening here... if sorting by size and doing for all 18 groups, it only saves 16 of them. 	
+		// Sort groups by size  	
 		List<Group> groups = new ArrayList<Group>();
 		List<?> colValues = colGroups.getValues(colGroupClass);
 		Set<?> colValuesUnique = new HashSet(colValues);
@@ -189,8 +188,8 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			// define name of enrichment tables
 			String groupTableName = EnrichmentTerm.ENRICHMENT_TABLE_PREFIX + colGroups.getName() + " " + group.getName();
 			
-			// clear old results
-			deleteEnrichmentTables(groupTableName);
+			// clear old results (already done above, for now we don't need this one)
+			// deleteEnrichmentTables(groupTableName);
 
 			// get set of nodes to retrieve enrichment for
 			String selected = getGroupNodes(network, colGroups, group.getName()).trim(); // also inits the analyzedNodes
@@ -426,12 +425,12 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		return str.toString();
 	}
 
-	// [N] not working yet? -> seems to work
+	// not needed at the moment, unless we decide otherwise, see also similar methods in ModelUtils
 	private void deleteEnrichmentTables(String groupTableName) {
 		CyTableManager tableManager = manager.getService(CyTableManager.class); 
 		Set<CyTable> currTables = tableManager.getAllTables(true);
 		for (CyTable current : currTables) {
-			if (current.getTitle().contains(groupTableName)
+			if (current.getTitle().equals(groupTableName)
 					&& current.getColumn(EnrichmentTerm.colNetworkSUID) != null
 					&& current.getAllRows().size() > 0) {
 				CyRow tempRow = current.getAllRows().get(0);
