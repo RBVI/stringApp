@@ -1455,6 +1455,7 @@ public class ModelUtils {
 			tableManager.deleteTable(table.getSUID());
 			manager.flushEvents();				
 		}
+		// TODO: [N] Is it ok to set the  NET_ENRICHMENT_TABLES to an empty list
 		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_TABLES, groups);
 		// TODO: [N] do we need to delete settings from the settings table
 	}
@@ -1473,6 +1474,7 @@ public class ModelUtils {
 			tableManager.deleteTable(table.getSUID());
 			manager.flushEvents();				
 		}
+		// TODO: [N] Is it ok to set the  NET_ENRICHMENT_TABLES to an empty list
 		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_TABLES, groups);
 		// TODO: [N] do we need to delete settings from the settings table
 	}
@@ -1735,6 +1737,10 @@ public class ModelUtils {
 	public static Map<String, String> getEnrichmentSettingsTableGroup(StringManager manager, CyNetwork network, String group) {
 		Map<String, String> settings = new HashMap<String, String>();
 		CyTable settingsTable = getEnrichmentSettingsTable(manager, network);
+		// TODO: [N] Test, not sure why this has to be checked...
+		if (settingsTable == null) {
+			return settings;
+		}
 		String setting = settingsTable.getRow(group).get(NET_ENRICHMENT_SETTINGS, String.class);
 		if (setting == null || setting.length() == 0)
 			return settings;
@@ -1765,7 +1771,7 @@ public class ModelUtils {
 		CyTableFactory tableFactory = manager.getService(CyTableFactory.class);
 		CyTableManager tableManager = manager.getService(CyTableManager.class);
 
-		// TODO: [N] before release, change the visibility of the settings tables
+		// TODO: [Release] change the visibility of the settings tables
 		CyTable settingsTable = tableFactory.createTable(NET_ENRICHMENT_SETTINGS_TABLE, NET_ENRICHMENT_GROUP, String.class, true, true);
 		// settingsTable.setSavePolicy(SavePolicy.SESSION_FILE);
 		tableManager.addTable(settingsTable);

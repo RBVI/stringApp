@@ -66,6 +66,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 	@Tunable(description = "Retrieve for species", gravity = 3.0)
 	public ListSingleSelection<String> allNetSpecies = new ListSingleSelection<String>();
 	
+	// TODO: [Release] Decide on group size cutoffs before release
 	@Tunable(description = "Number of groups ", groups={"Advanced"}, params="displayState=collapsed", gravity = 5.0)
 	public int limitGroupNumber = 12;	
 
@@ -121,7 +122,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		}
 		
 		// get background nodes
-		// TODO: [N] test if background network still works
+		// test if background network still works -> seems to work
 		String bgNodes = null;
 		if (!background.getSelectedValue().equals("genome")) {
 			bgNodes = getBackground(stringNetworkMap.get(background.getSelectedValue()), network);
@@ -416,7 +417,8 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			}
 		}
 		// check if foreground is contained in background
-		for (CyNode fgNode : analyzedNodes) {
+		// instead of checking it only for analyzed nodes, check it for all nodes in the fgNetwork
+		for (CyNode fgNode : fgNetwork.getNodeList()) {
 			if (str.indexOf(fgNetwork.getRow(fgNode).get(ModelUtils.STRINGID, String.class)) == -1) {
 				System.out.println(fgNode.getSUID());
 				return "";
