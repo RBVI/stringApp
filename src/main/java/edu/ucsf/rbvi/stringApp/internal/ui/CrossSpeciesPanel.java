@@ -216,10 +216,11 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 							JOptionPane.showMessageDialog(null,
 								"<html><i>"+speciesCombo.getSelectedItem()+"</i> has no cross-species interactions.</html>",
 											"No partners", JOptionPane.ERROR_MESSAGE);
-							speciesCombo.setSelectedItem(defaultSpecies);
 						}
 					});
-					return;
+
+          speciesCombo.setSelectedItem(defaultSpecies);
+          crossList = Species.getSpeciesPartners(defaultSpecies.toString());
 				}
         String first = crossList.get(0);
         Collections.sort(crossList);

@@ -315,7 +315,8 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 							});
 						speciesFrame1.setVisible(false);
 
-            return;
+            species1.setSelectedItem(defaultSpecies);
+            crossList = Species.getSpeciesPartners(defaultSpecies.toString());
 					}
 
           String first = crossList.get(0);
