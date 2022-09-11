@@ -135,7 +135,7 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 				return optionsPanel.getSpecies().getTaxId();
 			}
 			return 9606; // Homo sapiens
-		} catch (ClassCastException e) {
+		} catch (RuntimeException e) {
 			// The user might not have given us a full species name
 			String name = optionsPanel.getSpeciesText();
 			SwingUtilities.invokeLater(new Runnable() {
@@ -144,6 +144,8 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 								                        "Unknown species", JOptionPane.ERROR_MESSAGE); 
 				}
 			});
+      // Reset
+      optionsPanel.setSpeciesText(manager.getDefaultSpecies());
 			return -1;
 		}
 	}

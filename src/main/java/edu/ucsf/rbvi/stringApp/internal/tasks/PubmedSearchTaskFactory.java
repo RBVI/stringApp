@@ -107,9 +107,11 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 						Species species;
 						try {
 							species = optionsPanel.getSpecies();
-						} catch (ClassCastException e) {
+						} catch (RuntimeException e) {
 							String speciesText = optionsPanel.getSpeciesText();
 							m.showMessage(TaskMonitor.Level.ERROR, "Unknown species: '"+speciesText+"'");
+              // Reset
+              optionsPanel.setSpeciesText(manager.getDefaultSpecies());
 							return;
 						}
 						JDialog d = new JDialog();

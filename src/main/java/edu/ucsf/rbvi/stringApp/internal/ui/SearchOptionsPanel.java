@@ -272,10 +272,22 @@ public class SearchOptionsPanel extends JPanel {
 		return speciesPanel;
 	}
 
-	public Species getSpecies() {
-		if (speciesCombo != null)
-			return (Species)speciesCombo.getSelectedItem();
-		return null;
+	public Species getSpecies() throws RuntimeException {
+    Object sp = speciesCombo.getSelectedItem();
+    if (sp instanceof Species)
+      return (Species)sp;
+
+    // OK, we haven't gotten a real species, so let's see if we can convert it
+    String spText = sp.toString();
+    if (spText.length() == 0)
+      return null;
+
+    // See if we know about this species
+    Species species = Species.getSpecies(spText);
+    if (species == null) {
+      throw new RuntimeException("No such species");
+    }
+    return species;
 	}
 
 	public String getSpeciesText() {
@@ -294,6 +306,7 @@ public class SearchOptionsPanel extends JPanel {
 			speciesCombo.setSelectedItem(species);
 	}
 
+  /*
 	JPanel createControlButtons(boolean optionsPanel) {
 		JPanel buttonPanel = new JPanel();
 		BoxLayout layout = new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS);
@@ -325,6 +338,7 @@ public class SearchOptionsPanel extends JPanel {
 
 		return buttonPanel;
 	}
+  */
 
 	JPanel createNetworkTypeRadioGroup() {
 

@@ -194,6 +194,8 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 		Species getSpecies1() {
 			if (species1.getSelectedItem() instanceof Species)
 				return (Species)species1.getSelectedItem();
+			if (species1.getSelectedItem() instanceof String)
+        return Species.getSpecies(species1.getSelectedItem().toString());
 			return null;
 		}
 
@@ -212,7 +214,7 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 			// setBorder(BorderFactory.createEmptyBorder(vgap, hgap, vgap, hgap));
 			smallFont = getFont().deriveFont(LookAndFeelUtil.getSmallFontSize());
 
-			speciesPanel2 = createSpeciesPartnerComboBox(Species.getSpeciesPartners(Species.getHumanSpecies().toString()));
+			// speciesPanel2 = createSpeciesPartnerComboBox(Species.getSpeciesPartners(Species.getHumanSpecies().toString()));
 
 			EasyGBC c = new EasyGBC();
 
@@ -354,8 +356,11 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 			species2.setFont(getFont().deriveFont(LookAndFeelUtil.getSmallFontSize()));
 			model2 = (DefaultComboBoxModel)species2.getModel();
 	
-			if (speciesList.contains("Plasmodium falciparum"))
+			if (speciesList.contains("Plasmodium falciparum")) {
 				species2.setSelectedItem("Plasmodium falciparum");
+        String sp2 = Species.abbreviate("Plasmodium falciparum");
+        sp2Button.setText(sp2);
+      }
 
     	species2Decorator = new JComboBoxDecorator(species2, true, false, speciesList);
 			species2Decorator.decorate(speciesList); 
