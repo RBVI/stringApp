@@ -75,13 +75,11 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 	StringManager manager;
 	static String CROSS_SPECIES_ID = "edu.ucsf.rbvi.x-species";
 	static String CROSS_SPECIES_URL = "http://string-db.org";
-	static String CROSS_SPECIES_NAME = "STRING Cross Species query";
+	static String CROSS_SPECIES_NAME = "STRING cross-species query";
 	static String CROSS_SPECIES_DESC = "Search STRING for protein-protein interactions across species";
-	static String CROSS_SPECIES_DESC_LONG =  "<html>The PubMed query retrieves a STRING network pertaining to any topic of interest <br />"
-											+ "based on text mining of PubMed abstracts. STRING is a database of known and <br />"
-											+ "predicted protein interactions for thousands of organisms, which are integrated <br />"
-											+ "from several sources, scored, and transferred across orthologs. The network <br />"
-											+ "includes both physical interactions and functional associations.</html>";
+	static String CROSS_SPECIES_DESC_LONG =  "<html>The cross-species query retrieves a STRING network for all proteins <br />"
+											+ "in the two chosen species that have interactions above the chosen cutoff, <br />"
+											+ "including both interactions within and across the species.</html>";
 
 	private JComboBoxDecorator species2Decorator;
 	private StringNetwork stringNetwork = null;
@@ -125,6 +123,8 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 		return new TaskIterator(new AbstractTask() {
 			@Override
 			public void run(TaskMonitor m) {
+				// m.setTitle(CROSS_SPECIES_NAME);
+				m.setStatusMessage("Retrieving across and within species interactions");
 				StringNetwork stringNetwork = new StringNetwork(manager);
 				int confidence = optionsPanel.getConfidence();
 				LoadSpeciesInteractions loadInteractions = 
