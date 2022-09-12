@@ -124,12 +124,12 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 			@Override
 			public void run(TaskMonitor m) {
 				// m.setTitle(CROSS_SPECIES_NAME);
-				m.setStatusMessage("Retrieving across and within species interactions");
+				m.setTitle("Loading interactions from STRING for " + species1.toString() + " and " + species2.toString());
 				StringNetwork stringNetwork = new StringNetwork(manager);
 				int confidence = optionsPanel.getConfidence();
 				LoadSpeciesInteractions loadInteractions = 
 								new LoadSpeciesInteractions(stringNetwork, species1, species2, 
-								                            confidence, optionsPanel.getNetworkType());
+								                            confidence, optionsPanel.getNetworkType(), species1.toString() + " & " + species2.toString());
 
 				manager.execute(new TaskIterator(loadInteractions), true);
 			}

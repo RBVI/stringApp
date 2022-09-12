@@ -104,7 +104,7 @@ public class CrossSpeciesQueryTask extends AbstractTask implements ObservableTas
 		// Create the network from a cross-species query
 
 		LoadSpeciesInteractions loadInteractions = 
-						new LoadSpeciesInteractions(stringNetwork, sp1, sp2, confidence, networkType.getSelectedValue());
+						new LoadSpeciesInteractions(stringNetwork, sp1, sp2, confidence, networkType.getSelectedValue(), sp1.toString() + " & " + sp2.toString());
 
 		manager.execute(new TaskIterator(loadInteractions), true);
 		if(loadInteractions.hasError()) {

@@ -46,8 +46,8 @@ public class LoadSpeciesInteractions extends AbstractTask {
 	String errorMsg;
 
 	public LoadSpeciesInteractions(final StringNetwork stringNet, final Species species1,
-	                               final Species species2, final int confidence, final NetworkType netType) {
-		this(stringNet, species1.toString(), species1.getTaxId(), confidence, "", Databases.STRING.getAPIName());
+	                               final Species species2, final int confidence, final NetworkType netType, final String netName) {
+		this(stringNet, species1.toString(), species1.getTaxId(), confidence, netName, Databases.STRING.getAPIName());
 		this.species2 = species2.toString();
 		this.taxonId2 = species2.getTaxId();
 		this.netType = netType;

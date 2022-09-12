@@ -308,7 +308,7 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 		}
 		// public LoadSpeciesInteractions(final StringNetwork stringNet, final Species species1,
 	  //                                final Species species2, final int confidence, final NetworkType netType) {
-		TaskIterator ti = new TaskIterator(new LoadSpeciesInteractions(stringNetwork, species1, species2, confidence, netType));
+		TaskIterator ti = new TaskIterator(new LoadSpeciesInteractions(stringNetwork, species1, species2, confidence, netType, species1.toString() + " & " + species2.toString()));
 		if (additionalTask != null)
 			ti.append(additionalTask);
 
