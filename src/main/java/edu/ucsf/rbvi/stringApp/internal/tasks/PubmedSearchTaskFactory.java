@@ -46,9 +46,6 @@ import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.TaskObserver;
-import org.cytoscape.io.webservice.NetworkImportWebServiceClient;
-import org.cytoscape.io.webservice.SearchWebServiceClient;
-import org.cytoscape.io.webservice.swing.AbstractWebServiceGUIClient;
 
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
@@ -110,9 +107,11 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 						Species species;
 						try {
 							species = optionsPanel.getSpecies();
-						} catch (ClassCastException e) {
+						} catch (RuntimeException e) {
 							String speciesText = optionsPanel.getSpeciesText();
 							m.showMessage(TaskMonitor.Level.ERROR, "Unknown species: '"+speciesText+"'");
+              // Reset
+              optionsPanel.setSpeciesText(manager.getDefaultSpecies());
 							return;
 						}
 						JDialog d = new JDialog();

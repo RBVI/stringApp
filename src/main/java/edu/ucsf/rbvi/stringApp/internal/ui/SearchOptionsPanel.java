@@ -85,6 +85,7 @@ public class SearchOptionsPanel extends JPanel {
 	private boolean ignore = false;
 	private final boolean isDisease;
 	private final boolean isPubMed;
+	private boolean isCrossSpecies = false;
 	private final boolean showSpecies;
 	private String netSpecies = "Homo sapiens";
 
@@ -95,14 +96,22 @@ public class SearchOptionsPanel extends JPanel {
 
 	public SearchOptionsPanel(final StringManager manager, final boolean isPubMed, 
 	                          final boolean isDisease, final boolean showSpecies) {
+		this(manager, isPubMed, isDisease, false, showSpecies);
+	}
+
+	public SearchOptionsPanel(final StringManager manager, final boolean isPubMed, 
+	                          final boolean isDisease, final boolean isCrossSpecies, final boolean showSpecies) {
 		super(new GridBagLayout());
 		this.manager = manager;
 		this.isDisease = isDisease;
 		this.isPubMed = isPubMed;
+		this.isCrossSpecies = isCrossSpecies;
 		this.showSpecies = showSpecies;
 		// System.out.println("SearchOptionsPanel("+isPubMed+","+isDisease+","+showSpecies+")");
 		if (isDisease || isPubMed) 
 				additionalNodes = manager.getDefaultMaxProteins();
+		else if (isCrossSpecies)
+				additionalNodes = 0;
 		else
 				additionalNodes = manager.getDefaultAdditionalProteins();
 		confidence = (int)(manager.getDefaultConfidence()*100);
@@ -111,16 +120,16 @@ public class SearchOptionsPanel extends JPanel {
 	}
 
 	public SearchOptionsPanel(final StringManager manager, final boolean isPubMed, final boolean isDisease) {
-		this(manager, isPubMed, isDisease, true);
+		this(manager, isPubMed, isDisease, false, true);
 	}
 
 	// Special constructor used for new NetworkSearchTaskFactory options.
 	public SearchOptionsPanel(final StringManager manager) {
-		this(manager, false, false);
+		this(manager, false, false, true);
 	}
 
 	private void initOptions() {
-		setPreferredSize(new Dimension(700,200));
+		// setPreferredSize(new Dimension(700,200));
 		EasyGBC c = new EasyGBC();
 		if (showSpecies) {
 			List<Species> speciesList = getSpeciesList();
@@ -136,9 +145,11 @@ public class SearchOptionsPanel extends JPanel {
 		JPanel confidenceSlider = createConfidenceSlider();
 		add(confidenceSlider, c.down().expandBoth().insets(5,5,0,5));
 
-		// Create the slider for the additional nodes
-		JPanel additionalNodesSlider = createAdditionalNodesSlider();
-		add(additionalNodesSlider, c.down().expandBoth().insets(5,5,0,5));
+		if (!isCrossSpecies) {
+			// Create the slider for the additional nodes
+			JPanel additionalNodesSlider = createAdditionalNodesSlider();
+			add(additionalNodesSlider, c.down().expandBoth().insets(5,5,0,5));
+		}
 
 		// Add some "advanced" options
 		advancedOptions = createAdvancedOptions();
@@ -169,7 +180,7 @@ public class SearchOptionsPanel extends JPanel {
 		JLabel optionsLabel = new JLabel("<html><b>Options:</b></html>");
 		c.anchor("west").insets(0,5,0,5);
 		advancedPanel.add(optionsLabel, c);
-		if (!isDisease && !isPubMed) {
+		if (!isDisease && !isPubMed && !isCrossSpecies) {
 			c.right().noExpand().insets(0,10,0,5);
 			useSmartDelimiters = new JCheckBox("Use Smart Delimiters", false);
 			useSmartDelimiters.setToolTipText("<html>\"Smart\" delimiters attempts to provide flexibility "+
@@ -231,6 +242,7 @@ public class SearchOptionsPanel extends JPanel {
 	}
 
 	JPanel createSpeciesComboBox(List<Species> speciesList) {
+    // System.out.println("createSpeciesComboBox");
 		JPanel speciesPanel = new JPanel(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
 		JLabel speciesLabel = new JLabel("Species:");
@@ -251,7 +263,8 @@ public class SearchOptionsPanel extends JPanel {
 		} else {
 			speciesCombo.setSelectedItem(Species.getSpecies(defaultSpecies));
 		}
-		JComboBoxDecorator.decorate(speciesCombo, true, true); 
+    JComboBoxDecorator decorator = new JComboBoxDecorator(speciesCombo, true, true, speciesList);
+		decorator.decorate(speciesList); 
 		c.right().expandHoriz().insets(0,5,0,5);
 		if (isDisease)
 			speciesCombo.setEnabled(false);
@@ -259,10 +272,22 @@ public class SearchOptionsPanel extends JPanel {
 		return speciesPanel;
 	}
 
-	public Species getSpecies() {
-		if (speciesCombo != null)
-			return (Species)speciesCombo.getSelectedItem();
-		return null;
+	public Species getSpecies() throws RuntimeException {
+    Object sp = speciesCombo.getSelectedItem();
+    if (sp instanceof Species)
+      return (Species)sp;
+
+    // OK, we haven't gotten a real species, so let's see if we can convert it
+    String spText = sp.toString();
+    if (spText.length() == 0)
+      return null;
+
+    // See if we know about this species
+    Species species = Species.getSpecies(spText);
+    if (species == null) {
+      throw new RuntimeException("No such species");
+    }
+    return species;
 	}
 
 	public String getSpeciesText() {
@@ -281,6 +306,7 @@ public class SearchOptionsPanel extends JPanel {
 			speciesCombo.setSelectedItem(species);
 	}
 
+  /*
 	JPanel createControlButtons(boolean optionsPanel) {
 		JPanel buttonPanel = new JPanel();
 		BoxLayout layout = new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS);
@@ -312,6 +338,7 @@ public class SearchOptionsPanel extends JPanel {
 
 		return buttonPanel;
 	}
+  */
 
 	JPanel createNetworkTypeRadioGroup() {
 

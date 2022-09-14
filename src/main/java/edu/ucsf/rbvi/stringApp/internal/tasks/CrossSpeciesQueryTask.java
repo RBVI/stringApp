@@ -34,30 +34,30 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.StringResults;
 
-public class PubmedQueryTask extends AbstractTask implements ObservableTask {
+public class CrossSpeciesQueryTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 
-	@Tunable(description = "Pubmed query", required = true, 
-	         longDescription="Enter a pubmed query (see NCBI tutorials for information about "+
-					                 "pubmed query syntax)",
-					 exampleStringValue="krogan[au] AND morris[au] AND gulbahce[au] AND HIV[title]")
-	public String pubmed = null;
+	@Tunable(description = "Species 1", 
+	         longDescription="Name of the first species.  This should be the actual "+
+					                "taxonomic name (e.g. homo sapiens, not human)", 
+					 exampleStringValue="homo sapiens")
+	public String species1 = null;
 
-	@Tunable(description = "Species", 
-	         longDescription="Species name.  This should be the actual "+
+	@Tunable (description="Taxon ID 1",
+	          longDescription="The taxonomy ID of the first species.  See the NCBI taxonomy home page for IDs",
+						exampleStringValue="9606")
+	public int taxonID1 = -1;
+
+	@Tunable(description = "Species 2", 
+	         longDescription="Name of the second species.  This should be the actual "+
 					                "taxonomic name (e.g. homo sapiens, not human)",
 					 exampleStringValue="homo sapiens")
-	public String species = null;
+	public String species2 = null;
 
-	@Tunable (description="Taxon ID",
-	          longDescription="The species taxonomy ID.  See the NCBI taxonomy home page for IDs",
+	@Tunable (description="Taxon ID 2",
+	          longDescription="The taxonomy ID of the second species.  See the NCBI taxonomy home page for IDs",
 						exampleStringValue="9606")
-	public int taxonID = -1;
-
-	@Tunable(description = "Maximum additional interactors",
-	         longDescription="The maximum number of proteins to return in addition to the query set",
-					 exampleStringValue="100")
-	public BoundedInteger limit = new BoundedInteger(1, 100, 10000, false, false);
+	public int taxonID2 = -1;
 
 	@Tunable(description = "Confidence cutoff",
 	         longDescription="The confidence score reflects the cumulated evidence that this "+
@@ -76,45 +76,56 @@ public class PubmedQueryTask extends AbstractTask implements ObservableTask {
 
 	private CyNetwork loadedNetwork;
 
-	public PubmedQueryTask(final StringManager manager) {
+	public CrossSpeciesQueryTask(final StringManager manager) {
 		this.manager = manager;
 		speciesList = Species.getSpecies();
 		// Set Human as the default
-		species = Species.getHumanSpecies().toString();
+		species1 = Species.getHumanSpecies().toString();
+		species2 = null;
 		networkType = new ListSingleSelection<>(NetworkType.values());
 		networkType.setSelectedValue(NetworkType.FUNCTIONAL);
 	}
 
 	public void run(TaskMonitor monitor)  {
-		monitor.setTitle("PubMed Query");
+		monitor.setTitle("Cross Species Query");
 		boolean found;
-		Species sp = null;
-		for (Species s: speciesList) {
-			if (s.toString().equals(species) || s.getTaxId() == taxonID) {
-				found = true;
-				sp = s;
-				break;
-			}
+		Species sp1 = getSpecies(species1, taxonID1);
+		if (sp1 == null) {
+			monitor.showMessage(TaskMonitor.Level.ERROR, "Unknown or missing species 1");
+			throw new RuntimeException("Unknown or missing species 1");
 		}
-		if (sp == null) {
-			monitor.showMessage(TaskMonitor.Level.ERROR, "Unknown or missing species");
-			throw new RuntimeException("Query '"+pubmed+"' returned no results");
-		}
+
+		// See if we have a second species
+		Species sp2 = getSpecies(species2, taxonID2);
 
 		StringNetwork stringNetwork = new StringNetwork(manager);
 		int confidence = (int)(cutoff.getValue()*100);
-		// Create the network from a pubmed query
-		GetStringIDsFromPubmedTask getIds = 
-						new GetStringIDsFromPubmedTask(stringNetwork, sp, limit.getValue(), confidence, 
-								pubmed, networkType.getSelectedValue());
-		manager.execute(new TaskIterator(getIds), true);
-		if(getIds.hasError()) {
-			monitor.showMessage(Level.ERROR, getIds.getErrorMessage());
+
+		// Create the network from a cross-species query
+
+		LoadSpeciesInteractions loadInteractions = 
+						new LoadSpeciesInteractions(stringNetwork, sp1, sp2, confidence, networkType.getSelectedValue(), sp1.toString() + " & " + sp2.toString());
+
+		manager.execute(new TaskIterator(loadInteractions), true);
+		if(loadInteractions.hasError()) {
+			monitor.showMessage(Level.ERROR, loadInteractions.getErrorMessage());
 			return;
 		}
 		loadedNetwork = stringNetwork.getNetwork();
 		if (loadedNetwork == null)
-			throw new RuntimeException("Query '"+pubmed+"' returned no results");
+			throw new RuntimeException("Could not find interactions between "+sp1+" and "+sp2);
+	}
+
+	private Species getSpecies(String species, int taxonID) {
+		if ((species == null || species.length() == 0) && (taxonID <= 0))
+			return null;
+
+		for (Species s: speciesList) {
+			if (s.toString().equals(species) || s.getTaxId() == taxonID) {
+				return s;
+			}
+		}
+		return null;
 	}
 
 	@Override

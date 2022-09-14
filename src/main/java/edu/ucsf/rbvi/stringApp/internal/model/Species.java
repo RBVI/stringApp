@@ -22,6 +22,7 @@ public class Species implements Comparable<Species> {
 	private static List<Species> modelSpecies;
 	private static Map<Integer, Species> taxIdSpecies;
 	private static Map<String, Species> nameSpecies;
+  private static boolean haveSpecies = false;
 	private int taxon_id;
 	private String type;
 	private String compactName;
@@ -134,6 +135,8 @@ public class Species implements Comparable<Species> {
 		return modelSpecies;
 	}
 
+  public static boolean haveSpecies() { return haveSpecies; }
+
 	public static List<Species> readPairs(StringManager manager) throws Exception {
 		InputStream stream = null;
 		try {
@@ -171,6 +174,7 @@ public class Species implements Comparable<Species> {
 	}
 
 	public static List<Species> readSpecies(StringManager manager) throws Exception {
+    haveSpecies = false;
 		allSpecies = new ArrayList<Species>();
 		coreSpecies = new ArrayList<Species>();
 		peripherySpecies = new ArrayList<Species>();
@@ -242,13 +246,17 @@ public class Species implements Comparable<Species> {
 		Collections.sort(virusSpecies);
 		//System.out.println("virus species: " + virusSpecies.size());
 		Collections.sort(modelSpecies);
+
+    haveSpecies = true;
 		return guiSpecies;
 	}
 
 	public static Species getSpecies(String speciesName) {
+		if (nameSpecies == null || speciesName == null) return null;
 		if (nameSpecies.containsKey(speciesName))
 			return nameSpecies.get(speciesName);
 
+		if (allSpecies == null) return null;
 		for (Species s: allSpecies) {
 			if (s.getName().equalsIgnoreCase(speciesName))
 				return s;
@@ -270,8 +278,11 @@ public class Species implements Comparable<Species> {
 						// ignore
 					}
 				}
+        return partners;
 			}
 		}
+
+    // This will be empty
 		return partners;
 	}
 
@@ -306,6 +317,14 @@ public class Species implements Comparable<Species> {
 			}
 		}
 		return -1;
+	}
+
+	public static String abbreviate(String speciesName) {
+		if (speciesName.length() <= 20) return speciesName;
+		String[] names = speciesName.split(" ", 2);
+		String newName = names[0].substring(0,1)+". "+names[1];
+		newName = newName.substring(0, Math.min(newName.length(), 20));
+		return newName;
 	}
 	
 }

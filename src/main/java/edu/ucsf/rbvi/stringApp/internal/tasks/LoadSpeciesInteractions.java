@@ -1,5 +1,6 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -32,7 +33,9 @@ public class LoadSpeciesInteractions extends AbstractTask {
 
 	final StringNetwork stringNet;
 	final String species;
+	String species2 = null;
 	final int taxonId;
+	int taxonId2 = -1;
 	final int confidence;
 	// final int additionalNodes;
 	// final List<String> stringIds;
@@ -40,6 +43,15 @@ public class LoadSpeciesInteractions extends AbstractTask {
 	final String netName;
 	final String useDATABASE;
 	NetworkType netType;
+	String errorMsg;
+
+	public LoadSpeciesInteractions(final StringNetwork stringNet, final Species species1,
+	                               final Species species2, final int confidence, final NetworkType netType, final String netName) {
+		this(stringNet, species1.toString(), species1.getTaxId(), confidence, netName, Databases.STRING.getAPIName());
+		this.species2 = species2.toString();
+		this.taxonId2 = species2.getTaxId();
+		this.netType = netType;
+	}
 	
 	public LoadSpeciesInteractions(final StringNetwork stringNet, final String species,
 			final int taxonId, final int confidence, final String netName,
@@ -58,11 +70,16 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		this.species = species;
 		this.netName = netName;
 		this.useDATABASE = useDATABASE;
+		this.errorMsg = null;
 	}
 
 	public void run(TaskMonitor monitor) {
 		if (useDATABASE.equals(Databases.STRING.getAPIName()))
-			monitor.setTitle("Loading interactions from STRING for " + species);
+			if (species2 != null)
+				monitor.setTitle("Loading interactions from STRING for " + species + " and "
+												+species2);
+			else
+				monitor.setTitle("Loading interactions from STRING for " + species);
 		else if (useDATABASE.equals(Databases.STITCH.getAPIName()))
 			monitor.setTitle("Loading interactions from STITCH for " + species);
 		StringManager manager = stringNet.getManager();
@@ -74,6 +91,9 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		Map<String, String> args = new HashMap<>();
 		args.put("database", netType.getAPIName());
 		args.put("organism", String.valueOf(taxonId));
+		if (species2 != null) {
+			args.put("organism2", String.valueOf(taxonId2));
+		}
 		args.put("score", conf);
 		args.put("caller_identity", StringManager.CallerIdentity);
 
@@ -82,7 +102,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		try {
 			results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
 		} catch (ConnectionException e) {
-			e.printStackTrace();
+			this.errorMsg = e.getMessage();
 			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
 			return;
 		}
@@ -97,6 +117,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		// time = System.currentTimeMillis();
 
 		if (network == null) {
+			this.errorMsg = "String returned no results";
 			monitor.showMessage(TaskMonitor.Level.ERROR, "String returned no results");
 			return;
 		}
@@ -116,7 +137,9 @@ public class LoadSpeciesInteractions extends AbstractTask {
 			// Now style the network
 			CyNetworkView networkView = manager.createNetworkView(network);
 			ViewUtils.styleNetwork(manager, network, networkView);
-
+			if (species2 != null) {
+				ViewUtils.updateNodeColors(manager, network, networkView, Arrays.asList(species2, species));
+			}
 			// And lay it out
 			CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class)
 					.getLayout("force-directed");
@@ -131,7 +154,19 @@ public class LoadSpeciesInteractions extends AbstractTask {
 
 		} else {
 			ViewUtils.styleNetwork(manager, network, null);
+			if (species2 != null) {
+				ViewUtils.updateNodeColors(manager, network, null, Arrays.asList(species2, species));
+			}
+
 		}
+	}
+
+	public boolean hasError() {
+		return this.errorMsg != null;
+	}
+	
+	public String getErrorMessage() {
+		return this.errorMsg;
 	}
 
 	@ProvidesTitle

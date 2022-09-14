@@ -37,6 +37,10 @@ public class GetSpeciesTask extends AbstractTask implements ObservableTask {
 
 	public void run(TaskMonitor monitor) throws Exception {
 		monitor.setTitle(this.getTitle());
+
+    while (!Species.haveSpecies()) {
+      Thread.sleep(100);
+    }
 	}
 
 	@ProvidesTitle

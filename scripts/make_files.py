@@ -50,38 +50,5 @@ def main():
             output.write("%s\t%s\t%s\t%s\t%s\n"%(taxid, string_type, name1, name2, common))
     output.close()
 
-    # Read in the Virus-Host pairs file
-    pairs = {}
-    for line in open(VirusHostPairs+Version+".tsv"):
-        if line.startswith("#"):
-            continue
-        (source, target) = line.strip().split("\t")
-        if (source == target):
-            continue
-        if not source in pairs:
-            pairs[source] = set()
-        pairs[source].add(target)
-        if not target in pairs:
-            pairs[target] = set()
-        pairs[target].add(source)
-
-    # Read in the Virus-Host pairs file
-    for line in open(VirusHostPairs+Version+".tsv"):
-        if line.startswith("#"):
-            continue
-        (source, target) = line.strip().split("\t")
-        if (source == target):
-            continue
-        if not target in pairs:
-            pairs[target] = set()
-
-        pairs[target].add(source)
-
-    # Output the interacting pairs file
-    output = open("../../src/main/resources/pairs_"+Version+".tsv", "w")
-    for tax in pairs:
-        output.write("%s\t%s\n"%(tax, ",".join(pairs[tax])))
-    output.close()
-
 if __name__ == "__main__":
     main()

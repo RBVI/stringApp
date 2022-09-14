@@ -25,6 +25,8 @@ public class GetNetworkTaskFactory extends AbstractTaskFactory {
 			return new TaskIterator(new PubmedQueryTask(manager));
 		else if (type.equals("compound"))
 			return new TaskIterator(new CompoundQueryTask(manager));
+		else if (type.equals("cross-species"))
+			return new TaskIterator(new CrossSpeciesQueryTask(manager));
 		return null;
 	}
 
