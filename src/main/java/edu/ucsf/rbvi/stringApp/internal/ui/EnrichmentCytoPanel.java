@@ -89,7 +89,7 @@ public class EnrichmentCytoPanel extends JPanel
 		TableModelListener, SelectedNodesAndEdgesListener, SetCurrentNetworkListener {
 
 	// enrichment settings and analyzed nodes are now saved in a network-specific table
-	// TODO: [N] find out what to do with visualized terms
+	// TODO: [Feature] make visualized terms work with groups
 	// implemented backwards compatibility for old sessions, the info is copied from the network table to the enrichment info table
 
 	final StringManager manager;
@@ -293,7 +293,7 @@ public class EnrichmentCytoPanel extends JPanel
 			}
 		}
 
-		getFilteredTable();
+		updateFilteredEnrichmentTable(getFilteredTable());
 
 		JTable currentTable = enrichmentTables.get(showTable);
 		currentTable.tableChanged(e);
@@ -315,7 +315,7 @@ public class EnrichmentCytoPanel extends JPanel
 		TaskManager<?, ?> tm = manager.getService(TaskManager.class);
 		CyNetwork network = manager.getCurrentNetwork();
 		if (e.getSource().equals(butDrawCharts)) {
-			// TODO: [N] draw charts currently only works on the main network, why? do something else instead of resetting or not?
+			// TODO: [Feature] draw charts currently only works on the main network, why? do something else instead of resetting or not?
 			resetCharts();
 			// do something fancy here...
 			// piechart: attributelist="test3" colorlist="modulated" showlabels="false"
@@ -507,7 +507,7 @@ public class EnrichmentCytoPanel extends JPanel
 			JPanel panelMiddle = new JPanel(new BorderLayout());
 			Double ppiEnrichment = ModelUtils.getPPIEnrichment(network);
 			labelPPIEnrichment = new JLabel();
-			if (ppiEnrichment != null) {
+			if (ppiEnrichment != null && showTable.equals(TermCategory.ALL.getTable())) {
 				labelPPIEnrichment = new JLabel("PPI Enrichment: " + ppiEnrichment.toString());
 				labelPPIEnrichment.setToolTipText(
 						"<html>If the PPI enrichment is less or equal 0.05, your proteins have more interactions among themselves <br />"
@@ -880,7 +880,7 @@ public class EnrichmentCytoPanel extends JPanel
 		if (network == null)
 			return selectedTerms;
 
-		// TODO: [N] decide what to do with getAllUserSelectedTerms() 
+		// TODO: [Feature] change getAllUserSelectedTerms() to work with groups groups 
 		Set<CyTable> currTables = ModelUtils.getMainEnrichmentTables(manager, network);
 		for (CyTable currTable : currTables) {
 			// currTable = ModelUtils.getEnrichmentTable(manager, network, showTable);
@@ -956,15 +956,11 @@ public class EnrichmentCytoPanel extends JPanel
 			//return selectedTerms;
 			return null;
 
-		// TODO: [N] Figure out filtering of tables
 		String filteredTableName = showTable + EnrichmentTerm.ENRICHMENT_TABLE_FILTERED_SUFFIX;
-		System.out.println("filtered table name to look for " + filteredTableName);
 		CyTable filteredEnrichmentTable = ModelUtils.getEnrichmentTable(manager, network, filteredTableName);
 		if (filteredEnrichmentTable != null) {
-			System.out.println("found filtered table " + filteredEnrichmentTable.getRowCount());
 			return filteredEnrichmentTable;
 		}
-		System.out.println("create filtered table");
 		CyTable currTable = ModelUtils.getEnrichmentTable(manager, network, showTable);
 
 		if (currTable == null || currTable.getRowCount() == 0) {
@@ -986,11 +982,13 @@ public class EnrichmentCytoPanel extends JPanel
 	}
 
 	public void updateFilteredEnrichmentTable(CyTable filteredEnrichmentTable) {
+		if (filteredEnrichmentTable == null)
+			filteredEnrichmentTable = getFilteredTable();
+
 		CyNetwork network = manager.getCurrentNetwork();
 		if (network == null)
 			return;
 		
-		System.out.println("update filtered enrichment table");
 		CyTable currTable = ModelUtils.getEnrichmentTable(manager, network, showTable);
 		EnrichmentTableModel tableModel = enrichmentTableModels.get(showTable);
 		if (currTable == null || tableModel == null) return;
@@ -1017,6 +1015,5 @@ public class EnrichmentCytoPanel extends JPanel
 			// filtRow.set(EnrichmentTerm.colShowChart, false);
 			filtRow.set(EnrichmentTerm.colChartColor, "");
 		}
-		// return filteredEnrichmentTable;
 	}
 }

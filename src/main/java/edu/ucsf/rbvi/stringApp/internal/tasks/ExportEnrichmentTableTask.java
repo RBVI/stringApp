@@ -50,7 +50,6 @@ public class ExportEnrichmentTableTask extends AbstractTask {
 		
 		if (selectedTable != null && fileName != null) {
 			File file = fileName;
-			// TODO: [N] Fix export of filtered tables
 			if (filtered && enrichmentPanel != null) {
 				selectedTable = enrichmentPanel.getFilteredTable();
 			}

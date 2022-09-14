@@ -252,7 +252,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			}
 			// skip column if it only contains unique values or only one value or unique values for more than half the nodes in the network 
 			// filter for empty strings -> maybe enough to put a cutoff here?
-			// TODO: [N] is colValues.size() > numValues/2 good to use to remove columns with many values?
+			// TODO: [Release] decide if colValues.size() > numValues/2 is good to use to remove columns with many values?
 			if (colValues.size() < 2 || colValues.size() == numValues || colValues.size() > numValues/2) {
 				// System.out.println("skip: " + col.getName());
 				continue;
@@ -500,7 +500,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 	@Override
 	@SuppressWarnings("unchecked")
 	public <R> R getResults(Class<? extends R> clzz) {
-		// TODO: [N] What do we need to return in getResults
+		// TODO: [Release] What do we need to return in getResults
 		if (clzz.equals(CyTable.class)) {
 			return (R) enrichmentTables.get(0);
 		} else if (clzz.equals(String.class)) {

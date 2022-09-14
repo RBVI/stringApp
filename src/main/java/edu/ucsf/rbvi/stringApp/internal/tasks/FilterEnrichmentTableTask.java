@@ -26,36 +26,11 @@ import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentTableModel;
 
 public class FilterEnrichmentTableTask extends AbstractTask implements ObservableTask {
 
-	// TODO: [N] Make filtering table specific 
-	
 	private StringManager manager;
 	private EnrichmentCytoPanel enrichmentPanel;
 	private CyNetwork network;
 	private String group;
-	private CyTable filteredEnrichmentTable;
-	
-	// @Tunable(description = "Enrichment cutoff", gravity = 1.0)
-	// public double cutoff = 0.05;
-
-	/*
-	@Tunable(description = "GO Biological Process", gravity = 2.0)
-	public boolean goProcess = false;
-
-	@Tunable(description = "GO Molecular Function", gravity = 3.0)
-	public boolean goFunction = false;
-
-	@Tunable(description = "GO Cellular Compartment", gravity = 4.0)
-	public boolean goCompartment = false;
-
-	@Tunable(description = "KEGG Pathways", gravity = 5.0)
-	public boolean kegg = false;
-
-	@Tunable(description = "Pfam domains", gravity = 6.0)
-	public boolean pfam = false;
-
-	@Tunable(description = "InterPro domains", gravity = 7.0)
-	public boolean interPro = false;
-	*/
+	private CyTable filteredEnrichmentTable;	
 
 	@Tunable(description = "Select categories", 
 	         tooltip = "Select the enrichment categories to show in the table",
@@ -111,16 +86,14 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 					else return;
 				}
 				EnrichmentTableModel tableModel = enrichmentPanel.getTableModel();
-				// TODO: [N] FIgure out filtering 
-				System.out.println("filter table model");
 				tableModel.filter(categoryList, removeOverlapping, overlapCutoff.getValue());
 				// enrichmentPanel.updateLabelRows();
 				manager.setRemoveOverlap(network,removeOverlapping, group);
 				manager.setOverlapCutoff(network,overlapCutoff.getValue(), group);
 				manager.setCategoryFilter(network,categories.getSelectedValues(), group);
 				manager.updateSettings();
-				enrichmentPanel.getFilteredTable();
-				// enrichmentPanel.updateFilteredEnrichmentTable();
+				filteredEnrichmentTable = enrichmentPanel.getFilteredTable();
+				enrichmentPanel.updateFilteredEnrichmentTable(filteredEnrichmentTable);
 			//}
 		//});
 	}
