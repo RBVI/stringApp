@@ -117,8 +117,8 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		// time = System.currentTimeMillis();
 
 		if (network == null) {
-			this.errorMsg = "String returned no results";
-			monitor.showMessage(TaskMonitor.Level.ERROR, "String returned no results");
+			this.errorMsg = "STRING returned no results";
+			monitor.showMessage(TaskMonitor.Level.ERROR, "STRING returned no results");
 			return;
 		}
 

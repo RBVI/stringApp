@@ -229,7 +229,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 				// throw new RuntimeException("String returned no results with a confidence larger than 1.0. Consider changing the confidence threshold.");
 				return;
 			} else { 
-				manager.error("String returned no results");
+				manager.error("STRING returned no results");
 				throw new RuntimeException("This query will not add any new nodes or edges to the existing network.");
 			}
 			// SwingUtilities.invokeLater(new Runnable() {

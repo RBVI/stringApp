@@ -87,7 +87,7 @@ public class CrossSpeciesQueryTask extends AbstractTask implements ObservableTas
 	}
 
 	public void run(TaskMonitor monitor)  {
-		monitor.setTitle("Cross Species Query");
+		monitor.setTitle("Cross-species query");
 		boolean found;
 		Species sp1 = getSpecies(species1, taxonID1);
 		if (sp1 == null) {
