@@ -249,7 +249,19 @@ public class PubMedQueryPanel extends JPanel {
     public void actionPerformed(ActionEvent e) {
 			loadEnrichment = optionsPanel.getLoadEnrichment();
 			// Start our task cascade
-			Species species = (Species)speciesCombo.getSelectedItem();
+			Species species = null;
+			Object speciesObj = speciesCombo.getSelectedItem();
+			if (speciesObj instanceof Species)
+				species = (Species)speciesObj;
+			else if (speciesObj instanceof String)
+				species = Species.getSpecies((String)speciesObj);
+			if (species == null) {
+				JOptionPane.showMessageDialog(null, "Unknown species: '"+speciesObj.toString()+"'",
+                        "Unknown species", JOptionPane.ERROR_MESSAGE);
+				return;				
+			}
+			
+			// Species species = (Species)speciesCombo.getSelectedItem();
 			if (stringNetwork == null)
 				stringNetwork = new StringNetwork(manager);
 
