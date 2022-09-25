@@ -119,7 +119,7 @@ public class LoadInteractions extends AbstractTask {
 		                                                     queryTermMap, ids.trim(), netName, useDATABASE, netType.getAPIName());
 
 		if (network == null) {
-			monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results");
+			monitor.showMessage(TaskMonitor.Level.ERROR,"STRING returned no results");
 			return;
 		}
 

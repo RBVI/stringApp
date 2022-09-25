@@ -683,9 +683,12 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
     @Override
     public void actionPerformed(ActionEvent e) {
 			int taxon = 0;
-			if (!queryAddNodes) 
-				taxon = ((Species)speciesCombo.getSelectedItem()).getTaxId();
-			else
+			if (!queryAddNodes) {
+				if (speciesCombo.getSelectedItem() instanceof Species)
+					taxon = ((Species)speciesCombo.getSelectedItem()).getTaxId();
+				else if (speciesCombo.getSelectedItem() instanceof String) 
+					taxon = Species.getSpeciesTaxId((String)speciesCombo.getSelectedItem());
+			} else
 				taxon = Species.getSpeciesTaxId((String)speciesPartnerCombo.getSelectedItem());
 			
 			int additionalNodes = optionsPanel.getAdditionalNodes();

@@ -355,9 +355,17 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-			Species species1 = ((Species)speciesCombo.getSelectedItem());
+			Species species1 = null;
+			if (speciesCombo.getSelectedItem() instanceof Species)
+				species1 = (Species)speciesCombo.getSelectedItem();
+			else if (speciesCombo.getSelectedItem() instanceof String)
+				species1 = Species.getSpecies((String)speciesCombo.getSelectedItem());
 			String sp2 = (String)speciesPartnerCombo.getSelectedItem();
 			Species species2 = Species.getSpecies(sp2);
+			if (species1 == null || species2 == null) {
+				JOptionPane.showMessageDialog(null, "Unknown species", "Unknown species", JOptionPane.ERROR_MESSAGE);
+				return;				
+			}
 			cancel();
 			importNetwork(species1, species2, optionsPanel.getConfidence(), optionsPanel.getNetworkType());
 		}

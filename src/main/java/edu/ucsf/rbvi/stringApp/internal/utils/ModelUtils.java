@@ -513,6 +513,8 @@ public class ModelUtils {
 		stringNetwork.getManager().ignoreAdd();
 		CyNetwork network = createNetworkFromJSON(stringNetwork.getManager(), species, object,
 				queryTermMap, ids, netName, useDATABASE, netType);
+		if (network == null)
+			return null;
 		stringNetwork.getManager().addStringNetwork(stringNetwork, network);
 		stringNetwork.getManager().listenToAdd();
 		stringNetwork.getManager().showResultsPanel();
@@ -525,7 +527,14 @@ public class ModelUtils {
 		JSONObject results = getResultsFromJSON(object, JSONObject.class);
 		if (results == null)
 			return null;
-
+		
+		if (results.containsKey("message")) {
+			String msgJSON = (String) results.get("message");
+			if (msgJSON.length() > 0) {
+				throw new RuntimeException(msgJSON);
+			}
+		}
+		
 		// Get a network name
 		String defaultName;
 		String defaultNameRootNet;
