@@ -117,6 +117,15 @@ public class SearchOptionsPanel extends JPanel {
 		confidence = (int)(manager.getDefaultConfidence()*100);
 		this.networkType = manager.getDefaultNetworkType();
 		initOptions();
+    // setMinimumSize(new Dimension(500,50));
+    if (isCrossSpecies)
+      setPreferredSize(new Dimension(700,150));
+    else if (isDisease)
+      setPreferredSize(new Dimension(700,200));
+    else if (isPubMed)
+      setPreferredSize(new Dimension(700,200));
+    else 
+      setPreferredSize(new Dimension(700,200));
 	}
 
 	public SearchOptionsPanel(final StringManager manager, final boolean isPubMed, final boolean isDisease) {
