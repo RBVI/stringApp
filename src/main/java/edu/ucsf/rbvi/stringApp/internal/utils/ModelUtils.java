@@ -25,6 +25,7 @@ import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
+import org.cytoscape.model.CyTableFactory;
 import org.cytoscape.model.CyTableManager;
 import org.cytoscape.model.CyTableUtil;
 import org.cytoscape.model.subnetwork.CyRootNetwork;
@@ -126,6 +127,7 @@ public class ModelUtils {
 	public static String NET_DATAVERSION = "data version";
 	public static String NET_URI = "uri";
 	public static String NET_ANALYZED_NODES = "analyzedNodes.SUID";
+	public static String NET_ANALYZED_NODES_PUBL = "analyzedNodesPubl.SUID";
 	public static String NET_PPI_ENRICHMENT = "ppiEnrichment";
 	public static String NET_ENRICHMENT_NODES = "enrichmentNodes";
 	public static String NET_ENRICHMENT_EXPECTED_EDGES = "enrichmentExpectedEdges";
@@ -133,6 +135,10 @@ public class ModelUtils {
 	public static String NET_ENRICHMENT_CLSTR = "enrichmentClusteringCoeff";
 	public static String NET_ENRICHMENT_DEGREE = "enrichmentAvgDegree";
 	public static String NET_ENRICHMENT_SETTINGS = "enrichmentSettings";
+	public static String NET_ENRICHMENT_SETTINGS_TABLE = "Enrichment Settings Table";
+	public static String NET_ENRICHMENT_SETTINGS_TABLE_SUID = "enrichmentSettingsTable.SUID";
+	public static String NET_ENRICHMENT_GROUP = "enrichmentGroup";
+	public static String NET_ENRICHMENT_TABLES = "enrichmentTables";
 
 	public static String NET_ENRICHMENT_VISTEMRS = "visualizedTerms";
 	public static String NET_ENRICHMENT_VISCOLORS = "visualizedTermsColors";
@@ -1244,18 +1250,27 @@ public class ModelUtils {
 		return availableTypes;
 	}	
 
-	public static List<CyNode> getEnrichmentNodes(CyNetwork net) {
+	public static List<CyNode> getEnrichmentNodes(StringManager manager, CyNetwork net, String tableName) {
 		List<CyNode> analyzedNodes = new ArrayList<CyNode>();
 		if (net != null) {
-			CyTable netTable = net.getDefaultNetworkTable();
-			if (netTable.getColumn(ModelUtils.NET_ANALYZED_NODES) != null) {
-				List<Long> nodesSUID = (List<Long>) netTable.getRow(net.getSUID())
-						.get(ModelUtils.NET_ANALYZED_NODES, List.class);
-				if (nodesSUID != null) {
-					for (CyNode netNode : net.getNodeList()) {
-						if (nodesSUID.contains(netNode.getSUID())) {
-							analyzedNodes.add(netNode);
-						}
+			List<Long> nodesSUID = new ArrayList<Long>();
+			// we handle it differently for publications table and for enrichemnt table
+			if (tableName.equals(TermCategory.PMID.getTable())) {
+				CyTable netTable = net.getDefaultNetworkTable();
+				if (netTable.getColumn(ModelUtils.NET_ANALYZED_NODES_PUBL) != null) {
+					nodesSUID = (List<Long>) netTable.getRow(net.getSUID()).get(ModelUtils.NET_ANALYZED_NODES_PUBL, List.class);
+				}
+			} else {
+				CyTable settignsTable = ModelUtils.getEnrichmentSettingsTable(manager, net);
+				if (settignsTable.getColumn(ModelUtils.NET_ANALYZED_NODES) != null) {
+					nodesSUID = (List<Long>) settignsTable.getRow(tableName)
+							.get(ModelUtils.NET_ANALYZED_NODES, List.class);
+				}
+			}
+			if (nodesSUID != null) {
+				for (CyNode netNode : net.getNodeList()) {
+					if (nodesSUID.contains(netNode.getSUID())) {
+						analyzedNodes.add(netNode);
 					}
 				}
 			}
@@ -1373,7 +1388,8 @@ public class ModelUtils {
 		return (Integer) json.get(StringManager.APIVERSION);
 	}
 
-	public static Set<CyTable> getEnrichmentTables(StringManager manager, CyNetwork network) {
+	// This method returns only the main tables, e.g. STRING Enrichment: All and STRING Enrichment: PMID 
+	public static Set<CyTable> getMainEnrichmentTables(StringManager manager, CyNetwork network) {
 		CyTableManager tableManager = manager.getService(CyTableManager.class);
 		Set<CyTable> netTables = new HashSet<CyTable>();
 		Set<String> tableNames = new HashSet<String>(TermCategory.getTables());
@@ -1392,6 +1408,28 @@ public class ModelUtils {
 		return netTables;
 	}
 
+	// This method now returns all enrichment tables that start with the given prefix and are associated with the given network
+	// If the prefix is EnrichmentTerm.ENRICHMENT_TABLE_PREFIX, it returns all enrichment tables
+	// If the prefix is the name of the table it returns that table
+	// If the prefix is the enrichment table prefix + group name, it returns all tables for a given group
+	public static Set<CyTable> getAllEnrichmentTables(StringManager manager, CyNetwork network, String tablePrefix) {
+		Set<CyTable> netTables = new HashSet<CyTable>();
+		CyTableManager tableManager = manager.getService(CyTableManager.class); 
+		Set<CyTable> currTables = tableManager.getAllTables(true);
+		for (CyTable current : currTables) {
+			if ((current.getTitle().startsWith(tablePrefix))
+					&& current.getColumn(EnrichmentTerm.colNetworkSUID) != null
+					&& current.getAllRows().size() > 0) {
+				CyRow tempRow = current.getAllRows().get(0);
+				if (tempRow.get(EnrichmentTerm.colNetworkSUID, Long.class) != null && tempRow
+						.get(EnrichmentTerm.colNetworkSUID, Long.class).equals(network.getSUID())) {
+					netTables.add(current);
+				}
+			}
+		}
+		return netTables;
+	}
+	
 	public static CyTable getEnrichmentTable(StringManager manager, CyNetwork network, String name) {
 		CyTableManager tableManager = manager.getService(CyTableManager.class);
 		Set<CyTable> currTables = tableManager.getAllTables(true);
@@ -1409,17 +1447,45 @@ public class ModelUtils {
 		return null;
 	}
 
-	
-	public static void deleteEnrichmentTables(CyNetwork network, StringManager manager, boolean publOnly) {
+	public static void deleteMainEnrichmentTables(CyNetwork network, StringManager manager, boolean publOnly) {
 		CyTableManager tableManager = manager.getService(CyTableManager.class);
-		Set<CyTable> oldTables = ModelUtils.getEnrichmentTables(manager, network);
+		CyTable netTable = network.getDefaultNetworkTable();
+		List<String> groups = netTable.getRow(network.getSUID()).getList(ModelUtils.NET_ENRICHMENT_TABLES, String.class);
+		Set<CyTable> oldTables = ModelUtils.getMainEnrichmentTables(manager, network);
 		for (CyTable table : oldTables) {
 			if (publOnly && !table.getTitle().equals(TermCategory.PMID.getTable())) {
 				continue;
 			} 
+			// first delete the table name from the list of groups in the network table
+			if (!publOnly && groups != null && groups.contains(table.getTitle())) {
+				groups.remove(table.getTitle());
+			}			
+			// them delete the enrichment table
 			tableManager.deleteTable(table.getSUID());
 			manager.flushEvents();				
 		}
+		// TODO: [N] Is it ok to set the  NET_ENRICHMENT_TABLES to an empty list
+		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_TABLES, groups);
+		// TODO: [N] do we need to delete settings from the settings table
+	}
+
+	public static void deleteGroupEnrichmentTables(CyNetwork network, StringManager manager, String groupPrefix) {
+		CyTableManager tableManager = manager.getService(CyTableManager.class);
+		CyTable netTable = network.getDefaultNetworkTable();
+		List<String> groups = netTable.getRow(network.getSUID()).getList(ModelUtils.NET_ENRICHMENT_TABLES, String.class);
+		Set<CyTable> oldTables = ModelUtils.getAllEnrichmentTables(manager, network, groupPrefix);
+		for (CyTable table : oldTables) {
+			// first delete the table name from the list of groups in the network table
+			if (groups != null && groups.contains(table.getTitle())) {
+				groups.remove(table.getTitle());
+			}
+			// then delete the enrichment table
+			tableManager.deleteTable(table.getSUID());
+			manager.flushEvents();				
+		}
+		// TODO: [N] Is it ok to set the  NET_ENRICHMENT_TABLES to an empty list
+		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_TABLES, groups);
+		// TODO: [N] do we need to delete settings from the settings table
 	}
 
 	public static void setupEnrichmentTable(CyTable enrichmentTable) {
@@ -1662,23 +1728,29 @@ public class ModelUtils {
 		return Arrays.asList(arr);
 	}
 
-	public static void updateEnrichmentSettings(CyNetwork network, Map<String, String> settings) {
+
+	public static void updateEnrichmentSettingsTableGroup(StringManager manager, CyNetwork network, String group, Map<String, String> groupSettings) {
 		String setting = "";
 		int index = 0;
-		for (String key: settings.keySet()) {
+		for (String key: groupSettings.keySet()) {
 			if (index > 0) {
 				setting += ";";
 			}
-			setting += key+"="+settings.get(key);
+			setting += key+"="+groupSettings.get(key);
 			index ++;
 		}
-		createColumnIfNeeded(network.getDefaultNetworkTable(), String.class, NET_ENRICHMENT_SETTINGS);
-		network.getRow(network).set(NET_ENRICHMENT_SETTINGS, setting);
+		CyTable settingsTable = getEnrichmentSettingsTable(manager, network);
+		settingsTable.getRow(group).set(NET_ENRICHMENT_SETTINGS, setting);
 	}
 
-	public static Map<String, String> getEnrichmentSettings(CyNetwork network) {
+	public static Map<String, String> getEnrichmentSettingsTableGroup(StringManager manager, CyNetwork network, String group) {
 		Map<String, String> settings = new HashMap<String, String>();
-		String setting = network.getRow(network).get(NET_ENRICHMENT_SETTINGS, String.class);
+		CyTable settingsTable = getEnrichmentSettingsTable(manager, network);
+		// TODO: [N] Test, not sure why this has to be checked...
+		if (settingsTable == null) {
+			return settings;
+		}
+		String setting = settingsTable.getRow(group).get(NET_ENRICHMENT_SETTINGS, String.class);
 		if (setting == null || setting.length() == 0)
 			return settings;
 
@@ -1692,6 +1764,33 @@ public class ModelUtils {
 		return settings;
 	}
 
+	public static CyTable getEnrichmentSettingsTable(StringManager manager, CyNetwork network) {
+		CyTableManager tableManager = manager.getService(CyTableManager.class);
+		Long tableSUID = network.getRow(network).get(NET_ENRICHMENT_SETTINGS_TABLE_SUID, Long.class);
+		if (tableSUID != null) {
+			return tableManager.getTable(tableSUID.longValue());
+		} else {
+			CyTable settingsTable = createEnrichmentSettingsTable(manager, network);
+			network.getRow(network).set(NET_ENRICHMENT_SETTINGS_TABLE_SUID, settingsTable.getSUID());						
+			return settingsTable;
+		}
+	}
+
+	public static CyTable createEnrichmentSettingsTable(StringManager manager, CyNetwork network) {
+		CyTableFactory tableFactory = manager.getService(CyTableFactory.class);
+		CyTableManager tableManager = manager.getService(CyTableManager.class);
+
+		// TODO: [Release] change the visibility of the settings tables
+		CyTable settingsTable = tableFactory.createTable(NET_ENRICHMENT_SETTINGS_TABLE, NET_ENRICHMENT_GROUP, String.class, true, true);
+		// settingsTable.setSavePolicy(SavePolicy.SESSION_FILE);
+		tableManager.addTable(settingsTable);
+		createColumnIfNeeded(settingsTable, String.class, NET_ENRICHMENT_SETTINGS);
+		createListColumnIfNeeded(settingsTable, Long.class, NET_ANALYZED_NODES);
+		createListColumnIfNeeded(settingsTable, String.class, NET_ENRICHMENT_VISTEMRS);
+		createListColumnIfNeeded(settingsTable, String.class, NET_ENRICHMENT_VISCOLORS);
+		return settingsTable;
+	}
+	
 	public static CyProperty<Properties> getPropertyService(StringManager manager,
 			SavePolicy policy) {
 			String name = "stringApp";

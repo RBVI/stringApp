@@ -42,6 +42,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ExpandNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExportPublicationsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.FilterEnrichmentTableTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.GetClusterEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetPublicationsTaskFactory;
@@ -520,6 +521,17 @@ public class CyActivator extends AbstractCyActivator {
 				registerService(bc, getEnrichment, NetworkTaskFactory.class, propsEnrichment);
 			}
 			
+			GetClusterEnrichmentTaskFactory getClusterEnrichment = new GetClusterEnrichmentTaskFactory(manager, true);
+			{
+				Properties propsEnrichment = new Properties();
+				propsEnrichment.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
+				propsEnrichment.setProperty(TITLE, "Retrieve functional enrichment per group");
+				propsEnrichment.setProperty(MENU_GRAVITY, "7.0");
+				propsEnrichment.setProperty(IN_MENU_BAR, "true");
+				propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
+				registerService(bc, getClusterEnrichment, NetworkTaskFactory.class, propsEnrichment);
+			}
+
 			{
 				ShowEnrichmentPanelAction sea = new ShowEnrichmentPanelAction("Show enrichment panel", manager);
 				registerService(bc, sea, CyAction.class);
@@ -527,6 +539,7 @@ public class CyActivator extends AbstractCyActivator {
 				ShowEnrichmentPanelTaskFactory showEnrichment = new ShowEnrichmentPanelTaskFactory(manager);
 				// showEnrichment.reregister();
 				getEnrichment.setShowEnrichmentPanelFactory(showEnrichment);
+				getClusterEnrichment.setShowEnrichmentPanelFactory(showEnrichment);
 				manager.setShowEnrichmentPanelTaskFactory(showEnrichment);
 				
 				// Create command version and register it

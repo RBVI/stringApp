@@ -49,8 +49,9 @@ public class EnrichmentMapTask extends AbstractTask {
 		this.manager = manager;
 		this.filteredEnrichmentTable = filteredEnrichmentTable;
 		if (filtered) {
-			similarity.setBounds(0.0, manager.getOverlapCutoff(network));
-			similarity.setValue(defaultSimCutoff*manager.getOverlapCutoff(network));
+			// TODO: [N] do we not use this class anymore?
+			// similarity.setBounds(0.0, manager.getOverlapCutoff(network));
+			// similarity.setValue(defaultSimCutoff*manager.getOverlapCutoff(network));
 		}
 		String netName = network.getRow(network).get(CyNetwork.NAME, String.class);
 		mapName = "Enrichment Map - "+ netName;

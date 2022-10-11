@@ -18,6 +18,9 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 
 	public static final String enrichmentURLTest = "http://gamma.string-db.org/cgi/webservices/enrichmentWrapper.pl";
 	public static final String enrichmentURL = "http://version-10.string-db.org/cgi/webservices/enrichmentWrapper.pl";
+	
+	public static final String ENRICHMENT_TABLE_PREFIX = "STRING Enrichment: ";
+	public static final String ENRICHMENT_TABLE_FILTERED_SUFFIX = " [filtered]";
 
 	// Change to an enum?
 	public static enum TermCategory {

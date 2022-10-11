@@ -206,7 +206,8 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		}
 
 		// clear old results
-		ModelUtils.deleteEnrichmentTables(network, manager, publOnly);
+		// TODO: [N] test deletion of old tables
+		ModelUtils.deleteMainEnrichmentTables(network, manager, publOnly);
 
 		// retrieve enrichment (new API)
 		getEnrichmentJSON(selected, species, bgNodes);
@@ -219,13 +220,35 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 
 		// save analyzed nodes in network table
 		CyTable netTable = network.getDefaultNetworkTable();
-		ModelUtils.createListColumnIfNeeded(netTable, Long.class, ModelUtils.NET_ANALYZED_NODES);
+		// create list of anlayzed nodes
 		List<Long> analyzedNodesSUID = new ArrayList<Long>();
 		for (CyNode node : analyzedNodes) {
 			analyzedNodesSUID.add(node.getSUID());
 		}
-		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ANALYZED_NODES, analyzedNodesSUID);
-
+		// save into settings table for functional enrichment and into the network table for publications
+		if (!publOnly) {
+			String defaultGroup = TermCategory.ALL.getTable();
+			// Add enrichment table All to the groups
+			ModelUtils.createListColumnIfNeeded(netTable, String.class, ModelUtils.NET_ENRICHMENT_TABLES);
+			List<String> enrichmentGroups = netTable.getRow(network.getSUID()).getList(ModelUtils.NET_ENRICHMENT_TABLES, String.class);
+			if (enrichmentGroups == null) 
+				enrichmentGroups = new ArrayList<String>();
+			if (!enrichmentGroups.contains(defaultGroup))
+				enrichmentGroups.add(defaultGroup);
+			netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_TABLES, enrichmentGroups);
+	
+			// Create settings table if needed and save its SUID in the network table
+			ModelUtils.createColumnIfNeeded(netTable, Long.class, ModelUtils.NET_ENRICHMENT_SETTINGS_TABLE_SUID);
+			CyTable settignsTable = ModelUtils.getEnrichmentSettingsTable(manager, network);
+			netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_SETTINGS_TABLE_SUID, settignsTable.getSUID());
+			// Save analyzed nodes into the new settings table
+			ModelUtils.createListColumnIfNeeded(settignsTable, Long.class, ModelUtils.NET_ANALYZED_NODES);
+			settignsTable.getRow(defaultGroup).set(ModelUtils.NET_ANALYZED_NODES, analyzedNodesSUID);
+		} else {
+			ModelUtils.createListColumnIfNeeded(netTable, Long.class, ModelUtils.NET_ANALYZED_NODES_PUBL);
+			netTable.getRow(network.getSUID()).set(ModelUtils.NET_ANALYZED_NODES_PUBL, analyzedNodesSUID);
+		}
+			
 		// save ppi enrichment in network table
 		if (ppiSummary != null) {
 			writeDouble(netTable, ppiSummary, ModelUtils.NET_PPI_ENRICHMENT);

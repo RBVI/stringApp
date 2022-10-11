@@ -65,12 +65,13 @@ public class EnrichmentMapAdvancedTask extends AbstractTask implements TaskObser
 	         exampleStringValue = "")
 	public ListMultipleSelection<String> columns = new ListMultipleSelection<>();
 	
-	public EnrichmentMapAdvancedTask(final StringManager manager, final CyNetwork network, final CyTable filteredEnrichmentTable, boolean filtered) {
+	public EnrichmentMapAdvancedTask(final StringManager manager, final CyNetwork network, final CyTable filteredEnrichmentTable, boolean filtered, String group) {
 		this.manager = manager;
 		this.filteredEnrichmentTable = filteredEnrichmentTable;
 		if (filtered) {
-			similarity.setBounds(0.0, manager.getOverlapCutoff(network));
-			similarity.setValue(defaultSimCutoff*manager.getOverlapCutoff(network));
+			// TODO: [N] Double check using groups here
+			similarity.setBounds(0.0, manager.getOverlapCutoff(network, group));
+			similarity.setValue(defaultSimCutoff*manager.getOverlapCutoff(network, group));
 		}
 		this.network = network;
 		String netName = network.getRow(network).get(CyNetwork.NAME, String.class);

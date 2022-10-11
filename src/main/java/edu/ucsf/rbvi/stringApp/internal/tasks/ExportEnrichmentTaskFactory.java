@@ -7,6 +7,7 @@ import org.cytoscape.model.CyNetwork;
 import org.cytoscape.task.AbstractNetworkTaskFactory;
 import org.cytoscape.work.TaskIterator;
 
+import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
@@ -30,7 +31,7 @@ public class ExportEnrichmentTaskFactory extends AbstractNetworkTaskFactory {
 	}
 
 	public boolean isReady(CyNetwork network) {
-		if (ModelUtils.getEnrichmentTables(manager, network).size() > 0)
+		if (ModelUtils.getAllEnrichmentTables(manager, network, EnrichmentTerm.ENRICHMENT_TABLE_PREFIX).size() > 0)
 			return true;
 		else
 			return false;

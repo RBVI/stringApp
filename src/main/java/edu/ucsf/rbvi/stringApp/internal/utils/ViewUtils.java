@@ -661,7 +661,7 @@ public class ViewUtils {
 							nodeTable.getRow(node.getSUID()).getList(EnrichmentTerm.colEnrichmentTermsIntegers,Integer.class);
 			String nodeColor = nodeColors(colorList, nodeTermsIntegers, type);
 			nodeTable.getRow(node.getSUID()).set(EnrichmentTerm.colEnrichmentPassthrough, nodeColor);
-			nodeTable.getRow(node.getSUID()).set(EnrichmentTerm.colEnrichmentTermsIntegers,nodeTermsIntegers);
+			nodeTable.getRow(node.getSUID()).set(EnrichmentTerm.colEnrichmentTermsIntegers, nodeTermsIntegers);
 		}
 
 		// System.out.println(selectedTerms);
