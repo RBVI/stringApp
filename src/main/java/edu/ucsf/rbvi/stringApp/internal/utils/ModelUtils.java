@@ -1780,8 +1780,7 @@ public class ModelUtils {
 		CyTableFactory tableFactory = manager.getService(CyTableFactory.class);
 		CyTableManager tableManager = manager.getService(CyTableManager.class);
 
-		// TODO: [Release] change the visibility of the settings tables
-		CyTable settingsTable = tableFactory.createTable(NET_ENRICHMENT_SETTINGS_TABLE, NET_ENRICHMENT_GROUP, String.class, true, true);
+		CyTable settingsTable = tableFactory.createTable(NET_ENRICHMENT_SETTINGS_TABLE, NET_ENRICHMENT_GROUP, String.class, false, true);
 		// settingsTable.setSavePolicy(SavePolicy.SESSION_FILE);
 		tableManager.addTable(settingsTable);
 		createColumnIfNeeded(settingsTable, String.class, NET_ENRICHMENT_SETTINGS);
