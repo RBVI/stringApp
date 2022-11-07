@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.task.AbstractNetworkTaskFactory;
 import org.cytoscape.task.NetworkViewTaskFactory;
@@ -31,7 +32,8 @@ public class GetClusterEnrichmentTaskFactory extends AbstractNetworkTaskFactory
 	public boolean isReady(CyNetwork network) {
 		if (manager.haveURIs() && ModelUtils.isStringNetwork(network)) {
 			List<String> netSpecies = ModelUtils.getEnrichmentNetSpecies(network);
-			if (netSpecies.size() > 0) {
+			List<CyColumn> groupCols = ModelUtils.getGroupColumns(network);
+			if (groupCols.size() > 0 && netSpecies.size() > 0) {
 				return true;
 			}
 		}
@@ -56,7 +58,8 @@ public class GetClusterEnrichmentTaskFactory extends AbstractNetworkTaskFactory
 	public boolean isReady(CyNetworkView netView) {
 		if (manager.haveURIs() && ModelUtils.isStringNetwork(netView.getModel())) {
 			List<String> netSpecies = ModelUtils.getEnrichmentNetSpecies(netView.getModel());
-			if (netSpecies.size() > 0) {
+			List<CyColumn> groupCols = ModelUtils.getGroupColumns(netView.getModel());
+			if (groupCols.size() > 0 && netSpecies.size() > 0) {
 				return true;
 			}
 		}

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -731,9 +732,47 @@ public class ModelUtils {
 					species.add(nSpecies);
 			}
 		}
+		Collections.sort(species);
 		return species;
 	}
 
+	public static List<CyColumn> getGroupColumns(CyNetwork network) {
+		Collection<CyColumn> colList = network.getDefaultNodeTable().getColumns();
+		colList.remove(network.getDefaultNodeTable().getColumn(CyNetwork.SELECTED));
+		colList.remove(network.getDefaultNodeTable().getColumn(CyNetwork.SUID));
+		colList.removeAll(network.getDefaultNodeTable().getColumns(ModelUtils.STRINGDB_NAMESPACE));
+		colList.removeAll(network.getDefaultNodeTable().getColumns(ModelUtils.TISSUE_NAMESPACE));
+		colList.removeAll(network.getDefaultNodeTable().getColumns(ModelUtils.COMPARTMENT_NAMESPACE));
+		colList.removeAll(network.getDefaultNodeTable().getColumns("target"));
+		List<CyColumn> showList = new ArrayList<CyColumn>();
+		int numValues = network.getNodeCount();
+		for (CyColumn col : colList) {
+			Set<?> colValues = new HashSet<>();			 
+			if (col.getType().equals(String.class)) {
+				colValues = new HashSet<String>(col.getValues(String.class));
+			} else if (col.getType().equals(Integer.class)) {
+				colValues = new HashSet<Integer>(col.getValues(Integer.class));
+			} else if (col.getType().equals(Boolean.class)) {
+				colValues = new HashSet<Boolean>(col.getValues(Boolean.class));
+			} else if (col.getType().equals(Double.class)) {
+				colValues = new HashSet<Double>(col.getValues(Double.class));
+			}
+			// skip column if it only contains unique values or only one value or unique values for more than half the nodes in the network 
+			// filter for empty strings -> maybe enough to put a cutoff here?
+			if (colValues.size() < 2 || colValues.size() == numValues || colValues.size() > numValues/2) {
+				continue;
+			}
+			showList.add(col);
+		}
+		// sort attribute list
+		Collections.sort(showList, new Comparator<CyColumn>() {
+		    public int compare(CyColumn a, CyColumn b) {
+		        return a.getName().compareToIgnoreCase(b.getName());
+		    }
+		});
+		return showList;
+	}
+	
 	private static List<CyNode> getJSON(StringManager manager, Species species, CyNetwork network,
 			JSONArray tmResults) {
 		List<CyNode> newNodes = new ArrayList<>();

@@ -60,20 +60,32 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 	// [N] check if the number of unique values == number of values and don't show such columns -> 
 	// [N] take suggested column name from network attribute __clusterSomething -> done
 		
-	@Tunable(description = "Column for groups", gravity = 2.0)
+	@Tunable(description = "Column for groups", 
+	         longDescription="Specify the column that contains the node groups to be used for group-wise enrichment",
+	         exampleStringValue="",
+	         required=true, 
+	         gravity = 2.0)
 	public ListSingleSelection<CyColumn> groupColumn = new ListSingleSelection<CyColumn>();
 
-	@Tunable(description = "Retrieve for species", gravity = 3.0)
+	@Tunable(description = "Retrieve for species", 
+			gravity = 3.0)
 	public ListSingleSelection<String> allNetSpecies = new ListSingleSelection<String>();
 	
-	// TODO: [Release] Decide on group size cutoffs before release
-	@Tunable(description = "Number of groups ", groups={"Advanced"}, params="displayState=collapsed", gravity = 5.0)
-	public int limitGroupNumber = 12;	
+	@Tunable(description = "Maximum number of groups ", 
+			groups={"Advanced"}, params="displayState=collapsed",
+			exampleStringValue="20",
+			gravity = 5.0)
+	public int maxGroupNumber = 20;	
 
-	@Tunable(description = "Group size limit", groups={"Advanced"}, params="displayState=collapsed", gravity = 6.0)
-	public int limitGroupSize = 7;	
+	@Tunable(description = "Minimum group size", 
+			groups={"Advanced"}, params="displayState=collapsed",
+			exampleStringValue="5",
+			gravity = 6.0)
+	public int minGroupSize = 5;	
 	
-	@Tunable(description="Network to be used as background", groups={"Advanced"}, params="displayState=collapsed", gravity = 7.0
+	@Tunable(description="Network to be used as background", 
+			groups={"Advanced"}, params="displayState=collapsed", 
+			gravity = 7.0
 			// longDescription = StringToModel.CY_NETWORK_VIEW_LONG_DESCRIPTION,
 			// exampleStringValue = StringToModel.CY_NETWORK_VIEW_EXAMPLE_STRING,
 		        )
@@ -91,7 +103,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		enrichmentResult = new HashMap<>();
 		stringNodesMap = new HashMap<>();
 		monitor = null;
-		initGroupColumn();
+		initGroupColumn(); // initializes groupColumn
 		allNetSpecies = new ListSingleSelection<String>(ModelUtils.getEnrichmentNetSpecies(network));
 
 		stringNetworkMap = new HashMap<>();
@@ -182,7 +194,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			enrichmentGroups = new ArrayList<String>();
 		int counter = 0;
 		for (Group group : groups) {
-			if (counter >= limitGroupNumber) 
+			if (counter >= maxGroupNumber) 
 				break;
 
 			// System.out.println(group);
@@ -193,12 +205,12 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			// deleteEnrichmentTables(groupTableName);
 
 			// get set of nodes to retrieve enrichment for
-			String selected = getGroupNodes(network, colGroups, group.getName()).trim(); // also inits the analyzedNodes
-			if (analyzedNodes.size() < limitGroupSize) {
-				System.out.println("ignore group " + groupTableName);
+			String selected = getGroupNodes(network, colGroups, group.getName()).trim(); // also initializes the analyzedNodes
+			if (analyzedNodes.size() < minGroupSize) {
+				// System.out.println("ignore group " + groupTableName);
 				continue;
 			}
-			System.out.println("Retrieving enrichment for group " + groupTableName + " with " + analyzedNodes.size() + " nodes.");
+			// System.out.println("Retrieving enrichment for group " + groupTableName + " with " + analyzedNodes.size() + " nodes.");
 			monitor.showMessage(Level.INFO, "Retrieving enrichment for group " + groupTableName);
 
 			// retrieve enrichment (new API)
@@ -234,37 +246,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 	}
 
     private void initGroupColumn() {
-		Collection<CyColumn> colList = network.getDefaultNodeTable().getColumns();
-		colList.remove(network.getDefaultNodeTable().getColumn(CyNetwork.SELECTED));
-		colList.remove(network.getDefaultNodeTable().getColumn(CyNetwork.SUID));
-		List<CyColumn> showList = new ArrayList<CyColumn>();
-		int numValues = network.getNodeCount();
-		for (CyColumn col : colList) {
-			Set<?> colValues = new HashSet();			 
-			if (col.getType().equals(String.class)) {
-				colValues = new HashSet<String>(col.getValues(String.class));
-			} else if (col.getType().equals(Integer.class)) {
-				colValues = new HashSet<Integer>(col.getValues(Integer.class));
-			} else if (col.getType().equals(Boolean.class)) {
-				colValues = new HashSet<Boolean>(col.getValues(Boolean.class));
-			} else if (col.getType().equals(Double.class)) {
-				colValues = new HashSet<Double>(col.getValues(Double.class));
-			}
-			// skip column if it only contains unique values or only one value or unique values for more than half the nodes in the network 
-			// filter for empty strings -> maybe enough to put a cutoff here?
-			// TODO: [Release] decide if colValues.size() > numValues/2 is good to use to remove columns with many values?
-			if (colValues.size() < 2 || colValues.size() == numValues || colValues.size() > numValues/2) {
-				// System.out.println("skip: " + col.getName());
-				continue;
-			}
-			showList.add(col);
-		}
-		// sort attribute list
-		Collections.sort(showList, new Comparator<CyColumn>() {
-		    public int compare(CyColumn a, CyColumn b) {
-		        return a.getName().compareToIgnoreCase(b.getName());
-		    }
-		});
+    	List<CyColumn> showList = ModelUtils.getGroupColumns(network);
 		groupColumn = new ListSingleSelection<CyColumn>(showList);
 		// check if clustering has been done and if find out which one to pre-select the column
 		CyColumn mclColNet = network.getDefaultNetworkTable().getColumn("__clusterAttribute");
@@ -397,8 +379,13 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			if (groupValue == null || !groupValue.toString().equals(group)) 
 				continue;
 			String stringID = currentNetwork.getRow(node).get(ModelUtils.STRINGID, String.class);
+			// check the node type and only accept if protein
 			String type = currentNetwork.getRow(node).get(ModelUtils.TYPE, String.class);
-			if (stringID != null && stringID.length() > 0 && type != null && type.equals("protein")) {
+			// chech the node species and only allow if it is the same as the one chosen by the user
+			String species = currentNetwork.getRow(node).get(ModelUtils.SPECIES, String.class);
+			if (stringID != null && stringID.length() > 0 
+					&& type != null && type.equals("protein") 
+					&& species != null && species.equals(allNetSpecies.getSelectedValue())) {
 				str.append(stringID + "\n");
 				analyzedNodes.add(node);
 			}
@@ -487,8 +474,8 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 	@ProvidesTitle
 	public String getTitle() {
 		if (publOnly)
-			return "Retrieve enriched publications per group";
-		return "Retrieve functional enrichment per group";
+			return "Retrieve group-wise enriched publications";
+		return "Retrieve group-wise functional enrichment";
 	}
 
 	public static String EXAMPLE_JSON = 

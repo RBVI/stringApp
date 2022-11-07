@@ -133,10 +133,8 @@ public class StringNetwork {
 			// System.out.println("get settings for group: " + group + " in network " + ModelUtils.getName(network, network));
 			// Load our options
 			Map<String, String> settings = ModelUtils.getEnrichmentSettingsTableGroup(manager, network, group);
-			if (settings.size() == 0) {
-				System.out.println("found no settings for _" + group + "_ in network " + ModelUtils.getName(network, network));
-			} else {
-				System.out.println("found settings for _" + group + "_ in network " + ModelUtils.getName(network, network));
+			if (settings.size() > 0) {
+				// System.out.println("found settings for _" + group + "_ in network " + ModelUtils.getName(network, network));
 				settingsGroups.put(group, settings);
 				if (settings.containsKey("overlapCutoff")) {
 					overlapCutoff = Double.valueOf(settings.get("overlapCutoff"));
@@ -180,7 +178,10 @@ public class StringNetwork {
 					manager.setBrewerPalette(network, settings.get("brewerPalette"), group);
 				}
 				// brewerPaletteGroups.put(defaultGroup, brewerPalette);
-			}
+			} 
+			// else {
+				// System.out.println("found no settings for _" + group + "_ in network " + ModelUtils.getName(network, network));
+			// }
 		}
 	}
 

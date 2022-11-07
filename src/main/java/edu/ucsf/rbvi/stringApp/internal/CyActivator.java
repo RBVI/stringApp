@@ -525,10 +525,9 @@ public class CyActivator extends AbstractCyActivator {
 			{
 				Properties propsEnrichment = new Properties();
 				propsEnrichment.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
-				propsEnrichment.setProperty(TITLE, "Retrieve functional enrichment per group");
-				propsEnrichment.setProperty(MENU_GRAVITY, "7.0");
+				propsEnrichment.setProperty(TITLE, "Retrieve group-wise functional enrichment");
+				propsEnrichment.setProperty(MENU_GRAVITY, "2.0");
 				propsEnrichment.setProperty(IN_MENU_BAR, "true");
-				propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 				registerService(bc, getClusterEnrichment, NetworkTaskFactory.class, propsEnrichment);
 			}
 
@@ -559,7 +558,7 @@ public class CyActivator extends AbstractCyActivator {
 				Properties propsPublications = new Properties();
 				propsPublications.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
 				propsPublications.setProperty(TITLE, "Retrieve enriched publications");
-				propsPublications.setProperty(MENU_GRAVITY, "4.0");
+				propsPublications.setProperty(MENU_GRAVITY, "5.0");
 				propsPublications.setProperty(IN_MENU_BAR, "true");
 				propsPublications.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 				registerService(bc, getPublications, NetworkTaskFactory.class, propsPublications);
@@ -617,6 +616,23 @@ public class CyActivator extends AbstractCyActivator {
 			propsEnrichment.setProperty(COMMAND_EXAMPLE_JSON, GetEnrichmentTaskFactory.EXAMPLE_JSON);
 			// propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 			registerService(bc, getCommandEnrichment, NetworkTaskFactory.class, propsEnrichment);
+		}
+
+		GetClusterEnrichmentTaskFactory getCommandGroupEnrichment = new GetClusterEnrichmentTaskFactory(manager, false);
+		{
+			Properties propsEnrichment = new Properties();
+			propsEnrichment.setProperty(COMMAND_NAMESPACE, "string");
+			propsEnrichment.setProperty(COMMAND, "retrieve group-wise enrichment");
+			propsEnrichment.setProperty(COMMAND_DESCRIPTION, 
+			                            "Retrieve functional enrichment for the current String network and a pre-definde grouping of the nodes");
+			propsEnrichment.setProperty(COMMAND_LONG_DESCRIPTION, 
+			                            "Retrieve the functional enrichment for the current String network and a pre-definde grouping of the nodes. "+
+			                            "This includes enrichment for GO Process, GO Component, GO Function, "+
+			                            "InterPro, KEGG Pathways, and PFAM.");
+			propsEnrichment.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			propsEnrichment.setProperty(COMMAND_EXAMPLE_JSON, GetEnrichmentTaskFactory.EXAMPLE_JSON);
+			// propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
+			registerService(bc, getCommandGroupEnrichment, NetworkTaskFactory.class, propsEnrichment);
 		}
 
 		GetPublicationsTaskFactory getCommandPublications = new GetPublicationsTaskFactory(manager, false);
