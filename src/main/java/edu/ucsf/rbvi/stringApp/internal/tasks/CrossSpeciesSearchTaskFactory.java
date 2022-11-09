@@ -125,6 +125,7 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 			public void run(TaskMonitor m) {
 				// m.setTitle(CROSS_SPECIES_NAME);
 				m.setTitle("Loading interactions from STRING for " + species1.toString() + " and " + species2.toString());
+				m.setStatusMessage("Please be patient, this might take several minutes (up to half an hour for well annotated species).");
 				StringNetwork stringNetwork = new StringNetwork(manager);
 				int confidence = optionsPanel.getConfidence();
 				LoadSpeciesInteractions loadInteractions = 
@@ -292,11 +293,11 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 			Species defaultSpecies = Species.getHumanSpecies();
 			species1.setSelectedItem(defaultSpecies);
 	
-      JComboBoxDecorator decorator = new JComboBoxDecorator(species1, true, true, speciesList);
-		  decorator.decorate(speciesList); 
-			c.right().expandHoriz().insets(0,0,0,0);
+			JComboBoxDecorator decorator = new JComboBoxDecorator(species1, true, true, speciesList);
+			decorator.decorate(speciesList);
+			c.right().expandHoriz().insets(0, 0, 0, 0);
 			speciesPanel.add(species1, c);
-	
+
 			species1.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
@@ -304,31 +305,32 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 					if (Species.getSpecies(species1.getSelectedItem().toString()) == null)
 						return;
 
-					DefaultComboBoxModel<String> model2 = (DefaultComboBoxModel)species2.getModel();
+					DefaultComboBoxModel<String> model2 = (DefaultComboBoxModel) species2.getModel();
 					model2.removeAllElements();
-					List<String> crossList = Species.getSpeciesPartners(species1.getSelectedItem().toString());
-          if (crossList == null || crossList.size() == 0) {
+					String selectedSp = species1.getSelectedItem().toString();
+					List<String> crossList = Species.getSpeciesPartners(selectedSp);
+					if (crossList == null || crossList.size() == 0) {
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
 								JOptionPane.showMessageDialog(null,
-									"<html><i>"+species1.getSelectedItem()+"</i> has no cross-species interactions.</html>",
-												"No partners", JOptionPane.ERROR_MESSAGE);
-								}
-							});
+										"<html><i>" + selectedSp + "</i> has no cross-species interactions.</html>",
+										"No partners", JOptionPane.ERROR_MESSAGE);
+							}
+						});
 						speciesFrame1.setVisible(false);
 
-            species1.setSelectedItem(defaultSpecies);
-            crossList = Species.getSpeciesPartners(defaultSpecies.toString());
+						species1.setSelectedItem(defaultSpecies);
+						crossList = Species.getSpeciesPartners(defaultSpecies.toString());
 					}
 
-          String first = crossList.get(0);
+					String first = crossList.get(0);
 					Collections.sort(crossList);
 					model2.addAll(crossList);
 					species2Decorator.updateEntries(crossList);
-          species2.setSelectedItem(first);
+					species2.setSelectedItem(first);
 					// speciesFrame1.setVisible(false);
 
-					Species sp1 = (Species)species1.getSelectedItem();
+					Species sp1 = (Species) species1.getSelectedItem();
 					if (sp1 == null || sp1.toString() == "")
 						sp1Button.setText("Species 1");
 					else {
@@ -349,29 +351,33 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 			EasyGBC c = new EasyGBC();
 			JLabel speciesLabel = new JLabel("Species 2:");
 			speciesLabel.setFont(getFont().deriveFont(LookAndFeelUtil.getSmallFontSize()));
+			String first = speciesList.get(0);
 			Collections.sort(speciesList);
-			c.noExpand().insets(0,0,0,0);
+			c.noExpand().insets(0, 0, 0, 0);
 			speciesPanel.add(speciesLabel, c);
 			species2 = new JComboBox<String>(speciesList.toArray(new String[1]));
 			species2.setFont(getFont().deriveFont(LookAndFeelUtil.getSmallFontSize()));
-			model2 = (DefaultComboBoxModel)species2.getModel();
-	
-			if (speciesList.contains("Plasmodium falciparum")) {
-				species2.setSelectedItem("Plasmodium falciparum");
-        String sp2 = Species.abbreviate("Plasmodium falciparum");
-        sp2Button.setText(sp2);
-      }
+			model2 = (DefaultComboBoxModel) species2.getModel();
 
-    	species2Decorator = new JComboBoxDecorator(species2, true, false, speciesList);
-			species2Decorator.decorate(speciesList); 
-	
-			c.right().expandHoriz().insets(0,0,0,0);
+			//if (speciesList.contains("Plasmodium falciparum")) {
+			//	species2.setSelectedItem("Plasmodium falciparum");
+			//	String sp2 = Species.abbreviate("Plasmodium falciparum");
+			//	sp2Button.setText(sp2);
+			//}
+			species2.setSelectedItem(first);
+			String sp2 = Species.abbreviate(first);
+			sp2Button.setText(sp2);
+
+			species2Decorator = new JComboBoxDecorator(species2, true, false, speciesList);
+			species2Decorator.decorate(speciesList);
+
+			c.right().expandHoriz().insets(0, 0, 0, 0);
 			speciesPanel.add(species2, c);
 
 			species2.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
-					String sp2 = (String)species2.getSelectedItem();
+					String sp2 = (String) species2.getSelectedItem();
 					if (sp2 == null || sp2.toString() == "" || Species.getSpecies(sp2) == null) {
 						// sp2Button.setText("Species 2");
 						// System.out.println("Updating entries");

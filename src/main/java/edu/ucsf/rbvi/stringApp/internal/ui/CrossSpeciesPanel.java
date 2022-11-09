@@ -197,9 +197,9 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 		speciesCombo.setSelectedItem(defaultSpecies);
 
 
-    JComboBoxDecorator decorator = new JComboBoxDecorator(speciesCombo, true, true, speciesList);
-		decorator.decorate(speciesList); 
-		c.right().expandHoriz().insets(0,5,0,5);
+		JComboBoxDecorator decorator = new JComboBoxDecorator(speciesCombo, true, true, speciesList);
+		decorator.decorate(speciesList);
+		c.right().expandHoriz().insets(0, 5, 0, 5);
 		speciesPanel.add(speciesCombo, c);
 
 		speciesCombo.addActionListener(new ActionListener() {
@@ -207,27 +207,28 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 			public void actionPerformed(ActionEvent ae) {
 				if (Species.getSpecies(speciesCombo.getSelectedItem().toString()) == null)
 					return;
-				DefaultComboBoxModel<String> model = (DefaultComboBoxModel)speciesPartnerCombo.getModel();
+				DefaultComboBoxModel<String> model = (DefaultComboBoxModel) speciesPartnerCombo.getModel();
 				model.removeAllElements();
-				List<String> crossList = Species.getSpeciesPartners(speciesCombo.getSelectedItem().toString());
-        if (crossList == null || crossList.size() == 0)  {
+				String selectedSp = speciesCombo.getSelectedItem().toString();
+				List<String> crossList = Species.getSpeciesPartners(selectedSp);
+				if (crossList == null || crossList.size() == 0) {
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
 							JOptionPane.showMessageDialog(null,
-								"<html><i>"+speciesCombo.getSelectedItem()+"</i> has no cross-species interactions.</html>",
-											"No partners", JOptionPane.ERROR_MESSAGE);
+									"<html><i>" + selectedSp + "</i> has no cross-species interactions.</html>",
+									"No partners", JOptionPane.ERROR_MESSAGE);
 						}
 					});
 
-          speciesCombo.setSelectedItem(defaultSpecies);
-          crossList = Species.getSpeciesPartners(defaultSpecies.toString());
+					speciesCombo.setSelectedItem(defaultSpecies);
+					crossList = Species.getSpeciesPartners(defaultSpecies.toString());
 				}
-        String first = crossList.get(0);
-        Collections.sort(crossList);
+				String first = crossList.get(0);
+				Collections.sort(crossList);
 				model.addAll(crossList);
-        if (speciesPartnerDecorator != null)
-          speciesPartnerDecorator.updateEntries(crossList);
-        speciesPartnerCombo.setSelectedItem(first);
+				if (speciesPartnerDecorator != null)
+					speciesPartnerDecorator.updateEntries(crossList);
+				speciesPartnerCombo.setSelectedItem(first);
 			}
 		});
 		return speciesPanel;
@@ -239,16 +240,16 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 		JLabel speciesLabel = new JLabel("Species 2:");
 		String first = speciesList.get(0);
 		Collections.sort(speciesList);
-		c.noExpand().insets(0,5,0,5);
+		c.noExpand().insets(0, 5, 0, 5);
 		speciesPanel.add(speciesLabel, c);
 		speciesPartnerCombo = new JComboBox<String>(speciesList.toArray(new String[1]));
 
 		speciesPartnerCombo.setSelectedItem(first);
 
-    speciesPartnerDecorator = new JComboBoxDecorator(speciesPartnerCombo, true, false, speciesList);
-		speciesPartnerDecorator.decorate(speciesList); 
+		speciesPartnerDecorator = new JComboBoxDecorator(speciesPartnerCombo, true, false, speciesList);
+		speciesPartnerDecorator.decorate(speciesList);
 
-		c.right().expandHoriz().insets(0,5,0,5);
+		c.right().expandHoriz().insets(0, 5, 0, 5);
 		speciesPanel.add(speciesPartnerCombo, c);
 		return speciesPanel;
 	}
