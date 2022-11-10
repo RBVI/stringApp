@@ -138,17 +138,17 @@ public class StringNetwork {
 				settingsGroups.put(group, settings);
 				if (settings.containsKey("overlapCutoff")) {
 					overlapCutoff = Double.valueOf(settings.get("overlapCutoff"));
-					System.out.println(overlapCutoff);
+					//System.out.println(overlapCutoff);
 				}
 				overlapCutoffGroups.put(group, overlapCutoff);
 				if (settings.containsKey("topTerms")) {
 					topTerms = Integer.valueOf(settings.get("topTerms"));
-					System.out.println(topTerms);
+					//System.out.println(topTerms);
 				}
 				topTermsGroups.put(group, topTerms);
 				if (settings.containsKey("removeOverlap")) {
 					removeOverlap = Boolean.valueOf(settings.get("removeOverlap"));
-					System.out.println(removeOverlap);
+					//System.out.println(removeOverlap);
 				}
 				removeOverlapGroups.put(group, removeOverlap);
 				if (settings.containsKey("categoryFilter")) {
@@ -157,12 +157,12 @@ public class StringNetwork {
 					for (String filter: strFilters) {
 						categoryFilter.add(Enum.valueOf(TermCategory.class, filter));
 					}
-					System.out.println(categoryFilter);
+					//System.out.println(categoryFilter);
 				}
 				categoryFilterGroups.put(group, categoryFilter);
 				if (settings.containsKey("chartType")) {
 					chartType = Enum.valueOf(ChartType.class, settings.get("chartType"));
-					System.out.println(chartType);
+					//System.out.println(chartType);
 				}
 				chartTypeGroups.put(group, chartType);
 		
@@ -174,7 +174,7 @@ public class StringNetwork {
 				*/
 				// TODO: why do we set this one here and none of the others?
 				if (settings.containsKey("brewerPalette")) {
-					System.out.println(settings.get("brewerPalette"));
+					// System.out.println(settings.get("brewerPalette"));
 					manager.setBrewerPalette(network, settings.get("brewerPalette"), group);
 				}
 				// brewerPaletteGroups.put(defaultGroup, brewerPalette);
@@ -291,7 +291,7 @@ public class StringNetwork {
 
 	// Update our settings in the network table
 	private void updateGroup(String group) {
-		System.out.println("update settings for " + group);
+		// System.out.println("update settings for " + group);
 		Map<String, String> groupSettings = new HashMap<String, String>();
 		if (overlapCutoffGroups.containsKey(group))
 			groupSettings.put("overlapCutoff", Double.toString(overlapCutoffGroups.get(group)));

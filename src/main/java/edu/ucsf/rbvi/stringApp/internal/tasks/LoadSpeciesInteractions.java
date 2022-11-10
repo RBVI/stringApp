@@ -83,7 +83,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 			monitor.setTitle("Loading interactions from STITCH for " + species);
 		StringManager manager = stringNet.getManager();
 		
-		monitor.setStatusMessage("Please be patient, this might take several minutes (up to half an hour for well annotated species).");
+		monitor.setStatusMessage("Please be patient, this might take several minutes (up to half an hour depending on species and confidence cutoff).");
 
 		String conf = "0." + confidence;
 		if (confidence == 100)

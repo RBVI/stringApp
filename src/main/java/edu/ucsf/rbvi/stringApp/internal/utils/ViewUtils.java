@@ -42,6 +42,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.ChartType;
 
 public class ViewUtils {
+	public static String STYLE_NAME_SIMPLE = "STRING";
 	public static String STYLE_NAME = "STRING style";
 	public static String STYLE_NAME_NAMESPACES = "STRING style v1.5";
 	public static String STYLE_NAME_ORG = "Organism STRING style";
@@ -598,14 +599,15 @@ public class ViewUtils {
 		if (style == null)
 			return;
 
-		if (!style.getTitle().startsWith(STYLE_NAME_ORG_NAMESPACES)) {
-			VisualStyleFactory vsf = manager.getService(VisualStyleFactory.class);
-
-			VisualStyle stringStyle = vsf.createVisualStyle(vmm.getCurrentVisualStyle());
-			stringStyle.setTitle(STYLE_ORG + style.getTitle());
-			vmm.addVisualStyle(stringStyle);
-			style = stringStyle;
-		}
+		// TODO: [Release] find out what happens here
+//		if (!style.getTitle().startsWith(STYLE_NAME_ORG_NAMESPACES)) {
+//			VisualStyleFactory vsf = manager.getService(VisualStyleFactory.class);
+//
+//			VisualStyle stringStyle = vsf.createVisualStyle(vmm.getCurrentVisualStyle());
+//			stringStyle.setTitle(STYLE_ORG + style.getTitle());
+//			vmm.addVisualStyle(stringStyle);
+//			style = stringStyle;
+//		}
 
 		updateColorMapHost(manager, style, net, speciesList);
 
@@ -671,7 +673,7 @@ public class ViewUtils {
 			ViewUtils.updatePieCharts(manager, vmm.getVisualStyle(netView), network, true);
 
 			// Don't override the user if they have specifically disabled the glass ball effect
-			if (manager.showGlassBallEffect() && vmm.getVisualStyle(netView).getTitle().startsWith(ViewUtils.STYLE_NAME)) {
+			if (manager.showGlassBallEffect() && vmm.getVisualStyle(netView).getTitle().startsWith(ViewUtils.STYLE_NAME_SIMPLE)) {
 				if (ChartType.PIE.equals(type) || ChartType.SPLIT_PIE.equals(type)) {
 					ViewUtils.updateGlassBallEffect(manager, vmm.getVisualStyle(netView), network, false);
 					// manager.setShowGlassBallEffect(false);
@@ -764,7 +766,7 @@ public class ViewUtils {
 
 	public static void hideStringColors(StringManager manager, CyNetworkView view, boolean show) {
 		VisualStyle style = getStyle(manager, view);
-		if (style == null || !style.getTitle().contains(STYLE_NAME)) return;
+		if (style == null || !style.getTitle().contains(STYLE_NAME_SIMPLE)) return;
 		
 		// Don't overwrite a mapping the user added
 		VisualMappingFunction<?,Paint> function = style.getVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
@@ -921,7 +923,7 @@ public class ViewUtils {
 
 	private static String getStyleName(StringManager manager, CyNetwork network) {
 		String networkName = manager.getNetworkName(network);
-		String styleName = STYLE_NAME_NAMESPACES;
+		String styleName = STYLE_NAME_SIMPLE;
 		if (networkName.startsWith("String Network")
 				|| networkName.startsWith(ModelUtils.DEFAULT_NAME_STRING)
 				|| networkName.startsWith(ModelUtils.DEFAULT_NAME_STITCH)) {
@@ -936,3 +938,4 @@ public class ViewUtils {
 		return styleName;
 	}
 }
+

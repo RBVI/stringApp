@@ -487,22 +487,35 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 	@Override
 	@SuppressWarnings("unchecked")
 	public <R> R getResults(Class<? extends R> clzz) {
-		// TODO: [Release] What do we need to return in getResults
+		// TODO: [N] Test if this works for all cases
 		if (clzz.equals(CyTable.class)) {
-			return (R) enrichmentTables.get(0);
+			return (R) enrichmentTables;
 		} else if (clzz.equals(String.class)) {
 			if (enrichmentTables == null) 
 				return (R)"No results";
-			if (enrichmentTables != null)
-				return (R)("\"EnrichmentTable\": "+enrichmentTables.get(0).getSUID());
+			if (enrichmentTables != null) {
+				String result = "\"" + enrichmentTables.get(0).getTitle() + "\": "+enrichmentTables.get(0).getSUID();
+				if (enrichmentTables.size() > 1) {
+					for (int i=1; i < enrichmentTables.size(); i++) {
+						result += ", \"" + enrichmentTables.get(i).getTitle() + "\": "+enrichmentTables.get(i).getSUID();
+					}
+				}
+				return (R)result;
+			}
 		} else if (clzz.equals(Long.class)) {
 			// if (ppiSummary == null) return null; 
 			return (R) enrichmentTables.get(0).getSUID();
 		} else if (clzz.equals(JSONResult.class)) {
 			JSONResult res = () -> {
 				String result = "{";
-				if (enrichmentTables != null)
-					result += "\"EnrichmentTable\": "+enrichmentTables.get(0).getSUID();
+				if (enrichmentTables != null) {
+					result += "\"" + enrichmentTables.get(0).getTitle() + "\": "+enrichmentTables.get(0).getSUID();
+					if (enrichmentTables.size() > 1) {
+						for (int i=1; i < enrichmentTables.size(); i++) {
+							result += ", \"" + enrichmentTables.get(i).getTitle() + "\": "+enrichmentTables.get(i).getSUID();
+						}
+					}
+				}
 				result += "}";
 				// System.out.println(result);
 				return result;
