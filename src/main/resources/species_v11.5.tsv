@@ -193,7 +193,7 @@
 6334	core	Trichinella spiralis	Trichinella spiralis
 6412	core	Helobdella robusta	Helobdella robusta
 6500	periphery	Aplysia californica	Aplysia californica
-6669	core	Daphnia pulex	Daphnia pulex	water flea
+6669	core	Daphnia pulex	Daphnia pulex
 7029	periphery	Acyrthosiphon pisum	Acyrthosiphon pisum
 7070	core	Tribolium castaneum	Tribolium castaneum
 7091	periphery	Bombyx mori	Bombyx mori
@@ -5156,7 +5156,7 @@
 56723	mapped	Labrus bergylta	Labrus bergylta
 40217	mapped	Junco hyemalis	Junco hyemalis
 8478	mapped	Chrysemys picta bellii	Chrysemys picta bellii
-9796	mapped	Equus caballus	Equus caballus	horse
+9796	mapped	Equus caballus	Equus caballus
 48699	mapped	Poecilia latipinna	Poecilia latipinna
 9545	mapped	Macaca nemestrina	Macaca nemestrina
 99883	mapped	Tetraodon nigroviridis	Tetraodon nigroviridis
