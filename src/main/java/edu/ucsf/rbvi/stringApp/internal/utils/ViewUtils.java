@@ -599,15 +599,16 @@ public class ViewUtils {
 		if (style == null)
 			return;
 
-		// TODO: [Release] find out what happens here
-//		if (!style.getTitle().startsWith(STYLE_NAME_ORG_NAMESPACES)) {
-//			VisualStyleFactory vsf = manager.getService(VisualStyleFactory.class);
-//
-//			VisualStyle stringStyle = vsf.createVisualStyle(vmm.getCurrentVisualStyle());
-//			stringStyle.setTitle(STYLE_ORG + style.getTitle());
-//			vmm.addVisualStyle(stringStyle);
-//			style = stringStyle;
-//		}
+		// TODO: [N] Is this the right way to do it? 
+		// Why do we need this?
+		if (!style.getTitle().startsWith(STYLE_NAME_SIMPLE)) {
+			VisualStyleFactory vsf = manager.getService(VisualStyleFactory.class);
+
+			VisualStyle stringStyle = vsf.createVisualStyle(vmm.getCurrentVisualStyle());
+			stringStyle.setTitle(STYLE_NAME_SIMPLE + style.getTitle());
+			vmm.addVisualStyle(stringStyle);
+			style = stringStyle;
+		}
 
 		updateColorMapHost(manager, style, net, speciesList);
 
