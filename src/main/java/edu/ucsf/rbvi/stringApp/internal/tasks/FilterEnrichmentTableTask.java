@@ -60,14 +60,30 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 	public FilterEnrichmentTableTask(StringManager manager, EnrichmentCytoPanel panel) {
 		this.manager = manager;
 		network = manager.getCurrentNetwork();
-		this.enrichmentPanel = panel;
+			this.enrichmentPanel = panel;
 		// TODO: [N] is it ok to just add the group here?
-		this.group = panel.getTable();
+		this.group = enrichmentPanel.getTable();
 		overlapCutoff.setValue(manager.getOverlapCutoff(network, group));
 		categories.setSelectedValues(manager.getCategoryFilter(network, group));
 		removeOverlapping = manager.getRemoveOverlap(network, group);
 	}
 
+	public FilterEnrichmentTableTask(StringManager manager) {
+		this.manager = manager;
+		network = manager.getCurrentNetwork();
+		CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
+		CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.SOUTH);
+		if (cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment") >= 0) {
+			this.enrichmentPanel = (EnrichmentCytoPanel) cytoPanel.getComponentAt(
+					cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment"));
+		}
+		// TODO: [N] is it ok to just add the group here?
+		this.group = enrichmentPanel.getTable();
+		overlapCutoff.setValue(manager.getOverlapCutoff(network, group));
+		categories.setSelectedValues(manager.getCategoryFilter(network, group));
+		removeOverlapping = manager.getRemoveOverlap(network, group);
+	}
+	
 	@Override
 	public void run(TaskMonitor monitor) throws Exception {
 		monitor.setTitle("Filter STRING Enrichment table");

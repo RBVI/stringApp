@@ -22,17 +22,17 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 public class GetSpeciesTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 
-	@Tunable(description="Category of species to list", 
-	         longDescription="Select which category to list from these: all, core, periphery, mapped, and viral species.",
-	         exampleStringValue="core",
-	         context="nogui", required=false)
-	public ListSingleSelection<String> category;
+	//@Tunable(description="Category of species to list", 
+	//         longDescription="Select which category to list from these: all, core, periphery, mapped, and viral species.",
+	//         exampleStringValue="core",
+	//        context="nogui", required=false)
+	// public ListSingleSelection<String> category;
 
 	
 	public GetSpeciesTask(StringManager manager) {
 		this.manager = manager;
-		category = new ListSingleSelection<>(Species.category);
-		category.setSelectedValue("all");
+		//category = new ListSingleSelection<>(Species.category);
+		//category.setSelectedValue("all");
 	}
 
 	public void run(TaskMonitor monitor) throws Exception {
@@ -51,19 +51,19 @@ public class GetSpeciesTask extends AbstractTask implements ObservableTask {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <R> R getResults(Class<? extends R> clzz) {
-		List<Species> stringSpecies = new ArrayList<Species>();
-		if (category.getSelectedValue().equals("core"))
-			stringSpecies = Species.getCoreSpecies();
-		else if (category.getSelectedValue().equals("periphery"))
-			stringSpecies = Species.getPeripherySpecies();
-		else if (category.getSelectedValue().equals("mapped"))
-			stringSpecies = Species.getMappedSpecies();
-		else if (category.getSelectedValue().equals("viral"))
-			stringSpecies = Species.getVirusSpecies();
-		else 
-			stringSpecies = Species.getSpecies();
+//		List<Species> stringSpecies = new ArrayList<Species>();
+//		if (category.getSelectedValue().equals("core"))
+//			stringSpecies = Species.getCoreSpecies();
+//		else if (category.getSelectedValue().equals("periphery"))
+//			stringSpecies = Species.getPeripherySpecies();
+//		else if (category.getSelectedValue().equals("mapped"))
+//			stringSpecies = Species.getMappedSpecies();
+//		else if (category.getSelectedValue().equals("viral"))
+//			stringSpecies = Species.getVirusSpecies();
+//		else 
+//			stringSpecies = Species.getSpecies();
 		
-		List<Species> speciesList = stringSpecies;
+		List<Species> speciesList = Species.getSpecies();;
 		if (clzz.equals(List.class)) {
 			List<Map<String,String>> speciesMap = new ArrayList<>();
 			for (Species species: speciesList) {

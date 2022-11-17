@@ -231,9 +231,9 @@ public class EnrichmentTableModel extends AbstractTableModel {
 				i++;
 			}
 		}
-
+		
 		// Now we have the categories of interest.  Remove redundancy if desired
-		if (removeRedundancy)
+		if (removeRedundancy && i > 0)
 			rowNames = removeRedundancy(rowArray, i, cutoff);
 		else
 			rowNames = Arrays.copyOf(rowArray, i);
