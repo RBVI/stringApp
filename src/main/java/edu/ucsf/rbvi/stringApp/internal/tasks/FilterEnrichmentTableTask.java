@@ -14,6 +14,7 @@ import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.TaskMonitor.Level;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.json.JSONResult;
 import org.cytoscape.work.util.BoundedDouble;
@@ -57,6 +58,7 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 	         params="slider=true", dependsOn="removeOverlapping=true", gravity = 9.0)
 	public BoundedDouble overlapCutoff = new BoundedDouble(0.0, 0.5, 1.0, false, false);
 	
+	// this is called from within the enrichment panel  
 	public FilterEnrichmentTableTask(StringManager manager, EnrichmentCytoPanel panel) {
 		this.manager = manager;
 		network = manager.getCurrentNetwork();
@@ -68,17 +70,18 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 		removeOverlapping = manager.getRemoveOverlap(network, group);
 	}
 
+	// this is called only by the command and handles the group differently depending on whether the panel is shown or not
+	// TODO: [N] add enrichment table name as required argument for the command?!
 	public FilterEnrichmentTableTask(StringManager manager) {
 		this.manager = manager;
 		network = manager.getCurrentNetwork();
 		CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
 		CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.SOUTH);
 		if (cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment") >= 0) {
-			this.enrichmentPanel = (EnrichmentCytoPanel) cytoPanel.getComponentAt(
+			enrichmentPanel = (EnrichmentCytoPanel) cytoPanel.getComponentAt(
 					cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment"));
-		}
-		// TODO: [N] is it ok to just add the group here?
-		this.group = enrichmentPanel.getTable();
+			group = enrichmentPanel.getTable();
+		} 
 		overlapCutoff.setValue(manager.getOverlapCutoff(network, group));
 		categories.setSelectedValues(manager.getCategoryFilter(network, group));
 		removeOverlapping = manager.getRemoveOverlap(network, group);
@@ -96,10 +99,14 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 				if (enrichmentPanel == null) { 
 					CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
 					CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.SOUTH);
-					if (cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment") != -1)
+					if (cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment") >= 0) {
 						enrichmentPanel = (EnrichmentCytoPanel) cytoPanel.getComponentAt(
 								cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment"));
-					else return;
+						group = enrichmentPanel.getTable();
+					} else { 
+						monitor.showMessage(Level.ERROR, "Filtering can only be performed on the currently shown enrichment table and the STRING Enrichment panel is currently not shown.");
+						return;
+					}
 				}
 				EnrichmentTableModel tableModel = enrichmentPanel.getTableModel();
 				tableModel.filter(categoryList, removeOverlapping, overlapCutoff.getValue());
