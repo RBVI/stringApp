@@ -656,7 +656,7 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "list species");
 			props.setProperty(COMMAND_DESCRIPTION, 
-			                            "Retrieve a list of all the species available in STRING.");
+			                            "Retrieve a list of all species available in STRING.");
 			props.setProperty(COMMAND_LONG_DESCRIPTION, 
 			                            "Retrieve the list of all species known to the STRING database, including the taxonomy ID.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
