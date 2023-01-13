@@ -5,10 +5,10 @@ import org.cytoscape.work.TaskIterator;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
-public class GetSpeciesDetailedTaskFactory extends AbstractTaskFactory {
+public class GetSelectedSpeciesTaskFactory extends AbstractTaskFactory {
 	final StringManager manager;
 
-	public GetSpeciesDetailedTaskFactory(final StringManager manager) {
+	public GetSelectedSpeciesTaskFactory(final StringManager manager) {
 		this.manager = manager;
 	}
 
@@ -17,7 +17,7 @@ public class GetSpeciesDetailedTaskFactory extends AbstractTaskFactory {
 	}
 
 	public TaskIterator createTaskIterator() {
-		return new TaskIterator(new GetSpeciesDetailedTask(manager));
+		return new TaskIterator(new GetSelectedSpeciesTask(manager));
 	}
 
 }

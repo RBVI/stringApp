@@ -46,7 +46,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.GetClusterEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetPublicationsTaskFactory;
-import edu.ucsf.rbvi.stringApp.internal.tasks.GetSpeciesDetailedTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.GetSelectedSpeciesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetSpeciesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.HideChartsTaskFactory;
 // import edu.ucsf.rbvi.stringApp.internal.tasks.FindProteinsTaskFactory;
@@ -665,15 +665,15 @@ public class CyActivator extends AbstractCyActivator {
 			registerService(bc, getSpecies, TaskFactory.class, props);
 		}
 
-		GetSpeciesDetailedTaskFactory getSpeciesDetailed = new GetSpeciesDetailedTaskFactory(manager);
+		GetSelectedSpeciesTaskFactory getSpeciesDetailed = new GetSelectedSpeciesTaskFactory(manager);
 		{
 			Properties props = new Properties();
 			props.setProperty(COMMAND_NAMESPACE, "string");
-			props.setProperty(COMMAND, "list species detailed");
+			props.setProperty(COMMAND, "list selected species");
 			props.setProperty(COMMAND_DESCRIPTION, 
-			                            "Retrieve a detailed list of the species available in STRING.");
+			                            "Retrieve a list of selected species available in STRING.");
 			props.setProperty(COMMAND_LONG_DESCRIPTION, 
-			                            "Retrieve the list of species known to the STRING database, including the taxonomy ID, that belong to the chosen internal category.");
+			                            "Retrieve the list of species known to the STRING database and based on a selection criterium such as category, including the taxonomy ID.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
 			props.setProperty(COMMAND_EXAMPLE_JSON, "[{\"taxonomyId\": 9606, \"scientificName\": \"Homo sapiens\", \"abbreviatedName\":\"Homo sapiens\"}]");
 			// propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");

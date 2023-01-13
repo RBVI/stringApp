@@ -19,7 +19,7 @@ import org.cytoscape.work.util.ListSingleSelection;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
-public class GetSpeciesDetailedTask extends AbstractTask implements ObservableTask {
+public class GetSelectedSpeciesTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 
 	@Tunable(description="Category of species to list", 
@@ -29,7 +29,7 @@ public class GetSpeciesDetailedTask extends AbstractTask implements ObservableTa
 	 public ListSingleSelection<String> category;
 
 	
-	public GetSpeciesDetailedTask(StringManager manager) {
+	public GetSelectedSpeciesTask(StringManager manager) {
 		this.manager = manager;
 		category = new ListSingleSelection<>(Species.category);
 		category.setSelectedValue("all");
