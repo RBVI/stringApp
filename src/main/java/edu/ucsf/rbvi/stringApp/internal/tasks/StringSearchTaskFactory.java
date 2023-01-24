@@ -43,7 +43,7 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 	StringManager manager;
 	static String STRING_ID = "edu.ucsf.rbvi.string";
 	static String STRING_URL = "http://string-db.org";
-	static String STRING_NAME = "STRING protein query";
+	static String STRING_NAME = "STRING: protein query";
 	static String STRING_DESC = "Search STRING for protein-protein interactions";
 	static String STRING_DESC_LONG = "<html>The protein query retrieves a STRING network for one or more proteins. <br />"
 										+ "STRING is a database of known and predicted protein interactions for <br />"

@@ -41,7 +41,7 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 	StringManager manager;
 	static String STITCH_ID = "edu.ucsf.rbvi.stitch";
 	static String STITCH_URL = "http://stitch-db.org";
-	static String STITCH_NAME = "STITCH compound query";
+	static String STITCH_NAME = "STITCH: compound query";
 	static String STITCH_DESC = "Search STITCH for protein-compound interactions";
 	static String STITCH_DESC_LONG = "<html>The compound query retrieves a STITCH network for one or more proteins or compounds. <br />"
 										+ "STITCH is a resource to explore known and predicted interactions of chemicals and <br />"

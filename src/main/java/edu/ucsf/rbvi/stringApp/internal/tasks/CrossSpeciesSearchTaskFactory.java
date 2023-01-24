@@ -75,7 +75,7 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 	StringManager manager;
 	static String CROSS_SPECIES_ID = "edu.ucsf.rbvi.x-species";
 	static String CROSS_SPECIES_URL = "http://string-db.org";
-	static String CROSS_SPECIES_NAME = "STRING cross-species query";
+	static String CROSS_SPECIES_NAME = "STRING: cross-species query";
 	static String CROSS_SPECIES_DESC = "Search STRING for protein-protein interactions across species";
 	static String CROSS_SPECIES_DESC_LONG =  "<html>The cross-species query retrieves a STRING network for all proteins <br />"
 											+ "in the two chosen species that have interactions above the chosen cutoff, <br />"

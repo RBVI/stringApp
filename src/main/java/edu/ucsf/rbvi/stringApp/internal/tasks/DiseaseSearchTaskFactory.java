@@ -33,7 +33,7 @@ public class DiseaseSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	StringManager manager;
 	static String DISEASE_ID = "edu.ucsf.rbvi.disease";
 	static String DISEASE_URL = "http://string-db.org";
-	static String DISEASE_NAME = "STRING disease query";
+	static String DISEASE_NAME = "STRING: disease query";
 	static String DISEASE_DESC = "Search STRING for protein-protein interactions";
 	static String DISEASE_DESC_LONG = "<html>The disease query retrieves a STRING network for the top-N human proteins associated <br />"
 										  + "with the queried disease in the DISEASES database. DISEASES is a weekly updated web <br />"

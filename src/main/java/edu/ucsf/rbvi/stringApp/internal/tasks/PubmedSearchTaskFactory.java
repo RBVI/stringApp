@@ -61,7 +61,7 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	StringManager manager;
 	static String PUBMED_ID = "edu.ucsf.rbvi.pubmed";
 	static String PUBMED_URL = "http://string-db.org";
-	static String PUBMED_NAME = "STRING PubMed query";
+	static String PUBMED_NAME = "STRING: PubMed query";
 	static String PUBMED_DESC = "Search STRING for protein-protein interactions based on PubMed queries";
 	static String PUBMED_DESC_LONG =  "<html>The PubMed query retrieves a STRING network pertaining to any topic of interest <br />"
 											+ "based on text mining of PubMed abstracts. STRING is a database of known and <br />"
