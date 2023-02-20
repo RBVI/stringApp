@@ -20,4 +20,4 @@ Since version 1.6, *stringApp* is also integrated with the [clusterMaker](http:/
 See also:
 - [stringApp tutorials](https://jensenlab.org/training/stringapp/)
 - [stringApp automation documentation](doc_automation.md)
-- [Cite stringApp](https://pubmed.ncbi.nlm.nih.gov/30450911/)
+- Cite [stringApp 2018 paper](https://pubmed.ncbi.nlm.nih.gov/30450911/) or [stringApp 2022 paper](https://pubmed.ncbi.nlm.nih.gov/36512705/)
