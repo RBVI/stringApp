@@ -1,8 +1,8 @@
 # stringApp Automation Documentation
 
-stringApp version 1.7.1
+stringApp version 2.0.1
 
-Last update: 2020-05-02
+Last update: 2023-02-20
 
 ## List of commands
 
@@ -663,7 +663,7 @@ Retrieves a list of selected species known to stringApp, including the taxonomy 
 
 ### Example 
 
-`string list species category=core`
+`string list selected species category=core`
 
 List all STRING core species.
 
