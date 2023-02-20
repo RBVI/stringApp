@@ -406,7 +406,8 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		// check if foreground is contained in background
 		// instead of checking it only for analyzed nodes, check it for all nodes in the fgNetwork
 		for (CyNode fgNode : fgNetwork.getNodeList()) {
-			if (str.indexOf(fgNetwork.getRow(fgNode).get(ModelUtils.STRINGID, String.class)) == -1) {
+			String fgStringID = fgNetwork.getRow(fgNode).get(ModelUtils.STRINGID, String.class);
+			if (fgStringID != null && str.indexOf(fgStringID) == -1) {
 				System.out.println(fgNode.getSUID());
 				return "";
 			}
