@@ -40,6 +40,7 @@ Last update: 2020-05-02
 ### Other
 - [Settings](#settings)
 - [List species](#list-species)
+- [List selected species](#list-selected-species)
 - [Version](#version)
 
 ## Protein query
@@ -638,7 +639,21 @@ Sets the default species for network queries to mouse (`Mus musculus`) and the d
 
 `string list species`
 
-Retrieves the list of species known to STRING, including the taxonomy ID.
+Retrieves the list of all species known to stringApp (all STRING species + viruses from Viruses.STRING), including the taxonomy ID.
+
+### Example 
+
+`string list species`
+
+List all STRING core species.
+
+[List of Other commands](#other)
+
+## List selected species
+
+`string list selected species`
+
+Retrieves a list of selected species known to stringApp, including the taxonomy ID.
 
 ### Arguments
 
