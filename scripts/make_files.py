@@ -5,12 +5,10 @@
 # Species pull-downs as well as information about cross-species PPIs
 #
 # To run it, cd into the data/species directory and run ../../scripts/make_files.py
-Version = "v11.5"
+Version = "v12"
 ModelSpecies = "model_species_"
 StringSpecies = "species.string."
 VirusSpecies = "virus.species."
-VirusHostPairs = "virus_host_pairs_"
-PathogenHostPairs = "pathogen_host_pairs_"
 
 def main():
     species = {}
