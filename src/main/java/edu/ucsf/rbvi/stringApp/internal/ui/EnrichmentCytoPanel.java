@@ -17,6 +17,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,6 +70,13 @@ import org.cytoscape.model.events.SelectedNodesAndEdgesEvent;
 import org.cytoscape.model.events.SelectedNodesAndEdgesListener;
 import org.cytoscape.util.swing.CyColorPaletteChooserFactory;
 import org.cytoscape.util.swing.IconManager;
+import org.cytoscape.view.model.CyNetworkView;
+import org.cytoscape.view.model.View;
+import org.cytoscape.view.model.VisualProperty;
+import org.cytoscape.view.presentation.annotations.AnnotationFactory;
+import org.cytoscape.view.presentation.annotations.AnnotationManager;
+import org.cytoscape.view.presentation.annotations.TextAnnotation;
+import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 // import org.jcolorbrewer.ColorBrewer;
@@ -599,19 +607,35 @@ public class EnrichmentCytoPanel extends JPanel
 			}
 		});
 		popupMenu.add(menuItemReset);
-		JMenuItem menuItemAddToNet = new JMenuItem("Add term(s) to network");
-		menuItemAddToNet.addActionListener(new ActionListener() {
+
+		JMenuItem menuItemAddNodesToNet = new JMenuItem("Add term(s) to network");
+		menuItemAddNodesToNet.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Component c = (Component) e.getSource();
 				JPopupMenu popup = (JPopupMenu) c.getParent();
 				JTable table = (JTable) popup.getInvoker();
 				if (table.getSelectedRow() > -1) {
-					addTermsToNetwork(table.getSelectedRows());
+					addTermsToNetworkAsNodes(table.getSelectedRows());
 				}
 			}
 		});
-		popupMenu.add(menuItemAddToNet);
+		popupMenu.add(menuItemAddNodesToNet);
+
+		JMenuItem menuItemAddAnnotToNet = new JMenuItem("Add term(s) as annotations");
+		menuItemAddAnnotToNet.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Component c = (Component) e.getSource();
+				JPopupMenu popup = (JPopupMenu) c.getParent();
+				JTable table = (JTable) popup.getInvoker();
+				if (table.getSelectedRow() > -1) {
+					addTermsToNetworkAsAnnot(table.getSelectedRows());
+				}
+			}
+		});
+		popupMenu.add(menuItemAddAnnotToNet);
+		
 		jTable.setComponentPopupMenu(popupMenu);
 		jTable.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
@@ -670,7 +694,83 @@ public class EnrichmentCytoPanel extends JPanel
 		}
 	}
 
-	public void addTermsToNetwork(int[] selectedRows) {
+
+	public void addTermsToNetworkAsAnnot(int[] selectedRows) {
+		JTable currentTable = enrichmentTables.get(showTable);
+		EnrichmentTableModel tableModel = enrichmentTableModels.get(showTable);
+		CyNetwork network = manager.getCurrentNetwork();
+		CyNetworkView view = manager.getCurrentNetworkView();
+		if (network == null || view == null || tableModel == null)
+			return;
+		
+		AnnotationManager annotManager = manager.getService(AnnotationManager.class);
+		AnnotationFactory<TextAnnotation> textFactory = 
+				(AnnotationFactory<TextAnnotation>) manager.getService(AnnotationFactory.class, "(type=TextAnnotation.class)");
+		if (annotManager == null || textFactory == null) {
+			System.out.println("AnnotationManager or textFactory is null");
+			return;
+		}
+		
+		for (int i : selectedRows) {
+			// extract term infos
+			String termName = (String) currentTable.getModel()
+					.getValueAt(currentTable.convertRowIndexToModel(i), EnrichmentTerm.nameColumn);
+			String termDesc = (String) currentTable.getModel()
+					.getValueAt(currentTable.convertRowIndexToModel(i), EnrichmentTerm.descColumn);
+			// Double termFDR = (Double) currentTable.getModel()
+			//		.getValueAt(currentTable.convertRowIndexToModel(i), EnrichmentTerm.fdrColumn);
+			//String termCat = (String) currentTable.getModel()
+			//		.getValueAt(currentTable.convertRowIndexToModel(i), EnrichmentTerm.catColumn);
+			//Integer termGenes = (Integer) currentTable.getModel()
+			//		.getValueAt(currentTable.convertRowIndexToModel(i), EnrichmentTerm.genesColumn);
+			//Integer termBG = (Integer) currentTable.getModel()
+			//		.getValueAt(currentTable.convertRowIndexToModel(i), EnrichmentTerm.bgColumn);
+			
+			// get nodes associated with term and use them to determine the location for annotations
+			Object cellContent = currentTable.getModel().getValueAt(
+					currentTable.convertRowIndexToModel(i), EnrichmentTerm.nodeSUIDColumn);
+			List<CyNode> termNodes = new ArrayList<CyNode>();
+			if (cellContent instanceof List) {
+				List<Long> nodeIDs = (List<Long>) cellContent;
+				for (Long nodeID : nodeIDs) {
+					CyNode stringNode = network.getNode(nodeID);
+					termNodes.add(stringNode);
+				}
+			}
+			
+			final VisualProperty<Double> xLoc = BasicVisualLexicon.NODE_X_LOCATION;
+			final VisualProperty<Double> yLoc = BasicVisualLexicon.NODE_Y_LOCATION;
+			Set<Double> xPos = new HashSet<Double>();
+			Set<Double> yPos = new HashSet<Double>();
+			for (View<CyNode> nodeView : view.getNodeViews()) {
+				if (termNodes.contains(nodeView.getModel())) {
+					xPos.add(nodeView.getVisualProperty(xLoc));
+					yPos.add(nodeView.getVisualProperty(yLoc));
+				}
+			}
+			double xSpan = Collections.max(xPos) - Collections.min(xPos);
+			double ySpan = Collections.max(yPos) - Collections.min(yPos);
+			// double scaling = view.getNodeViews().size()/(double)termNodes.size();
+			
+			// create annotaion
+			Map<String, String> args = new HashMap<>();
+			args.put(TextAnnotation.X, String.valueOf(Collections.min(xPos) - xSpan/8.0));
+			args.put(TextAnnotation.Y, String.valueOf(Collections.min(yPos) - ySpan/8.0));
+			//args.put(TextAnnotation.Z, String.valueOf(-1));
+			args.put(TextAnnotation.TEXT, termDesc);
+			//args.put(TextAnnotation.FONTSIZE, String.valueOf(this.font.getSize()));
+			//args.put(TextAnnotation.FONTFAMILY, this.font.getFamily());
+			//args.put(TextAnnotation.FONTSTYLE, String.valueOf(this.font.getStyle()));
+			//args.put(TextAnnotation.COLOR, Color.BLACK.toString());
+			
+			TextAnnotation annotation = textFactory.createAnnotation(TextAnnotation.class, view, args);
+			annotation.setName("stringApp_" + termName);
+			annotManager.addAnnotation(annotation);
+		}
+
+	}
+	
+	public void addTermsToNetworkAsNodes(int[] selectedRows) {
 		JTable currentTable = enrichmentTables.get(showTable);
 		EnrichmentTableModel tableModel = enrichmentTableModels.get(showTable);
 		// currentRow = currentTable.getSelectedRow();
