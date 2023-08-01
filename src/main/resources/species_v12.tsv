@@ -501,8 +501,8 @@
 8167	periphery	Perca flavescens	Perca flavescens
 8175	core	Sparus aurata	Sparus aurata
 8187	core	Lates calcarifer	Lates calcarifer
-8355	core	Xenopus laevis	Xenopus laevis
-8364	periphery	Xenopus tropicalis	Xenopus tropicalis	African clawed frog
+8355	core	Xenopus laevis	Xenopus laevis	African clawed frog
+8364	periphery	Xenopus tropicalis	Xenopus tropicalis
 8469	core	Chelonia mydas	Chelonia mydas
 8478	periphery	Chrysemys picta bellii	Chrysemys picta
 8496	core	Alligator mississippiensis	Alligator mississippiensis
@@ -551,7 +551,7 @@
 9598	periphery	Pan troglodytes	Pan troglodytes
 9601	periphery	Pongo abelii	Pongo abelii
 9606	core	Homo sapiens	Homo sapiens	human
-9615	core	Canis lupus familiaris	Canis lupus familiaris
+9615	core	Canis lupus familiaris	Canis lupus familiaris	dog
 9627	periphery	Vulpes vulpes	Vulpes vulpes
 9643	periphery	Ursus americanus	Ursus americanus
 9646	periphery	Ailuropoda melanoleuca	Ailuropoda melanoleuca
