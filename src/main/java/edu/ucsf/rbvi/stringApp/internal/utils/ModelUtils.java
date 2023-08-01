@@ -1809,8 +1809,10 @@ public class ModelUtils {
 		if (tableSUID != null) {
 			return tableManager.getTable(tableSUID.longValue());
 		} else {
+			CyTable netTable = network.getDefaultNetworkTable();
+			ModelUtils.createColumnIfNeeded(netTable, Long.class, ModelUtils.NET_ENRICHMENT_SETTINGS_TABLE_SUID);
 			CyTable settingsTable = createEnrichmentSettingsTable(manager, network);
-			network.getRow(network).set(NET_ENRICHMENT_SETTINGS_TABLE_SUID, settingsTable.getSUID());						
+			netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_SETTINGS_TABLE_SUID, settingsTable.getSUID());
 			return settingsTable;
 		}
 	}
