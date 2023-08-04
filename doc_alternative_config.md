@@ -12,7 +12,7 @@ First, check if the stringApp.props file exists in your ~/CytoscapeConfiguration
 
 ### Get a stringApp properties file
 - Quit Cytoscape if it is running
-- Download the stringApp.props file from [here](stringApp.props) and place it in ~/CytoscapeConfiguration/
+- Download the stringApp.props file from [here](./stringApp.props) and place it in ~/CytoscapeConfiguration/
 - Start Cytoscape
 
 
@@ -20,6 +20,7 @@ First, check if the stringApp.props file exists in your ~/CytoscapeConfiguration
 - Quit Cytoscape if it is running.
 - Open the stringApp.props file in ~/CytoscapeConfiguration/ 
 - Add the following line to it: 
+
 `alternativeCONFIGURI=https\://jensenlab.org/assets/stringapp/string_app_v2_0_0_string11.5.json`
 - Save the file
 - Start Cytoscape
