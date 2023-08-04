@@ -1,0 +1,20 @@
+#Tue Aug 01 16:24:22 CEST 2023
+alternativeCONFIGURI=https\://jensenlab.org/assets/stringapp/string_app_v2_0_0_string11.5.json
+additionalProteins=0
+enrichmentPalette=ColorBrewer Paired colors
+showEnhancedLabels=false
+showSingletons=true
+channelColors=\#ff00ffff|\#ffff00ff|\#ff00ff00|\#ffff0000|\#ff0000ff|\#ffc7ea46|\#ff000000|\#ffa3a1ff
+highlightNeighbors=false
+showGlassBallEffect=true
+showImage=false
+overlapCutoff=0.5
+categoryFilter=
+species=Homo sapiens
+removeOverlap=false
+topTerms=5
+chartType=SPLIT
+defaultConfidence=0.4
+showStringColors=true
+networkType=full STRING network
+maxProteins=100
