@@ -111,12 +111,12 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String STRINGResolveURI = "https://string-db.org/api/";
 	public static String STITCHResolveURI = "http://stitch.embl.de/api/";
 	public static String VIRUSESResolveURI = "http://viruses.string-db.org/cgi/webservice_handler.pl";
-	public static String SpeciesURI = Species.class.getResource("/species_v11.5.tsv").toString();
-	public static String PairsURI = Species.class.getResource("/pairs_v11.5.tsv").toString();
+	public static String SpeciesURI = Species.class.getResource("/species_v12.0.tsv").toString();
+	public static String PairsURI = Species.class.getResource("/pairs_v12.0.tsv").toString();
 	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
-	public static String URI = "https://api11.jensenlab.org/";
-	public static String DATAVERSION = "11.5";
-	public static String OLD_DATAVERSION = "10";
+	public static String URI = "https://api12.jensenlab.org/";
+	public static String DATAVERSION = "12";
+	public static String OLD_DATAVERSION = "11.5";
 	public static String alternativeAPIProperty = "alternativeAPI";
 	public static String alternativeCONFIGURIProperty = "alternativeCONFIGURI";
 	public static String alternativeCONFIGURI = "";
