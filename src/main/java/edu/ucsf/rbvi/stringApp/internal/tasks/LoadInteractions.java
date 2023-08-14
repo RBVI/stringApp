@@ -155,7 +155,7 @@ public class LoadInteractions extends AbstractTask {
 			layoutArgs.put("defaultNodeMass", 10.0);
 			setter.applyTunables(context, layoutArgs);
 			Set<View<CyNode>> nodeViews = new HashSet<>(networkView.getNodeViews());
-			insertTasksAfterCurrentTask(alg.createTaskIterator(networkView, context, nodeViews, "score"));
+			insertTasksAfterCurrentTask(alg.createTaskIterator(networkView, context, nodeViews, ModelUtils.SCORE));
 		} else {
 			ViewUtils.styleNetwork(manager, network, null);
 		}

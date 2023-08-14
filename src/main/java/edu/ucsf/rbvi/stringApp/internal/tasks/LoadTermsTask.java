@@ -177,7 +177,7 @@ public class LoadTermsTask extends AbstractTask {
 				layoutArgs.put("defaultNodeMass", 10.0);
 				setter.applyTunables(context, layoutArgs);
 				Set<View<CyNode>> nodeViews = new HashSet<>(netView.getNodeViews());
-				insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, "score"));
+				insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, ModelUtils.SCORE));
 			}
 		}
 	}

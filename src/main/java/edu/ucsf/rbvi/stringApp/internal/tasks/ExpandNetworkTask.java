@@ -359,7 +359,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		layoutArgs.put("spacing", spacing);
 		setter.applyTunables(context, layoutArgs);
 		// Set<View<CyNode>> nodeViews = new HashSet<>(netView.getNodeViews());
-		insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, "score"));
+		insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, ModelUtils.SCORE));
 	}
 		
 	@ProvidesTitle
