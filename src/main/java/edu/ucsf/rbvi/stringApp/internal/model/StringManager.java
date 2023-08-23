@@ -411,32 +411,32 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	void registerSearchFactories() {
 		// Register our Network search factories
-    {
-      StringSearchTaskFactory stringSearch = new StringSearchTaskFactory(this);
-      Properties propsSearch = new Properties();
-      registrar.registerService(stringSearch, NetworkSearchTaskFactory.class, propsSearch);
-    }
-    {
-      StitchSearchTaskFactory stringSearch = new StitchSearchTaskFactory(this);
-      Properties propsSearch = new Properties();
-      registrar.registerService(stringSearch, NetworkSearchTaskFactory.class, propsSearch);
-    }
-    {
-      PubmedSearchTaskFactory stringSearch = new PubmedSearchTaskFactory(this);
-      Properties propsSearch = new Properties();
-      registrar.registerService(stringSearch, NetworkSearchTaskFactory.class, propsSearch);
-    }
-    {
-      DiseaseSearchTaskFactory stringSearch = new DiseaseSearchTaskFactory(this);
-      Properties propsSearch = new Properties();
-      registrar.registerService(stringSearch, NetworkSearchTaskFactory.class, propsSearch);
-    }
-		
 		{
-      CrossSpeciesSearchTaskFactory xpSearch = new CrossSpeciesSearchTaskFactory(this);
-      Properties propsSearch = new Properties();
-      registrar.registerService(xpSearch, NetworkSearchTaskFactory.class, propsSearch);
-    }
+			CrossSpeciesSearchTaskFactory stringSearch = new CrossSpeciesSearchTaskFactory(this);
+			Properties propsSearch = new Properties();
+			registrar.registerService(stringSearch, NetworkSearchTaskFactory.class, propsSearch);
+		}
+		{
+			PubmedSearchTaskFactory stringSearch = new PubmedSearchTaskFactory(this);
+			Properties propsSearch = new Properties();
+			registrar.registerService(stringSearch, NetworkSearchTaskFactory.class, propsSearch);
+		}
+		{
+			DiseaseSearchTaskFactory stringSearch = new DiseaseSearchTaskFactory(this);
+			Properties propsSearch = new Properties();
+			registrar.registerService(stringSearch, NetworkSearchTaskFactory.class, propsSearch);
+		}
+		{
+			StitchSearchTaskFactory stringSearch = new StitchSearchTaskFactory(this);
+			Properties propsSearch = new Properties();
+			registrar.registerService(stringSearch, NetworkSearchTaskFactory.class, propsSearch);
+		}
+		{
+			StringSearchTaskFactory stringSearch = new StringSearchTaskFactory(this);
+			Properties propsSearch = new Properties();
+			registrar.registerService(stringSearch, NetworkSearchTaskFactory.class, propsSearch);
+		}
+
 	}
 
 	
