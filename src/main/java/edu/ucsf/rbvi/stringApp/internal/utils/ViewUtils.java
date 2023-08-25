@@ -522,15 +522,16 @@ public class ViewUtils {
 		return true;
 	}
 
-	private static void updateColorMapHost(StringManager manager, VisualStyle style, CyNetwork net, List<String> originalSpiecesList) {
+	private static void updateColorMapHost(StringManager manager, VisualStyle style, CyNetworkView view, List<String> originalSpiecesList) {
 		VisualMappingFunctionFactory discreteFactory = manager
 				.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
 
 		// get previous mapping
 		DiscreteMapping<String, Color> dMapping = (DiscreteMapping) style
 				.getVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
+
 		// get network species
-		List<String> species = ModelUtils.getAllNetSpecies(net);
+		List<String> species = ModelUtils.getAllNetSpecies(view.getModel());
 
 		// save previous color mapping
 		Map<String, Color> mapValues = new HashMap<String, Color>();
@@ -565,6 +566,7 @@ public class ViewUtils {
 		}
 		
 		style.addVisualMappingFunction(dMapping);
+		style.apply(view);
 	}
 
 	public static Color getRandomColor() {
@@ -579,8 +581,6 @@ public class ViewUtils {
 			List<String> speciesList) {
 		// manager.flushEvents();
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
-		VisualMappingFunctionFactory discreteFactory = manager
-				.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
 
 		VisualStyle style = null;
 	 	if (view != null)
@@ -610,7 +610,7 @@ public class ViewUtils {
 			style = stringStyle;
 		}
 
-		updateColorMapHost(manager, style, net, speciesList);
+		updateColorMapHost(manager, style, view, speciesList);
 
 		if (view != null)
 			vmm.setVisualStyle(style, view);
