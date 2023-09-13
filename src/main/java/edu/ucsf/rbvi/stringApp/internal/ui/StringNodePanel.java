@@ -150,7 +150,6 @@ public class StringNodePanel extends AbstractStringPanel {
 				public void itemStateChanged(ItemEvent e) {
 					if (updating) return;
 					if (enableGlass.isSelected()) {
-						System.out.println("Setting new node effect to false ");
 						manager.execute(
 							manager.getShowNewNodeEffectTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), false);
 						manager.execute(
@@ -158,7 +157,6 @@ public class StringNodePanel extends AbstractStringPanel {
 					} else {
 						manager.execute(
 							manager.getShowGlassBallEffectTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), false);
-						System.out.println("Setting new node effect to "+stringColors.isSelected());
 						manager.execute(
 							manager.getShowNewNodeEffectTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), stringColors.isSelected());
 					}
@@ -205,11 +203,9 @@ public class StringNodePanel extends AbstractStringPanel {
 					ViewUtils.hideStringColors(manager, manager.getCurrentNetworkView(), stringColors.isSelected());
 
 					if (!enableGlass.isSelected() && stringColors.isSelected()) {
-						System.out.println("Setting new node effect to true");
 						manager.execute(
 							manager.getShowNewNodeEffectTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), true);
 					} else {
-						System.out.println("Setting new node effect to false");
 						manager.execute(
 							manager.getShowNewNodeEffectTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), false);
 					}

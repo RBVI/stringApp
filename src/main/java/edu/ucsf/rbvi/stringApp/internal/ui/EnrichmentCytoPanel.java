@@ -805,6 +805,8 @@ public class EnrichmentCytoPanel extends JPanel
 					.getValueAt(currentTable.convertRowIndexToModel(i), EnrichmentTerm.genesColumn);
 			Integer termBG = (Integer) currentTable.getModel()
 					.getValueAt(currentTable.convertRowIndexToModel(i), EnrichmentTerm.bgColumn);
+			Color termColor = (Color) currentTable.getModel()
+					.getValueAt(currentTable.convertRowIndexToModel(i), EnrichmentTerm.chartColumnCol);
 			// create node
 			CyNode node = network.addNode();
 			// set node infos
@@ -829,6 +831,14 @@ public class EnrichmentCytoPanel extends JPanel
 							+ network.getRow(stringNode).get(CyNetwork.NAME, String.class));
 					network.getRow(edge).set(CyEdge.INTERACTION, "enrichment");
 				}
+			}
+
+			if (termColor != null) {
+				manager.flushEvents();
+				CyNetworkView view = manager.getCurrentNetworkView();
+				view.updateView();
+				View<CyNode> nodeView = view.getNodeView(node);
+				nodeView.setLockedValue(BasicVisualLexicon.NODE_FILL_COLOR, termColor);
 			}
 		}
 	}

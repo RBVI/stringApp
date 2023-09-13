@@ -478,15 +478,15 @@ public class ViewUtils {
 		
 		// Set the node colors around the color wheel
 		float h = 0.0f;
-		float s = 1.0f;
+		float s = 0.7f;
 		float stepSize = 1.0f/(float)network.getNodeCount();
 		for (CyNode node: network.getNodeList()) {
-			Color c = Color.getHSBColor(h, s, 1.0f);
+			Color c = Color.getHSBColor(h, s, 0.9f);
 			h += stepSize;
-			if (s == 1.0f)
-				s = 0.5f;
+			if (s == 0.7f)
+				s = 0.4f;
 			else
-				s = 1.0f;
+				s = 0.7f;
 			String name = network.getRow(node).get(CyNetwork.NAME, String.class);
 			dMapping.putMapValue(name, c);
 		}
