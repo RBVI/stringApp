@@ -62,6 +62,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowNewNodeEffectTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowPublicationsPanelAction;
@@ -739,6 +740,29 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
 			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");						
 			registerService(bc, showGlassBallEffectTF, NetworkViewTaskFactory.class, props);
+
+		}
+
+		{
+			// Register our "show glass ball effect" toggle
+			// ShowNewNodeEffectPanelAction sgbea = new ShowNewNodeEffectPanelAction("Enable STRING glass balls effect", manager);
+			// registerService(bc, sgbea, CyAction.class);
+			
+			ShowNewNodeEffectTaskFactory showNewNodeEffectTF = new ShowNewNodeEffectTaskFactory(manager);
+			manager.setShowNewNodeEffectTaskFactory(showNewNodeEffectTF);
+			//showGlassBallEffectTF.reregister();
+			
+			/*
+			// Create command version and register it
+			Properties props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "enable glass");
+			props.setProperty(COMMAND_DESCRIPTION, "Enable or disable the STRING glass ball effect on the nodes");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, "Enable or disable the STRING glass ball effect on the nodes.");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");						
+			registerService(bc, showGlassBallEffectTF, NetworkViewTaskFactory.class, props);
+			*/
 
 		}
 

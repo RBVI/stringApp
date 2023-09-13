@@ -26,6 +26,7 @@ public class StringLayer implements Cy2DGraphicLayer {
 	StringManager manager;
 	Rectangle2D bounds;
 	BufferedImage image;
+	boolean useNewNodeEffect;
 
 	public StringLayer(StringManager manager, BufferedImage image) {
 		this.manager = manager;
@@ -34,6 +35,8 @@ public class StringLayer implements Cy2DGraphicLayer {
 			bounds = new Rectangle2D.Double(0.0, 0.0, (double)image.getWidth(), (double)image.getHeight());
 		else
 			bounds = new Rectangle2D.Double(0.0, 0.0, 150, 150);
+
+		useNewNodeEffect = manager.showNewNodeEffect();
 	}
 
 	public void draw(Graphics2D g, Shape shape,
@@ -49,10 +52,10 @@ public class StringLayer implements Cy2DGraphicLayer {
 		if (network.getRow(view.getModel()).get(CyNetwork.SELECTED, Boolean.class))
 			selected = true;
 		if (usePill) {
-			DrawPill ds = new DrawPill((Color)fill, (Color)background, image, shape, selected);
+			DrawPill ds = new DrawPill((Color)fill, (Color)background, image, shape, selected, useNewNodeEffect);
 			ds.draw(g, bounds);
 		} else {
-			DrawSphere ds = new DrawSphere((Color)fill, (Color)background, image, shape, selected);
+			DrawSphere ds = new DrawSphere((Color)fill, (Color)background, image, shape, selected, useNewNodeEffect);
 			ds.draw(g, bounds);
 		}
 	}

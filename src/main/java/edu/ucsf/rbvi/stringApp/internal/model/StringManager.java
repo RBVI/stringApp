@@ -59,6 +59,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.SetConfidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowNewNodeEffectTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowPublicationsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
@@ -94,6 +95,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private ShowEnrichmentPanelTaskFactory enrichmentTaskFactory;
 	private ShowPublicationsPanelTaskFactory publicationsTaskFactory;
 	private ShowGlassBallEffectTaskFactory glassBallTaskFactory;
+	private ShowNewNodeEffectTaskFactory newNodeEffectTaskFactory;
 	private ShowResultsPanelTaskFactory resultsPanelTaskFactory;
 
 	private Boolean haveChemViz = null;
@@ -139,6 +141,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private boolean showImage = true;
 	private boolean showEnhancedLabels = true;
 	private boolean showGlassBallEffect = true;
+	private boolean showNewNodeEffect = true;
 	private boolean showStringColors = true;
 	private boolean showSingletons = true;
 	private boolean highlightNeighbors = false;
@@ -161,6 +164,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String ShowStructureImages = "showStructureImages";
 	public static String ShowEnhancedLabels = "showEnhancedLabels";
 	public static String ShowGlassBallEffect = "showGlassBallEffect";
+	public static String ShowNewNodeEffect = "showNewNodeEffect";
 	public static String ShowStringColors = "showStringColors";
 	public static String ShowSingletons = "showSingletons";
 	public static String HighlightNeighbors = "highlightNeighbors";
@@ -250,6 +254,9 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		}
 		if (ModelUtils.hasProperty(configProps, ShowGlassBallEffect)) {
 			setShowGlassBallEffect(ModelUtils.getBooleanProperty(configProps,ShowGlassBallEffect));
+		}
+		if (ModelUtils.hasProperty(configProps, ShowNewNodeEffect)) {
+			setShowNewNodeEffect(ModelUtils.getBooleanProperty(configProps,ShowNewNodeEffect));
 		}
 		if (ModelUtils.hasProperty(configProps, ShowSingletons)) {
 			setShowSingletons(ModelUtils.getBooleanProperty(configProps,ShowSingletons));
@@ -554,6 +561,12 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	
 	public void setShowGlassBallEffect(boolean set) { 
 		showGlassBallEffect = set; 
+	}
+
+	public boolean showNewNodeEffect() { return showNewNodeEffect; }
+	
+	public void setShowNewNodeEffect(boolean set) { 
+		showNewNodeEffect = set; 
 	}
 
 	public boolean showStringColors() { return showStringColors; }
@@ -995,6 +1008,14 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	public ShowGlassBallEffectTaskFactory getShowGlassBallEffectTaskFactory() {
 		return glassBallTaskFactory;
+	}
+
+	public void setShowNewNodeEffectTaskFactory(ShowNewNodeEffectTaskFactory factory) {
+		newNodeEffectTaskFactory = factory;		
+	}
+
+	public ShowNewNodeEffectTaskFactory getShowNewNodeEffectTaskFactory() {
+		return newNodeEffectTaskFactory;
 	}
 	
 	public void setShowEnrichmentPanelTaskFactory(ShowEnrichmentPanelTaskFactory factory) {

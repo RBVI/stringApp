@@ -26,16 +26,18 @@ public class DrawPill {
 	Color background;
 	Shape nodeShape;
 	boolean selected = false;
+	boolean newNodeEffect = false;
 	float xScale = 1.0f;
 	float yScale = 1.0f;
 	float xOff = 0.0f;
 	float yOff = 0.0f;
 
-	public DrawPill(Color color, Color background, BufferedImage image, Shape nodeShape, boolean selected) {
+	public DrawPill(Color color, Color background, BufferedImage image, Shape nodeShape, boolean selected, boolean newNodeEffect) {
 		this.color = color;
 		this.background = background;
 		this.image = image;
 		this.selected = selected;
+		this.newNodeEffect = newNodeEffect;
 		this.nodeShape = nodeShape;
 	}
 
