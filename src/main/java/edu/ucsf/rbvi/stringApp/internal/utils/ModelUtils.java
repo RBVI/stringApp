@@ -922,7 +922,6 @@ public class ModelUtils {
 		}
 	}
 
-	// TODO: [N] Make sure it works once we have all URLs in v12
 	public static void fetchImage(StringManager manager, CyNetwork network, CyNode node) {
 		CyRow row = network.getRow(node);
 		String imageURL = row.get(IMAGE, String.class);
@@ -930,7 +929,6 @@ public class ModelUtils {
 			// ignore
 			return;
 		}
-		imageURL = imageURL.substring(1, imageURL.length()-1);
 		String encodedImage = "string:";		
 		try {
 			URL url = new URL(imageURL);
