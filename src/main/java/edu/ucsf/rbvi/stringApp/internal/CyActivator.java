@@ -41,6 +41,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.DiseaseSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExpandNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExportPublicationsTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.FetchStructureImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.FilterEnrichmentTableTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetClusterEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
@@ -181,7 +182,6 @@ public class CyActivator extends AbstractCyActivator {
 		{
 			GetNetworkTaskFactory getNetwork = new GetNetworkTaskFactory(manager, "disease");
 			Properties props = new Properties();
-			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "disease query");
 			props.setProperty(COMMAND_DESCRIPTION, 
 										    "Create a STRING network by finding proteins associated with a disease");
@@ -679,6 +679,20 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(COMMAND_EXAMPLE_JSON, "[{\"taxonomyId\": 9606, \"scientificName\": \"Homo sapiens\", \"abbreviatedName\":\"Homo sapiens\"}]");
 			// propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 			registerService(bc, getSpeciesDetailed, TaskFactory.class, props);
+		}
+
+		FetchStructureImagesTaskFactory fetchImagesTask = new FetchStructureImagesTaskFactory(manager);
+		{
+			Properties props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "fetch images");
+			props.setProperty(COMMAND_DESCRIPTION, 
+			                            "");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, 
+			                            "");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
+			registerService(bc, fetchImagesTask, NetworkTaskFactory.class, props);
 		}
 
 		{

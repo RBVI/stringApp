@@ -1,11 +1,12 @@
 package edu.ucsf.rbvi.stringApp.internal.utils;
 
-import java.awt.Color;
-import java.awt.color.ICC_ColorSpace;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -79,6 +80,7 @@ public class ModelUtils {
 	public static String ID = "@id";
 	public static String DESCRIPTION = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "description";
 	public static String DISEASE_SCORE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "disease score";
+	public static String IMAGE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "image url";
 	public static String NAMESPACE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "namespace";
 	public static String QUERYTERM = "query term";
 	public static String SEQUENCE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "sequence";
@@ -574,6 +576,10 @@ public class ModelUtils {
 		getJSON(manager, species, newNetwork, nodeMap, nodeNameMap, queryTermMap, null, results,
 				useDATABASE, netType);
 
+		// TODO: [N] choose appropriate cutoff here! And add others where needed
+		if (newNetwork.getNodeCount() <= 100)
+			fetchImages(manager, newNetwork);
+		
 		manager.addNetwork(newNetwork);
 		return newNetwork;
 	}
@@ -835,6 +841,7 @@ public class ModelUtils {
 			createColumnIfNeeded(network.getDefaultNodeTable(), String.class, SMILES);
 			createColumnIfNeeded(network.getDefaultNodeTable(), String.class, CV_STYLE);
 		}
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, IMAGE);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STYLE);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, ELABEL_STYLE);
 
@@ -907,6 +914,52 @@ public class ModelUtils {
 			}
 		}
 
+	}
+	
+	public static void fetchImages(StringManager manager, CyNetwork network) {
+		for (CyNode node : network.getNodeList()) {
+			fetchImage(manager, network, node);
+		}
+	}
+
+	// TODO: [N] Make sure it works once we have all URLs in v12
+	public static void fetchImage(StringManager manager, CyNetwork network, CyNode node) {
+		CyRow row = network.getRow(node);
+		String imageURL = row.get(IMAGE, String.class);
+		if (imageURL == null) {
+			// ignore
+			return;
+		}
+		imageURL = imageURL.substring(1, imageURL.length()-1);
+		String encodedImage = "string:";		
+		try {
+			URL url = new URL(imageURL);
+
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			InputStream is = null;
+			try {
+			  is = url.openStream ();
+			  byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
+			  int n;
+
+			  while ( (n = is.read(byteChunk)) > 0 ) {
+			    baos.write(byteChunk, 0, n);
+			  }
+			}
+			catch (IOException e) {
+			  System.err.printf ("Failed while reading bytes from %s: %s", url.toExternalForm(), e.getMessage());
+			  e.printStackTrace ();
+			  // Perform any other exception handling that's appropriate.
+			} finally {
+				if (is != null) { 
+					is.close(); 
+				}
+			}
+	        encodedImage += Base64.getEncoder().encodeToString(baos.toByteArray());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
+		row.set(STYLE, encodedImage);
 	}
 	
 	public static String formatForColumnNamespace(String columnName) {
@@ -1049,9 +1102,11 @@ public class ModelUtils {
 			} else if (key.equals("canonical")) {
 				row.set(CANONICAL, (String) nodeObj.get("canonical"));
 			} else if (key.equals(SEQUENCE)) {
-				network.getRow(newNode).set(SEQUENCE, (String) nodeObj.get(SEQUENCE));
+				row.set(SEQUENCE, (String) nodeObj.get(SEQUENCE));
 			} else if (key.equals("image")) {
 				row.set(STYLE, "string:" + nodeObj.get("image"));
+			} else if (key.equals("imageurl"))  {
+				row.set(IMAGE, (String) nodeObj.get("imageurl"));
 			} else if (key.equals(SMILES)) {
 				if (manager.haveChemViz() || (nodeObj.containsKey("image") && nodeObj.get("image").equals("image:")))
 					row.set(CV_STYLE, "chemviz:" + nodeObj.get(SMILES));
