@@ -687,9 +687,9 @@ public class CyActivator extends AbstractCyActivator {
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "fetch images");
 			props.setProperty(COMMAND_DESCRIPTION, 
-			                            "");
+			                            "Fetch protein structures for all nodes in the network.");
 			props.setProperty(COMMAND_LONG_DESCRIPTION, 
-			                            "");
+			                            "Fetch protein structures for all nodes in the network and encode them to make them work with the STRING style.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
 			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 			registerService(bc, fetchImagesTask, NetworkTaskFactory.class, props);
