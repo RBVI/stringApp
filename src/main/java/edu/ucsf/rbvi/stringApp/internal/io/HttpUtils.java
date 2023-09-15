@@ -122,29 +122,33 @@ public class HttpUtils {
 			} catch (Exception parseFailure) {
 				// Get back to the start of the error
 				reader.reset();
-				StringBuilder errorString = new StringBuilder();
-				String line;
-				try {
-					while ((line = reader.readLine()) != null) {
-						// System.out.println(line);
-						errorString.append(line);
-					}
-				} catch (Exception ioe) {
+				String[] errorMessage = readErrorStream(connection.getInputStream(), manager);
+				
+				//StringBuilder errorString = new StringBuilder();
+				//String line;
+				//try {
+				//	while ((line = reader.readLine()) != null) {
+				//		System.out.println("parsed error message: " + line);
+				//		errorString.append(line);
+				//}
+				//} catch (Exception ioe) {
 					// ignore
-				}
-				manager.error("Exception reading JSON from STRING server: \n"+ parseFailure.getMessage()+"\n Text: "+errorString);
-				System.out.println("Exception reading JSON from STRING server: \n"+ parseFailure.getMessage()+"\n Text: "+errorString);
-				throw new ConnectionException("Exception reading JSON from STRING server: \n"+ parseFailure.getMessage());
+				//}
+				manager.error("Exception reading JSON from STRING server: \n"+ parseFailure.getMessage()+"\n Text: "+errorMessage[1]);
+				System.out.println("Exception reading JSON from STRING server: \n"+ parseFailure.getMessage()+"\n Text: "+errorMessage[1]);
+				throw new ConnectionException("Exception reading JSON from STRING server: \n"+ parseFailure.getMessage()+"\n Text: "+errorMessage[1]);
 			}
 
 	 	} catch(UnknownHostException e) {
 			e.printStackTrace();
 			throw new ConnectionException("Unknown host: " + e.getMessage());
+		} catch (UnknownSpeciesException e) {
+			throw new UnknownSpeciesException(e.getMessage()); 
 		} catch (Exception e) {
 			// e.printStackTrace();
-			manager.error("Unexpected error from server: \n" + e.getMessage());
-			System.out.println("Unexpected error from server: \n" + e.getMessage());
-			throw new ConnectionException("Unexpected error from server: \n" + e.getMessage());
+			manager.error("Unexpected error from server: \n <html>" + e.getMessage() + "</html>");
+			System.out.println("Unexpected error from server: \n <html>" + e.getMessage() + "</html>");
+			throw new ConnectionException("Unexpected error from server: \n <html>" + e.getMessage() + "</html>");
 		} finally {
 		}
 		return jsonObject;
@@ -209,14 +213,15 @@ public class HttpUtils {
 			return executeWithRedirect(manager, connection.getHeaderField("Location"), queryMap);
 		case HttpURLConnection.HTTP_INTERNAL_ERROR:
 		case HttpURLConnection.HTTP_BAD_REQUEST:
-			readStream(connection.getErrorStream(), manager);
-			return connection;
+			String[] errorMessage = readErrorStream(connection.getErrorStream(), manager);
+			if (errorMessage[0].equals("unknown organism"))
+				throw new UnknownSpeciesException(errorMessage[1]);
 		}
 		
 		return connection;
 	}
 
-	private static String readStream(InputStream stream, StringManager manager) throws Exception {
+	private static String[] readErrorStream(InputStream stream, StringManager manager) throws Exception {
 	    StringBuilder builder = new StringBuilder();
 	    try (BufferedReader in = new BufferedReader(new InputStreamReader(stream))) {
 	        String line;
@@ -225,9 +230,21 @@ public class HttpUtils {
 	        }
 	        in.close();
 	    }
-	    System.out.println("JSON error response: " + builder.toString());
-	    manager.error("JSON error response: " + builder.toString());
-	    return builder.toString();
+	    //System.out.println("JSON error response: " + builder.toString());
+	    //manager.error("JSON error response: " + builder.toString());
+
+		JSONParser parser = new JSONParser();
+		JSONObject jsonObject = (JSONObject)parser.parse(builder.toString());
+        String errorType = (String) jsonObject.get("Error");
+		String errorMessage = (String) jsonObject.get("ErrorMessage");
+		return new String[] {errorType, errorMessage};
 	}
 	
+	public static class UnknownSpeciesException extends ConnectionException {
+		
+		public UnknownSpeciesException(String message) {
+			super(message);
+		}
+	}
 }
+

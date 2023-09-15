@@ -17,6 +17,7 @@ import org.cytoscape.model.CyTableManager;
 import org.cytoscape.util.color.Palette;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils.UnknownSpeciesException;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
@@ -364,6 +365,7 @@ public class StringNetwork {
 	                                                         String useDATABASE, boolean includeViruses) throws ConnectionException {
 		// always call the string API first to resolve all potential protein IDs
 		// new API 
+
 		String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/get_string_ids";
 		// String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/resolveList";
 		Map<String, String> args = new HashMap<>();
@@ -373,10 +375,29 @@ public class StringNetwork {
 		args.put("caller_identity", StringManager.CallerIdentity);
 		manager.info("URL: "+url+"?species="+Integer.toString(taxon)+"&caller_identity="+StringManager.CallerIdentity+"&identifiers="+encTerms);
 		// Get the results
-		// System.out.println("Getting STRING term resolution");
-		JSONObject results = HttpUtils.postJSON(url, args, manager);
-		// System.out.println("Results: "+results);
-
+		JSONObject results = null;
+		try {
+			results = HttpUtils.postJSON(url, args, manager);
+		} catch (ConnectionException ex) {
+			if (ex instanceof UnknownSpeciesException && manager.isVirusesEnabled() && annotations.size() == 0 && includeViruses) {
+				// also call the viruses API
+				// http://viruses.string-db.org/cgi/webservice_handler.pl?species=11320&identifiers=NS1_I34A1
+				// &caller_identity=string_app_v1_1_1&output=json&request=resolveList
+				url = manager.getResolveURL(Databases.VIRUSES.getAPIName());
+				args = new HashMap<>();
+				args.put("species", Integer.toString(taxon));
+				args.put("identifiers", encTerms);
+				args.put("caller_identity", StringManager.CallerIdentity);
+				args.put("output", "json");
+				args.put("request", "resolveList");
+				manager.info("URL:" + url + "?species=" + Integer.toString(taxon) + "&caller_identity="
+						+ StringManager.CallerIdentity + "&identifiers=" + HttpUtils.truncate(encTerms));
+				// Get the results
+				// System.out.println("Getting VIRUSES term resolution");
+				results = HttpUtils.postJSON(url, args, manager);
+			}
+		}
+		
 		if (results != null) {
 			// System.out.println("Got results");
 			annotations = Annotation.getAnnotations(results, encTerms, annotations);
@@ -402,29 +423,6 @@ public class StringNetwork {
 			}
 			results = null;
 		} 
-		
-		// also call the viruses API
-		if (manager.isVirusesEnabled() && annotations.size() == 0 && includeViruses) {
-			// http://viruses.string-db.org/cgi/webservice_handler.pl?species=11320&identifiers=NS1_I34A1
-			// &caller_identity=string_app_v1_1_1&output=json&request=resolveList
-			url = manager.getResolveURL(Databases.VIRUSES.getAPIName());
-			args = new HashMap<>();
-			args.put("species", Integer.toString(taxon));
-			args.put("identifiers", encTerms);
-			args.put("caller_identity", StringManager.CallerIdentity);
-			args.put("output", "json");
-			args.put("request", "resolveList");
-			manager.info("URL:" + url + "?species=" + Integer.toString(taxon) + "&caller_identity="
-					+ StringManager.CallerIdentity + "&identifiers=" + HttpUtils.truncate(encTerms));
-			// Get the results
-			// System.out.println("Getting VIRUSES term resolution");
-			results = HttpUtils.postJSON(url, args, manager);
-
-			if (results != null) {
-				updateAnnotations(results, encTerms);
-			}
-			results = null;
-		 }
 		
 		return annotations;
 	}
