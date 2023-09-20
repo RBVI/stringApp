@@ -80,7 +80,7 @@ public class ModelUtils {
 	public static String ID = "@id";
 	public static String DESCRIPTION = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "description";
 	public static String DISEASE_SCORE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "disease score";
-	public static String IMAGE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "image url";
+	public static String IMAGE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "imageurl";
 	public static String NAMESPACE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "namespace";
 	public static String QUERYTERM = "query term";
 	public static String SEQUENCE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "sequence";
@@ -929,7 +929,7 @@ public class ModelUtils {
 			// ignore
 			return;
 		}
-		String encodedImage = "string:";		
+		String encodedImage = "string:data:image/png;base64,";		
 		try {
 			URL url = new URL(imageURL);
 
