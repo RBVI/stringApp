@@ -156,7 +156,14 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		// get background nodes
 		String bgNodes = null;
 		if (!background.getSelectedValue().equals("genome")) {
-			bgNodes = getBackground(stringNetworkMap.get(background.getSelectedValue()), network);
+			CyNetwork bgNetwork = stringNetworkMap.get(background.getSelectedValue());
+			if (analyzedNodes.containsAll(bgNetwork.getNodeList())) {
+				monitor.showMessage(Level.ERROR,
+						"Task cannot be performed. Nodes from the foreground are the same as the background.");
+				showError("Task cannot be performed. Nodes from the foreground are the same as the background.");
+				return;
+			}
+			bgNodes = getBackground(bgNetwork, network);
 			if (bgNodes.equals("")) {
 				monitor.showMessage(Level.ERROR,
 						"Task cannot be performed. Nodes from the foreground are missing in the background.");
