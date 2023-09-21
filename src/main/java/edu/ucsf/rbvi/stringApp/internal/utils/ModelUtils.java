@@ -578,7 +578,7 @@ public class ModelUtils {
 
 		// TODO: [N] choose appropriate cutoff here! And add others where needed
 		if (newNetwork.getNodeCount() <= 100)
-			fetchImages(manager, newNetwork);
+			fetchImages(newNetwork);
 		
 		manager.addNetwork(newNetwork);
 		return newNetwork;
@@ -916,23 +916,23 @@ public class ModelUtils {
 
 	}
 	
-	public static void fetchImages(StringManager manager, CyNetwork network) {
+	public static void fetchImages(CyNetwork network) {
 		for (CyNode node : network.getNodeList()) {
-			fetchImage(manager, network, node);
+			fetchImage(network, node);
 		}
 	}
 
-	public static void fetchImage(StringManager manager, CyNetwork network, CyNode node) {
+	public static void fetchImage(CyNetwork network, CyNode node) {
 		CyRow row = network.getRow(node);
 		String imageURL = row.get(IMAGE, String.class);
 		if (imageURL == null) {
 			// ignore
 			return;
 		}
-		String encodedImage = "string:data:image/png;base64,";		
+		String encodedImage = "string:data:image/png;base64,";
 		try {
 			URL url = new URL(imageURL);
-
+			
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			InputStream is = null;
 			try {

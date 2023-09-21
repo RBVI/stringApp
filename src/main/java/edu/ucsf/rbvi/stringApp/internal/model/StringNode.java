@@ -2,6 +2,7 @@ package edu.ucsf.rbvi.stringApp.internal.model;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -39,6 +40,10 @@ public class StringNode {
 
 	public String getStringID() {
 		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.STRINGID);
+	}
+
+	public String getStructureImageURL() {
+		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.IMAGE);
 	}
 
 	public boolean isStringNode() {
@@ -163,7 +168,16 @@ public class StringNode {
 
 		String input = ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.STYLE);
 		if (input == null) return null;
-		if (input.startsWith("string:data:")) {
+		if (input.equals("string:")) {
+			try {
+				bi = ImageIO.read(new URL(getStructureImageURL()));
+				return bi;
+			} catch (Exception e) {
+				// ignore
+				bi = null;
+				e.printStackTrace();
+			}
+		} else if (input.startsWith("string:data:")) {
 			input = input.substring(input.indexOf(","));
 		}
 		byte[] byteStream = Base64.decodeBase64(input);

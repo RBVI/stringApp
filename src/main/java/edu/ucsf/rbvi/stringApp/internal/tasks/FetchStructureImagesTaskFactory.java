@@ -22,7 +22,7 @@ public class FetchStructureImagesTaskFactory extends AbstractNetworkTaskFactory 
 	}
 
 	public TaskIterator createTaskIterator() {
-		return new TaskIterator(new FetchStructureImagesTask(manager, manager.getCurrentNetwork()));
+		return new TaskIterator(new FetchStructureImagesTask(manager.getCurrentNetwork()));
 	}
 
 	public boolean isReady(CyNetwork network) {
@@ -33,7 +33,7 @@ public class FetchStructureImagesTaskFactory extends AbstractNetworkTaskFactory 
 	}
 
 	public TaskIterator createTaskIterator(CyNetwork network) {
-		return new TaskIterator(new FetchStructureImagesTask(manager, network));
+		return new TaskIterator(new FetchStructureImagesTask(network));
 	}
 
 	public boolean isReady(CyNetworkView netView) {
@@ -44,6 +44,6 @@ public class FetchStructureImagesTaskFactory extends AbstractNetworkTaskFactory 
 	}
 
 	public TaskIterator createTaskIterator(CyNetworkView netView) {
-		return new TaskIterator(new FetchStructureImagesTask(manager, netView.getModel()));
+		return new TaskIterator(new FetchStructureImagesTask(netView.getModel()));
 	}
 }

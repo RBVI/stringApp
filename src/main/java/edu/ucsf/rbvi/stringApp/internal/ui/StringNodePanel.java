@@ -601,22 +601,20 @@ public class StringNodePanel extends AbstractStringPanel {
 
 		}
 
-		if (sNode.getStructureImage() != null) {
+		Image img = sNode.getStructureImage();
+		if (img != null) {
 			JLabel lbl = new JLabel("Structure");
 			lbl.setFont(labelFont);
 			lbl.setBorder(BorderFactory.createEmptyBorder(10,2,5,0));
 			panel.add(lbl, c.anchor("west").down().expandHoriz());
 
 			// Now add our image
-			Image img = sNode.getStructureImage();
-			if (img != null) {
-				Image scaledImage = img.getScaledInstance(200,200,Image.SCALE_SMOOTH);
-				JLabel label = new JLabel(new ImageIcon(scaledImage));
-				// label.setPreferredSize(new Dimension(100,100));
-				// label.setMinimumSize(new Dimension(100,100));
-				label.setAlignmentX(Component.LEFT_ALIGNMENT);
-				panel.add(label, c.anchor("west").down().noExpand());
-			}
+			Image scaledImage = img.getScaledInstance(200,200,Image.SCALE_SMOOTH);
+			JLabel label = new JLabel(new ImageIcon(scaledImage));
+			// label.setPreferredSize(new Dimension(100,100));
+			// label.setMinimumSize(new Dimension(100,100));
+			label.setAlignmentX(Component.LEFT_ALIGNMENT);
+			panel.add(label, c.anchor("west").down().noExpand());
 		}
 
 		String name = sNode.getDisplayName();
