@@ -680,13 +680,16 @@ public class StringNodePanel extends AbstractStringPanel {
 		EasyGBC c = new EasyGBC();
 		ViewUtils.clearHighlight(manager, manager.getCurrentNetworkView());
 
-		for (CyNode node: nodes) {
-			JPanel newPanel = createNodePanel(node);
-			newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
-
-			nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
+		// TODO: [Release] Is this an OK cutoff for how many node panels to show?
+		if (nodes.size() <= ModelUtils.MAX_NODE_PANELS) {
+			for (CyNode node: nodes) {
+				JPanel newPanel = createNodePanel(node);
+				newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
+	
+				nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
+			}
 		}
-
+		
 		if(manager.highlightNeighbors()) {
 			doHighlight(manager.getCurrentNetworkView());
 		} else {

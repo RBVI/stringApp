@@ -83,6 +83,7 @@ public class ShowImagesTask extends AbstractTask implements ObservableTask {
 				ViewUtils.updateChemVizPassthrough(manager, netView, false);
 		} else {
 			manager.setShowImage(true);
+			// TODO: [Release] In which cases do we want to fetch the images?
 			// System.out.println("show images");
 			if (ModelUtils.isStitchNetwork(netView.getModel()))
 				ViewUtils.updateChemVizPassthrough(manager, netView, true);

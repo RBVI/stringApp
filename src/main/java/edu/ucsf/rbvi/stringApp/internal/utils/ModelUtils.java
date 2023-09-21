@@ -157,6 +157,10 @@ public class ModelUtils {
 	public static int DEF_VIEW_THRESHOLD = 3000;
 	public static String VIEW_THRESHOLD = "viewThreshold";
 	
+	public static int MAX_NODES_STRUCTURE_DISPLAY = 100;
+	public static int MAX_NODE_PANELS = 25;
+	
+	
 	// Enrichment node information
 	public static String ENRICHMENT_NAMESPACE = "enrichment";
 	public static String NODE_ENRICHMENT_FDR = ENRICHMENT_NAMESPACE + NAMESPACE_SEPARATOR + "FDR value";
@@ -576,9 +580,13 @@ public class ModelUtils {
 		getJSON(manager, species, newNetwork, nodeMap, nodeNameMap, queryTermMap, null, results,
 				useDATABASE, netType);
 
-		// TODO: [N] choose appropriate cutoff here! And add others where needed
-		if (newNetwork.getNodeCount() <= 100)
+		// TODO: [Release] What should be the cutoff for max number of nodes with structure displayed?
+		if (newNetwork.getNodeCount() <= MAX_NODES_STRUCTURE_DISPLAY) {
 			fetchImages(newNetwork);
+		} else {
+			// TODO: [Release] How to set Show images to false in the node panel? 
+			manager.setShowImage(false);
+		}
 		
 		manager.addNetwork(newNetwork);
 		return newNetwork;
