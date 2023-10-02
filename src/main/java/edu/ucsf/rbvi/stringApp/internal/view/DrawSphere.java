@@ -23,18 +23,18 @@ public class DrawSphere {
 	Color background;
 	Shape nodeShape;
 	boolean selected = false;
-	boolean newNodeEffect = false;
+	boolean flatNodeDesign = false;
 	float xScale = 1.0f;
 	float yScale = 1.0f;
 	float xOff = 0.0f;
 	float yOff = 0.0f;
 
-	public DrawSphere(Color color, Color background, BufferedImage image, Shape nodeShape, boolean selected, boolean newNodeEffect) {
+	public DrawSphere(Color color, Color background, BufferedImage image, Shape nodeShape, boolean selected, boolean flatNodeDesign) {
 		this.color = color;
 		this.background = background;
 		this.image = image;
 		this.selected = selected;
-		this.newNodeEffect = newNodeEffect;
+		this.flatNodeDesign = flatNodeDesign;
 		this.nodeShape = nodeShape;
 	}
 
@@ -60,7 +60,7 @@ public class DrawSphere {
 			fillOval(g2, xOff, yOff, xScale*40f, yScale*40f);
 		}
 
-		if (newNodeEffect) {
+		if (flatNodeDesign) {
 			if (selected)
 				color = Color.YELLOW;
 			g2.setPaint(color);

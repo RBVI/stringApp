@@ -13,10 +13,10 @@ import org.cytoscape.work.Tunable;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
-public class ShowNewNodeEffectTask extends AbstractTask {
+public class ShowFlatNodeDesignTask extends AbstractTask {
 	final StringManager manager;
 	CyNetworkView netView;
-	final ShowNewNodeEffectTaskFactory factory;
+	final ShowFlatNodeDesignTaskFactory factory;
 	boolean show;
 
 	@Tunable(description="Network view to set STRING node effect on",
@@ -25,8 +25,8 @@ public class ShowNewNodeEffectTask extends AbstractTask {
 	         context = "nogui")
   public CyNetworkView view = null;
 
-	public ShowNewNodeEffectTask(final StringManager manager, final boolean show, 
-            final ShowNewNodeEffectTaskFactory factory) {
+	public ShowFlatNodeDesignTask(final StringManager manager, final boolean show, 
+            final ShowFlatNodeDesignTaskFactory factory) {
 		this.manager = manager;
 		if (view != null)
 			this.netView = view;
@@ -36,8 +36,8 @@ public class ShowNewNodeEffectTask extends AbstractTask {
 		this.show = show;
 	}
 
-	public ShowNewNodeEffectTask(final StringManager manager, final CyNetworkView netView,
-			final ShowNewNodeEffectTaskFactory factory) {
+	public ShowFlatNodeDesignTask(final StringManager manager, final CyNetworkView netView,
+			final ShowFlatNodeDesignTaskFactory factory) {
 		this.manager = manager;
 		if (view != null) 
 			this.netView = view;
@@ -48,13 +48,11 @@ public class ShowNewNodeEffectTask extends AbstractTask {
 	}
 
 	public void run(TaskMonitor monitor) {
-		monitor.setTitle("Enable/disable STRING node color effect");
+		monitor.setTitle("Enable/disable STRING flat node design");
 
-		boolean reregister = true;
 		if (netView == null) {
 			// Command version
-			reregister = false;
-			manager.setShowNewNodeEffect(show);
+			manager.setShowFlatNodeDesign(show);
 			CyNetwork network = manager.getCurrentNetwork();
 			Collection<CyNetworkView> views = 
 			          manager.getService(CyNetworkViewManager.class).getNetworkViews(network);
@@ -65,11 +63,11 @@ public class ShowNewNodeEffectTask extends AbstractTask {
 				}
 			}
 		} else {
-			if (manager.showNewNodeEffect()) {
-				manager.setShowNewNodeEffect(false);
+			if (manager.showFlatNodeDesign()) {
+				manager.setShowFlatNodeDesign(false);
 				show = false;
 			} else {
-				manager.setShowNewNodeEffect(true);
+				manager.setShowFlatNodeDesign(true);
 				show = true;
 			}
 		}
@@ -79,7 +77,7 @@ public class ShowNewNodeEffectTask extends AbstractTask {
 		for (CyNetworkView currNetView : netManager.getNetworkViewSet()) {
 			if (vmm.getVisualStyle(currNetView).getTitle().startsWith(ViewUtils.STYLE_NAME_SIMPLE) || vmm
 					.getVisualStyle(currNetView).getTitle().startsWith(ViewUtils.STYLE_ORG)) {
-				ViewUtils.updateGlassBallEffect(manager, vmm.getVisualStyle(currNetView),
+				ViewUtils.updateNodeStyle(manager, vmm.getVisualStyle(currNetView),
 						currNetView.getModel(), show);
 			}
 		}

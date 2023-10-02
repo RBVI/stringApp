@@ -36,7 +36,7 @@ public class StringLayer implements Cy2DGraphicLayer {
 		else
 			bounds = new Rectangle2D.Double(0.0, 0.0, 150, 150);
 
-		useNewNodeEffect = manager.showNewNodeEffect();
+		useNewNodeEffect = manager.showFlatNodeDesign();
 	}
 
 	public void draw(Graphics2D g, Shape shape,

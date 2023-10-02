@@ -69,7 +69,7 @@ public class ViewUtils {
 		if (manager.showStringColors())
 			updateColorMap(manager, stringStyle, network);
 		updateEnhancedLabels(manager, stringStyle, network, manager.showEnhancedLabels());
-		updateGlassBallEffect(manager, stringStyle, network, manager.showGlassBallEffect());
+		updateNodeStyle(manager, stringStyle, network, manager.showFlatNodeDesign());
 		
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
 		vmm.setCurrentVisualStyle(stringStyle);
@@ -432,7 +432,7 @@ public class ViewUtils {
 		}
 	}
 
-	public static void updateGlassBallEffect(StringManager manager, VisualStyle stringStyle, 
+	public static void updateNodeStyle(StringManager manager, VisualStyle stringStyle, 
             CyNetwork net, boolean show) {
 
 		VisualMappingFunctionFactory passthroughFactory = manager
@@ -641,7 +641,7 @@ public class ViewUtils {
 			if (manager.showGlassBallEffect()) {
 				CyNetworkView netView = manager.getCurrentNetworkView();
 				VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
-				ViewUtils.updateGlassBallEffect(manager, vmm.getVisualStyle(netView), net, true);
+				ViewUtils.updateNodeStyle(manager, vmm.getVisualStyle(netView), net, true);
 			}
 		}
 	}
@@ -676,10 +676,10 @@ public class ViewUtils {
 			// Don't override the user if they have specifically disabled the glass ball effect
 			if (manager.showGlassBallEffect() && vmm.getVisualStyle(netView).getTitle().startsWith(ViewUtils.STYLE_NAME_SIMPLE)) {
 				if (ChartType.PIE.equals(type) || ChartType.SPLIT_PIE.equals(type)) {
-					ViewUtils.updateGlassBallEffect(manager, vmm.getVisualStyle(netView), network, false);
+					ViewUtils.updateNodeStyle(manager, vmm.getVisualStyle(netView), network, false);
 					// manager.setShowGlassBallEffect(false);
 				} else {
-					ViewUtils.updateGlassBallEffect(manager, vmm.getVisualStyle(netView), network, true);
+					ViewUtils.updateNodeStyle(manager, vmm.getVisualStyle(netView), network, true);
 					// manager.setShowGlassBallEffect(true);
 				}
 				// manager.getShowGlassBallEffectTaskFactory().reregister();
