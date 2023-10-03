@@ -581,10 +581,9 @@ public class ModelUtils {
 				useDATABASE, netType);
 
 		// TODO: [Release] What should be the cutoff for max number of nodes with structure displayed?
-		if (newNetwork.getNodeCount() <= MAX_NODES_STRUCTURE_DISPLAY) {
+		if (newNetwork.getNodeCount() < MAX_NODES_STRUCTURE_DISPLAY) {
 			fetchImages(newNetwork);
 		} else {
-			// TODO: [Release] How to set Show images to false in the node panel? 
 			manager.setShowImage(false);
 		}
 		

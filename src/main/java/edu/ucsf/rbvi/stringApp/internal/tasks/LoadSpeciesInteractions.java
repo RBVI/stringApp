@@ -158,8 +158,8 @@ public class LoadSpeciesInteractions extends AbstractTask {
 			if (species2 != null) {
 				ViewUtils.updateNodeColors(manager, network, null, Arrays.asList(species2, species));
 			}
-
 		}
+		manager.updateControls();
 	}
 
 	public boolean hasError() {

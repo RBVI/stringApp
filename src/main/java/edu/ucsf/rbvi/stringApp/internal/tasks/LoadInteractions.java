@@ -159,6 +159,7 @@ public class LoadInteractions extends AbstractTask {
 		} else {
 			ViewUtils.styleNetwork(manager, network, null);
 		}
+		manager.updateControls();
 	}
 
 	@ProvidesTitle

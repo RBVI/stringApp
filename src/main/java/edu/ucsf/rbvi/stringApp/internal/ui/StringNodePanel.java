@@ -201,6 +201,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		{
 			showStructure = new JCheckBox("Structure images");
 			showStructure.setFont(labelFont);
+			showStructure.setSelected(manager.showImage());
 			// showStructure.setBorder(null);
 			showStructure.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
@@ -217,6 +218,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		{
 			stringLabels = new JCheckBox("STRING style labels");
 			stringLabels.setFont(labelFont);
+			stringLabels.setSelected(manager.showEnhancedLabels());
 			stringLabels.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
 					if (updating) return;
@@ -232,7 +234,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		{
 			stringColors = new JCheckBox("STRING style colors");
 			stringColors.setFont(labelFont);
-			stringColors.setSelected(true);
+			stringColors.setSelected(manager.showStringColors());
 			stringColors.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
 					if (updating) return;
@@ -254,7 +256,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		{
 			showSingletons = new JCheckBox("Singletons");
 			showSingletons.setFont(labelFont);
-			showSingletons.setSelected(true);
+			showSingletons.setSelected(manager.showSingletons());
 			showSingletons.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
 					if (updating) return;
