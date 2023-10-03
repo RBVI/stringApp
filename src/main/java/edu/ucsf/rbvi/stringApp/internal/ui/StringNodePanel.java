@@ -386,7 +386,7 @@ public class StringNodePanel extends AbstractStringPanel {
 					manager.execute(new TaskIterator(new MCLClusterTask(manager, currentNetwork)));
 				}
 			});
-			getClusters.setEnabled(manager.haveClusterMaker());
+			getClusters.setEnabled(true);
 			lowerPanel.add(getClusters);
 		}
 
