@@ -82,6 +82,28 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 	         exampleStringValue="full STRING network")
 	public ListSingleSelection<NetworkType> networkType;
 	
+	@Tunable(description = "Enable STRING flat node design",
+	         longDescription="If this flag is set to true, the flat design of the nodes will be enabled.",
+	         exampleStringValue="false")
+	public boolean showFlatNodeDesign = true;
+
+	@Tunable(description = "Show nodes as glass balls",
+	         longDescription="If this flag is set to true, the glass ball effect will be enabled.",
+	         exampleStringValue="false")
+	public boolean showGlassBallEffect = false;
+
+	@Tunable(description = "Show the structure images on the nodes",
+	         longDescription="If this flag is set to true, the structure images will be shown in the nodes."
+	         		+ "This seting will be overwritten (set to false) for large networks.",
+	         exampleStringValue="false")
+	public boolean showStructureImages = true;
+
+	@Tunable(description = "Show STRING style labels on the nodes",
+	         longDescription="If this flag is set to true, STRING style labels will be shown, "
+	         		+ "otherwise labels will be centered in the node.",
+	         exampleStringValue="false")
+	public boolean showSTRINGstyleLabels = true;
+
 	private List<Species> speciesList;
 
 	private CyNetwork loadedNetwork;
@@ -150,6 +172,13 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 			}
 		}
 
+		// set style as requested by the user
+		manager.setShowFlatNodeDesign(showFlatNodeDesign);
+		manager.setShowGlassBallEffect(showGlassBallEffect);
+		manager.setShowImage(showStructureImages);
+		manager.setShowEnhancedLabels(showSTRINGstyleLabels);
+		
+		// retrieve network
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
 		LoadInteractions load = new LoadInteractions(stringNetwork, sp.toString(), sp.getTaxId(),
