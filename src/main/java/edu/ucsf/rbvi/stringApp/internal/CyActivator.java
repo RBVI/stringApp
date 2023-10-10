@@ -766,18 +766,15 @@ public class CyActivator extends AbstractCyActivator {
 			manager.setShowNewNodeEffectTaskFactory(showNewNodeEffectTF);
 			//showGlassBallEffectTF.reregister();
 			
-			/*
 			// Create command version and register it
 			Properties props = new Properties();
 			props.setProperty(COMMAND_NAMESPACE, "string");
-			props.setProperty(COMMAND, "enable glass");
-			props.setProperty(COMMAND_DESCRIPTION, "Enable or disable the STRING glass ball effect on the nodes");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, "Enable or disable the STRING glass ball effect on the nodes.");
+			props.setProperty(COMMAND, "enable new node");
+			props.setProperty(COMMAND_DESCRIPTION, "Enable or disable the new STRING node effect");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, "Enable or disable the new STRING node effect.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
 			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");						
-			registerService(bc, showGlassBallEffectTF, NetworkViewTaskFactory.class, props);
-			*/
-
+			registerService(bc, showNewNodeEffectTF, NetworkViewTaskFactory.class, props);
 		}
 
 		{
