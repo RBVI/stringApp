@@ -757,6 +757,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		ModelUtils.setStringProperty(configProps, "showImage", Boolean.toString(showImage));
 		ModelUtils.setStringProperty(configProps, "showEnhancedLabels", Boolean.toString(showEnhancedLabels));
 		ModelUtils.setStringProperty(configProps, "showGlassBallEffect", Boolean.toString(showGlassBallEffect));
+		ModelUtils.setStringProperty(configProps, "showNewNodeEffect", Boolean.toString(showNewNodeEffect));
 		ModelUtils.setStringProperty(configProps, "showStringColors", Boolean.toString(showStringColors));
 		ModelUtils.setStringProperty(configProps, "showSingletons", Boolean.toString(showSingletons));
 		ModelUtils.setStringProperty(configProps, "highlightNeighbors", Boolean.toString(highlightNeighbors));
@@ -877,6 +878,20 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			} else {
 				ModelUtils.setStringProperty(sessionProperties, ModelUtils.showGlassBallEffectFlag,
 						new Boolean(showGlassBallEffect));
+			}
+			//glassBallTaskFactory.reregister();
+		}
+
+		// check if new node effect should be shown or not
+		if (newNodeEffectTaskFactory != null) {
+			String sessionValueLabels = ModelUtils.getStringProperty(sessionProperties,
+					ModelUtils.showNewNodeEffectFlag);
+			// System.out.println("show labels: " + sessionValueLabels);
+			if (sessionValueLabels != null) {
+				showNewNodeEffect = Boolean.parseBoolean(sessionValueLabels);
+			} else {
+				ModelUtils.setStringProperty(sessionProperties, ModelUtils.showNewNodeEffectFlag,
+						new Boolean(showNewNodeEffect));
 			}
 			//glassBallTaskFactory.reregister();
 		}
