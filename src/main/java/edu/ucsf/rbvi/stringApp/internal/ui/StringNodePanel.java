@@ -264,7 +264,7 @@ public class StringNodePanel extends AbstractStringPanel {
 					ViewUtils.hideSingletons(manager.getCurrentNetworkView(), showSingletons.isSelected());
 				}
 			});
-			upperPanel.add(showSingletons, upperGBC.left().down().noInsets().noExpand());
+			upperPanel.add(showSingletons, upperGBC.left().down().insets(5,0,0,0).noExpand());
 		}
 		
 		{
@@ -283,7 +283,7 @@ public class StringNodePanel extends AbstractStringPanel {
 			});
 			// highlightBox.setAlignmentX( Component.LEFT_ALIGNMENT );
 			// highlightBox.setBorder(BorderFactory.createEmptyBorder(10,2,10,0));
-			upperPanel.add(highlightBox, upperGBC.right().insets(0,10,0,0).noExpand());
+			upperPanel.add(highlightBox, upperGBC.right().insets(5,10,0,0).noExpand());
 		}
 
 		upperPanel.setBorder(BorderFactory.createEmptyBorder(5,0,10,0));
