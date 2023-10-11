@@ -150,6 +150,7 @@ public class ModelUtils {
 	public static String showStructureImagesFlag = "showStructureImages";
 	public static String showEnhancedLabelsFlag = "showEnhancedLabels";
 	public static String showGlassBallEffectFlag = "showGlassBallEffect";
+	public static String showFlatNodeDesignFlag = "showFlatNodeDesign";
 
 	// Create network view size threshold
 	// See https://github.com/cytoscape/cytoscape-impl/blob/develop/core-task-impl/

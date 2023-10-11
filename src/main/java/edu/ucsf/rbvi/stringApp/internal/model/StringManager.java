@@ -757,6 +757,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		ModelUtils.setStringProperty(configProps, "showImage", Boolean.toString(showImage));
 		ModelUtils.setStringProperty(configProps, "showEnhancedLabels", Boolean.toString(showEnhancedLabels));
 		ModelUtils.setStringProperty(configProps, "showGlassBallEffect", Boolean.toString(showGlassBallEffect));
+		ModelUtils.setStringProperty(configProps, "showFlatNodeDesign", Boolean.toString(showFlatNodeDesign));
 		ModelUtils.setStringProperty(configProps, "showStringColors", Boolean.toString(showStringColors));
 		ModelUtils.setStringProperty(configProps, "showSingletons", Boolean.toString(showSingletons));
 		ModelUtils.setStringProperty(configProps, "highlightNeighbors", Boolean.toString(highlightNeighbors));
@@ -862,21 +863,34 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 				showEnhancedLabels = Boolean.parseBoolean(sessionValueLabels);
 			} else {
 				ModelUtils.setStringProperty(sessionProperties, ModelUtils.showEnhancedLabelsFlag,
-						new Boolean(showEnhancedLabels));
+						Boolean.valueOf(showEnhancedLabels));
 			}
 			//labelsTaskFactory.reregister();
 		}
 		
 		// check if glass ball effect should be shown or not
+		if (flatNodeDesignTaskFactory != null) {
+			String sessionValueLabels = ModelUtils.getStringProperty(sessionProperties,
+					ModelUtils.showFlatNodeDesignFlag);
+			// System.out.println("show flat node design: " + sessionValueLabels);
+			if (sessionValueLabels != null) {
+				showFlatNodeDesign = Boolean.parseBoolean(sessionValueLabels);
+			} else {
+				ModelUtils.setStringProperty(sessionProperties, ModelUtils.showFlatNodeDesignFlag,
+						Boolean.valueOf(showFlatNodeDesign));
+			}
+		}
+
+		// check if glass ball effect should be shown or not
 		if (glassBallTaskFactory != null) {
 			String sessionValueLabels = ModelUtils.getStringProperty(sessionProperties,
 					ModelUtils.showGlassBallEffectFlag);
-			// System.out.println("show labels: " + sessionValueLabels);
+			// System.out.println("show glass ball effect: " + sessionValueLabels);
 			if (sessionValueLabels != null) {
 				showGlassBallEffect = Boolean.parseBoolean(sessionValueLabels);
 			} else {
 				ModelUtils.setStringProperty(sessionProperties, ModelUtils.showGlassBallEffectFlag,
-						new Boolean(showGlassBallEffect));
+						Boolean.valueOf(showGlassBallEffect));
 			}
 			//glassBallTaskFactory.reregister();
 		}
@@ -890,7 +904,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 				showImage = Boolean.parseBoolean(sessionValueImage);
 			} else {
 				ModelUtils.setStringProperty(sessionProperties, ModelUtils.showStructureImagesFlag,
-						new Boolean(showImage));
+						Boolean.valueOf(showImage));
 			}
 			//imagesTaskFactory.reregister();
 		}
