@@ -19,7 +19,7 @@ public class ShowGlassBallEffectTask extends AbstractTask {
 	final ShowGlassBallEffectTaskFactory factory;
 	boolean show;
 
-	@Tunable(description="Network view to set enhanced labels on",
+	@Tunable(description="Network view to set STRING node effect on",
 	         // longDescription = StringToModel.CY_NETWORK_VIEW_LONG_DESCRIPTION,
 	         // exampleStringValue = StringToModel.CY_NETWORK_VIEW_EXAMPLE_STRING,
 	         context = "nogui")

@@ -48,7 +48,7 @@ public class ShowFlatNodeDesignTask extends AbstractTask {
 	}
 
 	public void run(TaskMonitor monitor) {
-		monitor.setTitle("Enable/disable STRING flat node design");
+		monitor.setTitle("Enable/disable STRING flat node effect");
 
 		if (netView == null) {
 			// Command version

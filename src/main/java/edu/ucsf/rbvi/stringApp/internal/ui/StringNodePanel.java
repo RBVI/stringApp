@@ -166,7 +166,7 @@ public class StringNodePanel extends AbstractStringPanel {
 				}
 			});
 
-			enableGlassButton = new JRadioButton("Glass ball effect");
+			enableGlassButton = new JRadioButton("Glass ball design");
 			enableGlassButton.setFont(labelFont);
 			enableGlassButton.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
@@ -182,7 +182,7 @@ public class StringNodePanel extends AbstractStringPanel {
 				}
 			});
 			
-			enableBasicButton = new JRadioButton("No STRING effect");
+			enableBasicButton = new JRadioButton("Cytoscape design");
 			enableBasicButton.setFont(labelFont);
 			enableBasicButton.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
