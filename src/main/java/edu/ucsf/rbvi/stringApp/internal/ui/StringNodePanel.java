@@ -254,7 +254,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		}
 		
 		{
-			showSingletons = new JCheckBox("Singletons");
+			showSingletons = new JCheckBox("Show singletons");
 			showSingletons.setFont(labelFont);
 			showSingletons.setSelected(manager.showSingletons());
 			showSingletons.addItemListener(new ItemListener() {

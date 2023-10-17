@@ -22,3 +22,4 @@ First, check if the stringApp.props file exists in your ~/CytoscapeConfiguration
 - Add the following line to it: `alternativeCONFIGURI=https\://jensenlab.org/assets/stringapp/string_app_v2_0_0_string11.5.json`
 - Save the file
 - Start Cytoscape again
+- Make sure that the right version is used by checking the messages in the Cytoscape Task History (icon in the bottom left corner)
