@@ -81,8 +81,7 @@ public class ShowFlatNodeDesignTask extends AbstractTask {
 						currNetView.getModel(), show);
 			}
 		}
-		// netView.updateView();
-		// if (reregister) factory.reregister();
+		netView.updateView();
 		manager.updateControls();
 	}
 }

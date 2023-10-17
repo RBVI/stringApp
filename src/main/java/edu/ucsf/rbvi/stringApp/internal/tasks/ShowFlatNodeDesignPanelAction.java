@@ -11,17 +11,17 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 @SuppressWarnings("serial")
-public class ShowGlassBallEffectPanelAction extends AbstractCyAction {
+public class ShowFlatNodeDesignPanelAction extends AbstractCyAction {
 
 
 	final StringManager manager;
 		
-	public ShowGlassBallEffectPanelAction(String name, StringManager manager) {
+	public ShowFlatNodeDesignPanelAction(String name, StringManager manager) {
 		super(name);
 
 		this.manager = manager;
 		setPreferredMenu("Apps.STRING");
-		setMenuGravity(10.0f);
+		setMenuGravity(9.0f);
 		useCheckBoxMenuItem = true;
 		insertSeparatorBefore = false;
 	}
@@ -29,14 +29,14 @@ public class ShowGlassBallEffectPanelAction extends AbstractCyAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		TaskManager<?, ?> tm = manager.getService(TaskManager.class);
-		ShowGlassBallEffectTaskFactory factory = manager.getShowGlassBallEffectTaskFactory();
+		ShowFlatNodeDesignTaskFactory factory = manager.getShowFlatNodeDesignTaskFactory();
 		tm.execute(factory.createTaskIterator(manager.getCurrentNetworkView()));
 	}
 
 	@Override
 	public void menuSelected(MenuEvent evt) {
 		updateEnableState();
-		putValue(SELECTED_KEY, manager.showGlassBallEffect());
+		putValue(SELECTED_KEY, manager.showFlatNodeDesign());
 	}
 	
 	@Override

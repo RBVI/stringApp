@@ -61,6 +61,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowFlatNodeDesignPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowFlatNodeDesignTaskFactory;
@@ -435,7 +436,7 @@ public class CyActivator extends AbstractCyActivator {
 			Properties props = new Properties();
 			props.setProperty(PREFERRED_MENU, "Apps.STRING");
 			props.setProperty(TITLE, "Set STRING label attribute");
-			props.setProperty(MENU_GRAVITY, "10.0");
+			props.setProperty(MENU_GRAVITY, "11.0");
 			props.setProperty(IN_MENU_BAR, "true");
 			registerService(bc, setLabel, NetworkTaskFactory.class, props);
 		}
@@ -738,7 +739,7 @@ public class CyActivator extends AbstractCyActivator {
 		
 		{
 			// Register our "show glass ball effect" toggle
-			ShowGlassBallEffectPanelAction sgbea = new ShowGlassBallEffectPanelAction("Enable STRING glass balls effect", manager);
+			ShowGlassBallEffectPanelAction sgbea = new ShowGlassBallEffectPanelAction("Enable STRING glass ball desing", manager);
 			registerService(bc, sgbea, CyAction.class);
 			
 			ShowGlassBallEffectTaskFactory showGlassBallEffectTF = new ShowGlassBallEffectTaskFactory(manager);
@@ -759,8 +760,8 @@ public class CyActivator extends AbstractCyActivator {
 
 		{
 			// Register our "show flat node design" toggle
-			// ShowFLatNodeDesignPanelAction sgbea = new ShowNewNodeEffectPanelAction("Enable STRING flat node design", manager);
-			// registerService(bc, sgbea, CyAction.class);
+			ShowFlatNodeDesignPanelAction sfndpa = new ShowFlatNodeDesignPanelAction("Enable STRING flat node design", manager);
+			registerService(bc, sfndpa, CyAction.class);
 			
 			ShowFlatNodeDesignTaskFactory showFlatNodeDesignTF = new ShowFlatNodeDesignTaskFactory(manager);
 			manager.setShowFlatNodeDesignTaskFactory(showFlatNodeDesignTF);

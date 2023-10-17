@@ -101,6 +101,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		updating = true;
 		enableFlatButton.setSelected(manager.showFlatNodeDesign());
 		enableGlassButton.setSelected(manager.showGlassBallEffect());
+		enableBasicButton.setSelected(!manager.showFlatNodeDesign() && !manager.showGlassBallEffect());
 		showStructure.setSelected(manager.showImage());
 		stringLabels.setSelected(manager.showEnhancedLabels());
 		stringColors.setSelected(manager.showStringColors());
