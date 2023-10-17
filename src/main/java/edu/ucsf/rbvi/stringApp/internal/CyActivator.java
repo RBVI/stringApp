@@ -739,7 +739,7 @@ public class CyActivator extends AbstractCyActivator {
 		
 		{
 			// Register our "show glass ball effect" toggle
-			ShowGlassBallEffectPanelAction sgbea = new ShowGlassBallEffectPanelAction("Enable STRING glass ball desing", manager);
+			ShowGlassBallEffectPanelAction sgbea = new ShowGlassBallEffectPanelAction("Enable STRING glass ball design", manager);
 			registerService(bc, sgbea, CyAction.class);
 			
 			ShowGlassBallEffectTaskFactory showGlassBallEffectTF = new ShowGlassBallEffectTaskFactory(manager);

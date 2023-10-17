@@ -96,23 +96,31 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 			groups={"View Defaults"}, gravity=15.0)
 	public boolean showEnhancedLabels = true;
 
-	@Tunable(description="Enable STRING glass ball effect", 
-			longDescription="Enable STRING glass ball effect by default.",
+	@Tunable(description="Enable STRING flat node design", 
+			longDescription="Enable STRING flat node design by default.",
 			exampleStringValue = "true",
+			dependsOn = "showGlassBallEffect=false",
 			groups={"View Defaults"}, gravity=16.0)
-	public boolean showGlassBallEffect = true;
+	public boolean showFlatNodeDesign = true;
+
+	@Tunable(description="Enable STRING glass ball design", 
+			longDescription="Enable STRING glass ball design by default.",
+			exampleStringValue = "true",
+			dependsOn = "showFlatNodeDesign=false",
+			groups={"View Defaults"}, gravity=17.0)
+	public boolean showGlassBallEffect = false;
 
 	@Tunable(description="Change edge channel color palette", 
 			longDescription="Set the palette to use for the channel colors.",
 			exampleStringValue = "STRING channel colors", 
-			groups={"View Defaults"}, gravity=17.0, 
+			groups={"View Defaults"}, gravity=18.0, 
 			context="gui")
 	public UserAction paletteChooserChannels = new UserAction(this);
 
 	@Tunable(description = "Default palette for edge colors",
 	         longDescription = "Set the default palette for edge channel colors.",
 	         exampleStringValue = "STRING channel colors", 
-	         groups={"View Defaults"}, gravity=18.0,
+	         groups={"View Defaults"}, gravity=19.0,
 	         context="nogui")
 	public ListSingleSelection<Palette> defaultChannelPalette;
 
@@ -135,6 +143,7 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 		maxProteins.setValue(manager.getDefaultMaxProteins());
 		showImage = manager.showImage();
 		showEnhancedLabels = manager.showEnhancedLabels();
+		showFlatNodeDesign = manager.showFlatNodeDesign();
 		showGlassBallEffect = manager.showGlassBallEffect();
 
 		// Set our custom palette provider
@@ -178,6 +187,13 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 				manager.setShowImage(showImage);
 		}
 		
+		if (manager.showFlatNodeDesign() != showFlatNodeDesign) {
+			if (currentView != null)
+				tm.execute(manager.getShowFlatNodeDesignTaskFactory().createTaskIterator(currentView));
+			else
+				manager.setShowFlatNodeDesign(showFlatNodeDesign);
+		}
+
 		if (manager.showGlassBallEffect() != showGlassBallEffect) {
 			if (currentView != null)
 				tm.execute(manager.getShowGlassBallEffectTaskFactory().createTaskIterator(currentView));

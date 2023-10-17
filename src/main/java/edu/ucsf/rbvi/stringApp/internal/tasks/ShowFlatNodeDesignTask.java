@@ -68,6 +68,7 @@ public class ShowFlatNodeDesignTask extends AbstractTask {
 				show = false;
 			} else {
 				manager.setShowFlatNodeDesign(true);
+				manager.setShowGlassBallEffect(false);
 				show = true;
 			}
 		}

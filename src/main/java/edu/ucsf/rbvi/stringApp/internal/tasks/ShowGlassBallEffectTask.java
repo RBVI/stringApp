@@ -70,6 +70,7 @@ public class ShowGlassBallEffectTask extends AbstractTask {
 				show = false;
 			} else {
 				manager.setShowGlassBallEffect(true);
+				manager.setShowFlatNodeDesign(false);
 				show = true;
 			}
 		}
