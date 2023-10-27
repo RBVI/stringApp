@@ -17,12 +17,14 @@ public class FetchStructureImagesTaskFactory extends AbstractNetworkTaskFactory 
 		this.manager = manager;
 	}
 
+	
+	// TODO: [Release] enable only when images are not there?
 	public boolean isReady() {
 		return manager.haveURIs() && true;
 	}
 
 	public TaskIterator createTaskIterator() {
-		return new TaskIterator(new FetchStructureImagesTask(manager.getCurrentNetwork()));
+		return new TaskIterator(new FetchStructureImagesTask(manager, manager.getCurrentNetwork()));
 	}
 
 	public boolean isReady(CyNetwork network) {
@@ -33,7 +35,7 @@ public class FetchStructureImagesTaskFactory extends AbstractNetworkTaskFactory 
 	}
 
 	public TaskIterator createTaskIterator(CyNetwork network) {
-		return new TaskIterator(new FetchStructureImagesTask(network));
+		return new TaskIterator(new FetchStructureImagesTask(manager, network));
 	}
 
 	public boolean isReady(CyNetworkView netView) {
@@ -44,6 +46,6 @@ public class FetchStructureImagesTaskFactory extends AbstractNetworkTaskFactory 
 	}
 
 	public TaskIterator createTaskIterator(CyNetworkView netView) {
-		return new TaskIterator(new FetchStructureImagesTask(netView.getModel()));
+		return new TaskIterator(new FetchStructureImagesTask(manager, netView.getModel()));
 	}
 }
