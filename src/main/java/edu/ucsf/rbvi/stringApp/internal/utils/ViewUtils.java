@@ -69,7 +69,7 @@ public class ViewUtils {
 		if (manager.showStringColors())
 			updateColorMap(manager, stringStyle, network);
 		updateEnhancedLabels(manager, stringStyle, network, manager.showEnhancedLabels());
-		updateNodeStyle(manager, stringStyle, network, manager.showFlatNodeDesign());
+		updateNodeStyle(manager, stringStyle, network, (manager.showFlatNodeDesign() | manager.showGlassBallEffect()));
 		
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
 		vmm.setCurrentVisualStyle(stringStyle);

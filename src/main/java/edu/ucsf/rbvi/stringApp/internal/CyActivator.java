@@ -685,6 +685,13 @@ public class CyActivator extends AbstractCyActivator {
 		FetchStructureImagesTaskFactory fetchImagesTask = new FetchStructureImagesTaskFactory(manager);
 		{
 			Properties props = new Properties();
+			props.setProperty(PREFERRED_MENU, "Apps.STRING");
+			props.setProperty(TITLE, "Fetch structure images");
+			props.setProperty(MENU_GRAVITY, "12.0");
+			props.setProperty(IN_MENU_BAR, "true");
+			registerService(bc, fetchImagesTask, NetworkTaskFactory.class, props);
+
+			props = new Properties();
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "fetch images");
 			props.setProperty(COMMAND_DESCRIPTION, 
