@@ -180,6 +180,7 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 			else
 				manager.setShowEnhancedLabels(showEnhancedLabels);
 		}
+
 		if (manager.showImage() != showImage) {
 			if (currentView != null)
 				tm.execute(manager.getShowImagesTaskFactory().createTaskIterator(currentView));
@@ -188,17 +189,15 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 		}
 		
 		if (manager.showFlatNodeDesign() != showFlatNodeDesign) {
+			manager.setShowFlatNodeDesign(showFlatNodeDesign);
 			if (currentView != null)
 				tm.execute(manager.getShowFlatNodeDesignTaskFactory().createTaskIterator(currentView));
-			else
-				manager.setShowFlatNodeDesign(showFlatNodeDesign);
 		}
 
 		if (manager.showGlassBallEffect() != showGlassBallEffect) {
+			manager.setShowGlassBallEffect(showGlassBallEffect);
 			if (currentView != null)
 				tm.execute(manager.getShowGlassBallEffectTaskFactory().createTaskIterator(currentView));
-			else
-				manager.setShowGlassBallEffect(showGlassBallEffect);
 		}
 
 		manager.setDefaultSpecies(species.getSelectedValue());
@@ -213,6 +212,8 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 		manager.setOverlapCutoff(null,enrichmentSettings.overlapCutoff.getValue(), null);
 		manager.setEnrichmentPalette(null,enrichmentSettings.defaultEnrichmentPalette.getSelectedValue(), null);
 		manager.setChartType(null,enrichmentSettings.chartType.getSelectedValue(), null);
+		
+		// save all settings!
 		manager.updateSettings();
 
 		if (network != null) {

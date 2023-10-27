@@ -169,6 +169,7 @@ public class StringNodePanel extends AbstractStringPanel {
 
 			enableGlassButton = new JRadioButton("Glass ball design");
 			enableGlassButton.setFont(labelFont);
+			enableGlassButton.setSelected(manager.showGlassBallEffect());
 			enableGlassButton.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
 					if (updating)
@@ -185,6 +186,7 @@ public class StringNodePanel extends AbstractStringPanel {
 			
 			enableBasicButton = new JRadioButton("Cytoscape design");
 			enableBasicButton.setFont(labelFont);
+			enableBasicButton.setSelected(!manager.showFlatNodeDesign() && !manager.showGlassBallEffect());
 			enableBasicButton.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
 					if (updating)
