@@ -555,8 +555,11 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		for (CyNode node : currentNetwork.getNodeList()) {
 			String stringID = currentNetwork.getRow(node).get(ModelUtils.STRINGID, String.class);
 			String type = currentNetwork.getRow(node).get(ModelUtils.TYPE, String.class);
-			if (stringID != null && stringID.length() > 0 && type != null
-					&& type.equals("protein")) {
+			if (stringID != null && stringID.length() > 0 
+					&& type != null && type.equals("protein")) {
+				Boolean considerForEnrichment = currentNetwork.getRow(node).get(ModelUtils.ENRICHMENT, Boolean.class);
+				if (considerForEnrichment != null && !considerForEnrichment.booleanValue())
+					continue;
 				str.append(stringID + "\n");
 				analyzedNodes.add(node);
 			}
@@ -569,8 +572,11 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		for (CyNode node : bgNetwork.getNodeList()) {
 			String stringID = bgNetwork.getRow(node).get(ModelUtils.STRINGID, String.class);
 			String type = bgNetwork.getRow(node).get(ModelUtils.TYPE, String.class);
-			if (stringID != null && stringID.length() > 0 && type != null
-					&& type.equals("protein")) {
+			if (stringID != null && stringID.length() > 0 
+					&& type != null && type.equals("protein")) {
+				Boolean considerForEnrichment = bgNetwork.getRow(node).get(ModelUtils.ENRICHMENT, Boolean.class);
+				if (considerForEnrichment != null && !considerForEnrichment.booleanValue())
+					continue;
 				str.append(stringID + "\n");
 			}
 		}
@@ -591,8 +597,11 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			if (currentNetwork.getRow(node).get(CyNetwork.SELECTED, Boolean.class)) {
 				String stringID = currentNetwork.getRow(node).get(ModelUtils.STRINGID, String.class);
 				String type = currentNetwork.getRow(node).get(ModelUtils.TYPE, String.class);
-				if (stringID != null && stringID.length() > 0 && type != null
-						&& type.equals("protein")) {
+				if (stringID != null && stringID.length() > 0 
+						&& type != null && type.equals("protein")) {
+					Boolean considerForEnrichment = currentNetwork.getRow(node).get(ModelUtils.ENRICHMENT, Boolean.class);
+					if (considerForEnrichment != null && !considerForEnrichment.booleanValue())
+						continue;
 					selectedStr.append(stringID + "\n");
 					analyzedNodes.add(node);
 				}
