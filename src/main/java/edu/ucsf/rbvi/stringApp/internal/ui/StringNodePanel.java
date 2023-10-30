@@ -722,7 +722,6 @@ public class StringNodePanel extends AbstractStringPanel {
 		EasyGBC c = new EasyGBC();
 		ViewUtils.clearHighlight(manager, manager.getCurrentNetworkView());
 
-		// TODO: [Release] Is this an OK cutoff for how many node panels to show?
 		if (nodes.size() <= ModelUtils.MAX_NODE_PANELS) {
 			for (CyNode node: nodes) {
 				JPanel newPanel = createNodePanel(node);
