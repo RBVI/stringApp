@@ -26,18 +26,18 @@ public class DrawPill {
 	Color background;
 	Shape nodeShape;
 	boolean selected = false;
-	boolean newNodeEffect = false;
+	boolean flatNodeDesign = false;
 	float xScale = 1.0f;
 	float yScale = 1.0f;
 	float xOff = 0.0f;
 	float yOff = 0.0f;
 
-	public DrawPill(Color color, Color background, BufferedImage image, Shape nodeShape, boolean selected, boolean newNodeEffect) {
+	public DrawPill(Color color, Color background, BufferedImage image, Shape nodeShape, boolean selected, boolean flatNodeDesign) {
 		this.color = color;
 		this.background = background;
 		this.image = image;
 		this.selected = selected;
-		this.newNodeEffect = newNodeEffect;
+		this.flatNodeDesign = flatNodeDesign;
 		this.nodeShape = nodeShape;
 	}
 
@@ -63,7 +63,7 @@ public class DrawPill {
 			fillPill(g2, xOff, yOff, xScale*40f, yScale*40f);
 		}
 
-		if (newNodeEffect) {
+		if (flatNodeDesign) {
 			Color transColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int)(((float)255)*0.4f));
 			g2.setPaint(transColor);
 			fillPill(g2, xOff, yOff, xScale*40f, yScale*40f);

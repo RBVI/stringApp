@@ -23,18 +23,18 @@ public class DrawSphere {
 	Color background;
 	Shape nodeShape;
 	boolean selected = false;
-	boolean newNodeEffect = false;
+	boolean flatNodeDesign = false;
 	float xScale = 1.0f;
 	float yScale = 1.0f;
 	float xOff = 0.0f;
 	float yOff = 0.0f;
 
-	public DrawSphere(Color color, Color background, BufferedImage image, Shape nodeShape, boolean selected, boolean newNodeEffect) {
+	public DrawSphere(Color color, Color background, BufferedImage image, Shape nodeShape, boolean selected, boolean flatNodeDesign) {
 		this.color = color;
 		this.background = background;
 		this.image = image;
 		this.selected = selected;
-		this.newNodeEffect = newNodeEffect;
+		this.flatNodeDesign = flatNodeDesign;
 		this.nodeShape = nodeShape;
 	}
 
@@ -60,7 +60,7 @@ public class DrawSphere {
 			fillOval(g2, xOff, yOff, xScale*40f, yScale*40f);
 		}
 
-		if (newNodeEffect) {
+		if (flatNodeDesign) {
 			if (selected)
 				color = Color.YELLOW;
 			g2.setPaint(color);
@@ -74,21 +74,23 @@ public class DrawSphere {
 																				s1.getStops(), s1.getColors());
 			g2.setPaint(p);
 			fillOval(g2, xOff, xOff, xScale*40f, yScale*40f);
-			
-
-			Color transColor = new Color(((float)color.getRed()/255f), ((float)color.getGreen()/255f), ((float)color.getBlue()/255f), 0.4f);
-			g2.setPaint(transColor);
-			fillOval(g2, xOff, yOff, xScale*40f, yScale*40f);
 
 			// Draw our image (if we have one);
 			// For some reason, I can't make the compositing to work right.  The image is transparent,
-			// but when I composite it, the translucent areas come out white.  Doesn't make sense to
-			// me
+			// but when I composite it, the translucent areas come out white.  Doesn't make sense to me
+			// 
+			// add the structure image, currently the image is scaled a little bit 
 			if (image != null) {
 				g2.setClip(nodeShape);
-				g2.drawImage(image, (int)xOff, (int)yOff, (int)bounds.getWidth(), (int)bounds.getHeight(), null);
+				g2.drawImage(image, (int)(xOff+bounds.getWidth()*0.1), (int)(yOff+bounds.getWidth()*0.1), (int)(bounds.getWidth()*0.8), (int)(bounds.getHeight()*0.8), null);
 				g2.setClip(null);
 			}
+
+			// put a transparent layer on top of the node and structure
+			Color transColor = new Color(((float)color.getRed()/255f), ((float)color.getGreen()/255f), ((float)color.getBlue()/255f), 0.5f);
+			g2.setPaint(transColor);
+			fillOval(g2, xOff, yOff, xScale*40f, yScale*40f);
+			
 		} else {
 			{
 				// Paint a shadow

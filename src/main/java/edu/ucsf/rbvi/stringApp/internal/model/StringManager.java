@@ -58,8 +58,9 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.AddNamespacesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.SetConfidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowFlatNodeDesignPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectTaskFactory;
-import edu.ucsf.rbvi.stringApp.internal.tasks.ShowNewNodeEffectTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowFlatNodeDesignTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowPublicationsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
@@ -95,7 +96,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	private ShowEnrichmentPanelTaskFactory enrichmentTaskFactory;
 	private ShowPublicationsPanelTaskFactory publicationsTaskFactory;
 	private ShowGlassBallEffectTaskFactory glassBallTaskFactory;
-	private ShowNewNodeEffectTaskFactory newNodeEffectTaskFactory;
+	private ShowFlatNodeDesignTaskFactory flatNodeDesignTaskFactory;
 	private ShowResultsPanelTaskFactory resultsPanelTaskFactory;
 
 	private Boolean haveChemViz = null;
@@ -140,8 +141,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	// Settings default values.  Network specific values are stored in StringNetwork
 	private boolean showImage = true;
 	private boolean showEnhancedLabels = true;
-	private boolean showGlassBallEffect = true;
-	private boolean showNewNodeEffect = true;
+	private boolean showGlassBallEffect = false;
+	private boolean showFlatNodeDesign = true;
 	private boolean showStringColors = true;
 	private boolean showSingletons = true;
 	private boolean highlightNeighbors = false;
@@ -164,7 +165,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String ShowStructureImages = "showStructureImages";
 	public static String ShowEnhancedLabels = "showEnhancedLabels";
 	public static String ShowGlassBallEffect = "showGlassBallEffect";
-	public static String ShowNewNodeEffect = "showNewNodeEffect";
+	public static String ShowFlatNodeDesign = "showFlatNodeDesign";
 	public static String ShowStringColors = "showStringColors";
 	public static String ShowSingletons = "showSingletons";
 	public static String HighlightNeighbors = "highlightNeighbors";
@@ -219,6 +220,11 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			ModelUtils.setStringProperty(configProps, alternativeCONFIGURIProperty, alternativeCONFIGURI);
 		}
 
+		if (!ModelUtils.hasProperty(configProps, ShowFlatNodeDesign)) {
+			ModelUtils.setStringProperty(configProps, ShowFlatNodeDesign, true);
+			ModelUtils.setStringProperty(configProps, ShowGlassBallEffect, false);
+		}
+
 		// If we already have networks loaded, see if they are string networks
 		for (CyNetwork network: registrar.getService(CyNetworkManager.class).getNetworkSet()) {
 			if (ModelUtils.isStringNetwork(network)) {
@@ -255,8 +261,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		if (ModelUtils.hasProperty(configProps, ShowGlassBallEffect)) {
 			setShowGlassBallEffect(ModelUtils.getBooleanProperty(configProps,ShowGlassBallEffect));
 		}
-		if (ModelUtils.hasProperty(configProps, ShowNewNodeEffect)) {
-			setShowNewNodeEffect(ModelUtils.getBooleanProperty(configProps,ShowNewNodeEffect));
+		if (ModelUtils.hasProperty(configProps, ShowFlatNodeDesign)) {
+			setShowFlatNodeDesign(ModelUtils.getBooleanProperty(configProps,ShowFlatNodeDesign));
 		}
 		if (ModelUtils.hasProperty(configProps, ShowSingletons)) {
 			setShowSingletons(ModelUtils.getBooleanProperty(configProps,ShowSingletons));
@@ -563,10 +569,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		showGlassBallEffect = set; 
 	}
 
-	public boolean showNewNodeEffect() { return showNewNodeEffect; }
+	public boolean showFlatNodeDesign() { return showFlatNodeDesign; }
 	
-	public void setShowNewNodeEffect(boolean set) { 
-		showNewNodeEffect = set; 
+	public void setShowFlatNodeDesign(boolean set) { 
+		showFlatNodeDesign = set; 
 	}
 
 	public boolean showStringColors() { return showStringColors; }
@@ -757,7 +763,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		ModelUtils.setStringProperty(configProps, "showImage", Boolean.toString(showImage));
 		ModelUtils.setStringProperty(configProps, "showEnhancedLabels", Boolean.toString(showEnhancedLabels));
 		ModelUtils.setStringProperty(configProps, "showGlassBallEffect", Boolean.toString(showGlassBallEffect));
-		ModelUtils.setStringProperty(configProps, "showNewNodeEffect", Boolean.toString(showNewNodeEffect));
+		ModelUtils.setStringProperty(configProps, "showFlatNodeDesign", Boolean.toString(showFlatNodeDesign));
 		ModelUtils.setStringProperty(configProps, "showStringColors", Boolean.toString(showStringColors));
 		ModelUtils.setStringProperty(configProps, "showSingletons", Boolean.toString(showSingletons));
 		ModelUtils.setStringProperty(configProps, "highlightNeighbors", Boolean.toString(highlightNeighbors));
@@ -863,35 +869,34 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 				showEnhancedLabels = Boolean.parseBoolean(sessionValueLabels);
 			} else {
 				ModelUtils.setStringProperty(sessionProperties, ModelUtils.showEnhancedLabelsFlag,
-						new Boolean(showEnhancedLabels));
+						Boolean.valueOf(showEnhancedLabels));
 			}
 			//labelsTaskFactory.reregister();
 		}
 		
 		// check if glass ball effect should be shown or not
+		if (flatNodeDesignTaskFactory != null) {
+			String sessionValueLabels = ModelUtils.getStringProperty(sessionProperties,
+					ModelUtils.showFlatNodeDesignFlag);
+			// System.out.println("show flat node design: " + sessionValueLabels);
+			if (sessionValueLabels != null) {
+				showFlatNodeDesign = Boolean.parseBoolean(sessionValueLabels);
+			} else {
+				ModelUtils.setStringProperty(sessionProperties, ModelUtils.showFlatNodeDesignFlag,
+						Boolean.valueOf(showFlatNodeDesign));
+			}
+		}
+
+		// check if glass ball effect should be shown or not
 		if (glassBallTaskFactory != null) {
 			String sessionValueLabels = ModelUtils.getStringProperty(sessionProperties,
 					ModelUtils.showGlassBallEffectFlag);
-			// System.out.println("show labels: " + sessionValueLabels);
+			// System.out.println("show glass ball effect: " + sessionValueLabels);
 			if (sessionValueLabels != null) {
 				showGlassBallEffect = Boolean.parseBoolean(sessionValueLabels);
 			} else {
 				ModelUtils.setStringProperty(sessionProperties, ModelUtils.showGlassBallEffectFlag,
-						new Boolean(showGlassBallEffect));
-			}
-			//glassBallTaskFactory.reregister();
-		}
-
-		// check if new node effect should be shown or not
-		if (newNodeEffectTaskFactory != null) {
-			String sessionValueLabels = ModelUtils.getStringProperty(sessionProperties,
-					ModelUtils.showNewNodeEffectFlag);
-			// System.out.println("show labels: " + sessionValueLabels);
-			if (sessionValueLabels != null) {
-				showNewNodeEffect = Boolean.parseBoolean(sessionValueLabels);
-			} else {
-				ModelUtils.setStringProperty(sessionProperties, ModelUtils.showNewNodeEffectFlag,
-						new Boolean(showNewNodeEffect));
+						Boolean.valueOf(showGlassBallEffect));
 			}
 			//glassBallTaskFactory.reregister();
 		}
@@ -905,7 +910,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 				showImage = Boolean.parseBoolean(sessionValueImage);
 			} else {
 				ModelUtils.setStringProperty(sessionProperties, ModelUtils.showStructureImagesFlag,
-						new Boolean(showImage));
+						Boolean.valueOf(showImage));
 			}
 			//imagesTaskFactory.reregister();
 		}
@@ -1025,12 +1030,12 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		return glassBallTaskFactory;
 	}
 
-	public void setShowNewNodeEffectTaskFactory(ShowNewNodeEffectTaskFactory factory) {
-		newNodeEffectTaskFactory = factory;		
+	public void setShowFlatNodeDesignTaskFactory(ShowFlatNodeDesignTaskFactory factory) {
+		flatNodeDesignTaskFactory = factory;		
 	}
 
-	public ShowNewNodeEffectTaskFactory getShowNewNodeEffectTaskFactory() {
-		return newNodeEffectTaskFactory;
+	public ShowFlatNodeDesignTaskFactory getShowFlatNodeDesignTaskFactory() {
+		return flatNodeDesignTaskFactory;
 	}
 	
 	public void setShowEnrichmentPanelTaskFactory(ShowEnrichmentPanelTaskFactory factory) {

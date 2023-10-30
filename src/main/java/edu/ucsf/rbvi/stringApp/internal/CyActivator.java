@@ -61,9 +61,10 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowFlatNodeDesignPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectTaskFactory;
-import edu.ucsf.rbvi.stringApp.internal.tasks.ShowNewNodeEffectTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowFlatNodeDesignTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowPublicationsPanelAction;
@@ -435,7 +436,7 @@ public class CyActivator extends AbstractCyActivator {
 			Properties props = new Properties();
 			props.setProperty(PREFERRED_MENU, "Apps.STRING");
 			props.setProperty(TITLE, "Set STRING label attribute");
-			props.setProperty(MENU_GRAVITY, "10.0");
+			props.setProperty(MENU_GRAVITY, "11.0");
 			props.setProperty(IN_MENU_BAR, "true");
 			registerService(bc, setLabel, NetworkTaskFactory.class, props);
 		}
@@ -684,6 +685,13 @@ public class CyActivator extends AbstractCyActivator {
 		FetchStructureImagesTaskFactory fetchImagesTask = new FetchStructureImagesTaskFactory(manager);
 		{
 			Properties props = new Properties();
+			props.setProperty(PREFERRED_MENU, "Apps.STRING");
+			props.setProperty(TITLE, "Fetch structure images");
+			props.setProperty(MENU_GRAVITY, "12.0");
+			props.setProperty(IN_MENU_BAR, "true");
+			registerService(bc, fetchImagesTask, NetworkTaskFactory.class, props);
+
+			props = new Properties();
 			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "fetch images");
 			props.setProperty(COMMAND_DESCRIPTION, 
@@ -738,7 +746,7 @@ public class CyActivator extends AbstractCyActivator {
 		
 		{
 			// Register our "show glass ball effect" toggle
-			ShowGlassBallEffectPanelAction sgbea = new ShowGlassBallEffectPanelAction("Enable STRING glass balls effect", manager);
+			ShowGlassBallEffectPanelAction sgbea = new ShowGlassBallEffectPanelAction("Enable STRING glass ball design", manager);
 			registerService(bc, sgbea, CyAction.class);
 			
 			ShowGlassBallEffectTaskFactory showGlassBallEffectTF = new ShowGlassBallEffectTaskFactory(manager);
@@ -758,23 +766,22 @@ public class CyActivator extends AbstractCyActivator {
 		}
 
 		{
-			// Register our "show glass ball effect" toggle
-			// ShowNewNodeEffectPanelAction sgbea = new ShowNewNodeEffectPanelAction("Enable STRING glass balls effect", manager);
-			// registerService(bc, sgbea, CyAction.class);
+			// Register our "show flat node design" toggle
+			ShowFlatNodeDesignPanelAction sfndpa = new ShowFlatNodeDesignPanelAction("Enable STRING flat node design", manager);
+			registerService(bc, sfndpa, CyAction.class);
 			
-			ShowNewNodeEffectTaskFactory showNewNodeEffectTF = new ShowNewNodeEffectTaskFactory(manager);
-			manager.setShowNewNodeEffectTaskFactory(showNewNodeEffectTF);
-			//showGlassBallEffectTF.reregister();
+			ShowFlatNodeDesignTaskFactory showFlatNodeDesignTF = new ShowFlatNodeDesignTaskFactory(manager);
+			manager.setShowFlatNodeDesignTaskFactory(showFlatNodeDesignTF);
 			
 			// Create command version and register it
 			Properties props = new Properties();
 			props.setProperty(COMMAND_NAMESPACE, "string");
-			props.setProperty(COMMAND, "enable new node");
-			props.setProperty(COMMAND_DESCRIPTION, "Enable or disable the new STRING node effect");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, "Enable or disable the new STRING node effect.");
+			props.setProperty(COMMAND, "enable flat");
+			props.setProperty(COMMAND_DESCRIPTION, "Enable or disable the STRING flat design on the nodes");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, "Enable or disable the STRING flat design on the nodes.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
 			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");						
-			registerService(bc, showNewNodeEffectTF, NetworkViewTaskFactory.class, props);
+			registerService(bc, showFlatNodeDesignTF, NetworkViewTaskFactory.class, props);
 		}
 
 		{

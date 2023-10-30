@@ -18,6 +18,8 @@ import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
 import org.cytoscape.model.CyColumn;
@@ -150,7 +152,7 @@ public class ModelUtils {
 	public static String showStructureImagesFlag = "showStructureImages";
 	public static String showEnhancedLabelsFlag = "showEnhancedLabels";
 	public static String showGlassBallEffectFlag = "showGlassBallEffect";
-	public static String showNewNodeEffectFlag = "showNewNodeEffect";
+	public static String showFlatNodeDesignFlag = "showFlatNodeDesign";
 
 	// Create network view size threshold
 	// See https://github.com/cytoscape/cytoscape-impl/blob/develop/core-task-impl/
@@ -158,7 +160,7 @@ public class ModelUtils {
 	public static int DEF_VIEW_THRESHOLD = 3000;
 	public static String VIEW_THRESHOLD = "viewThreshold";
 	
-	public static int MAX_NODES_STRUCTURE_DISPLAY = 100;
+	public static int MAX_NODES_STRUCTURE_DISPLAY = 250;
 	public static int MAX_NODE_PANELS = 25;
 	
 	
@@ -582,10 +584,10 @@ public class ModelUtils {
 				useDATABASE, netType);
 
 		// TODO: [Release] What should be the cutoff for max number of nodes with structure displayed?
+		// Same cutoff as on the STRING page
 		if (newNetwork.getNodeCount() <= MAX_NODES_STRUCTURE_DISPLAY) {
 			fetchImages(newNetwork);
 		} else {
-			// TODO: [Release] How to set Show images to false in the node panel? 
 			manager.setShowImage(false);
 		}
 		
@@ -926,13 +928,28 @@ public class ModelUtils {
 	}
 	
 	public static void fetchImages(CyNetwork network) {
+		// long startTime = System.nanoTime();
+
+		// TODO: Do we need to catch possible exceptions here?
+		int numThreads = Runtime.getRuntime().availableProcessors(); // Number of available CPU cores
+		ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
+		
 		for (CyNode node : network.getNodeList()) {
-			fetchImage(network, node);
+			Runnable task = () -> fetchImage(network, node);
+		    executorService.submit(task);
 		}
+				
+		executorService.shutdown();
+		// long currentTime = System.nanoTime();
+		// System.out.println("fetched images in " + (currentTime - startTime)/6000000000.0 + " sec");
 	}
 
 	public static void fetchImage(CyNetwork network, CyNode node) {
 		CyRow row = network.getRow(node);
+		// if image already exists, don't fetch it
+		String existingImage = row.get(STYLE, String.class);
+		if (existingImage != null && !existingImage.equals("") && existingImage.contains("image/png;base64")) 
+			return;
 		String imageURL = row.get(IMAGE, String.class);
 		if (imageURL == null) {
 			// ignore

@@ -19,12 +19,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
@@ -69,8 +71,9 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
  */
 public class StringNodePanel extends AbstractStringPanel {
 
-	private JCheckBox enableGlass;
-	private JCheckBox newStringStyle;
+	private JRadioButton enableFlatButton;
+	private JRadioButton enableGlassButton;
+	private JRadioButton enableBasicButton;
 	private JCheckBox showStructure;
 	private JCheckBox stringLabels;
 	private JCheckBox showSingletons;
@@ -96,8 +99,9 @@ public class StringNodePanel extends AbstractStringPanel {
 
 	public void updateControls() {
 		updating = true;
-		enableGlass.setSelected(manager.showGlassBallEffect());
-		newStringStyle.setSelected(manager.showNewNodeEffect());
+		enableFlatButton.setSelected(manager.showFlatNodeDesign());
+		enableGlassButton.setSelected(manager.showGlassBallEffect());
+		enableBasicButton.setSelected(!manager.showFlatNodeDesign() && !manager.showGlassBallEffect());
 		showStructure.setSelected(manager.showImage());
 		stringLabels.setSelected(manager.showEnhancedLabels());
 		stringColors.setSelected(manager.showStringColors());
@@ -105,7 +109,7 @@ public class StringNodePanel extends AbstractStringPanel {
 
 		// TODO: fix me
 		highlightBox.setSelected(manager.highlightNeighbors());
-		if (!manager.showGlassBallEffect() && !manager.showNewNodeEffect())
+		if (!manager.showGlassBallEffect() && !manager.showFlatNodeDesign())
 			showStructure.setEnabled(false);
 		else
 			showStructure.setEnabled(true);
@@ -146,30 +150,61 @@ public class StringNodePanel extends AbstractStringPanel {
 		EasyGBC upperGBC = new EasyGBC();
 		JPanel upperPanel = new JPanel(new GridBagLayout());
 		{
-			enableGlass = new JCheckBox("Glass ball effect");
-			enableGlass.setFont(labelFont);
-			enableGlass.addItemListener(new ItemListener() {
+			enableFlatButton = new JRadioButton("Flat node design");
+			enableFlatButton.setFont(labelFont);
+			enableFlatButton.setSelected(manager.showFlatNodeDesign());
+			enableFlatButton.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
-					if (updating) return;
-					if (e.getStateChange() == ItemEvent.SELECTED) {
-						System.out.println("Glass ball is selected");
-						manager.execute(
-							manager.getShowNewNodeEffectTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), false);
-						manager.execute(
-							manager.getShowGlassBallEffectTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), true);
+					if (updating)
+						return;
+					if (enableFlatButton.isSelected()) {
+						manager.execute(manager.getShowFlatNodeDesignTaskFactory()
+								.createTaskIterator(manager.getCurrentNetworkView()), true);
 					} else {
-						System.out.println("Glass ball is deselected");
-						manager.execute(
-							manager.getShowGlassBallEffectTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), false);
+						manager.execute(manager.getShowFlatNodeDesignTaskFactory()
+								.createTaskIterator(manager.getCurrentNetworkView()), false);
 					}
 				}
 			});
-			upperPanel.add(enableGlass, upperGBC.anchor("northwest").noExpand());
+
+			enableGlassButton = new JRadioButton("Glass ball design");
+			enableGlassButton.setFont(labelFont);
+			enableGlassButton.setSelected(manager.showGlassBallEffect());
+			enableGlassButton.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					if (updating)
+						return;
+					if (enableGlassButton.isSelected()) {
+						manager.execute(manager.getShowGlassBallEffectTaskFactory()
+								.createTaskIterator(manager.getCurrentNetworkView()), true);
+					} else {
+						manager.execute(manager.getShowGlassBallEffectTaskFactory()
+								.createTaskIterator(manager.getCurrentNetworkView()), false);
+					}
+				}
+			});
+			
+			enableBasicButton = new JRadioButton("Cytoscape design");
+			enableBasicButton.setFont(labelFont);
+			enableBasicButton.setSelected(!manager.showFlatNodeDesign() && !manager.showGlassBallEffect());
+			enableBasicButton.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					if (updating)
+						return;
+				}
+			});
+
+			ButtonGroup group = new ButtonGroup();
+			group.add(enableFlatButton);
+			group.add(enableGlassButton);
+			group.add(enableBasicButton);
+			upperPanel.add(enableFlatButton, upperGBC.anchor("northwest").noExpand());
 		}
 		
 		{
 			showStructure = new JCheckBox("Structure images");
 			showStructure.setFont(labelFont);
+			showStructure.setSelected(manager.showImage());
 			// showStructure.setBorder(null);
 			showStructure.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
@@ -180,46 +215,13 @@ public class StringNodePanel extends AbstractStringPanel {
 			});
 			upperPanel.add(showStructure, upperGBC.right().insets(0,10,0,0).noExpand());
 		}
-
-		{
-			newStringStyle = new JCheckBox("New STRING style");
-			newStringStyle.setFont(labelFont);
-			newStringStyle.addItemListener(new ItemListener() {
-				public void itemStateChanged(ItemEvent e) {
-					if (updating) return;
-					if (e.getStateChange() == ItemEvent.SELECTED) {
-						System.out.println("New node effect is selected");
-						manager.execute(
-							manager.getShowGlassBallEffectTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), false);
-						manager.execute(
-							manager.getShowNewNodeEffectTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), true);
-					} else {
-						System.out.println("New node effect is deselected");
-						manager.execute(
-							manager.getShowNewNodeEffectTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), false);
-					}
-				}
-			});
-			upperPanel.add(newStringStyle, upperGBC.left().down().noInsets().noExpand());
-		}
-
-		{
-			stringColors = new JCheckBox("STRING style colors");
-			stringColors.setFont(labelFont);
-			stringColors.setSelected(true);
-			stringColors.addItemListener(new ItemListener() {
-				public void itemStateChanged(ItemEvent e) {
-					if (updating) return;
-					manager.setShowStringColors(stringColors.isSelected());
-					ViewUtils.hideStringColors(manager, manager.getCurrentNetworkView(), stringColors.isSelected());
-				}
-			});
-			upperPanel.add(stringColors, upperGBC.right().insets(0,10,0,0).noExpand());
-		}
+		
+		upperPanel.add(enableGlassButton, upperGBC.left().down().noInsets().noExpand());
 		
 		{
 			stringLabels = new JCheckBox("STRING style labels");
 			stringLabels.setFont(labelFont);
+			stringLabels.setSelected(manager.showEnhancedLabels());
 			stringLabels.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
 					if (updating) return;
@@ -227,13 +229,37 @@ public class StringNodePanel extends AbstractStringPanel {
 						manager.getShowEnhancedLabelsTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), true);
 				}
 			});
-			upperPanel.add(stringLabels, upperGBC.left().down().noInsets().noExpand());
+			upperPanel.add(stringLabels, upperGBC.right().insets(0,10,0,0).noExpand());
+		}
+		
+		upperPanel.add(enableBasicButton, upperGBC.left().down().noInsets().noExpand());
+		
+		{
+			stringColors = new JCheckBox("STRING style colors");
+			stringColors.setFont(labelFont);
+			stringColors.setSelected(manager.showStringColors());
+			stringColors.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					if (updating) return;
+					manager.setShowStringColors(stringColors.isSelected());
+					ViewUtils.hideStringColors(manager, manager.getCurrentNetworkView(), stringColors.isSelected());
+
+					//if (!enableGlass.isSelected() && stringColors.isSelected()) {
+					//	manager.execute(
+					//		manager.getShowFlatNodeDesignTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), true);
+					//} else {
+					//	manager.execute(
+					//		manager.getShowFlatNodeDesignTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), false);
+					//}
+				}
+			});
+			upperPanel.add(stringColors, upperGBC.right().insets(0,10,0,0).noExpand());
 		}
 		
 		{
 			showSingletons = new JCheckBox("Show singletons");
 			showSingletons.setFont(labelFont);
-			showSingletons.setSelected(true);
+			showSingletons.setSelected(manager.showSingletons());
 			showSingletons.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
 					if (updating) return;
@@ -363,7 +389,7 @@ public class StringNodePanel extends AbstractStringPanel {
 					manager.execute(new TaskIterator(new MCLClusterTask(manager, currentNetwork)));
 				}
 			});
-			getClusters.setEnabled(manager.haveClusterMaker());
+			getClusters.setEnabled(true);
 			lowerPanel.add(getClusters);
 		}
 
