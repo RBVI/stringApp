@@ -64,9 +64,16 @@ public class DrawPill {
 		}
 
 		if (flatNodeDesign) {
-			Color transColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int)(((float)255)*0.4f));
-			g2.setPaint(transColor);
-			fillPill(g2, xOff, yOff, xScale*40f, yScale*40f);
+
+			// if node is selected, use yellow
+			// TODO: should actually be changed to the default selection color set by the user
+			if (selected)
+				color = Color.YELLOW;
+
+			// use black and white transparent colors to make the border color more pastel-like
+			// TODO: revise code below and see if it is enough to draw the white and black stroke fills only once in the end
+			Color transBlack = new Color(0, 0, 0, (int)(((float)255)*0.5f));
+			Color transWhite = new Color(1, 1, 1, 0.5f);
 
 			// Now draw the border.  Unfortunately, it's not easy to do a gradient here, so we need to use a stroke.  To simulate
 			// a gradient, we draw the stroke three times -- two smaller strokes and then the final, larger stroke
@@ -74,26 +81,55 @@ public class DrawPill {
 			g2.setPaint(strokeColor1);
 			strokePill(g2, xOff+3, yOff+3, xScale*40f-6, yScale*40f-6, 0.5f);
 
+			g2.setPaint(transBlack);
+			strokePill(g2, xOff+3, yOff+3, xScale*40f-6, yScale*40f-6, 0.5f);
+			g2.setPaint(transWhite);
+			strokePill(g2, xOff+3, yOff+3, xScale*40f-6, yScale*40f-6, 0.5f);
+
 			Color strokeColor2 = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int)(((float)255)*0.6f));
 			g2.setPaint(strokeColor2);
+			strokePill(g2, xOff+2.5f, yOff+2.5f, xScale*40f-5, yScale*40f-5, 0.5f);
+
+			g2.setPaint(transBlack);
+			strokePill(g2, xOff+2.5f, yOff+2.5f, xScale*40f-5, yScale*40f-5, 0.5f);
+			g2.setPaint(transWhite);
 			strokePill(g2, xOff+2.5f, yOff+2.5f, xScale*40f-5, yScale*40f-5, 0.5f);
 
 			Color strokeColor3 = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int)(((float)255)*0.7f));
 			g2.setPaint(strokeColor3);
 			strokePill(g2, xOff+2f, yOff+2f, xScale*40f-4, yScale*40f-4, 0.6f);
 
+			g2.setPaint(transBlack);
+			strokePill(g2, xOff+2f, yOff+2f, xScale*40f-4, yScale*40f-4, 0.6f);
+			g2.setPaint(transWhite);
+			strokePill(g2, xOff+2f, yOff+2f, xScale*40f-4, yScale*40f-4, 0.6f);
+
 			g2.setPaint(color);
 			strokePill(g2, xOff+1.5f, yOff+1.5f, xScale*40f-3, yScale*40f-3, 3);
 
+			g2.setPaint(transBlack);
+			strokePill(g2, xOff+1.5f, yOff+1.5f, xScale*40f-3, yScale*40f-3, 3);
+			g2.setPaint(transWhite);
+			strokePill(g2, xOff+1.5f, yOff+1.5f, xScale*40f-3, yScale*40f-3, 3);
 
 			if (image != null) {
 				g2.setClip(nodeShape);
-				if (bounds.getHeight() <= bounds.getWidth())
-					g2.drawImage(image, (int)(xOff+bounds.getWidth()/2-bounds.getHeight()/2), (int)yOff, (int)bounds.getHeight(), (int)bounds.getHeight(), null);
-				else
-					g2.drawImage(image, (int)(xOff), (int)yOff, (int)bounds.getWidth(), (int)bounds.getWidth(), null);
+				// tried to scale the images a little bit (by a factor of 0.9) such that they fit within the nodes and don't overlap with the node "border"
+				if (bounds.getHeight() <= bounds.getWidth()) {
+					// g2.drawImage(image, (int)(xOff+bounds.getWidth()/2-bounds.getHeight()/2), (int)yOff, (int)bounds.getHeight(), (int)bounds.getHeight(), null);
+					g2.drawImage(image, (int)(xOff+bounds.getWidth()*0.9/2-bounds.getHeight()*0.9/3), (int)(yOff+bounds.getHeight()*0.05), (int)(bounds.getHeight()*0.9), (int)(bounds.getHeight()*0.9), null);
+				} else {
+					// g2.drawImage(image, (int)(xOff), (int)yOff, (int)bounds.getWidth(), (int)bounds.getWidth(), null);
+					g2.drawImage(image, (int)(xOff+bounds.getWidth()*0.05), (int)(yOff+bounds.getWidth()*0.05), (int)(bounds.getWidth()*0.9), (int)(bounds.getWidth()*0.9), null);
+				}
 				g2.setClip(null);
 			}
+			
+			// put a transparent layer on top of the node and structure, after drawing the structure and not before
+			Color transColor = new Color(((float)color.getRed()/255f), ((float)color.getGreen()/255f), ((float)color.getBlue()/255f), 0.5f);
+			g2.setPaint(transColor);
+			fillPill(g2, xOff, yOff, xScale*40f, yScale*40f);
+			
 		} else {
 			{
 				// Paint a shadow

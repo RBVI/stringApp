@@ -61,15 +61,18 @@ public class DrawSphere {
 		}
 
 		if (flatNodeDesign) {
+			// if node is selected, use yellow
+			// TODO: should actually be changed to the default selection color set by the user
 			if (selected)
 				color = Color.YELLOW;
 			g2.setPaint(color);
-			
+
+			// the gradient goes from white to black for a more pastel-like color
 			Stops s1 = new Stops(4);
 			s1.addStop(0.0f, "#FFFFFF", 0.0f);
 			s1.addStop(0.84f, "#FFFFFF", 0.0f);
-			s1.addStop(0.88f, color, 1.0f);
-			s1.addStop(1.0f, color, 1.0f);
+			s1.addStop(0.88f, "#000000", 0.35f);
+			s1.addStop(1.0f, "#000000", 0.35f);
 			Paint p = new RadialGradientPaint(scaleX(20.0f), scaleY(20f), yScale*20f,
 																				s1.getStops(), s1.getColors());
 			g2.setPaint(p);
@@ -82,7 +85,7 @@ public class DrawSphere {
 			// add the structure image, currently the image is scaled a little bit 
 			if (image != null) {
 				g2.setClip(nodeShape);
-				g2.drawImage(image, (int)(xOff+bounds.getWidth()*0.1), (int)(yOff+bounds.getWidth()*0.1), (int)(bounds.getWidth()*0.8), (int)(bounds.getHeight()*0.8), null);
+				g2.drawImage(image, (int)(xOff+bounds.getWidth()*0.1), (int)(yOff+bounds.getHeight()*0.1), (int)(bounds.getWidth()*0.8), (int)(bounds.getHeight()*0.8), null);
 				g2.setClip(null);
 			}
 

@@ -161,7 +161,7 @@ public class ModelUtils {
 	public static int DEF_VIEW_THRESHOLD = 3000;
 	public static String VIEW_THRESHOLD = "viewThreshold";
 	
-	public static int MAX_NODES_STRUCTURE_DISPLAY = 250;
+	public static int MAX_NODES_STRUCTURE_DISPLAY = 300;
 	public static int MAX_NODE_PANELS = 25;
 	
 	
@@ -584,8 +584,7 @@ public class ModelUtils {
 		getJSON(manager, species, newNetwork, nodeMap, nodeNameMap, queryTermMap, null, results,
 				useDATABASE, netType);
 
-		// TODO: [Release] What should be the cutoff for max number of nodes with structure displayed?
-		// Same cutoff as on the STRING page
+		// cutoff for max number of nodes with structure displayed is currently 300, the same as on the STRING page
 		if (newNetwork.getNodeCount() <= MAX_NODES_STRUCTURE_DISPLAY) {
 			fetchImages(newNetwork);
 		} else {
