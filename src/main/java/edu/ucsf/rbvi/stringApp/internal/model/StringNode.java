@@ -169,8 +169,10 @@ public class StringNode {
 		String input = ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.STYLE);
 		if (input == null) return null;
 		if (input.equals("string:")) {
+			String url = getStructureImageURL();
+			if (url == null) return null;
 			try {
-				bi = ImageIO.read(new URL(getStructureImageURL()));
+				bi = ImageIO.read(new URL(url));
 				return bi;
 			} catch (Exception e) {
 				// ignore

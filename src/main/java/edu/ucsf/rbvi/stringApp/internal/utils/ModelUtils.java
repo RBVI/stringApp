@@ -515,6 +515,12 @@ public class ModelUtils {
 		
 		List<CyNode> nodes = getJSON(manager, species, net, nodeMap, nodeNameMap, queryTermMap,
 				newEdges, results, useDATABASE, netType);
+		
+		// if we have "enough" nodes, but not too many, fetch the images 
+		if (nodes != null && nodes.size() > 0 && nodes.size() <= MAX_NODES_STRUCTURE_DISPLAY) {
+			fetchImages(net, nodes);
+		}
+
 		return nodes;
 	}
 
@@ -928,13 +934,17 @@ public class ModelUtils {
 	}
 	
 	public static void fetchImages(CyNetwork network) {
+		fetchImages(network, network.getNodeList());
+	}
+
+	public static void fetchImages(CyNetwork network, List<CyNode> nodes) {
 		// long startTime = System.nanoTime();
 
 		// TODO: Do we need to catch possible exceptions here?
 		int numThreads = Runtime.getRuntime().availableProcessors(); // Number of available CPU cores
 		ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
 		
-		for (CyNode node : network.getNodeList()) {
+		for (CyNode node : nodes) {
 			Runnable task = () -> fetchImage(network, node);
 		    executorService.submit(task);
 		}

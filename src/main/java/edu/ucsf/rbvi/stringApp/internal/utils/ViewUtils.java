@@ -480,6 +480,7 @@ public class ViewUtils {
 		float h = 0.0f;
 		float s = 0.7f;
 		float stepSize = 1.0f/(float)network.getNodeCount();
+		// TODO: Instead of getting the node list, get a list sorted the same way as in STRING and start with h = 1.0 to start with red color
 		for (CyNode node: network.getNodeList()) {
 			Color c = Color.getHSBColor(h, s, 0.9f);
 			h += stepSize;
