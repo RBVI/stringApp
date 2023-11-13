@@ -173,6 +173,8 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 		}
 
 		// set style as requested by the user
+		if (showFlatNodeDesign && showGlassBallEffect)
+			showGlassBallEffect = false;
 		manager.setShowFlatNodeDesign(showFlatNodeDesign);
 		manager.setShowGlassBallEffect(showGlassBallEffect);
 		manager.setShowImage(showStructureImages);

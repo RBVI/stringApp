@@ -84,7 +84,8 @@ public class ShowGlassBallEffectTask extends AbstractTask {
 						currNetView.getModel(), show);
 			}
 		}
-		netView.updateView();
+		if (netView != null)
+			netView.updateView();
 		// if (reregister) factory.reregister();
 		manager.updateControls();
 	}
