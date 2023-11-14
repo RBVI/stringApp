@@ -557,7 +557,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			String type = currentNetwork.getRow(node).get(ModelUtils.TYPE, String.class);
 			if (stringID != null && stringID.length() > 0 
 					&& type != null && type.equals("protein")) {
-				Boolean considerForEnrichment = currentNetwork.getRow(node).get(ModelUtils.ENRICHMENT, Boolean.class);
+				Boolean considerForEnrichment = currentNetwork.getRow(node).get(ModelUtils.USE_ENRICHMENT, Boolean.class);
 				if (considerForEnrichment != null && !considerForEnrichment.booleanValue())
 					continue;
 				str.append(stringID + "\n");
@@ -574,7 +574,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			String type = bgNetwork.getRow(node).get(ModelUtils.TYPE, String.class);
 			if (stringID != null && stringID.length() > 0 
 					&& type != null && type.equals("protein")) {
-				Boolean considerForEnrichment = bgNetwork.getRow(node).get(ModelUtils.ENRICHMENT, Boolean.class);
+				Boolean considerForEnrichment = bgNetwork.getRow(node).get(ModelUtils.USE_ENRICHMENT, Boolean.class);
 				if (considerForEnrichment != null && !considerForEnrichment.booleanValue())
 					continue;
 				str.append(stringID + "\n");
@@ -599,7 +599,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 				String type = currentNetwork.getRow(node).get(ModelUtils.TYPE, String.class);
 				if (stringID != null && stringID.length() > 0 
 						&& type != null && type.equals("protein")) {
-					Boolean considerForEnrichment = currentNetwork.getRow(node).get(ModelUtils.ENRICHMENT, Boolean.class);
+					Boolean considerForEnrichment = currentNetwork.getRow(node).get(ModelUtils.USE_ENRICHMENT, Boolean.class);
 					if (considerForEnrichment != null && !considerForEnrichment.booleanValue())
 						continue;
 					selectedStr.append(stringID + "\n");

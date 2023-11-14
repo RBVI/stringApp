@@ -82,7 +82,7 @@ public class ModelUtils {
 	public static String ID = "@id";
 	public static String DESCRIPTION = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "description";
 	public static String DISEASE_SCORE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "disease score";
-	public static String ENRICHMENT = "use for enrichment";
+	public static String USE_ENRICHMENT = "use for enrichment";
 	public static String IMAGE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "imageurl";
 	public static String NAMESPACE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "namespace";
 	public static String QUERYTERM = "query term";

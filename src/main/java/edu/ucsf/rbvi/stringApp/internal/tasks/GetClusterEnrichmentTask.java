@@ -386,7 +386,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			if (stringID != null && stringID.length() > 0 
 					&& type != null && type.equals("protein") 
 					&& species != null && species.equals(allNetSpecies.getSelectedValue())) {
-				Boolean considerForEnrichment = currentNetwork.getRow(node).get(ModelUtils.ENRICHMENT, Boolean.class);
+				Boolean considerForEnrichment = currentNetwork.getRow(node).get(ModelUtils.USE_ENRICHMENT, Boolean.class);
 				if (considerForEnrichment != null && !considerForEnrichment.booleanValue())
 					continue;
 				str.append(stringID + "\n");
@@ -403,7 +403,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			String type = bgNetwork.getRow(node).get(ModelUtils.TYPE, String.class);
 			if (stringID != null && stringID.length() > 0 
 					&& type != null && type.equals("protein")) {
-				Boolean considerForEnrichment = bgNetwork.getRow(node).get(ModelUtils.ENRICHMENT, Boolean.class);
+				Boolean considerForEnrichment = bgNetwork.getRow(node).get(ModelUtils.USE_ENRICHMENT, Boolean.class);
 				if (considerForEnrichment != null && !considerForEnrichment.booleanValue())
 					continue;
 				str.append(stringID + "\n");
