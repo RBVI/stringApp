@@ -366,7 +366,7 @@ public class ViewUtils {
 
 		boolean useStitch = false;
 		if (net.getDefaultNodeTable().getColumn(ModelUtils.TYPE) != null)
-			useStitch = true;
+		 	useStitch = true;
 
 		VisualMappingFunctionFactory discreteFactory = 
             manager.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
@@ -386,13 +386,12 @@ public class ViewUtils {
 			// Set up our labels to be in the upper right quadrant
 			{
 				VisualProperty customGraphicsP = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_POSITION_3");
-				Object upperRight = customGraphicsP.parseSerializableString("NE,C,c,0.00,0.00");
+				Object upperRight = customGraphicsP.parseSerializableString("N,SW,l,-1.00,-1.00");
 				stringStyle.setDefaultValue(customGraphicsP, upperRight);
 				if (useStitch) {
-					Object top = customGraphicsP.parseSerializableString("N,C,c,0.00,-5.00");
-					DiscreteMapping<String,Object> dMapping = 
-						(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 
-											   	                                              customGraphicsP);
+					Object top = customGraphicsP.parseSerializableString("N,S,c,0.00,-10.00");
+					DiscreteMapping<String, Object> dMapping = (DiscreteMapping) discreteFactory
+							.createVisualMappingFunction(ModelUtils.TYPE, String.class, customGraphicsP);
 					dMapping.putMapValue("compound", top);
 					dMapping.putMapValue("protein", upperRight);
 					stringStyle.addVisualMappingFunction(dMapping);
