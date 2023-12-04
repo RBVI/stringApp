@@ -384,19 +384,19 @@ public class ViewUtils {
 			}
 	
 			// Set up our labels to be in the upper right quadrant
-			{
-				VisualProperty customGraphicsP = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_POSITION_3");
-				Object upperRight = customGraphicsP.parseSerializableString("N,SW,l,-1.00,-1.00");
-				stringStyle.setDefaultValue(customGraphicsP, upperRight);
-				if (useStitch) {
-					Object top = customGraphicsP.parseSerializableString("N,S,c,0.00,-10.00");
-					DiscreteMapping<String, Object> dMapping = (DiscreteMapping) discreteFactory
-							.createVisualMappingFunction(ModelUtils.TYPE, String.class, customGraphicsP);
-					dMapping.putMapValue("compound", top);
-					dMapping.putMapValue("protein", upperRight);
-					stringStyle.addVisualMappingFunction(dMapping);
-				}
-			}
+			// {
+			// 	VisualProperty customGraphicsP = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_POSITION_3");
+			// 	Object upperRight = customGraphicsP.parseSerializableString("N,SW,l,-1.00,-1.00");
+			// 	stringStyle.setDefaultValue(customGraphicsP, upperRight);
+			// 	if (useStitch) {
+			// 		Object top = customGraphicsP.parseSerializableString("N,S,c,0.00,-10.00");
+			// 		DiscreteMapping<String, Object> dMapping = (DiscreteMapping) discreteFactory
+			// 				.createVisualMappingFunction(ModelUtils.TYPE, String.class, customGraphicsP);
+			// 		dMapping.putMapValue("compound", top);
+			// 		dMapping.putMapValue("protein", upperRight);
+			// 		stringStyle.addVisualMappingFunction(dMapping);
+			// 	}
+			// }
 	
 			// Finally, disable the "standard" label passthrough and position
 			{
@@ -406,8 +406,8 @@ public class ViewUtils {
 		} else {
 			stringStyle
 					.removeVisualMappingFunction(lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_3"));
-			stringStyle.removeVisualMappingFunction(
-					lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_POSITION_3"));
+			// stringStyle.removeVisualMappingFunction(
+			// 		lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_POSITION_3"));
 
 			{
 				PassthroughMapping pMapping = (PassthroughMapping) passthroughFactory
@@ -612,8 +612,10 @@ public class ViewUtils {
 
 		updateColorMapHost(manager, style, view, speciesList);
 
-		if (view != null)
+		if (view != null) {
 			vmm.setVisualStyle(style, view);
+			style.apply(view);
+		}
 		vmm.setCurrentVisualStyle(style);
 	}
 

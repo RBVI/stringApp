@@ -1172,9 +1172,9 @@ public class ModelUtils {
 				// Construct instructions for enhanced graphics label
 				String enhancedLabel = "label: attribute=\"display name\" labelsize=12 ";
 				if (type.equals("protein"))
-					enhancedLabel += "labelAlignment=left ";
+					enhancedLabel += "labelAlignment=left position=northeast ";
 				else
-					enhancedLabel += "labelAlignment=center ";
+					enhancedLabel += "labelAlignment=middle position=north ";
 				enhancedLabel += "outline=true outlineColor=white outlineTransparency=95 outlineWidth=10 ";
 				enhancedLabel += "background=false color=black dropShadow=false";
 				row.set(ELABEL_STYLE, enhancedLabel);
