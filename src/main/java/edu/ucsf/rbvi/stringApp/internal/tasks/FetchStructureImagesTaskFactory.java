@@ -18,7 +18,6 @@ public class FetchStructureImagesTaskFactory extends AbstractNetworkTaskFactory 
 	}
 
 	
-	// TODO: [Release] enable only when images are not there?
 	public boolean isReady() {
 		return manager.haveURIs() && true;
 	}
@@ -28,7 +27,7 @@ public class FetchStructureImagesTaskFactory extends AbstractNetworkTaskFactory 
 	}
 
 	public boolean isReady(CyNetwork network) {
-		if (manager.haveURIs() && ModelUtils.isStringNetwork(network)) {
+		if (manager.haveURIs() && ModelUtils.isStringNetwork(network) && !ModelUtils.getNetworkHasImages(network)) {
 			return true;
 		}
 		return false;
@@ -39,7 +38,8 @@ public class FetchStructureImagesTaskFactory extends AbstractNetworkTaskFactory 
 	}
 
 	public boolean isReady(CyNetworkView netView) {
-		if (manager.haveURIs() && ModelUtils.isStringNetwork(netView.getModel())) {
+		if (manager.haveURIs() && ModelUtils.isStringNetwork(netView.getModel())
+				&& !ModelUtils.getNetworkHasImages(netView.getModel())) {
 			return true;
 		}
 		return false;

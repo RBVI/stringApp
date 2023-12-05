@@ -131,6 +131,7 @@ public class ModelUtils {
 	public static String DATABASE = "database";
 	public static String NET_SPECIES = "species";
 	public static String NET_DATAVERSION = "data version";
+	public static String NET_HAS_IMAGES = "has images";
 	public static String NET_URI = "uri";
 	public static String NET_ANALYZED_NODES = "analyzedNodes.SUID";
 	public static String NET_ANALYZED_NODES_PUBL = "analyzedNodesPubl.SUID";
@@ -516,9 +517,12 @@ public class ModelUtils {
 		List<CyNode> nodes = getJSON(manager, species, net, nodeMap, nodeNameMap, queryTermMap,
 				newEdges, results, useDATABASE, netType);
 		
-		// if we have "enough" nodes, but not too many, fetch the images 
+		// if we have "enough" nodes, but not too many, fetch the images, 
+		// otherwise allow users to fetch them by setting "has images" to false 
 		if (nodes != null && nodes.size() > 0 && nodes.size() <= MAX_NODES_STRUCTURE_DISPLAY) {
 			fetchImages(net, nodes);
+		} else {
+			ModelUtils.setNetworkHasImages(net, false);
 		}
 
 		return nodes;
@@ -595,6 +599,7 @@ public class ModelUtils {
 			fetchImages(newNetwork);
 		} else {
 			manager.setShowImage(false);
+			ModelUtils.setNetworkHasImages(newNetwork, false);
 		}
 		
 		manager.addNetwork(newNetwork);
@@ -621,6 +626,17 @@ public class ModelUtils {
 		if (network.getDefaultNetworkTable().getColumn(NETWORK_TYPE) == null)
 			return null;
 		return network.getRow(network).get(NETWORK_TYPE, String.class);
+	}
+
+	public static void setNetworkHasImages(CyNetwork network, boolean hasImages) {
+		createColumnIfNeeded(network.getDefaultNetworkTable(), Boolean.class, NET_HAS_IMAGES);
+		network.getRow(network).set(NET_HAS_IMAGES, hasImages);
+	}
+
+	public static boolean getNetworkHasImages(CyNetwork network) {
+		if (network.getDefaultNetworkTable().getColumn(NET_HAS_IMAGES) == null)
+			return false;
+		return network.getRow(network).get(NET_HAS_IMAGES, Boolean.class);
 	}
 
 	public static String inferNetworkType(CyNetwork network) {
@@ -952,6 +968,7 @@ public class ModelUtils {
 		executorService.shutdown();
 		// long currentTime = System.nanoTime();
 		// System.out.println("fetched images in " + (currentTime - startTime)/6000000000.0 + " sec");
+		setNetworkHasImages(network, true);
 	}
 
 	public static void fetchImage(CyNetwork network, CyNode node) {
