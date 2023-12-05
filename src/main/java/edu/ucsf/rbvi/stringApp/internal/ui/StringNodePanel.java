@@ -202,23 +202,6 @@ public class StringNodePanel extends AbstractStringPanel {
 		}
 		
 		{
-			showStructure = new JCheckBox("Structure images");
-			showStructure.setFont(labelFont);
-			showStructure.setSelected(manager.showImage());
-			// showStructure.setBorder(null);
-			showStructure.addItemListener(new ItemListener() {
-				public void itemStateChanged(ItemEvent e) {
-					if (updating) return;
-					manager.execute(
-						manager.getShowImagesTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), true);
-				}
-			});
-			upperPanel.add(showStructure, upperGBC.right().insets(0,10,0,0).noExpand());
-		}
-		
-		upperPanel.add(enableGlassButton, upperGBC.left().down().noInsets().noExpand());
-		
-		{
 			stringLabels = new JCheckBox("STRING style labels");
 			stringLabels.setFont(labelFont);
 			stringLabels.setSelected(manager.showEnhancedLabels());
@@ -232,7 +215,7 @@ public class StringNodePanel extends AbstractStringPanel {
 			upperPanel.add(stringLabels, upperGBC.right().insets(0,10,0,0).noExpand());
 		}
 		
-		upperPanel.add(enableBasicButton, upperGBC.left().down().noInsets().noExpand());
+		upperPanel.add(enableGlassButton, upperGBC.left().down().noInsets().noExpand());
 		
 		{
 			stringColors = new JCheckBox("STRING style colors");
@@ -243,18 +226,12 @@ public class StringNodePanel extends AbstractStringPanel {
 					if (updating) return;
 					manager.setShowStringColors(stringColors.isSelected());
 					ViewUtils.hideStringColors(manager, manager.getCurrentNetworkView(), stringColors.isSelected());
-
-					//if (!enableGlass.isSelected() && stringColors.isSelected()) {
-					//	manager.execute(
-					//		manager.getShowFlatNodeDesignTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), true);
-					//} else {
-					//	manager.execute(
-					//		manager.getShowFlatNodeDesignTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), false);
-					//}
 				}
 			});
 			upperPanel.add(stringColors, upperGBC.right().insets(0,10,0,0).noExpand());
 		}
+		
+		upperPanel.add(enableBasicButton, upperGBC.left().down().noInsets().noExpand());
 		
 		{
 			showSingletons = new JCheckBox("Show singletons");
@@ -267,7 +244,22 @@ public class StringNodePanel extends AbstractStringPanel {
 					ViewUtils.hideSingletons(manager.getCurrentNetworkView(), showSingletons.isSelected());
 				}
 			});
-			upperPanel.add(showSingletons, upperGBC.left().down().insets(5,0,0,0).noExpand());
+			upperPanel.add(showSingletons, upperGBC.right().insets(0,10,0,0).noExpand());
+		}
+		
+		{
+			showStructure = new JCheckBox("Structure images");
+			showStructure.setFont(labelFont);
+			showStructure.setSelected(manager.showImage());
+			// showStructure.setBorder(null);
+			showStructure.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					if (updating) return;
+					manager.execute(
+						manager.getShowImagesTaskFactory().createTaskIterator(manager.getCurrentNetworkView()), true);
+				}
+			});
+			upperPanel.add(showStructure, upperGBC.left().down().insets(0,0,0,0).noExpand());
 		}
 		
 		{
@@ -284,9 +276,7 @@ public class StringNodePanel extends AbstractStringPanel {
 						}
 					}
 			});
-			// highlightBox.setAlignmentX( Component.LEFT_ALIGNMENT );
-			// highlightBox.setBorder(BorderFactory.createEmptyBorder(10,2,10,0));
-			upperPanel.add(highlightBox, upperGBC.right().insets(5,10,0,0).noExpand());
+			upperPanel.add(highlightBox, upperGBC.right().insets(0,10,0,0).noExpand());
 		}
 
 		upperPanel.setBorder(BorderFactory.createEmptyBorder(5,0,10,0));
