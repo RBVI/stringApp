@@ -183,6 +183,7 @@ public class CyActivator extends AbstractCyActivator {
 		{
 			GetNetworkTaskFactory getNetwork = new GetNetworkTaskFactory(manager, "disease");
 			Properties props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
 			props.setProperty(COMMAND, "disease query");
 			props.setProperty(COMMAND_DESCRIPTION, 
 										    "Create a STRING network by finding proteins associated with a disease");
