@@ -455,7 +455,13 @@ public class StringNodePanel extends AbstractStringPanel {
 
 		List<CyNode> nodes = CyTableUtil.getNodesInState(currentNetwork, CyNetwork.SELECTED, true);
 		// TODO: test if this improves performance with large networks!
-		if (nodes.size() > 50) {
+		if (nodes.size() > ModelUtils.MAX_NODE_PANELS) {
+			JPanel newPanel = new JPanel();
+			newPanel.setLayout(new GridLayout(1,0));
+			JLabel label = new JLabel("Select less than 50 nodes to see node panels.");
+			newPanel.add(label);
+			newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
+			nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
 			return;
 		}
 		for (CyNode node: nodes) {
@@ -572,7 +578,7 @@ public class StringNodePanel extends AbstractStringPanel {
 			crosslinkPanel.setLayout(layout);
 			crosslinkPanel.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
 			if (sNode.haveUniprot()) {
-  			JLabel link = new SwingLink("UniProt", sNode.getUniprotURL(), openBrowser);
+  			JLabel link = new SwingLink2("UniProt", sNode.getUniprotURL());
 				link.setFont(textFont);
 				crosslinkPanel.add(link);
 			}
@@ -719,6 +725,13 @@ public class StringNodePanel extends AbstractStringPanel {
 	
 				nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
 			}
+		} else {
+			JPanel newPanel = new JPanel();
+			newPanel.setLayout(new GridLayout(1,0));
+			JLabel label = new JLabel("Select less than 50 nodes to see node panels.");
+			newPanel.add(label);
+			newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
+			nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
 		}
 		
 		if(manager.highlightNeighbors()) {
