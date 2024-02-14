@@ -10,20 +10,21 @@ import org.cytoscape.work.TaskMonitor.Level;
 
 import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
+import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 
 public class GetAnnotationsTask extends AbstractTask implements ObservableTask {
 	final StringNetwork stringNetwork;
-	final int taxon;
+	final Species species;
 	final String terms;
 	final String useDATABASE;
 	String errorMessage;
 	Map<String, List<Annotation>> annotations = null;
 
-	public GetAnnotationsTask(StringNetwork stringNetwork, int taxon, String terms, String useDATABASE) {
+	public GetAnnotationsTask(StringNetwork stringNetwork, Species species, String terms, String useDATABASE) {
 		this.stringNetwork = stringNetwork;
-		this.taxon = taxon;
+		this.species = species;
 		this.terms = terms;
 		this.useDATABASE = useDATABASE;
 		errorMessage = "";
@@ -33,7 +34,7 @@ public class GetAnnotationsTask extends AbstractTask implements ObservableTask {
 	public void run(TaskMonitor monitor) {
 		monitor.setTitle("Getting annotations");
 		try {
-			annotations = stringNetwork.getAnnotations(stringNetwork.getManager(), taxon, terms, useDATABASE, true);
+			annotations = stringNetwork.getAnnotations(stringNetwork.getManager(), species, terms, useDATABASE, true);
 		} catch (ConnectionException e) {
 			e.printStackTrace();
 			errorMessage = e.getMessage();
@@ -47,7 +48,9 @@ public class GetAnnotationsTask extends AbstractTask implements ObservableTask {
 
 	public Map<String, List<Annotation>> getAnnotations() { return annotations; }
 
-	public int getTaxon() { return taxon; }
+	public int getTaxon() { return species.getTaxId(); }
+
+	public Species getSpecies() { return species; }
 	
 	public String getErrorMessage() { return errorMessage; }
 

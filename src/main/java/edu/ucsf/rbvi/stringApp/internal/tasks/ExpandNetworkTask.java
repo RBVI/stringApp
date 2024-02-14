@@ -176,6 +176,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		}
 		// int taxonId = Species.getSpeciesTaxId(species);
 		int taxonId = Species.getSpeciesTaxId(selectedType);
+		Species selSpecies = Species.getSpecies(selectedType);
 		Map<String, String> args = new HashMap<>();
 		args.put("existing",existing.trim());
 		if (selected != null && selected.length() > 0)
@@ -194,9 +195,16 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			useDatabase = Databases.STITCH.getAPIName();
 			args.put("filter", "CIDm%%");			
 		} else {
-			useDatabase = Databases.STRING.getAPIName();
+			String filterString;
+			if (selSpecies.isCustom()) {
+				filterString = selSpecies.toString();
+				useDatabase = Databases.STRINGDB.getAPIName();
+			} else {
+				filterString = String.valueOf(selSpecies.getTaxId());
+				useDatabase = Databases.STRING.getAPIName();
+			}
 			if (taxonId != -1) 
-				args.put("filter", taxonId + ".%%");
+				args.put("filter", filterString + ".%%");
 		}
 		// set network type
 		NetworkType currentType = NetworkType.getType(ModelUtils.getNetworkType(network));
@@ -209,7 +217,10 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 
 		JSONObject results;
 		try {
-			results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+				if (selSpecies.isCustom())
+					results = HttpUtils.postJSON(manager.getStringNetworkURL(), args, manager);
+				else
+					results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
 		} catch (ConnectionException e) {
 			e.printStackTrace();
 			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());

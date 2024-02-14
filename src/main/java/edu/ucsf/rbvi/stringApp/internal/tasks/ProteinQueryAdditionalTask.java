@@ -130,7 +130,7 @@ public class ProteinQueryAdditionalTask extends AbstractTask implements Observab
 		// Get the annotations
 		Map<String, List<Annotation>> annotations;
 		try {
-			annotations = stringNetwork.getAnnotations(manager, sp.getTaxId(),
+			annotations = stringNetwork.getAnnotations(manager, sp,
 					query, Databases.STRING.getAPIName(), includesViruses);
 		} catch (ConnectionException e) {
 			e.printStackTrace();
@@ -158,7 +158,7 @@ public class ProteinQueryAdditionalTask extends AbstractTask implements Observab
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);		
 		// LoadInteractions load = new LoadInteractions(stringNetwork, sp.toString(), sp.getTaxId(),
 		// 		confidence, limit.getValue(), stringIds, queryTermMap, "", Databases.STRING.getAPIName());
-		manager.execute(new TaskIterator(new LoadTermsTask(stringNetwork, sp.toString(), sp.getTaxId(), confidence,
+		manager.execute(new TaskIterator(new LoadTermsTask(stringNetwork, sp.toString(), sp, confidence,
                 								limit.getValue(), stringIds, queryTermMap, Databases.STRING.getAPIName(), 
                 								networkType.getSelectedValue())), true);
 		loadedNetwork = stringNetwork.getNetwork();

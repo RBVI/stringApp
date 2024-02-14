@@ -85,6 +85,11 @@ public class JComboBoxDecorator {
         entriesFiltered = allEntries;
 		} else if (enteredText.length() < 4) {
 			return;
+		} else if (species && enteredText.startsWith("STRG0") && enteredText.length() == 11) {
+			// We have a custom species
+			Species newSpecies = Species.getSpecies(enteredText); // This will add it to our species list
+			entriesFiltered = Species.search(enteredText);
+			updateEntries(Species.getSpecies());
 		} else {
       if (species)
         entriesFiltered = Species.search(enteredText);

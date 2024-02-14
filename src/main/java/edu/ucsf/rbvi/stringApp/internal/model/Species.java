@@ -23,6 +23,7 @@ public class Species implements Comparable<Species> {
 	private static Map<Integer, Species> taxIdSpecies;
 	private static Map<String, Species> nameSpecies;
   private static boolean haveSpecies = false;
+  private boolean isCustom = false;
 	private int taxon_id;
 	private String type;
 	private String compactName;
@@ -31,13 +32,15 @@ public class Species implements Comparable<Species> {
 	private List<String> interactionPartners;
 	private static Species humanSpecies; 
 
-	public static String[] category = { "all", "core", "periphery", "mapped", "viral"};
+	public static String[] category = { "all", "core", "periphery", "mapped", "viral", "custom"};
 
-	/*
 	public Species(int tax, String type, String name, String oName, String alias) {
 		init(tax, type, oName, name, alias);
+		allSpecies.add(this);
+		nameSpecies.put(name, this);
+		taxIdSpecies.put(tax, this);
+		if (type == "custom") this.isCustom = true;
 	}
-	*/
 
 	public Species(String line) {
 		if (line.startsWith("#"))
@@ -63,6 +66,8 @@ public class Species implements Comparable<Species> {
 		}
 	}
 
+	public boolean isCustom() { return isCustom; }
+
 	public String toString() { return compactName; }
 
 	public String getName() { return compactName; }
@@ -74,6 +79,8 @@ public class Species implements Comparable<Species> {
 	public String getOfficialName() { return officialName; }
 	
 	public String getAlias() { return alias; }
+
+	public void setOfficialName( String name ) { officialName = name; }
 	
 	public List<String> getInteractionPartners() { return interactionPartners; }
 	public void setInteractionPartners(List<String> partners) { interactionPartners = partners; }
@@ -260,6 +267,19 @@ public class Species implements Comparable<Species> {
 		for (Species s: allSpecies) {
 			if (s.getName().equalsIgnoreCase(speciesName))
 				return s;
+		}
+
+		// Silently "find" custom species
+		if (speciesName.startsWith("STRG")) {
+			// This is a custom species.  See if we already have it, otherwise, we
+			// add it.
+			if (nameSpecies.containsKey(speciesName)) {
+				return nameSpecies.get(speciesName);
+			}
+			Species newSpecies = new Species(-2, "custom", speciesName, speciesName, null);
+			allSpecies.add(newSpecies);
+			nameSpecies.put(speciesName, newSpecies);
+			return newSpecies;
 		}
 		return null;
 	}

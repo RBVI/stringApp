@@ -30,6 +30,7 @@ import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
+import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
@@ -37,8 +38,8 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
 public class LoadTermsTask extends AbstractTask {
 	final StringNetwork stringNet;
-	final String species;
-	final int taxonId;
+	final String speciesName;
+	final Species species;
 	final int confidence;
 	final int additionalNodes;
 	final List<String> stringIds;
@@ -49,25 +50,25 @@ public class LoadTermsTask extends AbstractTask {
 	@Tunable(description="Re-layout network?")
 	public boolean relayout = false;
 
-	public LoadTermsTask(final StringNetwork stringNet, final String species, final int taxonId, 
+	public LoadTermsTask(final StringNetwork stringNet, final String speciesName, final Species species, 
             final int confidence, final int additionalNodes,
 					     	 final List<String>stringIds,
 					    	 final Map<String, String> queryTermMap, final String useDATABASE,
 					    	 final NetworkType netType) {
-		this(stringNet, species, taxonId, confidence, additionalNodes, stringIds,
+		this(stringNet, speciesName, species, confidence, additionalNodes, stringIds,
 						    	 queryTermMap, useDATABASE);
 		this.netType = netType;
 	}
 	
-	public LoadTermsTask(final StringNetwork stringNet, final String species, final int taxonId, 
+	public LoadTermsTask(final StringNetwork stringNet, final String speciesName, final Species species, 
 	                     final int confidence, final int additionalNodes,
 								     	 final List<String>stringIds,
 								    	 final Map<String, String> queryTermMap, final String useDATABASE) {
 		this.stringNet = stringNet;
-		this.taxonId = taxonId;
 		this.additionalNodes = additionalNodes;
 		this.confidence = confidence;
 		this.stringIds = stringIds;
+		this.speciesName = speciesName;
 		this.species = species;
 		this.queryTermMap = queryTermMap;
 		this.useDATABASE = useDATABASE;
@@ -97,12 +98,18 @@ public class LoadTermsTask extends AbstractTask {
 		args.put("database", netType.getAPIName());
 		args.put("entities",ids.trim());
 		args.put("score", conf);
+		String taxString;
+		if (species.isCustom())
+			taxString = species.toString();
+		else
+			taxString = String.valueOf(species.getTaxId());
+
 		if (additionalNodes > 0) {
 			args.put("additional", Integer.toString(additionalNodes));
 			if (useDATABASE.equals(Databases.STRING.getAPIName())) {
-				args.put("filter", taxonId + ".%%");
+				args.put("filter", taxString + ".%%");
 			} else {
-				args.put("filter", taxonId + ".%%|CIDm%%");
+				args.put("filter", taxString + ".%%|CIDm%%");
 			}
 		}
 		args.put("existing", ModelUtils.getExisting(network).trim());

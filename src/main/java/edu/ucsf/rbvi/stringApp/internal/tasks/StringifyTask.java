@@ -227,7 +227,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 
 		// Get the network
 		stringNetwork = new StringNetwork(manager);
-		int taxon = species.getSelectedValue().getTaxId();
+		Species sp = species.getSelectedValue();
 
 		// Set to STICH network
 		if (compoundQuery) useDatabase = Databases.STITCH.getAPIName();
@@ -241,7 +241,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 			optionsPanel.setSpecies(species.getSelectedValue());
 
 			// GUI based
-			TaskIterator ti = new TaskIterator(new GetAnnotationsTask(stringNetwork, taxon, terms, useDatabase));
+			TaskIterator ti = new TaskIterator(new GetAnnotationsTask(stringNetwork, sp, terms, useDatabase));
 			manager.execute(ti, this);
 			return;
 		}
@@ -249,7 +249,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		// Get the annotations
 		Map<String, List<Annotation>> annotations;
 		try {
-			annotations = stringNetwork.getAnnotations(manager, taxon, terms, useDatabase, false);
+			annotations = stringNetwork.getAnnotations(manager, sp, terms, useDatabase, false);
 		} catch (ConnectionException e) {
 			e.printStackTrace();
 			monitor.showMessage(TaskMonitor.Level.ERROR,
@@ -274,7 +274,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
 		LoadInteractions load = 
-				new LoadInteractions(stringNetwork, species.toString(), taxon, 
+				new LoadInteractions(stringNetwork, sp.toString(), sp, 
 						(int)(cutoff.getValue()*100), additionalNodes, stringIds, queryTermMap, netName, useDatabase, networkType.getSelectedValue());
 		manager.execute(new TaskIterator(load), true);
 		loadedNetwork = stringNetwork.getNetwork();
@@ -325,7 +325,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 
 		GetAnnotationsTask annTask = (GetAnnotationsTask)task;
 
-		final int taxon = annTask.getTaxon();
+		final Species species = annTask.getSpecies();
 		if (stringNetwork.getAnnotations() == null || stringNetwork.getAnnotations().size() == 0) {
 			if (annTask.getErrorMessage() != "") {
 				SwingUtilities.invokeLater(new Runnable() {
@@ -349,7 +349,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		boolean noAmbiguity = stringNetwork.resolveAnnotations();
 		if (noAmbiguity) {
 			// System.out.println("Calling importNetwork");
-			importNetwork(taxon, (int)(cutoff.getValue()*100), additionalNodes, useDatabase, networkType.getSelectedValue());
+			importNetwork(species, (int)(cutoff.getValue()*100), additionalNodes, useDatabase, networkType.getSelectedValue());
 
 			// Creating the copyTask
 			CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork, includeNotMapped, colDisplayName);
@@ -377,18 +377,18 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 
 	}
 
-	public String getSpecies() {
+	public String getSpeciesName() {
 		// This will eventually come from the OptionsComponent...
 		if (optionsPanel.getSpecies() != null)
 			return optionsPanel.getSpecies().toString();
 		return "Homo sapiens"; // Homo sapiens
 	}
 
-	void importNetwork(int taxon, int confidence, int additionalNodes, String useDatabase, NetworkType netType) {
+	void importNetwork(Species species, int confidence, int additionalNodes, String useDatabase, NetworkType netType) {
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
-		TaskFactory factory = new ImportNetworkTaskFactory(stringNetwork, getSpecies(), 
-		                                                   taxon, confidence, additionalNodes, stringIds,
+		TaskFactory factory = new ImportNetworkTaskFactory(stringNetwork, getSpeciesName(), 
+		                                                   species, confidence, additionalNodes, stringIds,
 		                                                   queryTermMap, netName, useDatabase, netType);
 		if (optionsPanel.getLoadEnrichment())
 			manager.execute(factory.createTaskIterator(), this, true);

@@ -23,9 +23,11 @@ import org.cytoscape.work.TaskMonitor.Level;
 import org.cytoscape.work.TunableSetter;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
+import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
@@ -33,8 +35,8 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
 public class LoadInteractions extends AbstractTask {
 	final StringNetwork stringNet;
-	final String species;
-	final int taxonId;
+	final String speciesName;
+	final Species species;
 	final int confidence;
 	final int additionalNodes;
 	final List<String> stringIds;
@@ -43,29 +45,29 @@ public class LoadInteractions extends AbstractTask {
 	final String useDATABASE;
 	NetworkType netType;
 
-	public LoadInteractions(final StringNetwork stringNet, final String species, final int taxonId, 
+	public LoadInteractions(final StringNetwork stringNet, final String speciesName, final Species species, 
             final int confidence, final int additionalNodes,
 									final List<String>stringIds,
 									final Map<String, String> queryTermMap,
 									final String netName,
 									final String useDATABASE,
 									final NetworkType netType) {
-		this(stringNet, species, taxonId, confidence, additionalNodes, stringIds, queryTermMap, netName, useDATABASE);
+		this(stringNet, speciesName, species, confidence, additionalNodes, stringIds, queryTermMap, netName, useDATABASE);
 		this.netType = netType;
 	}
 	
-	public LoadInteractions(final StringNetwork stringNet, final String species, final int taxonId, 
+	public LoadInteractions(final StringNetwork stringNet, final String speciesName, final Species species, 
 	                        final int confidence, final int additionalNodes,
 													final List<String>stringIds,
 													final Map<String, String> queryTermMap,
 													final String netName,
 													final String useDATABASE) {
 		this.stringNet = stringNet;
-		this.taxonId = taxonId;
+		this.species = species;
 		this.additionalNodes = additionalNodes;
 		this.confidence = confidence;
 		this.stringIds = stringIds;
-		this.species = species;
+		this.speciesName = speciesName;
 		this.queryTermMap = queryTermMap;
 		this.netName = netName;
 		this.useDATABASE = useDATABASE;
@@ -78,6 +80,10 @@ public class LoadInteractions extends AbstractTask {
 			monitor.setTitle("Loading data from STRING for " + uniqueIds.size() + " identifier(s).");
 		else if (useDATABASE.equals(Databases.STITCH.getAPIName()))
 			monitor.setTitle("Loading data from STITCH for " + uniqueIds.size() + " identifier(s).");
+		else if (useDATABASE.equals(Databases.STRINGDB.getAPIName()))
+			monitor.setTitle("Loading data from STRING-DB for " + uniqueIds.size() + " identifier(s).");
+
+		// System.out.println("Using database: "+useDATABASE);
 		StringManager manager = stringNet.getManager();
 		String ids = null;
 		for (String id: uniqueIds) {
@@ -87,36 +93,57 @@ public class LoadInteractions extends AbstractTask {
 				ids += "\n"+id;
 		}
 
-		String conf = "0."+confidence;
-		if (confidence == 100) 
-			conf = "1.0";
 
 		// String url = "http://api.jensenlab.org/network?entities="+URLEncoder.encode(ids.trim())+"&score="+conf;
 		Map<String, String> args = new HashMap<>();
-		args.put("database", netType.getAPIName());
-		args.put("entities",ids.trim());
-		args.put("score", conf);
-		args.put("caller_identity", StringManager.CallerIdentity);
-		if (additionalNodes > 0) {
-			args.put("additional", Integer.toString(additionalNodes));
-			if (useDATABASE.equals(Databases.STRING.getAPIName())) {
-				args.put("filter", taxonId + ".%%");
-			} else {
-				args.put("filter", taxonId + ".%%|CIDm%%");
+		String networkURL = manager.getNetworkURL();
+
+		// We use different arguments depending on the database
+		if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
+			// System.out.println("Identifiers: "+ids.trim());
+			args.put("identifiers",ids.trim());
+			args.put("required_score",String.valueOf(confidence*10));
+			args.put("network_type",netType.getAPIName());
+			networkURL = manager.getStringNetworkURL();
+		} else {
+			String conf = "0."+confidence;
+			if (confidence == 100) 
+				conf = "1.0";
+			args.put("database", netType.getAPIName());
+			args.put("entities",ids.trim());
+			args.put("score", conf);
+			args.put("caller_identity", StringManager.CallerIdentity);
+			if (additionalNodes > 0) {
+				args.put("additional", Integer.toString(additionalNodes));
+				String speciesStr;
+				if (species.isCustom())
+					speciesStr = species.toString();
+				else
+					speciesStr = String.valueOf(species.getTaxId());
+				if (useDATABASE.equals(Databases.STRING.getAPIName())) {
+					args.put("filter", speciesStr + ".%%");
+				} else {
+					args.put("filter", speciesStr + ".%%|CIDm%%");
+				}
 			}
 		}
 		JSONObject results;
+		// System.out.println("URL: "+networkURL);
 		try {
-			results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+			results = HttpUtils.postJSON(networkURL, args, manager);
 		} catch (ConnectionException e) {
 			e.printStackTrace();
 			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
 			return;
 		}
 
+		// System.out.println("results: "+results.toString());
+
+		Map<String, CyNode> nodeMap = new HashMap<>();
 		// This may change...
-		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, species, results, 
-		                                                     queryTermMap, ids.trim(), netName, useDATABASE, netType.getAPIName());
+		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, speciesName, results, 
+		                                                     queryTermMap, nodeMap, ids.trim(), 
+																												 netName, useDATABASE, netType.getAPIName());
 
 		if (network == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"STRING returned no results");
@@ -133,10 +160,32 @@ public class LoadInteractions extends AbstractTask {
 		ModelUtils.setConfidence(network, ((double)confidence)/100.0);
 		ModelUtils.setNetworkType(network, netType.toString());
 		ModelUtils.setDatabase(network, useDATABASE);
-		ModelUtils.setNetSpecies(network, species);
+		ModelUtils.setNetSpecies(network, speciesName);
 		ModelUtils.setDataVersion(network, manager.getDataVersion());
 		ModelUtils.setNetURI(network, manager.getNetworkURL());
 		stringNet.setNetwork(network);
+
+		// Finally, update any node information if we're using from STRING
+		if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
+			String terms = "";
+			for (String term: nodeMap.keySet()) {
+				terms += term+"\n";
+			}
+			try {
+				Map<String, List<Annotation>> annotations = stringNet.getAnnotations(stringNet.getManager(), species, terms, useDATABASE, true);
+				for (String s: annotations.keySet()) {
+					CyNode node = nodeMap.get(s);
+					for (Annotation a: annotations.get(s)) {
+						String annotation = a.getAnnotation();
+						if (annotation != null) {
+							network.getRow(node).set(ModelUtils.DESCRIPTION,annotation);
+						}
+					}
+				}
+			} catch (ConnectionException ce) {
+				monitor.showMessage(TaskMonitor.Level.ERROR, "Unable to get additional node annotations");
+			}
+		}
 
 		// System.out.println("Results: "+results.toString());
 		int viewThreshold = ModelUtils.getViewThreshold(manager);

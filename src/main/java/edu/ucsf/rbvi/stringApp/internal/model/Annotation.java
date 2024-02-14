@@ -8,6 +8,7 @@ import java.util.Map;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class Annotation {
@@ -16,6 +17,9 @@ public class Annotation {
 	String stringId;
 	String query;
 	String preferredName;
+
+	// Additional information for creating nodes from get_string_ids
+	String description = null;
 
 	public Annotation(String preferredName, String stringId, int taxId, String query, String annotation) {
 		this.preferredName = preferredName;
@@ -30,20 +34,22 @@ public class Annotation {
 	public String getQueryString() { return query; }
 	public String getStringId() { return stringId; }
 	public String getAnnotation() { return annotation; }
+	public String getDescription() { return description; }
 	public String toString() {
 		String res = "   Query: "+query+"\n";
 		res += "   PreferredName: "+preferredName+"\n";
-		res += "   Annotation: "+annotation;
+		res += "   Annotation: "+annotation+"\n";
+		res += "   Description: "+description;
 		return res;
 	}
 
-	public static Map<String, List<Annotation>> getAnnotations(JSONObject json, String queryTerms) {
+	public static Map<String, List<Annotation>> getAnnotations(JSONObject json, String queryTerms, Species species) {
 		Map<String, List<Annotation>> map = new HashMap<>();
-		return getAnnotations(json, queryTerms, map);
+		return getAnnotations(json, queryTerms, map, species);
 	}
 
 	public static Map<String, List<Annotation>> getAnnotations(JSONObject json, String queryTerms,
-	                                                           Map<String, List<Annotation>> map) {
+	                                                           Map<String, List<Annotation>> map, Species species) {
 		String[] terms = queryTerms.trim().split("\n");
 		JSONArray annotationArray = ModelUtils.getResultsFromJSON(json, JSONArray.class);
 		Integer version = ModelUtils.getVersionFromJSON(json);
@@ -58,6 +64,8 @@ public class Annotation {
 			String annotation = null;
 			String stringId = null;
 			String preferredName = null;
+			String description = null;
+			String taxonName = null;
 			int taxId = -1;
 			int queryIndex = -1;
 
@@ -79,12 +87,26 @@ public class Annotation {
 
 				queryIndex = queryIndex - queryIndexStart;
 			}
+			if (ann.containsKey("description"))
+				description = (String)ann.get("description");
+
+			if (ann.containsKey("taxonName")) {
+				taxonName = (String)ann.get("taxonName");
+				if (species.isCustom() && species.getOfficialName() == species.getName()) {
+					species.setOfficialName(taxonName);
+				}
+			}
 
 			// Temporary HACK
 			// if (stringId.startsWith("-1.CID1"))
 			// 	stringId = stringId.replaceFirst("-1.CID1","CIDm");
 
 			Annotation newAnnotation = new Annotation(preferredName, stringId, taxId, terms[queryIndex], annotation);
+
+			// Node information
+			if (description != null)
+				newAnnotation.description = description;
+
 			if (!map.containsKey(terms[queryIndex])) {
 				map.put(terms[queryIndex], new ArrayList<Annotation>());
 			}

@@ -114,6 +114,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String STRINGResolveURI = "https://string-db.org/api/";
 	public static String STITCHResolveURI = "http://stitch.embl.de/api/";
 	public static String VIRUSESResolveURI = "http://viruses.string-db.org/cgi/webservice_handler.pl";
+	public static String STRINGNetworkURI = "https://string-db.org/api/json/network";
+	// public static String STRINGNetworkURI = "https://string-pythongamma.org/api/json/network";
 	public static String SpeciesURI = Species.class.getResource("/species_v12.0.tsv").toString();
 	public static String PairsURI = Species.class.getResource("/pairs_v12.0.tsv").toString();
 	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
@@ -696,6 +698,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	
 	public String getNetworkURL() {
 		return getDataAPIURL()+"network";
+	}
+	
+	public String getStringNetworkURL() {
+		return STRINGNetworkURI;
 	}
 
 	public String getTextMiningURL() {

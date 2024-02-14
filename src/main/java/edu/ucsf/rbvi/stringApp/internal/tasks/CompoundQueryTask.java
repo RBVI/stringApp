@@ -128,7 +128,7 @@ public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 		// Get the annotations
 		Map<String, List<Annotation>> annotations;
 		try {
-			annotations = stringNetwork.getAnnotations(manager, sp.getTaxId(),
+			annotations = stringNetwork.getAnnotations(manager, sp,
 					query, Databases.STITCH.getAPIName(), includesViruses);
 		} catch (ConnectionException e) {
 			e.printStackTrace();
@@ -152,7 +152,7 @@ public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
-		LoadInteractions load = new LoadInteractions(stringNetwork, sp.toString(), sp.getTaxId(),
+		LoadInteractions load = new LoadInteractions(stringNetwork, sp.toString(), sp,
 				confidence, limit.getValue(), stringIds, queryTermMap, newNetName, Databases.STITCH.getAPIName(), networkType.getSelectedValue());
 		manager.execute(new TaskIterator(load), true);
 		loadedNetwork = stringNetwork.getNetwork();
