@@ -31,8 +31,10 @@ import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTableUtil;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
+import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
+import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeNetTypeTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
@@ -315,10 +317,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 		}
 		
 		{
-			String interactionURL = "https://string-db.org/interaction/"
-					+ ModelUtils.getName(currentNetwork, edge.getSource()) + "/"
-					+ ModelUtils.getName(currentNetwork, edge.getTarget()) + "?c1=65c7ff&c2=001cb2";
-	  		JLabel link = new SwingLinkOSBrowser("See STRING interaction page", interactionURL);
+	  		JLabel link = new SwingLinkOSBrowser("See STRING interaction page", getInteractionURL(edge));
 			link.setFont(textFont);
 			panel.add(link, c.right().expandBoth());
 		}
@@ -334,6 +333,32 @@ public class StringEdgePanel extends AbstractStringPanel {
 		Border emptyBorder = BorderFactory.createEmptyBorder(0,5,0,0);
 		collapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
 		return collapsablePanel;
+	}
+	
+	private String getInteractionURL(CyEdge edge) {
+		
+		
+		String sourceNode = ModelUtils.getName(currentNetwork, edge.getSource());
+		String targetNode = ModelUtils.getName(currentNetwork, edge.getTarget());
+		String netType = "interaction";
+		if (ModelUtils.getString(currentNetwork, currentNetwork, ModelUtils.NETWORK_TYPE) != null
+				&& ModelUtils.getString(currentNetwork, currentNetwork, ModelUtils.NETWORK_TYPE)
+						.equals(NetworkType.PHYSICAL.toString()))
+			netType = "interaction-physical";
+
+		CyNetworkView view = manager.getCurrentNetworkView();
+		Color sourceNodeColor = (Color)view.getNodeView(edge.getSource()).getVisualProperty(BasicVisualLexicon.NODE_FILL_COLOR);
+		Color targetNodeColor = (Color)view.getNodeView(edge.getTarget()).getVisualProperty(BasicVisualLexicon.NODE_FILL_COLOR);
+		String colors = "?c1=" + Integer.toHexString(sourceNodeColor.getRGB()).substring(2);
+		// String.format("%02x%02x%02x", sourceNodeColor.getRed(), sourceNodeColor.getGreen(), sourceNodeColor.getBlue()); 
+		colors += "&c2=" + Integer.toHexString(targetNodeColor.getRGB()).substring(2);
+		// String.format("%02x%02x%02x", targetNodeColor.getRed(), targetNodeColor.getGreen(), targetNodeColor.getBlue());
+		
+		if (sourceNode == null || targetNode == null || netType == null || colors == null) 
+			return "";
+		
+		String url = "https://string-db.org/" + netType + "/" + sourceNode + "/" + targetNode + colors;		
+		return url;
 	}
 	
 	private void updateEdgesPanel() {
