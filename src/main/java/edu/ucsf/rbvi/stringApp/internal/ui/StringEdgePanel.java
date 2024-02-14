@@ -318,7 +318,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 			String interactionURL = "https://string-db.org/interaction/"
 					+ ModelUtils.getName(currentNetwork, edge.getSource()) + "/"
 					+ ModelUtils.getName(currentNetwork, edge.getTarget()) + "?c1=65c7ff&c2=001cb2";
-	  		JLabel link = new SwingLink2("See STRING interaction page", interactionURL);
+	  		JLabel link = new SwingLinkOSBrowser("See STRING interaction page", interactionURL);
 			link.setFont(textFont);
 			panel.add(link, c.right().expandBoth());
 		}
