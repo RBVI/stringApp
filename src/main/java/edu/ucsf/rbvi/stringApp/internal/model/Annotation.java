@@ -30,7 +30,7 @@ public class Annotation {
 	}
 
 	public String getPreferredName() { return preferredName; }
-	public int getTaxId() { return taxId; }
+	// public int getTaxId() { return taxId; }
 	public String getQueryString() { return query; }
 	public String getStringId() { return stringId; }
 	public String getAnnotation() { return annotation; }
@@ -75,8 +75,8 @@ public class Annotation {
 				annotation = (String)ann.get("annotation");
 			if (ann.containsKey("stringId"))
 				stringId = (String)ann.get("stringId");
-			if (ann.containsKey("ncbiTaxonId"))
-				taxId = ((Long)ann.get("ncbiTaxonId")).intValue();
+			//if (ann.containsKey("ncbiTaxonId"))
+			//	taxId = ((Long)ann.get("ncbiTaxonId")).intValue();
 			if (ann.containsKey("queryIndex")) {
 				Object index = ann.get("queryIndex");
 				if (index instanceof Long) {

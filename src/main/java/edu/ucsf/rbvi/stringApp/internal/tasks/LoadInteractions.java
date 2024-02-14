@@ -103,8 +103,11 @@ public class LoadInteractions extends AbstractTask {
 			// System.out.println("Identifiers: "+ids.trim());
 			args.put("identifiers",ids.trim());
 			args.put("required_score",String.valueOf(confidence*10));
-			args.put("network_type",netType.getAPIName());
+			args.put("network_type", netType.getAPIName());
 			networkURL = manager.getStringNetworkURL();
+			if (additionalNodes > 0) {
+				args.put("add_color_nodes", Integer.toString(additionalNodes));
+			}
 		} else {
 			String conf = "0."+confidence;
 			if (confidence == 100) 
@@ -115,15 +118,10 @@ public class LoadInteractions extends AbstractTask {
 			args.put("caller_identity", StringManager.CallerIdentity);
 			if (additionalNodes > 0) {
 				args.put("additional", Integer.toString(additionalNodes));
-				String speciesStr;
-				if (species.isCustom())
-					speciesStr = species.toString();
-				else
-					speciesStr = String.valueOf(species.getTaxId());
 				if (useDATABASE.equals(Databases.STRING.getAPIName())) {
-					args.put("filter", speciesStr + ".%%");
+					args.put("filter", String.valueOf(species.getTaxId()) + ".%%");
 				} else {
-					args.put("filter", speciesStr + ".%%|CIDm%%");
+					args.put("filter", String.valueOf(species.getTaxId()) + ".%%|CIDm%%");
 				}
 			}
 		}
