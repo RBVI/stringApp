@@ -108,6 +108,8 @@ public class LoadInteractions extends AbstractTask {
 			if (additionalNodes > 0) {
 				args.put("add_color_nodes", Integer.toString(additionalNodes));
 			}
+			args.put("caller_identity", StringManager.CallerIdentity);
+			args.put("species", species.getName());
 		} else {
 			String conf = "0."+confidence;
 			if (confidence == 100) 
@@ -164,7 +166,8 @@ public class LoadInteractions extends AbstractTask {
 		stringNet.setNetwork(network);
 
 		// Finally, update any node information if we're using from STRING
-		if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
+		// Only do this when we asked for additional nodes
+		if (useDATABASE.equals(Databases.STRINGDB.getAPIName()) && additionalNodes > 0) {
 			String terms = "";
 			for (String term: nodeMap.keySet()) {
 				terms += term+"\n";
