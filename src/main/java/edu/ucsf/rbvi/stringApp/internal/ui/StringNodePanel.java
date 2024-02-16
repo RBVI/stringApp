@@ -458,7 +458,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		if (nodes.size() > ModelUtils.MAX_NODE_PANELS) {
 			JPanel newPanel = new JPanel();
 			newPanel.setLayout(new GridLayout(1,0));
-			JLabel label = new JLabel("Select less than 50 nodes to see node panels.");
+			JLabel label = new JLabel("  Select less than " + ModelUtils.MAX_NODE_PANELS + " nodes to see node panels.");
 			newPanel.add(label);
 			newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
 			nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
@@ -728,7 +728,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		} else {
 			JPanel newPanel = new JPanel();
 			newPanel.setLayout(new GridLayout(1,0));
-			JLabel label = new JLabel("Select less than 50 nodes to see node panels.");
+			JLabel label = new JLabel("  Select less than" + ModelUtils.MAX_NODE_PANELS + " nodes to see node panels.");
 			newPanel.add(label);
 			newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
 			nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
