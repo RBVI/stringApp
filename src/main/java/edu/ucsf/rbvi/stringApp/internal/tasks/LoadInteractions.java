@@ -143,7 +143,7 @@ public class LoadInteractions extends AbstractTask {
 		// This may change...
 		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, speciesName, results, 
 		                                                     queryTermMap, nodeMap, ids.trim(), 
-																												 netName, useDATABASE, netType.getAPIName());
+		                                                     netName, useDATABASE, netType.getAPIName());
 
 		if (network == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"STRING returned no results");
@@ -174,13 +174,23 @@ public class LoadInteractions extends AbstractTask {
 			}
 			try {
 				Map<String, List<Annotation>> annotations = stringNet.getAnnotations(stringNet.getManager(), species, terms, useDATABASE, true);
+				// TODO: [Custom] do we need to resolve or just take the first annotation or last one, which is currently the case...?
 				for (String s: annotations.keySet()) {
 					CyNode node = nodeMap.get(s);
 					for (Annotation a: annotations.get(s)) {
-						String annotation = a.getAnnotation();
-						if (annotation != null) {
-							network.getRow(node).set(ModelUtils.DESCRIPTION,annotation);
+						if (a.getAnnotation() != null) {
+							network.getRow(node).set(ModelUtils.DESCRIPTION, a.getAnnotation());
 						}
+						if (a.getUniprot() != null) {
+							network.getRow(node).set(ModelUtils.CANONICAL, a.getUniprot());
+						}
+						if (a.getSequence() != null) {
+							network.getRow(node).set(ModelUtils.SEQUENCE, a.getSequence());
+						}
+						if (a.getImage() != null) {
+							network.getRow(node).set(ModelUtils.IMAGE, a.getImage());
+						}
+						// TODO: [Custom] add structures, color, etc. 
 					}
 				}
 			} catch (ConnectionException ce) {

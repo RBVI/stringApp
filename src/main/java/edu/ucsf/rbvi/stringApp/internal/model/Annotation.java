@@ -18,6 +18,15 @@ public class Annotation {
 	String query;
 	String preferredName;
 
+	// new fields from STRING-DB
+	String taxonName;
+	String uniprot;
+	String sequence;
+	//String color;
+	String image;
+	List<String> structures;
+	
+
 	// Additional information for creating nodes from get_string_ids
 	String description = null;
 
@@ -27,9 +36,17 @@ public class Annotation {
 		this.taxId = taxId;
 		this.query = query;
 		this.annotation = annotation;
+		
+		this.taxonName = "";
+		this.uniprot = "";
+		this.sequence = "";
+		//this.color = "";
+		this.image = "";
+		this.structures = new ArrayList<>();
 	}
 
 	public String getPreferredName() { return preferredName; }
+	// TODO: [Custom] figure out if we can save both the name and the ID of custom species
 	// public int getTaxId() { return taxId; }
 	public String getQueryString() { return query; }
 	public String getStringId() { return stringId; }
@@ -39,10 +56,20 @@ public class Annotation {
 		String res = "   Query: "+query+"\n";
 		res += "   PreferredName: "+preferredName+"\n";
 		res += "   Annotation: "+annotation+"\n";
-		res += "   Description: "+description;
+		res += "   Description: "+description+"\n";
+		res += "   Uniprot: "+uniprot+"\n";
+		res += "   Sequence: "+sequence+"\n";
+		res += "   Image: "+image+"\n";
 		return res;
 	}
 
+	public String getTaxonName() {return taxonName;}
+	public String getUniprot() {return uniprot;}
+	public String getSequence() {return sequence;}
+	// public String getColor() {return color;}
+	public String getImage() {return image;}
+	public List<String> getStructures() {return structures;}
+	
 	public static Map<String, List<Annotation>> getAnnotations(JSONObject json, String queryTerms, Species species) {
 		Map<String, List<Annotation>> map = new HashMap<>();
 		return getAnnotations(json, queryTerms, map, species);
@@ -68,6 +95,9 @@ public class Annotation {
 			String taxonName = null;
 			int taxId = -1;
 			int queryIndex = -1;
+			String uniprot = null;
+			String sequence = null;
+			String image = null;
 
 			if (ann.containsKey("preferredName"))
 				preferredName = (String)ann.get("preferredName");
@@ -87,6 +117,7 @@ public class Annotation {
 
 				queryIndex = queryIndex - queryIndexStart;
 			}
+			// TODO: [Custom] was there ever a description field or is this the same as annotation? if yes, I will rather change all of them to description to avoid confusion
 			if (ann.containsKey("description"))
 				description = (String)ann.get("description");
 
@@ -96,7 +127,15 @@ public class Annotation {
 					species.setOfficialName(taxonName);
 				}
 			}
-
+			if (ann.containsKey("uniprot"))
+				uniprot = (String)ann.get("uniprot");
+			if (ann.containsKey("sequence"))
+				sequence = (String)ann.get("sequence");
+			if (ann.containsKey("image"))
+				image = (String)ann.get("image");
+			
+			// TODO: [Custom] add parsing of color and structures!
+			
 			// Temporary HACK
 			// if (stringId.startsWith("-1.CID1"))
 			// 	stringId = stringId.replaceFirst("-1.CID1","CIDm");
@@ -106,7 +145,17 @@ public class Annotation {
 			// Node information
 			if (description != null)
 				newAnnotation.description = description;
-
+			if (taxonName != null)
+				newAnnotation.taxonName = taxonName;
+			if (uniprot != null)
+				newAnnotation.uniprot = uniprot;
+			if (sequence != null)
+				newAnnotation.sequence = sequence;
+			if (image != null)
+				newAnnotation.image = image;
+			
+			// TODO: [Custom] save color and structures in the annotation
+			
 			if (!map.containsKey(terms[queryIndex])) {
 				map.put(terms[queryIndex], new ArrayList<Annotation>());
 			}

@@ -51,6 +51,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
@@ -533,7 +534,7 @@ public class ModelUtils {
 			String ids, String netName,
 			String useDATABASE, String netType) {
 		stringNetwork.getManager().ignoreAdd();
-		CyNetwork network = createNetworkFromJSON(stringNetwork.getManager(), species, object,
+		CyNetwork network = createNetworkFromJSON(stringNetwork.getManager(), stringNetwork, species, object,
 				queryTermMap, nodeMap, ids, netName, useDATABASE, netType);
 		if (network == null)
 			return null;
@@ -543,7 +544,7 @@ public class ModelUtils {
 		return network;
 	}
 
-	public static CyNetwork createNetworkFromJSON(StringManager manager, String species,
+	public static CyNetwork createNetworkFromJSON(StringManager manager, StringNetwork stringNetwork, String species,
 			JSONObject object, Map<String, String> queryTermMap, Map<String, CyNode> nodeMap,
 			String ids, String netName,
 			String useDATABASE, String netType) {
@@ -605,8 +606,9 @@ public class ModelUtils {
 		Map<String, String> nodeNameMap = new HashMap<>();
 
 		if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
+			Map<String, List<Annotation>> annotationsMap = stringNetwork.getFullAnnotations();
 			getJSONFromStringDb(manager, species, newNetwork, nodeMap, nodeNameMap, queryTermMap, null, (JSONArray)results,
-					                useDATABASE, netType);
+					                useDATABASE, netType, annotationsMap);
 		} else {
 			getJSON(manager, species, newNetwork, nodeMap, nodeNameMap, queryTermMap, null, (JSONObject)results,
 					    useDATABASE, netType);
@@ -876,7 +878,7 @@ public class ModelUtils {
 	private static List<CyNode> getJSONFromStringDb(StringManager manager, String species, CyNetwork network,
 			Map<String, CyNode> nodeMap, Map<String, String> nodeNameMap,
 			Map<String, String> queryTermMap, List<CyEdge> newEdges, JSONArray edges,
-			String useDATABASE, String netType) {
+			String useDATABASE, String netType, Map<String, List<Annotation>> annotationsMap) {
 		List<CyNode> newNodes = new ArrayList<>();
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, CANONICAL);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, DISPLAY);
@@ -901,10 +903,19 @@ public class ModelUtils {
 				if (edgeObj instanceof JSONObject)
 					createEdgeFromStringDb(network, (JSONObject) edgeObj, nodeMap, nodeNameMap, 
 														     queryTermMap, newNodes, newEdges,
-							                   useDATABASE, netType);
+							                   useDATABASE, netType, annotationsMap);
 			}
 		}
 
+		// TODO: [Custom] add new node to newNodes list if needed
+		if (queryTermMap != null & queryTermMap.size() > 0) {
+			for (String stringID : queryTermMap.keySet()) {
+				if (nodeMap.get(stringID) == null) {
+					createNodeFromStringDb(network, stringID, "", species, nodeMap, nodeNameMap, queryTermMap, annotationsMap.get(queryTermMap.get(stringID)));
+				}
+			}
+		}
+		
 		return newNodes;
 	}
 
@@ -1033,7 +1044,7 @@ public class ModelUtils {
 		if (existingImage != null && !existingImage.equals("") && existingImage.contains("image/png;base64")) 
 			return;
 		String imageURL = row.get(IMAGE, String.class);
-		if (imageURL == null) {
+		if (imageURL == null || imageURL.equals("")) {
 			// ignore
 			return;
 		}
@@ -1287,9 +1298,10 @@ public class ModelUtils {
 		return "unknown";
 	}
 
+		
 	private static CyNode createNodeFromStringDb(CyNetwork network, String id, String name,
-			Map<String, CyNode> nodeMap, Map<String, String> queryTermMap, 
-			Map<String, String> nodeNameMap ) {
+			String speciesName, Map<String, CyNode> nodeMap, Map<String, String> nodeNameMap, 
+			Map<String, String> queryTermMap, List<Annotation> annotations) {
 
 		if (nodeMap.containsKey(id))
 			return null;
@@ -1302,6 +1314,7 @@ public class ModelUtils {
 		// row.set(CyRootNetwork.SHARED_NAME, stringId);
 		row.set(DISPLAY, name);
 		row.set(STRINGID, id);
+		row.set(SPECIES, speciesName);
 		row.set(ID, "string:"+id);
 		row.set(NAMESPACE, "stringdb");
 		row.set(STYLE, "string:"); // We may overwrite this, if we get an image
@@ -1314,6 +1327,24 @@ public class ModelUtils {
 			enhancedLabel += "background=false color=black dropShadow=false";
 			row.set(ELABEL_STYLE, enhancedLabel);
 		}
+		// TODO: [Custom] can we just take the first annotation or not?
+		if (annotations != null && annotations.size() > 0) {
+			Annotation nodeAnnot = annotations.get(0);
+			if (nodeAnnot.getUniprot() != null)
+				row.set(CANONICAL, nodeAnnot.getUniprot());
+			if (nodeAnnot.getSequence() != null)
+				row.set(SEQUENCE, nodeAnnot.getSequence());
+			if (nodeAnnot.getImage() != null)
+				row.set(IMAGE, nodeAnnot.getImage());
+			if (nodeAnnot.getUniprot() != null)
+				row.set(CANONICAL, nodeAnnot.getUniprot());
+			// Special case depending of whether we create the node from the annotations or from the network json data 
+			if (name.equals("") && nodeAnnot.getPreferredName() != null)
+				row.set(DISPLAY, nodeAnnot.getPreferredName());
+			
+			// TODO: [Custom] add color and structures
+		}
+		
 		if (queryTermMap != null) {
 			if (queryTermMap.containsKey(id)) {
 				network.getRow(newNode).set(QUERYTERM, queryTermMap.get(id));
@@ -1327,16 +1358,17 @@ public class ModelUtils {
 	private static void createEdgeFromStringDb(CyNetwork network, JSONObject edgeObj,
 			Map<String, CyNode> nodeMap, Map<String, String> nodeNameMap, 
 			Map<String, String> queryTermMap, List<CyNode> newNodes, List<CyEdge> newEdges,
-			String useDATABASE, String netType) {
+			String useDATABASE, String netType, Map<String, List<Annotation>> annotationsMap) {
 
 		String source = (String) edgeObj.get("stringId_A");
 		String target = (String) edgeObj.get("stringId_B");
 		String sourceName = (String) edgeObj.get("preferredName_A");
 		String targetName = (String) edgeObj.get("preferredName_B");
+		String speciesName = (String) edgeObj.get("ncbiTaxonId");
 		CyNode sourceNode;
 		CyNode targetNode;
 		if (nodeMap.get(source) == null) {
-			sourceNode = createNodeFromStringDb(network, source, sourceName, nodeMap, nodeNameMap, queryTermMap);
+			sourceNode = createNodeFromStringDb(network, source, sourceName, speciesName, nodeMap, nodeNameMap, queryTermMap, annotationsMap.get(queryTermMap.get(source)));
 			if (newNodes != null)
 				newNodes.add(sourceNode);
 		} else {
@@ -1344,7 +1376,7 @@ public class ModelUtils {
 		}
 
 		if (nodeMap.get(target) == null) {
-			targetNode = createNodeFromStringDb(network, target, targetName, nodeMap, nodeNameMap, queryTermMap);
+			targetNode = createNodeFromStringDb(network, target, targetName, speciesName, nodeMap, nodeNameMap, queryTermMap, annotationsMap.get(queryTermMap.get(target)));
 			if (newNodes != null)
 				newNodes.add(targetNode);
 		} else {
