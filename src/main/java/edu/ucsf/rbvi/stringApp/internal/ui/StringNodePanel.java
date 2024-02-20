@@ -455,7 +455,13 @@ public class StringNodePanel extends AbstractStringPanel {
 
 		List<CyNode> nodes = CyTableUtil.getNodesInState(currentNetwork, CyNetwork.SELECTED, true);
 		// TODO: test if this improves performance with large networks!
-		if (nodes.size() > 50) {
+		if (nodes.size() > ModelUtils.MAX_NODE_PANELS) {
+			JPanel newPanel = new JPanel();
+			newPanel.setLayout(new GridLayout(1,0));
+			JLabel label = new JLabel("  Select less than " + ModelUtils.MAX_NODE_PANELS + " nodes to see node panels.");
+			newPanel.add(label);
+			newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
+			nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
 			return;
 		}
 		for (CyNode node: nodes) {
@@ -572,37 +578,37 @@ public class StringNodePanel extends AbstractStringPanel {
 			crosslinkPanel.setLayout(layout);
 			crosslinkPanel.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
 			if (sNode.haveUniprot()) {
-  			JLabel link = new SwingLink("UniProt", sNode.getUniprotURL(), openBrowser);
+  			JLabel link = new SwingLinkOSBrowser("UniProt", sNode.getUniprotURL());
 				link.setFont(textFont);
 				crosslinkPanel.add(link);
 			}
 			if (sNode.haveGeneCard()) {
-  			JLabel link = new SwingLink("GeneCards", sNode.getGeneCardURL(), openBrowser);
+  			JLabel link = new SwingLinkCyBrowser("GeneCards", sNode.getGeneCardURL(), openBrowser);
 				link.setFont(textFont);
 				crosslinkPanel.add(link);
 			}
 			if (sNode.haveCompartments()) {
-  			JLabel link = new SwingLink("COMPARTMENTS", sNode.getCompartmentsURL(), openBrowser);
+  			JLabel link = new SwingLinkCyBrowser("COMPARTMENTS", sNode.getCompartmentsURL(), openBrowser);
 				link.setFont(textFont);
 				crosslinkPanel.add(link);
 			}
 			if (sNode.haveTissues()) {
-  			JLabel link = new SwingLink("TISSUES", sNode.getTissuesURL(), openBrowser);
+  			JLabel link = new SwingLinkCyBrowser("TISSUES", sNode.getTissuesURL(), openBrowser);
 				link.setFont(textFont);
 				crosslinkPanel.add(link);
 			}
 			if (sNode.haveDisease()) {
-  			JLabel link = new SwingLink("DISEASES", sNode.getDiseaseURL(), openBrowser);
+  			JLabel link = new SwingLinkCyBrowser("DISEASES", sNode.getDiseaseURL(), openBrowser);
 				link.setFont(textFont);
 				crosslinkPanel.add(link);
 			}
 			if (sNode.havePharos()) {
-  			JLabel link = new SwingLink("Pharos", sNode.getPharosURL(), openBrowser);
+  			JLabel link = new SwingLinkCyBrowser("Pharos", sNode.getPharosURL(), openBrowser);
 				link.setFont(textFont);
 				crosslinkPanel.add(link);
 			}
 			if (sNode.havePubChem()) {
-  			JLabel link = new SwingLink("PubChem", sNode.getPubChemURL(), openBrowser);
+  			JLabel link = new SwingLinkCyBrowser("PubChem", sNode.getPubChemURL(), openBrowser);
 				link.setFont(textFont);
 				crosslinkPanel.add(link);
 			}
@@ -719,6 +725,13 @@ public class StringNodePanel extends AbstractStringPanel {
 	
 				nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
 			}
+		} else {
+			JPanel newPanel = new JPanel();
+			newPanel.setLayout(new GridLayout(1,0));
+			JLabel label = new JLabel("  Select less than" + ModelUtils.MAX_NODE_PANELS + " nodes to see node panels.");
+			newPanel.add(label);
+			newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
+			nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
 		}
 		
 		if(manager.highlightNeighbors()) {

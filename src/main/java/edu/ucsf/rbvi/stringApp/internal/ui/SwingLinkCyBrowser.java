@@ -10,19 +10,19 @@ import javax.swing.JLabel;
 
 import org.cytoscape.util.swing.OpenBrowser;
 
-public class SwingLink extends JLabel {
+public class SwingLinkCyBrowser extends JLabel {
   private static final long serialVersionUID = 8273875024682878518L;
   private String text;
   private URI uri;
 	private final OpenBrowser openBrowser;
 
-  public SwingLink(final String text, final URI uri, final OpenBrowser openBrowser){
+  public SwingLinkCyBrowser(final String text, final URI uri, final OpenBrowser openBrowser){
     super();
 		this.openBrowser = openBrowser;
     setup(text,uri);
   }
 
-  public SwingLink(String text, String uri, final OpenBrowser openBrowser){
+  public SwingLinkCyBrowser(String text, String uri, final OpenBrowser openBrowser){
     super();
 		this.openBrowser = openBrowser;
     setup(text,URI.create(uri));
