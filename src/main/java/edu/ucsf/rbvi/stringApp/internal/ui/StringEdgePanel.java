@@ -68,12 +68,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 		setLayout(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
 		// add(new JSeparator(SwingConstants.HORIZONTAL), c.anchor("west").expandHoriz());
-		//String networkType = NetworkType.FUNCTIONAL.getAPIName();
-		//if (ModelUtils.getNetworkType(currentNetwork) != null)
-		//	networkType = NetworkType.getType(ModelUtils.getNetworkType(currentNetwork)).getAPIName();
-		// controlPanel.setBorder(BorderFactory.createTitledBorder(networkType));
-		// JComponent scoreSlider = createFilterSlider("score", "Score (" + networkType + ")", currentNetwork, true, 100.0);
-		JComponent scoreSlider = createFilterSlider("score", "Score", currentNetwork, true, 100.0);
+		JComponent scoreSlider = createFilterSlider("score", "Score", createScoreLabel(), currentNetwork, true, 100.0);
 		{
 			scorePanel = new JPanel();
 			scorePanel.setLayout(new GridBagLayout());
@@ -132,6 +127,18 @@ public class StringEdgePanel extends AbstractStringPanel {
 		// add(new JPanel(), c.down().anchor("west").expandBoth());
 	}
 
+	private String createScoreLabel() {
+		String scoreLabel = "Score";
+		if (ModelUtils.getNetworkType(currentNetwork) != null) {
+			String netType = ModelUtils.getNetworkType(currentNetwork);	
+			if (netType.equals(NetworkType.PHYSICAL.toString()))
+				scoreLabel += " (" +  NetworkType.PHYSICAL.getAPIName() + ")";
+			else if (netType.equals(NetworkType.FUNCTIONAL.toString()))
+				scoreLabel += " (" +  NetworkType.FUNCTIONAL.getAPIName() + ")";
+		}
+		return scoreLabel;
+	}
+	
 	private JPanel createControlPanel() {
 		JPanel controlPanel = new JPanel();
 		GridLayout layout = new GridLayout(2,2);
@@ -253,7 +260,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 			filterPanel.add(lbl, d.anchor("north").noExpand());
 			for (String subScore: subScoreList) {
-				JComponent scoreSlider = createFilterSlider("score", subScore, currentNetwork, false, 100.0);
+				JComponent scoreSlider = createFilterSlider("score", subScore, subScore, currentNetwork, false, 100.0);
 				scoreSlider.setMinimumSize(new Dimension(100,30));
 				// scoreSlider.setMaximumSize(new Dimension(100,30));
 				filterPanel.add(scoreSlider, d.down().expandBoth());
@@ -523,7 +530,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 	public void updateScore() {
 		scorePanel.removeAll();
 		EasyGBC d = new EasyGBC();
-		JComponent scoreSlider = createFilterSlider("score", "Score", currentNetwork, true, 100.0);
+		JComponent scoreSlider = createFilterSlider("score", "Score", createScoreLabel(), currentNetwork, true, 100.0);
 		scorePanel.add(scoreSlider, d.anchor("northwest").expandHoriz());
 
 		JPanel controlPanel = createControlPanel();

@@ -399,7 +399,7 @@ public class StringNodePanel extends AbstractStringPanel {
 
 		List<String> tissueList = ModelUtils.getTissueList(currentNetwork);
 		for (String tissue: tissueList) {
-			tissuesPanel.add(createFilterSlider("tissue", tissue, currentNetwork, true, 500.0), 
+			tissuesPanel.add(createFilterSlider("tissue", tissue, tissue, currentNetwork, true, 500.0), 
 			                 c.anchor("west").down().expandHoriz());
 		}
 
@@ -415,7 +415,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		EasyGBC c = new EasyGBC();
 		List<String> tissueList = ModelUtils.getTissueList(currentNetwork);
 		for (String tissue: tissueList) {
-			tissuesPanel.add(createFilterSlider("tissue", tissue, currentNetwork, true, 500.0), 
+			tissuesPanel.add(createFilterSlider("tissue", tissue, tissue, currentNetwork, true, 500.0), 
 			                 c.anchor("west").down().expandHoriz());
 		}
 		return;
@@ -427,7 +427,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		EasyGBC c = new EasyGBC();
 		List<String> compartmentList = ModelUtils.getCompartmentList(currentNetwork);
 		for (String compartment: compartmentList) {
-			compartmentsPanel.add(createFilterSlider("compartment", compartment, currentNetwork, true, 500.0), 
+			compartmentsPanel.add(createFilterSlider("compartment", compartment, compartment, currentNetwork, true, 500.0), 
 			          c.anchor("west").down().expandHoriz());
 		}
 		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Compartment filters", compartmentsPanel, true, 10);
@@ -442,7 +442,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		EasyGBC c = new EasyGBC();
 		List<String> compartmentsList = ModelUtils.getCompartmentList(currentNetwork);
 		for (String compartments: compartmentsList) {
-			compartmentsPanel.add(createFilterSlider("compartment", compartments, currentNetwork, true, 500.0), 
+			compartmentsPanel.add(createFilterSlider("compartment", compartments, compartments, currentNetwork, true, 500.0), 
 			                      c.anchor("west").down().expandHoriz());
 		}
 		return;
