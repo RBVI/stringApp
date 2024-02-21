@@ -643,11 +643,11 @@ public class StringNodePanel extends AbstractStringPanel {
 		if (img != null) {
 			String imgSource = sNode.getStructureSource();
 			JLabel link = null;
-			if (imgSource.equals("PDB")) {
+			if (imgSource.equals(ModelUtils.STRUCTURE_SOURCE_PDB)) {
 				link = new SwingLinkCyBrowser("Structure" + " (from " + imgSource + ")", sNode.getPDBURL(), openBrowser);
-			} else if (imgSource.equals("AlphaFold DB") && sNode.haveUniprot()) {
+			} else if (imgSource.equals(ModelUtils.STRUCTURE_SOURCE_AF) && sNode.haveUniprot()) {
 				link = new SwingLinkCyBrowser("Structure" + " (from " + imgSource + ")", sNode.getAlphaFoldURL(), openBrowser);
-			} else if (imgSource.equals("SWISS-MODEL") && sNode.haveUniprot()) {
+			} else if (imgSource.equals(ModelUtils.STRUCTURE_SOURCE_SM) && sNode.haveUniprot()) {
 				link = new SwingLinkCyBrowser("Structure" + " (from " + imgSource + ")", sNode.getSwissModelURL(), openBrowser);
 			} else {
 				new JLabel("Structure");

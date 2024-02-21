@@ -206,11 +206,11 @@ public class StringNode {
 			String[] parts = imageURL.split("/");
 			try {
 				if (parts.length == 7 && parts[5].equals("af")) {
-					return "AlphaFold DB";
+					return ModelUtils.STRUCTURE_SOURCE_AF;
 				} else if (parts.length == 8 && parts[5].equals("pdb")) {
-					return "PDB";
+					return ModelUtils.STRUCTURE_SOURCE_PDB;
 				} else if (parts.length == 8 && parts[5].equals("sm")) {
-					return "SWISS-MODEL";
+					return ModelUtils.STRUCTURE_SOURCE_SM;
 				}
 			} catch (Exception ex) {
 				// ignore

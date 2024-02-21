@@ -115,6 +115,10 @@ public class ModelUtils {
 	
 	//public static Pattern cidmPattern = Pattern.compile("\\(CIDm\\)0*");
 	public static Pattern cidmPattern = Pattern.compile("CIDm0*");
+	
+	public static String STRUCTURE_SOURCE_PDB = "PDB";
+	public static String STRUCTURE_SOURCE_AF = "AlphaFold DB";
+	public static String STRUCTURE_SOURCE_SM = "SWISS-MODEL";
 	// public static String DISEASEINFO =
 	// "http://diseases.jensenlab.org/Entity?type1=9606&type2=-26";
 
