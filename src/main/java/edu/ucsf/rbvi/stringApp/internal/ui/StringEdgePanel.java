@@ -228,7 +228,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 			JPanel labelPanel = new JPanel();
 			labelPanel.setLayout(new GridBagLayout());
 			EasyGBC d = new EasyGBC();
-			JLabel lbl = new JLabel("Subscore");
+			JLabel lbl = new JLabel("Evidence");
 			lbl.setFont(labelFont);
 			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 			labelPanel.add(lbl, d.anchor("north").noExpand());
@@ -289,6 +289,13 @@ public class StringEdgePanel extends AbstractStringPanel {
 				scoreLabel.setMaximumSize(new Dimension(50,30));
 				labelPanel.add(scoreLabel, d.anchor("west").down().expandVert());
 			}
+			// add combined score as the last row
+			JLabel scoreLabel = new JLabel("combined");
+			scoreLabel.setFont(labelFont);
+			scoreLabel.setMinimumSize(new Dimension(50,30));
+			scoreLabel.setMaximumSize(new Dimension(50,30));
+			labelPanel.add(scoreLabel, d.anchor("west").down().expandVert());
+			// add border, etc. 
 			labelPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 30));
 			panel.add(labelPanel, c.right().expandVert());
 		}
@@ -311,6 +318,16 @@ public class StringEdgePanel extends AbstractStringPanel {
 				valueLabel.setMaximumSize(new Dimension(50,30));
 				valuesPanel.add(valueLabel, d.anchor("west").down().expandBoth());				
 			}
+			// add combined score
+			JLabel valueLabel = new JLabel("--");
+			Double score = ModelUtils.getDouble(currentNetwork, edge, ModelUtils.SCORE);
+			if (score != null) {
+				valueLabel = new JLabel(score.toString());
+			}			
+			valueLabel.setFont(labelFont);
+			valueLabel.setMinimumSize(new Dimension(50,30));
+			valueLabel.setMaximumSize(new Dimension(50,30));
+			valuesPanel.add(valueLabel, d.anchor("west").down().expandBoth());
 			panel.add(valuesPanel, c.right().expandHoriz());
 			
 		}

@@ -1366,6 +1366,16 @@ public class ModelUtils {
 		return null;
 	}
 
+	public static Double getDouble(CyNetwork network, CyIdentifiable ident, String column) {
+		try {
+			if (network.getRow(ident, CyNetwork.DEFAULT_ATTRS) != null)
+				return network.getRow(ident, CyNetwork.DEFAULT_ATTRS).get(column, Double.class);
+		} catch (Exception ex) {
+			// ignore
+		}
+		return null;
+	}
+
 	public static List<String> getNetworkSpeciesTaxons(CyNetwork network) {
 		List<CyNode> nodes = CyTableUtil.getNodesInState(network, CyNetwork.SELECTED, true);
 		if (nodes == null || nodes.size() == 0)
