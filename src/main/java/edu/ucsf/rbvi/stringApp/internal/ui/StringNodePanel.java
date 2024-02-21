@@ -641,18 +641,28 @@ public class StringNodePanel extends AbstractStringPanel {
 
 		Image img = sNode.getStructureImage();
 		if (img != null) {
-			JLabel lbl = new JLabel("Structure");
-			lbl.setFont(labelFont);
-			lbl.setBorder(BorderFactory.createEmptyBorder(10,2,5,0));
-			panel.add(lbl, c.anchor("west").down().expandHoriz());
-
+			String imgSource = sNode.getStructureSource();
+			JLabel link = null;
+			if (imgSource.equals("PDB")) {
+				link = new SwingLinkCyBrowser("Structure" + " (from " + imgSource + ")", sNode.getPDBURL(), openBrowser);
+			} else if (imgSource.equals("AlphaFold DB") && sNode.haveUniprot()) {
+				link = new SwingLinkCyBrowser("Structure" + " (from " + imgSource + ")", sNode.getAlphaFoldURL(), openBrowser);
+			} else if (imgSource.equals("SWISS-MODEL") && sNode.haveUniprot()) {
+				link = new SwingLinkCyBrowser("Structure" + " (from " + imgSource + ")", sNode.getSwissModelURL(), openBrowser);
+			} else {
+				new JLabel("Structure");
+			}
+			link.setFont(labelFont);
+			link.setBorder(BorderFactory.createEmptyBorder(10,2,5,0));
+			panel.add(link, c.anchor("west").down().expandHoriz());
+			
 			// Now add our image
 			Image scaledImage = img.getScaledInstance(200,200,Image.SCALE_SMOOTH);
 			JLabel label = new JLabel(new ImageIcon(scaledImage));
 			// label.setPreferredSize(new Dimension(100,100));
 			// label.setMinimumSize(new Dimension(100,100));
 			label.setAlignmentX(Component.LEFT_ALIGNMENT);
-			panel.add(label, c.anchor("west").down().noExpand());
+			panel.add(label, c.anchor("north").down().noExpand());
 		}
 
 		String name = sNode.getDisplayName();

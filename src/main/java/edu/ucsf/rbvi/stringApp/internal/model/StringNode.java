@@ -163,6 +163,62 @@ public class StringNode {
 	}
 
 	
+	public String getAlphaFoldURL() {
+		String uniprot = getUniprot();
+		if (uniprot == null) return null;
+		return "https://alphafold.ebi.ac.uk/entry/"+uniprot;
+	}
+	
+	public String getSwissModelURL() {
+		String uniprot = getUniprot();
+		if (uniprot == null) return null;
+		return "https://swissmodel.expasy.org/repository/uniprot/"+uniprot;
+	}
+	
+	public String getPDBURL() {
+		String pdbName = getStructureName();
+		if (pdbName.equals("")) return null;
+		return "https://www.rcsb.org/structure/"+pdbName;
+	}
+	
+	public String getStructureName() {
+		String imageURL = ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.IMAGE);
+		if (imageURL != null && !imageURL.equals("")) {
+			String[] parts = imageURL.split("/");
+			try {
+				if (parts.length == 7 && parts[5].equals("af")) {
+					return parts[6].split("\\.")[0];
+				} else if (parts.length == 8 && parts[5].equals("pdb")) {
+					return parts[7].split("\\.")[0].split("_")[0];
+				} else if (parts.length == 8 && parts[5].equals("sm")) {
+					return parts[7].split("\\.")[0];
+				}
+			} catch (Exception ex) {
+				// ignore
+			}
+		}
+		return "";
+	}
+
+	public String getStructureSource() {
+		String imageURL = ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.IMAGE);
+		if (imageURL != null && !imageURL.equals("")) {
+			String[] parts = imageURL.split("/");
+			try {
+				if (parts.length == 7 && parts[5].equals("af")) {
+					return "AlphaFold DB";
+				} else if (parts.length == 8 && parts[5].equals("pdb")) {
+					return "PDB";
+				} else if (parts.length == 8 && parts[5].equals("sm")) {
+					return "SWISS-MODEL";
+				}
+			} catch (Exception ex) {
+				// ignore
+			}
+		}
+		return "";
+	}
+
 	public BufferedImage getStructureImage() {
 		BufferedImage bi = null;
 
