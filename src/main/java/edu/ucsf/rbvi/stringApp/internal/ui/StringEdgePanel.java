@@ -5,7 +5,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -31,9 +30,9 @@ import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTableUtil;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
-import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
+import edu.ucsf.rbvi.stringApp.internal.model.EvidenceType;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeNetTypeTaskFactory;
@@ -202,7 +201,8 @@ public class StringEdgePanel extends AbstractStringPanel {
 		panel.setLayout(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
 
-		List<String> subScoreList = ModelUtils.getSubScoreList(currentNetwork);
+		//List<String> subScoreList = ModelUtils.getSubScoreList(currentNetwork);
+		List<String> subScoreList = EvidenceType.getOrderedEvidenceTypes(ModelUtils.getNetworkType(currentNetwork));
 
 		// OK, now we want to create 3 panels: Color, Label, and Filter
 		{
@@ -273,6 +273,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 		EasyGBC c = new EasyGBC();
 		panel.setLayout(new GridBagLayout());
 
+		List<String> subScoreList = EvidenceType.getOrderedEvidenceTypes(ModelUtils.getNetworkType(currentNetwork));
 		Map<String, Double> subScoresMap = ModelUtils.getSubScores(currentNetwork, edge);
 		{
 			JPanel labelPanel = new JPanel();
@@ -280,9 +281,8 @@ public class StringEdgePanel extends AbstractStringPanel {
 			EasyGBC d = new EasyGBC();
 			JLabel lbl = new JLabel("Evidence");
 			lbl.setFont(labelFont);
-			//lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
 			labelPanel.add(lbl, d.anchor("west").down().noExpand());
-			for (String subScore: subScoresMap.keySet()) {
+			for (String subScore: subScoreList) {
 				JLabel scoreLabel = new JLabel(subScore);
 				scoreLabel.setFont(textFont);
 				scoreLabel.setMinimumSize(new Dimension(50,30));
@@ -299,12 +299,11 @@ public class StringEdgePanel extends AbstractStringPanel {
 			EasyGBC d = new EasyGBC();
 			JLabel lbl = new JLabel("Score");
 			lbl.setFont(labelFont);
-			//lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
 			valuesPanel.add(lbl, d.anchor("west").down().noExpand());
-			for (String subScore: subScoresMap.keySet()) {
+			for (String subScore: subScoreList) {
 				JLabel valueLabel;
-				if (subScoresMap.get(subScore).equals(-1.0))
-					valueLabel = new JLabel("none");
+				if (subScoresMap.get(subScore) == null)
+					valueLabel = new JLabel("--");
 				else
 					valueLabel = new JLabel(subScoresMap.get(subScore).toString());
 				valueLabel.setFont(textFont);

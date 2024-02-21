@@ -198,16 +198,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		PaletteProvider brewerProvider = pm.getPaletteProvider("ColorBrewer");
 		brewerPalette = brewerProvider.getPalette("Paired colors");
 
-		channelColors = new HashMap<>();
 		// Set up our default channel colors
-		channelColors.put("databases",Color.CYAN);
-		channelColors.put("experiments",Color.MAGENTA);
-		channelColors.put("neighborhood",Color.GREEN);
-		channelColors.put("fusion",Color.RED);
-		channelColors.put("cooccurrence",Color.BLUE);
-		channelColors.put("textmining",new Color(199,234,70)); // Lime green
-		channelColors.put("coexpression", Color.BLACK);
-		channelColors.put("similarity", new Color(163, 161, 255)); // Lila
+		channelColors = EvidenceType.getEvidenceColors();
 
 		// Get our default settings
 		configProps = ModelUtils.getPropertyService(this, SavePolicy.CONFIG_DIR);

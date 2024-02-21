@@ -245,7 +245,7 @@ public class ModelUtils {
 	}
 	
 	public static Map<String, Double> getSubScores(CyNetwork network, CyEdge edge) {
-		Map<String, Double> scores = new TreeMap<>();
+		Map<String, Double> scores = new HashMap<>();
 		if (network == null) return scores;
 		Collection<CyColumn> columns = network.getDefaultEdgeTable().getColumns(STRINGDB_NAMESPACE);
 		if (columns == null || columns.size() == 0) return scores;
@@ -255,8 +255,6 @@ public class ModelUtils {
 			Double score = network.getRow(edge).get(col.getName(), Double.class);
 			if (score != null)
 				scores.put(col.getNameOnly(), score);
-			else 
-				scores.put(col.getNameOnly(), -1.0);				
 		}
 		return scores;
 	}
