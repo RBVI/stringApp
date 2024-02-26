@@ -29,7 +29,7 @@ public class StringNetwork {
 	CyNetwork network;
 	Map<String, List<String>> resolvedIdMap = null;
 	Map<String, List<Annotation>> annotations = null;
-	Map<String, List<Annotation>> annotationsFull = null;
+	// Map<String, List<Annotation>> annotationsFull = null;
 	// Map<String, String> settings = null;
 	Map<String, Map<String, String>> settingsGroups = null;
 
@@ -53,7 +53,7 @@ public class StringNetwork {
 		this.manager = manager;
 		resolvedIdMap = null;
 		annotations = null;
-		annotationsFull = null;
+		// annotationsFull = null;
 		// TODO: [N] Is it ok to set the group to null here?
 		topTerms = manager.getTopTerms(null, null);
 		overlapCutoff = manager.getOverlapCutoff(null, null);
@@ -68,7 +68,7 @@ public class StringNetwork {
 	public void reset() {
 		resolvedIdMap = null;
 		annotations = null;
-		annotationsFull = null;
+		// annotationsFull = null;
 	}
 
 	public StringManager getManager() { return manager; }
@@ -339,7 +339,7 @@ public class StringNetwork {
 
 	public Map<String, List<Annotation>> getAnnotations() { return annotations; }
 	
-	public Map<String, List<Annotation>> getFullAnnotations() { return annotationsFull; }
+	// public Map<String, List<Annotation>> getFullAnnotations() { return annotationsFull; }
 
 	public Map<String, List<Annotation>> getAnnotations(StringManager manager, Species species, final String terms, 
 	                                                    final String useDATABASE, boolean includeViruses) throws ConnectionException {
@@ -356,7 +356,7 @@ public class StringNetwork {
 		
 		// Split the terms up into groups of 5000
 		annotations = new HashMap<>();
-		annotationsFull = new HashMap<>();
+		// annotationsFull = new HashMap<>();
 		for (int i = 0; i < termsArray.length; i = i + 5000) {
 			String termsBatch = getTerms(termsArray, i, i + 5000, termsArray.length);
 			annotations = getAnnotationBatch(species, termsBatch, useDATABASE, includeViruses);
@@ -477,8 +477,9 @@ public class StringNetwork {
 			for (String key: resolvedIdMap.keySet()) {
 				if (annotations.containsKey(key))
 					// TODO: [Custom] figure out how to add the ones that resolve to multiple ids and the user chose one of them (if needed) 
-					annotationsFull.put(key, annotations.get(key));
-					annotations.remove(key);
+					// annotationsFull.put(key, annotations.get(key));
+					// annotations.remove(key);
+					for (Annotation a: annotations.get(key)) {a.setResolved(true);}
 			}
 		}
 		return noAmbiguity;

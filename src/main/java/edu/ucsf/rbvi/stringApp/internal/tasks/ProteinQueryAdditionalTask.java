@@ -156,8 +156,6 @@ public class ProteinQueryAdditionalTask extends AbstractTask implements Observab
 
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);		
-		// LoadInteractions load = new LoadInteractions(stringNetwork, sp.toString(), sp.getTaxId(),
-		// 		confidence, limit.getValue(), stringIds, queryTermMap, "", Databases.STRING.getAPIName());
 		manager.execute(new TaskIterator(new LoadTermsTask(stringNetwork, sp.toString(), sp, confidence,
                 								limit.getValue(), stringIds, queryTermMap, Databases.STRING.getAPIName(), 
                 								networkType.getSelectedValue())), true);

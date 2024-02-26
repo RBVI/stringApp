@@ -606,7 +606,7 @@ public class ModelUtils {
 		Map<String, String> nodeNameMap = new HashMap<>();
 
 		if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
-			Map<String, List<Annotation>> annotationsMap = stringNetwork.getFullAnnotations();
+			Map<String, List<Annotation>> annotationsMap = stringNetwork.getAnnotations();
 			getJSONFromStringDb(manager, species, newNetwork, nodeMap, nodeNameMap, queryTermMap, null, (JSONArray)results,
 					                useDATABASE, netType, annotationsMap);
 		} else {

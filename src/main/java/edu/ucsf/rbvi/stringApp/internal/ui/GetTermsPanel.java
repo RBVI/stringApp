@@ -399,7 +399,8 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		optionsPanel.showAdvancedOptions(false);
 		final Map<String, ResolveTableModel> tableModelMap = new HashMap<>();
 		for (String term: stringNetwork.getAnnotations().keySet()) {
-			tableModelMap.put(term, new ResolveTableModel(this, term, stringNetwork.getAnnotations().get(term)));
+			if (!Annotation.allResolved(stringNetwork.getAnnotations().get(term)))
+				tableModelMap.put(term, new ResolveTableModel(this, term, stringNetwork.getAnnotations().get(term)));
 		}
 		mainSearchPanel.setLayout(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
@@ -485,7 +486,6 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 	}
 
 	public void addResolvedStringID(String term, String id) {
-		stringNetwork.addResolvedStringID(term, id);
 		if (stringNetwork.haveResolvedNames()) {
 			importButton.setEnabled(true);
 		} else

@@ -25,6 +25,7 @@ public class Annotation {
 	//String color;
 	String image;
 	List<String> structures;
+	boolean resolved;
 	
 
 	// Additional information for creating nodes from get_string_ids
@@ -36,6 +37,7 @@ public class Annotation {
 		this.taxId = taxId;
 		this.query = query;
 		this.annotation = annotation;
+		this.resolved = false;
 		
 		this.taxonName = "";
 		this.uniprot = "";
@@ -69,10 +71,20 @@ public class Annotation {
 	// public String getColor() {return color;}
 	public String getImage() {return image;}
 	public List<String> getStructures() {return structures;}
+	public boolean isResolved() {return resolved;}
+	public void setResolved(boolean resolved) {this.resolved = resolved;}
 	
 	public static Map<String, List<Annotation>> getAnnotations(JSONObject json, String queryTerms, Species species) {
 		Map<String, List<Annotation>> map = new HashMap<>();
 		return getAnnotations(json, queryTerms, map, species);
+	}
+
+	public static boolean allResolved(List<Annotation> annotations) {
+		for (Annotation a: annotations) {
+			if (!a.isResolved())
+				return false;
+		}
+		return true;
 	}
 
 	public static Map<String, List<Annotation>> getAnnotations(JSONObject json, String queryTerms,
