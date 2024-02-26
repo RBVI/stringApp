@@ -263,14 +263,16 @@ public class EnrichmentCytoPanel extends JPanel
 		// only consider when nodes are selected
 		if (!event.nodesChanged())
 			return;
+
 		// if (!registered) return;
 		if (!enrichmentTables.containsKey(showTable))
 			return;
 
 		JTable table = enrichmentTables.get(showTable);
 		if (table.getSelectedRow() > -1 && table.getSelectedColumnCount() == 1
-				&& table.getSelectedColumn() != EnrichmentTerm.chartColumnCol)
+				&& table.getSelectedColumn() != EnrichmentTerm.chartColumnCol) {
 			return;
+		}
 
 		CyNetwork network = manager.getCurrentNetwork();
 		if (network == null)
@@ -635,6 +637,22 @@ public class EnrichmentCytoPanel extends JPanel
 			}
 		});
 		popupMenu.add(menuItemAddAnnotToNet);
+
+		JMenuItem menuItemClearRowSelection = new JMenuItem("Clear row selection");
+		menuItemClearRowSelection.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Component c = (Component) e.getSource();
+				JPopupMenu popup = (JPopupMenu) c.getParent();
+				JTable table = (JTable) popup.getInvoker();
+				table.clearSelection();
+				EnrichmentTableModel tableModel = enrichmentTableModels.get(showTable);
+				tableModel.filterByNodeSUID(null, true, manager.getCategoryFilter(network, showTable),
+								manager.getRemoveOverlap(network, showTable), manager.getOverlapCutoff(network, showTable));
+				updateLabelRows();
+			}
+		});
+		popupMenu.add(menuItemClearRowSelection);
 		
 		jTable.setComponentPopupMenu(popupMenu);
 		jTable.addMouseListener(new MouseAdapter() {
