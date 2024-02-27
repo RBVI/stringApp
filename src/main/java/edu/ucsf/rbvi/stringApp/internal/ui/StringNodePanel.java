@@ -466,6 +466,8 @@ public class StringNodePanel extends AbstractStringPanel {
 		}
 		for (CyNode node: nodes) {
 			JPanel newPanel = createNodePanel(node);
+			if (newPanel == null)
+				continue;
 			newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
 			nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
 		}
@@ -481,6 +483,8 @@ public class StringNodePanel extends AbstractStringPanel {
 			List<CyNode> nodes = CyTableUtil.getNodesInState(currentNetwork, CyNetwork.SELECTED, true);
 			for (CyNode node: nodes) {
 				JPanel newPanel = createNodePanel(node);
+				if (newPanel == null)
+					continue;
 				newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
 	
 				nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
@@ -562,6 +566,8 @@ public class StringNodePanel extends AbstractStringPanel {
 	private JPanel createNodePanel(CyNode node) {
 		JPanel panel = new JPanel();
 		StringNode sNode = new StringNode(manager.getStringNetwork(currentNetwork), node);
+		if (sNode.getNodeType() == null || (!sNode.getNodeType().equals("protein") && !sNode.getNodeType().equals("compound")))
+			return null;
 		EasyGBC c = new EasyGBC();
 		panel.setLayout(new GridBagLayout());
 
@@ -731,6 +737,8 @@ public class StringNodePanel extends AbstractStringPanel {
 		if (nodes.size() <= ModelUtils.MAX_NODE_PANELS) {
 			for (CyNode node: nodes) {
 				JPanel newPanel = createNodePanel(node);
+				if (newPanel == null)
+					continue;
 				newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
 	
 				nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
