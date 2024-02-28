@@ -487,6 +487,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 	}
 
 	public void addResolvedStringID(String term, String id) {
+		stringNetwork.addResolvedStringID(term, id);
 		if (stringNetwork.haveResolvedNames()) {
 			importButton.setEnabled(true);
 		} else
