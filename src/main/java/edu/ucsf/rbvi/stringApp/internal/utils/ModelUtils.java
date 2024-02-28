@@ -75,15 +75,15 @@ public class ModelUtils {
 	public static String DEFAULT_NAME_ADDON_PHYSICAL_REGEXP = " \\(physical\\)";
 	
 	// Node information
+	public static String COLOR = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "color";
 	public static String CANONICAL = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "canonical name";
-	public static String DISPLAY = "display name";
-	public static String FULLNAME = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "full name";
 	public static String CV_STYLE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "chemViz Passthrough";
-	public static String ELABEL_STYLE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "enhancedLabel Passthrough";
-	public static String ID = "@id";
 	public static String DESCRIPTION = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "description";
 	public static String DISEASE_SCORE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "disease score";
-	public static String USE_ENRICHMENT = "use for enrichment";
+	public static String DISPLAY = "display name";
+	public static String ELABEL_STYLE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "enhancedLabel Passthrough";
+	public static String FULLNAME = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "full name";
+	public static String ID = "@id";
 	public static String IMAGE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "imageurl";
 	public static String NAMESPACE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "namespace";
 	public static String QUERYTERM = "query term";
@@ -91,11 +91,13 @@ public class ModelUtils {
 	public static String SMILES = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "smiles";
 	public static String SPECIES = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "species";
 	public static String STRINGID = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "database identifier";
+	public static String STRUCTURES = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "structures";
 	public static String STYLE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "STRING style";
 	public static String TYPE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "node type";
 	public static String TM_FOREGROUND = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "textmining foreground";
 	public static String TM_BACKGROUND = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "textmining background";
 	public static String TM_SCORE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "textmining score";
+	public static String USE_ENRICHMENT = "use for enrichment";
 
 	public static String TISSUE_NAMESPACE = "tissue";
 	public static String COMPARTMENT_NAMESPACE = "compartment";
@@ -488,10 +490,24 @@ public class ModelUtils {
 		return values;
 	}
 
-	public static List<CyNode> augmentNetworkFromJSON(StringManager manager, CyNetwork net,
+	public static List<CyNode> augmentNetworkFromJSON(StringNetwork stringNetwork, CyNetwork net,
 			List<CyEdge> newEdges, JSONObject object, Map<String, String> queryTermMap,
 			String useDATABASE, String netType) {
-		JSONObject results = getResultsFromJSON(object, JSONObject.class);
+
+		StringManager manager = stringNetwork.getManager();
+
+		Object results = getResultsFromJSON(object, JSONObject.class);
+		if (results == null)
+			results = getResultsFromJSON(object, JSONArray.class); // See if this is a JSONArray
+		else {
+			if (((JSONObject)results).containsKey("message")) {
+				String msgJSON = (String) ((JSONObject)results).get("message");
+				if (msgJSON.length() > 0) {
+					throw new RuntimeException(msgJSON);
+				}
+			}
+		}
+
 		if (results == null)
 			return null;
 
@@ -514,9 +530,16 @@ public class ModelUtils {
 				useDATABASE = Databases.STITCH.getAPIName();
 		}
 		setDatabase(net, useDATABASE);
-		
-		List<CyNode> nodes = getJSON(manager, species, net, nodeMap, nodeNameMap, queryTermMap,
-				newEdges, results, useDATABASE, netType);
+
+		List<CyNode> nodes;
+		if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
+			Map<String, List<Annotation>> annotationsMap = stringNetwork.getAnnotations();
+			nodes = getJSONFromStringDb(manager, species, net, nodeMap, nodeNameMap, queryTermMap, null, (JSONArray)results,
+					                        useDATABASE, netType, annotationsMap);
+		} else {
+			nodes = getJSON(manager, species, net, nodeMap, nodeNameMap, queryTermMap, null, (JSONObject)results,
+					            useDATABASE, netType);
+		}
 		
 		// if we have "enough" nodes, but not too many, fetch the images, 
 		// otherwise allow users to fetch them by setting "has images" to false 
@@ -880,6 +903,7 @@ public class ModelUtils {
 			Map<String, String> queryTermMap, List<CyEdge> newEdges, JSONArray edges,
 			String useDATABASE, String netType, Map<String, List<Annotation>> annotationsMap) {
 		List<CyNode> newNodes = new ArrayList<>();
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, COLOR);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, CANONICAL);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, DISPLAY);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, FULLNAME);
@@ -891,6 +915,7 @@ public class ModelUtils {
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, QUERYTERM);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, SEQUENCE);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, SPECIES);
+		createListColumnIfNeeded(network.getDefaultNodeTable(), String.class, STRUCTURES);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, IMAGE);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STYLE);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, ELABEL_STYLE);
@@ -1187,7 +1212,6 @@ public class ModelUtils {
 		row.set(ID, id);
 		row.set(NAMESPACE, namespace);
 		row.set(STYLE, "string:"); // We may overwrite this, if we get an image
-
 	
 		String type = (String) nodeObj.get("node type");
 		if (type == null)
@@ -1338,6 +1362,8 @@ public class ModelUtils {
 				row.set(IMAGE, nodeAnnot.getImage());
 			if (nodeAnnot.getUniprot() != null)
 				row.set(CANONICAL, nodeAnnot.getUniprot());
+			if (nodeAnnot.getColor() != null) 
+				row.set(COLOR, (String) nodeAnnot.getColor());
 			// Special case depending of whether we create the node from the annotations or from the network json data 
 			if (name.equals("") && nodeAnnot.getPreferredName() != null)
 				row.set(DISPLAY, nodeAnnot.getPreferredName());

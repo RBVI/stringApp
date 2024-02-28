@@ -170,7 +170,7 @@ public class StringNode {
 		if (input == null) return null;
 		if (input.equals("string:")) {
 			String url = getStructureImageURL();
-			if (url == null) return null;
+			if (url == null || url == "") return null;
 			try {
 				bi = ImageIO.read(new URL(url));
 				return bi;

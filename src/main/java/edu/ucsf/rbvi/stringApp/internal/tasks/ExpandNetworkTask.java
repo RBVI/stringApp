@@ -41,6 +41,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.StringResults;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
@@ -174,53 +175,67 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			monitor.showMessage(TaskMonitor.Level.WARN, "No node type to expand by");
 			return;
 		}
+
+		Double score = 0.4;
+		Double conf = ModelUtils.getConfidence(network);
+		if (conf != null)
+			score = conf;
+
+		NetworkType currentType = NetworkType.getType(ModelUtils.getNetworkType(network));
+		String database = NetworkType.FUNCTIONAL.getAPIName();
+		if (currentType != null)
+			database = currentType.getAPIName();
+
 		// int taxonId = Species.getSpeciesTaxId(species);
 		int taxonId = Species.getSpeciesTaxId(selectedType);
 		Species selSpecies = Species.getSpecies(selectedType);
-		Map<String, String> args = new HashMap<>();
-		args.put("existing",existing.trim());
-		if (selected != null && selected.length() > 0)
-			args.put("selected",selected.trim());
-		Double conf = ModelUtils.getConfidence(network);
-		if (conf == null)
-			args.put("score", "0.4");
-		else
-			args.put("score", conf.toString());
-		if (additionalNodes > 0)
-			args.put("additional", Integer.toString(additionalNodes));
-		// String nodeType = nodeTypes.getSelectedValue().toLowerCase();
-		args.put("alpha", selectivityAlpha.getValue().toString());
+		String filterString = "";
 		String useDatabase = "";
-		if (selectedType.equals(ModelUtils.COMPOUND)) {
+		Map<String, String> args = new HashMap<>();
+		if (selSpecies.isCustom()) {
+			filterString = selSpecies.toString();
+			useDatabase = Databases.STRINGDB.getAPIName();
+			args.put("species",selSpecies.toString());
+			args.put("existing_string_identifiers",existing.trim());
+			args.put("required_score",String.valueOf((int)(conf*10)));
+			args.put("network_type", database);
+			if (additionalNodes > 0)
+				args.put("add_color_nodes", Integer.toString(additionalNodes));
+		} else if (selectedType.equals(ModelUtils.COMPOUND)) {
 			useDatabase = Databases.STITCH.getAPIName();
 			args.put("filter", "CIDm%%");			
+			args.put("score", conf.toString());
+			args.put("database", database);
+			args.put("alpha", selectivityAlpha.getValue().toString());
+			if (additionalNodes > 0)
+				args.put("additional", Integer.toString(additionalNodes));
 		} else {
-			String filterString;
-			if (selSpecies.isCustom()) {
-				filterString = selSpecies.toString();
-				useDatabase = Databases.STRINGDB.getAPIName();
-			} else {
-				filterString = String.valueOf(selSpecies.getTaxId());
-				useDatabase = Databases.STRING.getAPIName();
-			}
-			if (taxonId != -1) 
-				args.put("filter", filterString + ".%%");
+			useDatabase = Databases.STRING.getAPIName();
+			filterString = String.valueOf(selSpecies.getTaxId());
+			args.put("filter", filterString + ".%%");
+			args.put("existing",existing.trim());
+			args.put("score", conf.toString());
+			args.put("database", database);
+			args.put("alpha", selectivityAlpha.getValue().toString());
+			if (additionalNodes > 0)
+				args.put("additional", Integer.toString(additionalNodes));
 		}
-		// set network type
-		NetworkType currentType = NetworkType.getType(ModelUtils.getNetworkType(network));
-		if (currentType != null)
-			args.put("database", currentType.getAPIName());
-		else
-			args.put("database", Databases.STRING.getAPIName());
-		
-		monitor.setStatusMessage("Getting additional nodes from: "+manager.getNetworkURL());
+
+		System.out.println("Database: "+useDatabase+" Existing: "+existing);
+
+		if (selected != null && selected.length() > 0)
+			args.put("selected",selected.trim());
+		// String nodeType = nodeTypes.getSelectedValue().toLowerCase();
 
 		JSONObject results;
 		try {
-				if (selSpecies.isCustom())
+				if (useDatabase.equals(Databases.STRINGDB.getAPIName())) {
+					monitor.setStatusMessage("Getting additional nodes from: "+manager.getStringNetworkURL());
 					results = HttpUtils.postJSON(manager.getStringNetworkURL(), args, manager);
-				else
+				} else {
+					monitor.setStatusMessage("Getting additional nodes from: "+manager.getNetworkURL());
 					results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+				}
 		} catch (ConnectionException e) {
 			e.printStackTrace();
 			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
@@ -230,8 +245,9 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		monitor.setStatusMessage("Augmenting network");
 
 		// This may change...
+		StringNetwork stringNet = manager.getStringNetwork(network);
 		List<CyEdge> newEdges = new ArrayList<>();
-		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, useDatabase, currentType.getAPIName());
+		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(stringNet, network, newEdges, results, null, useDatabase, currentType.getAPIName());
 
 		if (newNodes.size() == 0 && newEdges.size() == 0) {
 			if (conf == 1.0) { 

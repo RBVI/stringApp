@@ -363,6 +363,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		} else {
 			stringIds = stringNetwork.combineIds(queryTermMap);
 		}
+
 		// We need to see if we're using a custom species, and if so, we need to use a different database
 		if (species.isCustom())
 			useDATABASE = Databases.STRINGDB.getAPIName();
@@ -376,7 +377,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 			                                       species, confidence, additionalNodes, stringIds,
 			                                       queryTermMap, netName, useDATABASE, netType);
 		}
-		cancel();
+		finish();
 		TaskIterator ti = factory.createTaskIterator();
 		if (additionalTask != null)
 			ti.append(additionalTask);
@@ -517,6 +518,10 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 	public void cancel() {
 		stringNetwork = initialStringNetwork;
 		if (stringNetwork != null) stringNetwork.reset();
+		finish();
+	}
+
+	public void finish() {
 		replaceSearchPanel();
 		importButton.setEnabled(true);
 		backButton.setEnabled(false);
@@ -564,13 +569,12 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
     @Override
     public void actionPerformed(ActionEvent e) {
 			// Start our task cascade
-    		String speciesName = "";
-    		if (!queryAddNodes) {
-					speciesName = speciesCombo.getSelectedItem().toString();
-    		} else {
-    			speciesName = (String)speciesPartnerCombo.getSelectedItem();
-    		}
-				System.out.println("SpeciesName = "+speciesName);
+			String speciesName = "";
+			if (!queryAddNodes) {
+				speciesName = speciesCombo.getSelectedItem().toString();
+			} else {
+				speciesName = (String)speciesPartnerCombo.getSelectedItem();
+			}
 			Species sp = Species.getSpecies(speciesName);
 			if (sp == null) {
 				// Oops -- unknown species

@@ -91,34 +91,48 @@ public class LoadTermsTask extends AbstractTask {
 		if (confidence == 100) 
 			conf = "1.0";
 
-		// String url = "http://api.jensenlab.org/network?entities="+URLEncoder.encode(ids.trim())+"&score="+conf;
-		Map<String, String> args = new HashMap<>();
-		// args.put("database", useDATABASE);
-		// TODO: Is it OK to always use stitch?
-		args.put("database", netType.getAPIName());
-		args.put("entities",ids.trim());
-		args.put("score", conf);
 		String taxString;
 		if (species.isCustom())
 			taxString = species.toString();
 		else
 			taxString = String.valueOf(species.getTaxId());
 
-		if (additionalNodes > 0) {
-			args.put("additional", Integer.toString(additionalNodes));
-			if (useDATABASE.equals(Databases.STRING.getAPIName())) {
-				args.put("filter", taxString + ".%%");
-			} else {
-				args.put("filter", taxString + ".%%|CIDm%%");
+
+		// String url = "http://api.jensenlab.org/network?entities="+URLEncoder.encode(ids.trim())+"&score="+conf;
+		Map<String, String> args = new HashMap<>();
+		// args.put("database", useDATABASE);
+		// TODO: Is it OK to always use stitch?
+		if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
+			args.put("species",taxString);
+			args.put("network_type", netType.getAPIName());
+			args.put("existing_string_identifiers", ModelUtils.getExisting(network).trim());
+			args.put("required_score", String.valueOf(confidence*10));
+			args.put("identifiers",ids.trim());
+			if (additionalNodes > 0)
+				args.put("add_color_nodes", Integer.toString(additionalNodes));
+		} else {
+			args.put("entities",ids.trim());
+			args.put("database", netType.getAPIName());
+			args.put("score", conf);
+			args.put("existing", ModelUtils.getExisting(network).trim());
+			if (additionalNodes > 0) {
+				args.put("additional", Integer.toString(additionalNodes));
+				if (useDATABASE.equals(Databases.STRING.getAPIName())) {
+					args.put("filter", taxString + ".%%");
+				} else if (useDATABASE.equals(Databases.STITCH.getAPIName())) {
+					args.put("filter", taxString + ".%%|CIDm%%");
+				}
 			}
 		}
-		args.put("existing", ModelUtils.getExisting(network).trim());
 
 		monitor.setStatusMessage("Getting additional terms from "+manager.getNetworkURL());
 
 		JSONObject results;
 		try {
-			results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+			if (useDATABASE.equals(Databases.STRINGDB.getAPIName()))
+				results = HttpUtils.postJSON(manager.getStringNetworkURL(), args, manager);
+			else
+				results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
 		} catch (ConnectionException e) {
 			e.printStackTrace();
 			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
@@ -133,10 +147,10 @@ public class LoadTermsTask extends AbstractTask {
 		monitor.setStatusMessage("Augmenting network");
 
 		List<CyEdge> newEdges = new ArrayList<>();
-		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges,
+		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(stringNet, network, newEdges,
 		                                                          results, queryTermMap, useDATABASE, netType.getAPIName());
 
-		if (newEdges.size() > 0 || newNodes.size() > 0) {
+		if (newEdges.size() > 0 || (newNodes != null && newNodes.size() > 0)) {
 			monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
 		} else {
 			// monitor.showMessage(Level.WARN, "Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");

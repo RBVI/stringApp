@@ -103,7 +103,7 @@ public class HttpUtils {
 
 		String args = HttpUtils.getStringArguments(queryMap);
 		manager.info("URL: " + url + "?" + truncate(args));
-		// System.out.println("URL: " + url + "?" + truncate(args));
+		System.out.println("URL: " + url + "?" + truncate(args));
 		// System.out.println("URL: " + url + "?" + args);
 		
 		URLConnection connection = null;

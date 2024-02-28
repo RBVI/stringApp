@@ -390,6 +390,7 @@ public class StringNetwork {
 		JSONObject results = null;
 		try {
 			results = HttpUtils.postJSON(url, args, manager);
+			// System.out.println(results.toString());
 		} catch (ConnectionException ex) {
 			if (ex instanceof UnknownSpeciesException && manager.isVirusesEnabled() && annotations.size() == 0 && includeViruses) {
 				// also call the viruses API

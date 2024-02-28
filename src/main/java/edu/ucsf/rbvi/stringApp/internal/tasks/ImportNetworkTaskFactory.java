@@ -49,15 +49,18 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 
 	public TaskIterator createTaskIterator() {
 		if (stringIds == null) {
+			System.out.println("Calling LoadSpeciesInteractions");
 			return new TaskIterator(
 					new LoadSpeciesInteractions(stringNet, speciesName, species, confidence,
 					                            species.getName(),
 					                            useDATABASE, netType));
 		} else if (stringNet.getNetwork() == null) {
+			System.out.println("Calling LoadInteractions");
 			return new TaskIterator(new LoadInteractions(stringNet, speciesName, species,
 			                                             confidence, additionalNodes, stringIds,
 			                                             queryTermMap, netName, useDATABASE, netType));
 		}
+		System.out.println("Calling LoadTermsTask");
 		return new TaskIterator(new LoadTermsTask(stringNet, speciesName, species, confidence,
 		                                          additionalNodes, stringIds, queryTermMap, useDATABASE, netType));
 	}

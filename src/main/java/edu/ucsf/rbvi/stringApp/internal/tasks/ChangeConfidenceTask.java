@@ -146,7 +146,8 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 
 			if (results != null) {
 				// This may change...
-				List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, database, currentType.getAPIName());
+				List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, 
+						                                                      results, null, database, currentType.getAPIName());
 	
 				monitor.setStatusMessage("Adding "+newEdges.size()+" edges");
 	

@@ -22,6 +22,7 @@ public class Annotation {
 	String taxonName;
 	String uniprot;
 	String sequence;
+	String color;
 	//String color;
 	String image;
 	List<String> structures;
@@ -44,6 +45,7 @@ public class Annotation {
 		this.sequence = "";
 		//this.color = "";
 		this.image = "";
+		this.color = "";
 		this.structures = new ArrayList<>();
 	}
 
@@ -62,13 +64,14 @@ public class Annotation {
 		res += "   Uniprot: "+uniprot+"\n";
 		res += "   Sequence: "+sequence+"\n";
 		res += "   Image: "+image+"\n";
+		res += "   Color: "+color+"\n";
 		return res;
 	}
 
 	public String getTaxonName() {return taxonName;}
 	public String getUniprot() {return uniprot;}
 	public String getSequence() {return sequence;}
-	// public String getColor() {return color;}
+	public String getColor() {return color;}
 	public String getImage() {return image;}
 	public List<String> getStructures() {return structures;}
 	public boolean isResolved() {return resolved;}
@@ -110,6 +113,7 @@ public class Annotation {
 			String uniprot = null;
 			String sequence = null;
 			String image = null;
+			String color = null;
 
 			if (ann.containsKey("preferredName"))
 				preferredName = (String)ann.get("preferredName");
@@ -143,10 +147,10 @@ public class Annotation {
 				uniprot = (String)ann.get("uniprot");
 			if (ann.containsKey("sequence"))
 				sequence = (String)ann.get("sequence");
+			if (ann.containsKey("color"))
+				color = (String)ann.get("color");
 			if (ann.containsKey("image"))
 				image = (String)ann.get("image");
-			
-			// TODO: [Custom] add parsing of color and structures!
 			
 			// Temporary HACK
 			// if (stringId.startsWith("-1.CID1"))
@@ -165,8 +169,15 @@ public class Annotation {
 				newAnnotation.sequence = sequence;
 			if (image != null)
 				newAnnotation.image = image;
+			if (color != null)
+				newAnnotation.color = color;
 			
-			// TODO: [Custom] save color and structures in the annotation
+			if (ann.containsKey("structures")) {
+				JSONArray stArray = (JSONArray)ann.get("structures");
+				for (Object st: stArray) {
+					newAnnotation.structures.add((String)st);
+				}
+			}
 			
 			if (!map.containsKey(terms[queryIndex])) {
 				map.put(terms[queryIndex], new ArrayList<Annotation>());
