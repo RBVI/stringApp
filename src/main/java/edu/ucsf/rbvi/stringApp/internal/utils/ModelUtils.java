@@ -1358,17 +1358,7 @@ public class ModelUtils {
 		// TODO: [Custom] can we just take the first annotation or not?
 		if (annotations != null && annotations.size() > 0) {
 			Annotation nodeAnnot = annotations.get(0);
-			if (nodeAnnot.getUniprot() != null)
-				row.set(CANONICAL, nodeAnnot.getUniprot());
-			if (nodeAnnot.getSequence() != null)
-				row.set(SEQUENCE, nodeAnnot.getSequence());
-			if (nodeAnnot.getImage() != null)
-				row.set(IMAGE, nodeAnnot.getImage());
-			if (nodeAnnot.getUniprot() != null)
-				row.set(CANONICAL, nodeAnnot.getUniprot());
-			if (nodeAnnot.getColor() != null) {
-				row.set(COLOR, (String) nodeAnnot.getColor());
-			}
+			updateNodeAttributes(row, nodeAnnot, true);
 			// Special case depending of whether we create the node from the annotations or from the network json data 
 			if (name.equals("") && nodeAnnot.getPreferredName() != null)
 				row.set(DISPLAY, nodeAnnot.getPreferredName());
@@ -1382,6 +1372,30 @@ public class ModelUtils {
 			}
 		}
 		return newNode;
+	}
+
+	public static void updateNodeAttributes(CyRow row, Annotation annotation, boolean isQueryNode) {
+		if (annotation.getAnnotation() != null) {
+			row.set(ModelUtils.DESCRIPTION, annotation.getAnnotation());
+		}
+		if (annotation.getUniprot() != null) {
+			row.set(ModelUtils.CANONICAL, annotation.getUniprot());
+		}
+		if (annotation.getSequence() != null) {
+			row.set(ModelUtils.SEQUENCE, annotation.getSequence());
+		}
+		if (annotation.getImage() != null) {
+			row.set(ModelUtils.IMAGE, annotation.getImage());
+		}
+		if (annotation.getColor() != null && isQueryNode) {
+		 	row.set(ModelUtils.COLOR, annotation.getColor());
+		}
+		if (annotation.getUniprot() != null) {
+			row.set(ModelUtils.CANONICAL, annotation.getUniprot());
+		}
+		if (annotation.getStructures() != null && annotation.getStructures().size() > 0) {
+			row.set(ModelUtils.STRUCTURES, annotation.getStructures());
+		}
 	}
 
 	// {"pscore":0,"preferredName_B":"OPC11257","preferredName_A":"OPC10681","dscore":0,"tscore":0,"score":0.92,"escore":0.92,"ncbiTaxonId":"110668318",

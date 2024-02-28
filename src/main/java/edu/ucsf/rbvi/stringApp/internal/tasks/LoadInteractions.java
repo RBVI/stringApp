@@ -178,27 +178,7 @@ public class LoadInteractions extends AbstractTask {
 				for (String s: annotations.keySet()) {
 					CyNode node = nodeMap.get(s);
 					for (Annotation a: annotations.get(s)) {
-						if (a.getAnnotation() != null) {
-							network.getRow(node).set(ModelUtils.DESCRIPTION, a.getAnnotation());
-						}
-						if (a.getUniprot() != null) {
-							network.getRow(node).set(ModelUtils.CANONICAL, a.getUniprot());
-						}
-						if (a.getSequence() != null) {
-							network.getRow(node).set(ModelUtils.SEQUENCE, a.getSequence());
-						}
-						if (a.getImage() != null) {
-							network.getRow(node).set(ModelUtils.IMAGE, a.getImage());
-						}
-						if (a.getColor() != null) {
-							network.getRow(node).set(ModelUtils.COLOR, a.getColor());
-						}
-						if (a.getUniprot() != null) {
-							network.getRow(node).set(ModelUtils.CANONICAL, a.getUniprot());
-						}
-						if (a.getStructures() != null && a.getStructures().size() > 0) {
-							network.getRow(node).set(ModelUtils.STRUCTURES, a.getStructures());
-						}
+						ModelUtils.updateNodeAttributes(network.getRow(node), a, false);
 					}
 				}
 			} catch (ConnectionException ce) {
