@@ -199,7 +199,6 @@ public class LoadInteractions extends AbstractTask {
 						if (a.getStructures() != null && a.getStructures().size() > 0) {
 							network.getRow(node).set(ModelUtils.STRUCTURES, a.getStructures());
 						}
-						// TODO: [Custom] add structures, color, etc. 
 					}
 				}
 			} catch (ConnectionException ce) {

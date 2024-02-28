@@ -903,8 +903,8 @@ public class ModelUtils {
 			Map<String, String> queryTermMap, List<CyEdge> newEdges, JSONArray edges,
 			String useDATABASE, String netType, Map<String, List<Annotation>> annotationsMap) {
 		List<CyNode> newNodes = new ArrayList<>();
-		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, COLOR);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, CANONICAL);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, COLOR);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, DISPLAY);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, FULLNAME);
 		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STRINGID);
@@ -923,6 +923,8 @@ public class ModelUtils {
 		createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, SCORE);
 		createColumnIfNeeded(network.getDefaultEdgeTable(), Boolean.class, INTERSPECIES);
 
+		if (annotationsMap == null) annotationsMap = new HashMap<>();
+
 		if (edges != null && edges.size() > 0) {
 			for (Object edgeObj : edges) {
 				if (edgeObj instanceof JSONObject)
@@ -933,7 +935,7 @@ public class ModelUtils {
 		}
 
 		// TODO: [Custom] add new node to newNodes list if needed
-		if (queryTermMap != null & queryTermMap.size() > 0) {
+		if (queryTermMap != null && queryTermMap.size() > 0) {
 			for (String stringID : queryTermMap.keySet()) {
 				if (nodeMap.get(stringID) == null) {
 					createNodeFromStringDb(network, stringID, "", species, nodeMap, nodeNameMap, queryTermMap, annotationsMap.get(queryTermMap.get(stringID)));
@@ -1334,6 +1336,8 @@ public class ModelUtils {
 		CyRow row = network.getRow(newNode);
 		nodeMap.put(id, newNode);
 
+		System.out.println("Creating node "+id);
+
 		row.set(CyNetwork.NAME, id);
 		// row.set(CyRootNetwork.SHARED_NAME, stringId);
 		row.set(DISPLAY, name);
@@ -1362,8 +1366,9 @@ public class ModelUtils {
 				row.set(IMAGE, nodeAnnot.getImage());
 			if (nodeAnnot.getUniprot() != null)
 				row.set(CANONICAL, nodeAnnot.getUniprot());
-			if (nodeAnnot.getColor() != null) 
+			if (nodeAnnot.getColor() != null) {
 				row.set(COLOR, (String) nodeAnnot.getColor());
+			}
 			// Special case depending of whether we create the node from the annotations or from the network json data 
 			if (name.equals("") && nodeAnnot.getPreferredName() != null)
 				row.set(DISPLAY, nodeAnnot.getPreferredName());
@@ -1394,7 +1399,12 @@ public class ModelUtils {
 		CyNode sourceNode;
 		CyNode targetNode;
 		if (nodeMap.get(source) == null) {
-			sourceNode = createNodeFromStringDb(network, source, sourceName, speciesName, nodeMap, nodeNameMap, queryTermMap, annotationsMap.get(queryTermMap.get(source)));
+			String sourceQuery;
+			if (queryTermMap != null)
+				sourceQuery = queryTermMap.get(source);
+			else
+				sourceQuery = source;
+			sourceNode = createNodeFromStringDb(network, source, sourceName, speciesName, nodeMap, nodeNameMap, queryTermMap, annotationsMap.get(sourceQuery));
 			if (newNodes != null)
 				newNodes.add(sourceNode);
 		} else {
@@ -1402,7 +1412,12 @@ public class ModelUtils {
 		}
 
 		if (nodeMap.get(target) == null) {
-			targetNode = createNodeFromStringDb(network, target, targetName, speciesName, nodeMap, nodeNameMap, queryTermMap, annotationsMap.get(queryTermMap.get(target)));
+			String targetQuery;
+			if (queryTermMap != null)
+				targetQuery = queryTermMap.get(target);
+			else
+				targetQuery = target;
+			targetNode = createNodeFromStringDb(network, target, targetName, speciesName, nodeMap, nodeNameMap, queryTermMap, annotationsMap.get(targetQuery));
 			if (newNodes != null)
 				newNodes.add(targetNode);
 		} else {

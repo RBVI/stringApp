@@ -36,6 +36,7 @@ import org.cytoscape.work.util.ListSingleSelection;
 import org.json.simple.JSONObject;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
@@ -197,10 +198,11 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			useDatabase = Databases.STRINGDB.getAPIName();
 			args.put("species",selSpecies.toString());
 			args.put("existing_string_identifiers",existing.trim());
+			args.put("identifiers",existing.trim());
 			args.put("required_score",String.valueOf((int)(conf*10)));
 			args.put("network_type", database);
 			if (additionalNodes > 0)
-				args.put("add_color_nodes", Integer.toString(additionalNodes));
+				args.put("add_nodes", Integer.toString(additionalNodes));
 		} else if (selectedType.equals(ModelUtils.COMPOUND)) {
 			useDatabase = Databases.STITCH.getAPIName();
 			args.put("filter", "CIDm%%");			
@@ -220,8 +222,6 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			if (additionalNodes > 0)
 				args.put("additional", Integer.toString(additionalNodes));
 		}
-
-		System.out.println("Database: "+useDatabase+" Existing: "+existing);
 
 		if (selected != null && selected.length() > 0)
 			args.put("selected",selected.trim());
@@ -269,6 +269,52 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			// return;
 		}
 		monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
+
+		// Finally, update any node information if we're using from STRING
+		// Only do this when we asked for additional nodes
+		if (useDatabase.equals(Databases.STRINGDB.getAPIName()) && additionalNodes > 0) {
+			Map<String, CyNode> nodeMap = new HashMap<>();
+			for (CyNode newNode: newNodes) {
+				nodeMap.put(ModelUtils.getName(network, newNode), newNode);
+			}
+
+			String terms = "";
+			for (String term: nodeMap.keySet()) {
+				terms += term+"\n";
+			}
+			try {
+				Map<String, List<Annotation>> annotations = stringNet.getAnnotations(stringNet.getManager(), selSpecies, terms, useDatabase, true);
+				// TODO: [Custom] do we need to resolve or just take the first annotation or last one, which is currently the case...?
+				for (String s: annotations.keySet()) {
+					CyNode node = nodeMap.get(s);
+					for (Annotation a: annotations.get(s)) {
+						if (a.getAnnotation() != null) {
+							network.getRow(node).set(ModelUtils.DESCRIPTION, a.getAnnotation());
+						}
+						if (a.getUniprot() != null) {
+							network.getRow(node).set(ModelUtils.CANONICAL, a.getUniprot());
+						}
+						if (a.getSequence() != null) {
+							network.getRow(node).set(ModelUtils.SEQUENCE, a.getSequence());
+						}
+						if (a.getImage() != null) {
+							network.getRow(node).set(ModelUtils.IMAGE, a.getImage());
+						}
+						// if (a.getColor() != null) {
+						// 	network.getRow(node).set(ModelUtils.COLOR, a.getColor());
+						// }
+						if (a.getUniprot() != null) {
+							network.getRow(node).set(ModelUtils.CANONICAL, a.getUniprot());
+						}
+						if (a.getStructures() != null && a.getStructures().size() > 0) {
+							network.getRow(node).set(ModelUtils.STRUCTURES, a.getStructures());
+						}
+					}
+				}
+			} catch (ConnectionException ce) {
+				monitor.showMessage(TaskMonitor.Level.ERROR, "Unable to get additional node annotations");
+			}
+		}
 
 		// If we have a view, re-apply the style and layout
 		monitor.setStatusMessage("Updating style");
