@@ -656,7 +656,7 @@ public class StringNodePanel extends AbstractStringPanel {
 			} else if (imgSource.equals(ModelUtils.STRUCTURE_SOURCE_SM) && sNode.haveUniprot()) {
 				link = new SwingLinkCyBrowser("Structure" + " (from " + imgSource + ")", sNode.getSwissModelURL(), openBrowser);
 			} else {
-				new JLabel("Structure");
+				link = new JLabel("Structure");
 			}
 			link.setFont(labelFont);
 			link.setBorder(BorderFactory.createEmptyBorder(10,2,5,0));
