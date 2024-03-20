@@ -193,7 +193,16 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		String filterString = "";
 		String useDatabase = "";
 		Map<String, String> args = new HashMap<>();
-		if (selSpecies.isCustom()) {
+		if (selectedType.equals(ModelUtils.COMPOUND)) {
+			useDatabase = Databases.STITCH.getAPIName();
+			args.put("filter", "CIDm%%");			
+			args.put("existing",existing.trim());
+			args.put("score", conf.toString());
+			args.put("database", database);
+			args.put("alpha", selectivityAlpha.getValue().toString());
+			if (additionalNodes > 0)
+				args.put("additional", Integer.toString(additionalNodes));
+		} else if (selSpecies.isCustom()) {
 			filterString = selSpecies.toString();
 			useDatabase = Databases.STRINGDB.getAPIName();
 			args.put("species",selSpecies.toString());
@@ -203,14 +212,6 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			args.put("network_type", database);
 			if (additionalNodes > 0)
 				args.put("add_nodes", Integer.toString(additionalNodes));
-		} else if (selectedType.equals(ModelUtils.COMPOUND)) {
-			useDatabase = Databases.STITCH.getAPIName();
-			args.put("filter", "CIDm%%");			
-			args.put("score", conf.toString());
-			args.put("database", database);
-			args.put("alpha", selectivityAlpha.getValue().toString());
-			if (additionalNodes > 0)
-				args.put("additional", Integer.toString(additionalNodes));
 		} else {
 			useDatabase = Databases.STRING.getAPIName();
 			filterString = String.valueOf(selSpecies.getTaxId());

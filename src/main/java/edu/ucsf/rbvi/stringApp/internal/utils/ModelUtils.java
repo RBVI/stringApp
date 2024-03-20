@@ -1662,6 +1662,8 @@ public class ModelUtils {
 			availableTypes.add(netSp);
 		}
 		availableTypes.addAll(species);
+		if (Species.getSpecies(netSp).isCustom())
+			return availableTypes;
 		availableTypes.add(COMPOUND);
 		Set<String> spPartners = new TreeSet<String>();
 		for (String sp : species) {
