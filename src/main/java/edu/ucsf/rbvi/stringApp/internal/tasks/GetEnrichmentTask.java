@@ -190,7 +190,10 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		}
 		// System.out.println(selected);
 		// List<String> netSpecies = ModelUtils.getNetworkSpeciesTaxons(network);
-		String species = String.valueOf(Species.getSpeciesTaxId(allNetSpecies.getSelectedValue()));
+		Species selSpecies = Species.getSpecies(allNetSpecies.getSelectedValue());
+		String species = String.valueOf(selSpecies.getTaxId());
+		if (selSpecies.isCustom())
+			species = selSpecies.toString();
 		//if (netSpecies.size() == 1) {
 		//	species = netSpecies.get(0);
 		//} else {
