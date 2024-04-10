@@ -265,24 +265,8 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		JLabel speciesLabel = new JLabel("Species:");
 		c.noExpand().insets(0,5,0,5);
 		speciesPanel.add(speciesLabel, c);
-		speciesCombo = new JComboBox<Species>(speciesList.toArray(new Species[1]));
+		speciesCombo = new SpeciesComboBox(manager, netSpecies);
 
-		Species defaultSpecies;
-		if (netSpecies == null) {
-			defaultSpecies = Species.getSpecies(manager.getDefaultSpecies());
-		} else {
-			defaultSpecies = Species.getSpecies(netSpecies);
-		}
-
-		if (!speciesList.contains(defaultSpecies)) {
-			speciesList.add(defaultSpecies);
-			Collections.sort(speciesList);
-		}
-		speciesCombo.setSelectedItem(defaultSpecies);
-
-
-    JComboBoxDecorator decorator = new JComboBoxDecorator(speciesCombo, true, true, speciesList);
-		decorator.decorate(speciesList); 
 		c.right().expandHoriz().insets(0,5,0,5);
 		speciesPanel.add(speciesCombo, c);
 		return speciesPanel;
@@ -369,7 +353,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		return buttonPanel;
 	}
 
-	void importNetwork(int taxon, int confidence, int additionalNodes, boolean wholeOrg, NetworkType netType) {
+	void importNetwork(Species species, int confidence, int additionalNodes, boolean wholeOrg, NetworkType netType) {
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = null;
 		if (wholeOrg) {
@@ -379,18 +363,21 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		} else {
 			stringIds = stringNetwork.combineIds(queryTermMap);
 		}
-		// System.out.println("Importing "+stringIds);
+
+		// We need to see if we're using a custom species, and if so, we need to use a different database
+		if (species.isCustom())
+			useDATABASE = Databases.STRINGDB.getAPIName();
 		TaskFactory factory = null;
 		if (!queryAddNodes) {
 			factory = new ImportNetworkTaskFactory(stringNetwork, speciesCombo.getSelectedItem().toString(), 
-			                                       taxon, confidence, additionalNodes, stringIds,
+			                                       species, confidence, additionalNodes, stringIds,
 			                                       queryTermMap, netName, useDATABASE, netType);
 		} else {
 			factory = new ImportNetworkTaskFactory(stringNetwork, (String)speciesPartnerCombo.getSelectedItem(), 
-			                                       taxon, confidence, additionalNodes, stringIds,
+			                                       species, confidence, additionalNodes, stringIds,
 			                                       queryTermMap, netName, useDATABASE, netType);
 		}
-		cancel();
+		finish();
 		TaskIterator ti = factory.createTaskIterator();
 		if (additionalTask != null)
 			ti.append(additionalTask);
@@ -413,7 +400,8 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		optionsPanel.showAdvancedOptions(false);
 		final Map<String, ResolveTableModel> tableModelMap = new HashMap<>();
 		for (String term: stringNetwork.getAnnotations().keySet()) {
-			tableModelMap.put(term, new ResolveTableModel(this, term, stringNetwork.getAnnotations().get(term)));
+			if (!Annotation.allResolved(stringNetwork.getAnnotations().get(term)))
+				tableModelMap.put(term, new ResolveTableModel(this, term, stringNetwork.getAnnotations().get(term)));
 		}
 		mainSearchPanel.setLayout(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
@@ -531,6 +519,10 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 	public void cancel() {
 		stringNetwork = initialStringNetwork;
 		if (stringNetwork != null) stringNetwork.reset();
+		finish();
+	}
+
+	public void finish() {
 		replaceSearchPanel();
 		importButton.setEnabled(true);
 		backButton.setEnabled(false);
@@ -578,14 +570,14 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
     @Override
     public void actionPerformed(ActionEvent e) {
 			// Start our task cascade
-    		String speciesName = "";
-    		if (!queryAddNodes) {
-					speciesName = speciesCombo.getSelectedItem().toString();
-    		} else {
-    			speciesName = (String)speciesPartnerCombo.getSelectedItem();
-    		}
-			int taxon = Species.getSpeciesTaxId(speciesName);
-			if (taxon == -1) {
+			String speciesName = "";
+			if (!queryAddNodes) {
+				speciesName = speciesCombo.getSelectedItem().toString();
+			} else {
+				speciesName = (String)speciesPartnerCombo.getSelectedItem();
+			}
+			Species sp = Species.getSpecies(speciesName);
+			if (sp == null) {
 				// Oops -- unknown species
 				JOptionPane.showMessageDialog(null, "Unknown species: '"+speciesName+"'",
 							                        "Unknown species", JOptionPane.ERROR_MESSAGE); 
@@ -595,7 +587,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 				stringNetwork = new StringNetwork(manager);
 
 			if (wholeOrgBox != null && wholeOrgBox.isSelected()) {
-				importNetwork(taxon, optionsPanel.getConfidence(), 0, wholeOrgBox.isSelected(), optionsPanel.getNetworkType());
+				importNetwork(sp, optionsPanel.getConfidence(), 0, wholeOrgBox.isSelected(), optionsPanel.getNetworkType());
 				return;
 			}
 
@@ -614,7 +606,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 			manager.info("Getting annotations for "+speciesName+" terms: "+terms);
 
 			// Launch a task to get the annotations. 
-			manager.execute(new TaskIterator(new GetAnnotationsTask(stringNetwork, taxon, terms, useDATABASE)),this);
+			manager.execute(new TaskIterator(new GetAnnotationsTask(stringNetwork, sp, terms, useDATABASE)),this);
 		}
 
 		@Override
@@ -631,7 +623,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 			// System.out.println("taskFinished");
 			GetAnnotationsTask annTask = (GetAnnotationsTask)task;
 
-			final int taxon = annTask.getTaxon();
+			final Species species = annTask.getSpecies();
 			if (stringNetwork.getAnnotations() == null || stringNetwork.getAnnotations().size() == 0) {
 				if (annTask.getErrorMessage() != "") {
 					SwingUtilities.invokeLater(new Runnable() {
@@ -666,7 +658,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						importNetwork(taxon, optionsPanel.getConfidence(), addNodes, wholeOrgBox.isSelected(), optionsPanel.getNetworkType());
+						importNetwork(species, optionsPanel.getConfidence(), addNodes, wholeOrgBox.isSelected(), optionsPanel.getNetworkType());
 					}
 				});
 			} else {
@@ -682,14 +674,14 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-			int taxon = 0;
+			Species species = null;
 			if (!queryAddNodes) {
 				if (speciesCombo.getSelectedItem() instanceof Species)
-					taxon = ((Species)speciesCombo.getSelectedItem()).getTaxId();
+					species = ((Species)speciesCombo.getSelectedItem());
 				else if (speciesCombo.getSelectedItem() instanceof String) 
-					taxon = Species.getSpeciesTaxId((String)speciesCombo.getSelectedItem());
+					species = Species.getSpecies((String)speciesCombo.getSelectedItem());
 			} else
-				taxon = Species.getSpeciesTaxId((String)speciesPartnerCombo.getSelectedItem());
+				species = Species.getSpecies((String)speciesPartnerCombo.getSelectedItem());
 			
 			int additionalNodes = optionsPanel.getAdditionalNodes();
 
@@ -721,7 +713,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 				});
 			}
 
-			importNetwork(taxon, optionsPanel.getConfidence(), additionalNodes, wholeOrgBox.isSelected(), optionsPanel.getNetworkType());
+			importNetwork(species, optionsPanel.getConfidence(), additionalNodes, wholeOrgBox.isSelected(), optionsPanel.getNetworkType());
 			optionsPanel.showSpeciesBox(true); // Turn this back on
 		}
 	}

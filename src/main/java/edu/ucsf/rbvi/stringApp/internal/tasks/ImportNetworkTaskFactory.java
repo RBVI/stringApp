@@ -12,8 +12,8 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 
 public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 	final StringNetwork stringNet;
-	final String species;
-	int taxon;
+	final String speciesName;
+	final Species species;
 	int confidence;
 	int additionalNodes;
 	final List<String> stringIds;
@@ -22,26 +22,26 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 	String useDATABASE;
 	NetworkType netType;
 
-	public ImportNetworkTaskFactory(final StringNetwork stringNet, final String species,
-            int taxon, int confidence, int additional_nodes,
+	public ImportNetworkTaskFactory(final StringNetwork stringNet, final String speciesName,
+            Species species, int confidence, int additional_nodes,
             final List<String> stringIds, final Map<String, String> queryTermMap,
 			final String netName, final String useDATABASE, final NetworkType netType) {
-		this(stringNet, species, taxon, confidence, additional_nodes, stringIds, queryTermMap, netName, useDATABASE);
+		this(stringNet, speciesName, species, confidence, additional_nodes, stringIds, queryTermMap, netName, useDATABASE);
 		this.netType = netType;
 	}
 	
-	public ImportNetworkTaskFactory(final StringNetwork stringNet, final String species,
-	                                int taxon, int confidence, int additional_nodes,
+	public ImportNetworkTaskFactory(final StringNetwork stringNet, final String speciesName,
+	                                Species species, int confidence, int additional_nodes,
 	                                final List<String> stringIds,
 																	final Map<String, String> queryTermMap,
 																	final String netName,
 																	final String useDATABASE) {
 		this.stringNet = stringNet;
-		this.taxon = taxon;
+		this.species = species;
 		this.confidence = confidence;
 		this.additionalNodes = additional_nodes;
 		this.stringIds = stringIds;
-		this.species = species;
+		this.speciesName = speciesName;
 		this.queryTermMap = queryTermMap;
 		this.netName = netName;
 		this.useDATABASE = useDATABASE;
@@ -49,16 +49,19 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 
 	public TaskIterator createTaskIterator() {
 		if (stringIds == null) {
+			System.out.println("Calling LoadSpeciesInteractions");
 			return new TaskIterator(
-					new LoadSpeciesInteractions(stringNet, species, taxon, confidence,
-					                            Species.getSpeciesName(String.valueOf(taxon)),
+					new LoadSpeciesInteractions(stringNet, speciesName, species, confidence,
+					                            species.getName(),
 					                            useDATABASE, netType));
 		} else if (stringNet.getNetwork() == null) {
-			return new TaskIterator(new LoadInteractions(stringNet, species, taxon,
+			System.out.println("Calling LoadInteractions");
+			return new TaskIterator(new LoadInteractions(stringNet, speciesName, species,
 			                                             confidence, additionalNodes, stringIds,
 			                                             queryTermMap, netName, useDATABASE, netType));
 		}
-		return new TaskIterator(new LoadTermsTask(stringNet, species, taxon, confidence,
+		System.out.println("Calling LoadTermsTask");
+		return new TaskIterator(new LoadTermsTask(stringNet, speciesName, species, confidence,
 		                                          additionalNodes, stringIds, queryTermMap, useDATABASE, netType));
 	}
 

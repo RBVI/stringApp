@@ -9,7 +9,8 @@ public enum Databases {
 	STRING("String", "string"),
 	// AGOTOOL("aGOtool", "agotool")
 	VIRUSES("Viruses", "viruses"),
-	STITCH("Stitch", "stitch");
+	STITCH("Stitch", "stitch"),
+	STRINGDB("String-db", "string-db");
 
 	String dbName;
 	String apiName;

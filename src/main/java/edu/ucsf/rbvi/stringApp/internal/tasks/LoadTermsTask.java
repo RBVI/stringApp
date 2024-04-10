@@ -30,6 +30,7 @@ import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
+import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
@@ -37,8 +38,8 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
 public class LoadTermsTask extends AbstractTask {
 	final StringNetwork stringNet;
-	final String species;
-	final int taxonId;
+	final String speciesName;
+	final Species species;
 	final int confidence;
 	final int additionalNodes;
 	final List<String> stringIds;
@@ -49,25 +50,25 @@ public class LoadTermsTask extends AbstractTask {
 	@Tunable(description="Re-layout network?")
 	public boolean relayout = false;
 
-	public LoadTermsTask(final StringNetwork stringNet, final String species, final int taxonId, 
+	public LoadTermsTask(final StringNetwork stringNet, final String speciesName, final Species species, 
             final int confidence, final int additionalNodes,
 					     	 final List<String>stringIds,
 					    	 final Map<String, String> queryTermMap, final String useDATABASE,
 					    	 final NetworkType netType) {
-		this(stringNet, species, taxonId, confidence, additionalNodes, stringIds,
+		this(stringNet, speciesName, species, confidence, additionalNodes, stringIds,
 						    	 queryTermMap, useDATABASE);
 		this.netType = netType;
 	}
 	
-	public LoadTermsTask(final StringNetwork stringNet, final String species, final int taxonId, 
+	public LoadTermsTask(final StringNetwork stringNet, final String speciesName, final Species species, 
 	                     final int confidence, final int additionalNodes,
 								     	 final List<String>stringIds,
 								    	 final Map<String, String> queryTermMap, final String useDATABASE) {
 		this.stringNet = stringNet;
-		this.taxonId = taxonId;
 		this.additionalNodes = additionalNodes;
 		this.confidence = confidence;
 		this.stringIds = stringIds;
+		this.speciesName = speciesName;
 		this.species = species;
 		this.queryTermMap = queryTermMap;
 		this.useDATABASE = useDATABASE;
@@ -90,28 +91,48 @@ public class LoadTermsTask extends AbstractTask {
 		if (confidence == 100) 
 			conf = "1.0";
 
+		String taxString;
+		if (species.isCustom())
+			taxString = species.toString();
+		else
+			taxString = String.valueOf(species.getTaxId());
+
+
 		// String url = "http://api.jensenlab.org/network?entities="+URLEncoder.encode(ids.trim())+"&score="+conf;
 		Map<String, String> args = new HashMap<>();
 		// args.put("database", useDATABASE);
 		// TODO: Is it OK to always use stitch?
-		args.put("database", netType.getAPIName());
-		args.put("entities",ids.trim());
-		args.put("score", conf);
-		if (additionalNodes > 0) {
-			args.put("additional", Integer.toString(additionalNodes));
-			if (useDATABASE.equals(Databases.STRING.getAPIName())) {
-				args.put("filter", taxonId + ".%%");
-			} else {
-				args.put("filter", taxonId + ".%%|CIDm%%");
+		if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
+			args.put("species",taxString);
+			args.put("network_type", netType.getAPIName());
+			args.put("existing_string_identifiers", ModelUtils.getExisting(network).trim());
+			args.put("required_score", String.valueOf(confidence*10));
+			args.put("identifiers",ids.trim());
+			if (additionalNodes > 0)
+				args.put("add_color_nodes", Integer.toString(additionalNodes));
+		} else {
+			args.put("entities",ids.trim());
+			args.put("database", netType.getAPIName());
+			args.put("score", conf);
+			args.put("existing", ModelUtils.getExisting(network).trim());
+			if (additionalNodes > 0) {
+				args.put("additional", Integer.toString(additionalNodes));
+				if (useDATABASE.equals(Databases.STRING.getAPIName())) {
+					args.put("filter", taxString + ".%%");
+				} else if (useDATABASE.equals(Databases.STITCH.getAPIName())) {
+					args.put("filter", taxString + ".%%|CIDm%%");
+				}
 			}
 		}
-		args.put("existing", ModelUtils.getExisting(network).trim());
 
 		monitor.setStatusMessage("Getting additional terms from "+manager.getNetworkURL());
 
 		JSONObject results;
 		try {
-			results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+			if (useDATABASE.equals(Databases.STRINGDB.getAPIName()))
+				results = HttpUtils.postJSON(manager.getStringNetworkURL(), args, manager);
+			else
+				results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
 		} catch (ConnectionException e) {
 			e.printStackTrace();
 			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
@@ -126,10 +147,10 @@ public class LoadTermsTask extends AbstractTask {
 		monitor.setStatusMessage("Augmenting network");
 
 		List<CyEdge> newEdges = new ArrayList<>();
-		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges,
+		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(stringNet, network, newEdges,
 		                                                          results, queryTermMap, useDATABASE, netType.getAPIName());
 
-		if (newEdges.size() > 0 || newNodes.size() > 0) {
+		if (newEdges.size() > 0 || (newNodes != null && newNodes.size() > 0)) {
 			monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
 		} else {
 			// monitor.showMessage(Level.WARN, "Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");

@@ -27,6 +27,7 @@ import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
@@ -174,7 +175,7 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 				network.removeEdges(removeEdges);
 	
 				// add new edges
-				ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, database, newType.getAPIName());
+				ModelUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, results, null, database, newType.getAPIName());
 				monitor.setStatusMessage("Adding "+newEdges.size()+" edges");
 	
 				// change network attributes

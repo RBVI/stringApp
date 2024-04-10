@@ -8,6 +8,7 @@ import java.util.Map;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class Annotation {
@@ -17,33 +18,80 @@ public class Annotation {
 	String query;
 	String preferredName;
 
+	// new fields from STRING-DB
+	String taxonName;
+	String uniprot;
+	String sequence;
+	String color;
+	//String color;
+	String image;
+	List<String> structures;
+	boolean resolved;
+	
+
+	// Additional information for creating nodes from get_string_ids
+	String description = null;
+
 	public Annotation(String preferredName, String stringId, int taxId, String query, String annotation) {
 		this.preferredName = preferredName;
 		this.stringId = stringId;
 		this.taxId = taxId;
 		this.query = query;
 		this.annotation = annotation;
+		this.resolved = false;
+		
+		this.taxonName = "";
+		this.uniprot = "";
+		this.sequence = "";
+		//this.color = "";
+		this.image = "";
+		this.color = "";
+		this.structures = new ArrayList<>();
 	}
 
 	public String getPreferredName() { return preferredName; }
-	public int getTaxId() { return taxId; }
+	// TODO: [Custom] figure out if we can save both the name and the ID of custom species
+	// public int getTaxId() { return taxId; }
 	public String getQueryString() { return query; }
 	public String getStringId() { return stringId; }
 	public String getAnnotation() { return annotation; }
+	public String getDescription() { return description; }
 	public String toString() {
 		String res = "   Query: "+query+"\n";
 		res += "   PreferredName: "+preferredName+"\n";
-		res += "   Annotation: "+annotation;
+		res += "   Annotation: "+annotation+"\n";
+		res += "   Description: "+description+"\n";
+		res += "   Uniprot: "+uniprot+"\n";
+		res += "   Sequence: "+sequence+"\n";
+		res += "   Image: "+image+"\n";
+		res += "   Color: "+color+"\n";
 		return res;
 	}
 
-	public static Map<String, List<Annotation>> getAnnotations(JSONObject json, String queryTerms) {
+	public String getTaxonName() {return taxonName;}
+	public String getUniprot() {return uniprot;}
+	public String getSequence() {return sequence;}
+	public String getColor() {return color;}
+	public String getImage() {return image;}
+	public List<String> getStructures() {return structures;}
+	public boolean isResolved() {return resolved;}
+	public void setResolved(boolean resolved) {this.resolved = resolved;}
+	
+	public static Map<String, List<Annotation>> getAnnotations(JSONObject json, String queryTerms, Species species) {
 		Map<String, List<Annotation>> map = new HashMap<>();
-		return getAnnotations(json, queryTerms, map);
+		return getAnnotations(json, queryTerms, map, species);
+	}
+
+	public static boolean allResolved(List<Annotation> annotations) {
+		for (Annotation a: annotations) {
+			if (!a.isResolved())
+				return false;
+		}
+		return true;
 	}
 
 	public static Map<String, List<Annotation>> getAnnotations(JSONObject json, String queryTerms,
-	                                                           Map<String, List<Annotation>> map) {
+	                                                           Map<String, List<Annotation>> map, Species species) {
 		String[] terms = queryTerms.trim().split("\n");
 		JSONArray annotationArray = ModelUtils.getResultsFromJSON(json, JSONArray.class);
 		Integer version = ModelUtils.getVersionFromJSON(json);
@@ -58,8 +106,14 @@ public class Annotation {
 			String annotation = null;
 			String stringId = null;
 			String preferredName = null;
+			String description = null;
+			String taxonName = null;
 			int taxId = -1;
 			int queryIndex = -1;
+			String uniprot = null;
+			String sequence = null;
+			String image = null;
+			String color = null;
 
 			if (ann.containsKey("preferredName"))
 				preferredName = (String)ann.get("preferredName");
@@ -67,8 +121,8 @@ public class Annotation {
 				annotation = (String)ann.get("annotation");
 			if (ann.containsKey("stringId"))
 				stringId = (String)ann.get("stringId");
-			if (ann.containsKey("ncbiTaxonId"))
-				taxId = ((Long)ann.get("ncbiTaxonId")).intValue();
+			//if (ann.containsKey("ncbiTaxonId"))
+			//	taxId = ((Long)ann.get("ncbiTaxonId")).intValue();
 			if (ann.containsKey("queryIndex")) {
 				Object index = ann.get("queryIndex");
 				if (index instanceof Long) {
@@ -79,12 +133,52 @@ public class Annotation {
 
 				queryIndex = queryIndex - queryIndexStart;
 			}
+			// TODO: [Custom] was there ever a description field or is this the same as annotation? if yes, I will rather change all of them to description to avoid confusion
+			if (ann.containsKey("description"))
+				description = (String)ann.get("description");
 
+			if (ann.containsKey("taxonName")) {
+				taxonName = (String)ann.get("taxonName");
+				if (species.isCustom() && species.getOfficialName() == species.getName()) {
+					species.setOfficialName(taxonName);
+				}
+			}
+			if (ann.containsKey("uniprot"))
+				uniprot = (String)ann.get("uniprot");
+			if (ann.containsKey("sequence"))
+				sequence = (String)ann.get("sequence");
+			if (ann.containsKey("color"))
+				color = (String)ann.get("color");
+			if (ann.containsKey("image"))
+				image = (String)ann.get("image");
+			
 			// Temporary HACK
 			// if (stringId.startsWith("-1.CID1"))
 			// 	stringId = stringId.replaceFirst("-1.CID1","CIDm");
 
 			Annotation newAnnotation = new Annotation(preferredName, stringId, taxId, terms[queryIndex], annotation);
+
+			// Node information
+			if (description != null)
+				newAnnotation.description = description;
+			if (taxonName != null)
+				newAnnotation.taxonName = taxonName;
+			if (uniprot != null)
+				newAnnotation.uniprot = uniprot;
+			if (sequence != null)
+				newAnnotation.sequence = sequence;
+			if (image != null)
+				newAnnotation.image = image;
+			if (color != null)
+				newAnnotation.color = color;
+			
+			if (ann.containsKey("structures")) {
+				JSONArray stArray = (JSONArray)ann.get("structures");
+				for (Object st: stArray) {
+					newAnnotation.structures.add((String)st);
+				}
+			}
+			
 			if (!map.containsKey(terms[queryIndex])) {
 				map.put(terms[queryIndex], new ArrayList<Annotation>());
 			}

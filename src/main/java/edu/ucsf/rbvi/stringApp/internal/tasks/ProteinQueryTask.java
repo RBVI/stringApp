@@ -120,7 +120,7 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 	public void run(TaskMonitor monitor) {
 		monitor.setTitle("STRING Protein Query");
 		Species sp = Species.getSpecies(species);
-		if (taxonID != -1) {
+		if (taxonID != -1 && !sp.isCustom()) {
 			for (Species s : speciesList) {
 				if (s.getTaxId() == taxonID) {
 					if (!s.toString().equals(species)) {
@@ -149,7 +149,7 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 		// Get the annotations
 		Map<String, List<Annotation>> annotations;
 		try {
-			annotations = stringNetwork.getAnnotations(manager, sp.getTaxId(),
+			annotations = stringNetwork.getAnnotations(manager, sp,
 					query, Databases.STRING.getAPIName(), includesViruses);
 		} catch (ConnectionException e) {
 			e.printStackTrace();
@@ -183,9 +183,14 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 		// retrieve network
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
-		LoadInteractions load = new LoadInteractions(stringNetwork, sp.toString(), sp.getTaxId(),
+
+		// Temporary workaround until the database is completely moved
+		String database = Databases.STRING.getAPIName();
+		if (sp.isCustom())
+			database = Databases.STRINGDB.getAPIName();
+		LoadInteractions load = new LoadInteractions(stringNetwork, sp.toString(), sp,
 								confidence, limit.getValue(), stringIds, queryTermMap, newNetName, 
-								Databases.STRING.getAPIName(), networkType.getSelectedValue());
+								database, networkType.getSelectedValue());
 		manager.execute(new TaskIterator(load), true);
 		loadedNetwork = stringNetwork.getNetwork();
 		if (loadedNetwork == null) {

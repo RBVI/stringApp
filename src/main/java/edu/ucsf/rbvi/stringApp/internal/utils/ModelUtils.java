@@ -52,6 +52,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
@@ -75,15 +76,15 @@ public class ModelUtils {
 	public static String DEFAULT_NAME_ADDON_PHYSICAL_REGEXP = " \\(physical\\)";
 	
 	// Node information
+	public static String COLOR = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "color";
 	public static String CANONICAL = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "canonical name";
-	public static String DISPLAY = "display name";
-	public static String FULLNAME = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "full name";
 	public static String CV_STYLE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "chemViz Passthrough";
-	public static String ELABEL_STYLE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "enhancedLabel Passthrough";
-	public static String ID = "@id";
 	public static String DESCRIPTION = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "description";
 	public static String DISEASE_SCORE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "disease score";
-	public static String USE_ENRICHMENT = "use for enrichment";
+	public static String DISPLAY = "display name";
+	public static String ELABEL_STYLE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "enhancedLabel Passthrough";
+	public static String FULLNAME = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "full name";
+	public static String ID = "@id";
 	public static String IMAGE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "imageurl";
 	public static String NAMESPACE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "namespace";
 	public static String QUERYTERM = "query term";
@@ -91,11 +92,13 @@ public class ModelUtils {
 	public static String SMILES = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "smiles";
 	public static String SPECIES = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "species";
 	public static String STRINGID = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "database identifier";
+	public static String STRUCTURES = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "structures";
 	public static String STYLE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "STRING style";
 	public static String TYPE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "node type";
 	public static String TM_FOREGROUND = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "textmining foreground";
 	public static String TM_BACKGROUND = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "textmining background";
 	public static String TM_SCORE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "textmining score";
+	public static String USE_ENRICHMENT = "use for enrichment";
 
 	public static String TISSUE_NAMESPACE = "tissue";
 	public static String COMPARTMENT_NAMESPACE = "compartment";
@@ -509,10 +512,24 @@ public class ModelUtils {
 		return values;
 	}
 
-	public static List<CyNode> augmentNetworkFromJSON(StringManager manager, CyNetwork net,
+	public static List<CyNode> augmentNetworkFromJSON(StringNetwork stringNetwork, CyNetwork net,
 			List<CyEdge> newEdges, JSONObject object, Map<String, String> queryTermMap,
 			String useDATABASE, String netType) {
-		JSONObject results = getResultsFromJSON(object, JSONObject.class);
+
+		StringManager manager = stringNetwork.getManager();
+
+		Object results = getResultsFromJSON(object, JSONObject.class);
+		if (results == null)
+			results = getResultsFromJSON(object, JSONArray.class); // See if this is a JSONArray
+		else {
+			if (((JSONObject)results).containsKey("message")) {
+				String msgJSON = (String) ((JSONObject)results).get("message");
+				if (msgJSON.length() > 0) {
+					throw new RuntimeException(msgJSON);
+				}
+			}
+		}
+
 		if (results == null)
 			return null;
 
@@ -535,9 +552,16 @@ public class ModelUtils {
 				useDATABASE = Databases.STITCH.getAPIName();
 		}
 		setDatabase(net, useDATABASE);
-		
-		List<CyNode> nodes = getJSON(manager, species, net, nodeMap, nodeNameMap, queryTermMap,
-				newEdges, results, useDATABASE, netType);
+
+		List<CyNode> nodes;
+		if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
+			Map<String, List<Annotation>> annotationsMap = stringNetwork.getAnnotations();
+			nodes = getJSONFromStringDb(manager, species, net, nodeMap, nodeNameMap, queryTermMap, null, (JSONArray)results,
+					                        useDATABASE, netType, annotationsMap);
+		} else {
+			nodes = getJSON(manager, species, net, nodeMap, nodeNameMap, queryTermMap, null, (JSONObject)results,
+					            useDATABASE, netType);
+		}
 		
 		// if we have "enough" nodes, but not too many, fetch the images, 
 		// otherwise allow users to fetch them by setting "has images" to false 
@@ -551,11 +575,12 @@ public class ModelUtils {
 	}
 
 	public static CyNetwork createNetworkFromJSON(StringNetwork stringNetwork, String species,
-			JSONObject object, Map<String, String> queryTermMap, String ids, String netName,
+			JSONObject object, Map<String, String> queryTermMap, Map<String, CyNode> nodeMap,
+			String ids, String netName,
 			String useDATABASE, String netType) {
 		stringNetwork.getManager().ignoreAdd();
-		CyNetwork network = createNetworkFromJSON(stringNetwork.getManager(), species, object,
-				queryTermMap, ids, netName, useDATABASE, netType);
+		CyNetwork network = createNetworkFromJSON(stringNetwork.getManager(), stringNetwork, species, object,
+				queryTermMap, nodeMap, ids, netName, useDATABASE, netType);
 		if (network == null)
 			return null;
 		stringNetwork.getManager().addStringNetwork(stringNetwork, network);
@@ -564,19 +589,19 @@ public class ModelUtils {
 		return network;
 	}
 
-	public static CyNetwork createNetworkFromJSON(StringManager manager, String species,
-			JSONObject object, Map<String, String> queryTermMap, String ids, String netName,
+	public static CyNetwork createNetworkFromJSON(StringManager manager, StringNetwork stringNetwork, String species,
+			JSONObject object, Map<String, String> queryTermMap, Map<String, CyNode> nodeMap,
+			String ids, String netName,
 			String useDATABASE, String netType) {
-		JSONObject results = getResultsFromJSON(object, JSONObject.class);
-		if (results == null)
-			return null;
-		
-		if (results.containsKey("message")) {
-			String msgJSON = (String) results.get("message");
+
+		// STRING API return
+		if (object.containsKey("ErrorMessage")) {
+			String msgJSON = (String) object.get("ErrorMessage");
 			if (msgJSON.length() > 0) {
 				throw new RuntimeException(msgJSON);
 			}
 		}
+
 		
 		// Get a network name
 		String defaultName;
@@ -601,20 +626,38 @@ public class ModelUtils {
 			defaultName = defaultName + " - " + queryTermMap.get(ids);
 			defaultNameRootNet = defaultNameRootNet + " - " + queryTermMap.get(ids);
 		} 
+		
+		Object results = getResultsFromJSON(object, JSONObject.class);
+		if (results == null)
+			results = getResultsFromJSON(object, JSONArray.class); // See if this is a JSONArray
+		else {
+			if (((JSONObject)results).containsKey("message")) {
+				String msgJSON = (String) ((JSONObject)results).get("message");
+				if (msgJSON.length() > 0) {
+					throw new RuntimeException(msgJSON);
+				}
+			}
+		}
+
+		if (results == null)
+			return null;
 
 		// Create the network
 		CyNetwork newNetwork = manager.createNetwork(defaultName, defaultNameRootNet);
 		setDatabase(newNetwork, useDATABASE);
 		setNetSpecies(newNetwork, species);
 
-		// Create a map to save the nodes
-		Map<String, CyNode> nodeMap = new HashMap<>();
-
 		// Create a map to save the node names
 		Map<String, String> nodeNameMap = new HashMap<>();
 
-		getJSON(manager, species, newNetwork, nodeMap, nodeNameMap, queryTermMap, null, results,
-				useDATABASE, netType);
+		if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
+			Map<String, List<Annotation>> annotationsMap = stringNetwork.getAnnotations();
+			getJSONFromStringDb(manager, species, newNetwork, nodeMap, nodeNameMap, queryTermMap, null, (JSONArray)results,
+					                useDATABASE, netType, annotationsMap);
+		} else {
+			getJSON(manager, species, newNetwork, nodeMap, nodeNameMap, queryTermMap, null, (JSONObject)results,
+					    useDATABASE, netType);
+		}
 
 		// cutoff for max number of nodes with structure displayed is currently 300, the same as on the STRING page
 		if (newNetwork.getNodeCount() <= MAX_NODES_STRUCTURE_DISPLAY) {
@@ -875,6 +918,56 @@ public class ModelUtils {
 		return nodes;
 	}
 
+	// {"pscore":0,"preferredName_B":"OPC11257","preferredName_A":"OPC10681","dscore":0,"tscore":0,"score":0.92,"escore":0.92,"ncbiTaxonId":"110668318",
+	// "stringId_B":"110668318.OPC11257","ascore":0,"stringId_A":"110668318.OPC10681","nscore":0,"fscore":0},
+	private static List<CyNode> getJSONFromStringDb(StringManager manager, String species, CyNetwork network,
+			Map<String, CyNode> nodeMap, Map<String, String> nodeNameMap,
+			Map<String, String> queryTermMap, List<CyEdge> newEdges, JSONArray edges,
+			String useDATABASE, String netType, Map<String, List<Annotation>> annotationsMap) {
+		List<CyNode> newNodes = new ArrayList<>();
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, CANONICAL);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, COLOR);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, DISPLAY);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, FULLNAME);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STRINGID);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, DESCRIPTION);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, ID);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, NAMESPACE);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, TYPE);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, QUERYTERM);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, SEQUENCE);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, SPECIES);
+		createListColumnIfNeeded(network.getDefaultNodeTable(), String.class, STRUCTURES);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, IMAGE);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, STYLE);
+		createColumnIfNeeded(network.getDefaultNodeTable(), String.class, ELABEL_STYLE);
+
+		createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, SCORE);
+		createColumnIfNeeded(network.getDefaultEdgeTable(), Boolean.class, INTERSPECIES);
+
+		if (annotationsMap == null) annotationsMap = new HashMap<>();
+
+		if (edges != null && edges.size() > 0) {
+			for (Object edgeObj : edges) {
+				if (edgeObj instanceof JSONObject)
+					createEdgeFromStringDb(network, (JSONObject) edgeObj, nodeMap, nodeNameMap, 
+														     queryTermMap, newNodes, newEdges,
+							                   useDATABASE, netType, annotationsMap);
+			}
+		}
+
+		// TODO: [Custom] add new node to newNodes list if needed
+		if (queryTermMap != null && queryTermMap.size() > 0) {
+			for (String stringID : queryTermMap.keySet()) {
+				if (nodeMap.get(stringID) == null) {
+					createNodeFromStringDb(network, stringID, "", species, nodeMap, nodeNameMap, queryTermMap, annotationsMap.get(queryTermMap.get(stringID)));
+				}
+			}
+		}
+		
+		return newNodes;
+	}
+
 	private static List<CyNode> getJSON(StringManager manager, String species, CyNetwork network,
 			Map<String, CyNode> nodeMap, Map<String, String> nodeNameMap,
 			Map<String, String> queryTermMap, List<CyEdge> newEdges, JSONObject json,
@@ -1000,7 +1093,7 @@ public class ModelUtils {
 		if (existingImage != null && !existingImage.equals("") && existingImage.contains("image/png;base64")) 
 			return;
 		String imageURL = row.get(IMAGE, String.class);
-		if (imageURL == null) {
+		if (imageURL == null || imageURL.equals("")) {
 			// ignore
 			return;
 		}
@@ -1143,7 +1236,6 @@ public class ModelUtils {
 		row.set(ID, id);
 		row.set(NAMESPACE, namespace);
 		row.set(STYLE, "string:"); // We may overwrite this, if we get an image
-
 	
 		String type = (String) nodeObj.get("node type");
 		if (type == null)
@@ -1252,6 +1344,197 @@ public class ModelUtils {
 		if (namespace.equals("stitchdb"))
 			return "compound";
 		return "unknown";
+	}
+
+		
+	private static CyNode createNodeFromStringDb(CyNetwork network, String id, String name,
+			String speciesName, Map<String, CyNode> nodeMap, Map<String, String> nodeNameMap, 
+			Map<String, String> queryTermMap, List<Annotation> annotations) {
+
+		if (nodeMap.containsKey(id))
+			return null;
+		// System.out.println("Node id = "+id+", name = "+name);
+		CyNode newNode = network.addNode();
+		CyRow row = network.getRow(newNode);
+		nodeMap.put(id, newNode);
+
+		System.out.println("Creating node "+id);
+
+		row.set(CyNetwork.NAME, id);
+		// row.set(CyRootNetwork.SHARED_NAME, stringId);
+		row.set(DISPLAY, name);
+		row.set(STRINGID, id);
+		row.set(SPECIES, speciesName);
+		row.set(ID, "string:"+id);
+		row.set(NAMESPACE, "stringdb");
+		row.set(STYLE, "string:"); // We may overwrite this, if we get an image
+		row.set(TYPE, "protein");
+		{
+			// Construct instructions for enhanced graphics label
+			String enhancedLabel = "label: attribute=\"display name\" labelsize=12 ";
+			enhancedLabel += "labelAlignment=left position=northeast ";
+			enhancedLabel += "outline=true outlineColor=white outlineTransparency=95 outlineWidth=10 ";
+			enhancedLabel += "background=false color=black dropShadow=false";
+			row.set(ELABEL_STYLE, enhancedLabel);
+		}
+		// TODO: [Custom] can we just take the first annotation or not?
+		if (annotations != null && annotations.size() > 0) {
+			Annotation nodeAnnot = annotations.get(0);
+			updateNodeAttributes(row, nodeAnnot, true);
+			// Special case depending of whether we create the node from the annotations or from the network json data 
+			if (name.equals("") && nodeAnnot.getPreferredName() != null)
+				row.set(DISPLAY, nodeAnnot.getPreferredName());
+			
+			// TODO: [Custom] add color and structures
+		}
+		
+		if (queryTermMap != null) {
+			if (queryTermMap.containsKey(id)) {
+				network.getRow(newNode).set(QUERYTERM, queryTermMap.get(id));
+			}
+		}
+		return newNode;
+	}
+
+	public static void updateNodeAttributes(CyRow row, Annotation annotation, boolean isQueryNode) {
+		if (annotation.getAnnotation() != null) {
+			row.set(ModelUtils.DESCRIPTION, annotation.getAnnotation());
+		}
+		if (annotation.getUniprot() != null) {
+			row.set(ModelUtils.CANONICAL, annotation.getUniprot());
+		}
+		if (annotation.getSequence() != null) {
+			row.set(ModelUtils.SEQUENCE, annotation.getSequence());
+		}
+		if (annotation.getImage() != null) {
+			row.set(ModelUtils.IMAGE, annotation.getImage());
+		}
+		if (annotation.getColor() != null && isQueryNode) {
+		 	row.set(ModelUtils.COLOR, annotation.getColor());
+		}
+		if (annotation.getUniprot() != null) {
+			row.set(ModelUtils.CANONICAL, annotation.getUniprot());
+		}
+		if (annotation.getStructures() != null && annotation.getStructures().size() > 0) {
+			row.set(ModelUtils.STRUCTURES, annotation.getStructures());
+		}
+	}
+
+	// {"pscore":0,"preferredName_B":"OPC11257","preferredName_A":"OPC10681","dscore":0,"tscore":0,"score":0.92,"escore":0.92,"ncbiTaxonId":"110668318",
+	// "stringId_B":"110668318.OPC11257","ascore":0,"stringId_A":"110668318.OPC10681","nscore":0,"fscore":0},
+	private static void createEdgeFromStringDb(CyNetwork network, JSONObject edgeObj,
+			Map<String, CyNode> nodeMap, Map<String, String> nodeNameMap, 
+			Map<String, String> queryTermMap, List<CyNode> newNodes, List<CyEdge> newEdges,
+			String useDATABASE, String netType, Map<String, List<Annotation>> annotationsMap) {
+
+		String source = (String) edgeObj.get("stringId_A");
+		String target = (String) edgeObj.get("stringId_B");
+		String sourceName = (String) edgeObj.get("preferredName_A");
+		String targetName = (String) edgeObj.get("preferredName_B");
+		String speciesName = (String) edgeObj.get("ncbiTaxonId");
+		CyNode sourceNode;
+		CyNode targetNode;
+		if (nodeMap.get(source) == null) {
+			String sourceQuery;
+			if (queryTermMap != null)
+				sourceQuery = queryTermMap.get(source);
+			else
+				sourceQuery = source;
+			sourceNode = createNodeFromStringDb(network, source, sourceName, speciesName, nodeMap, nodeNameMap, queryTermMap, annotationsMap.get(sourceQuery));
+			if (newNodes != null)
+				newNodes.add(sourceNode);
+		} else {
+			sourceNode = nodeMap.get(source);
+		}
+
+		if (nodeMap.get(target) == null) {
+			String targetQuery;
+			if (queryTermMap != null)
+				targetQuery = queryTermMap.get(target);
+			else
+				targetQuery = target;
+			targetNode = createNodeFromStringDb(network, target, targetName, speciesName, nodeMap, nodeNameMap, queryTermMap, annotationsMap.get(targetQuery));
+			if (newNodes != null)
+				newNodes.add(targetNode);
+		} else {
+			targetNode = nodeMap.get(target);
+		}
+
+		String physical = "";
+		if (netType.equals(NetworkType.PHYSICAL.getAPIName()))
+			physical = "p";
+
+		String interaction = physical+"pp";
+
+		CyEdge edge;
+		if (!network.containsEdge(sourceNode, targetNode)) {
+			edge = network.addEdge(sourceNode, targetNode, false);
+			network.getRow(edge).set(CyNetwork.NAME,
+					source + " (" + interaction + ") " + target);
+			network.getRow(edge).set(CyEdge.INTERACTION, interaction);
+
+			if (newEdges != null)
+				newEdges.add(edge);
+		} else {
+			List<CyEdge> edges = network.getConnectingEdgeList(sourceNode, targetNode,
+					CyEdge.Type.ANY);
+			if (edges == null)
+				return; // Shouldn't happen!
+			edge = edges.get(0);
+		}
+
+		// OK, now add the scores.  Here are the scores currently:
+		//
+		// score  -- score
+		// nscore -- neighborhood
+		// fscore -- fusion
+		// pscore -- coocurrence (?) phylogenetic profile score
+		// ascore -- coexpression
+		// escore -- experiments
+		// dscore -- database
+		// tscore -- textmining
+
+		// Update the scores information
+		CyRow edgeRow = network.getRow(edge);
+		if (edgeObj.containsKey("score"))
+			edgeRow.set("stringdb::score", makeDouble(edgeObj.get("score")));
+		if (edgeObj.containsKey("nscore")) {
+			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, "stringdb::neighborhood");
+			edgeRow.set("stringdb::neighborhood", makeDouble(edgeObj.get("nscore")));
+		}
+		if (edgeObj.containsKey("fscore")) {
+			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, "stringdb::fusion");
+			edgeRow.set("stringdb::fusion", makeDouble(edgeObj.get("fscore")));
+		}
+		if (edgeObj.containsKey("pscore")) {
+			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, "stringdb::coocurrence");
+			edgeRow.set("stringdb::coocurrence", makeDouble(edgeObj.get("pscore")));
+		}
+		if (edgeObj.containsKey("ascore")) {
+			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, "stringdb::coexpression");
+			edgeRow.set("stringdb::coexpression", makeDouble(edgeObj.get("ascore")));
+		}
+		if (edgeObj.containsKey("escore")) {
+			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, "stringdb::experiments");
+			edgeRow.set("stringdb::experiments", makeDouble(edgeObj.get("escore")));
+		}
+		if (edgeObj.containsKey("dscore")) {
+			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, "stringdb::database");
+			edgeRow.set("stringdb::database", makeDouble(edgeObj.get("dscore")));
+		}
+		if (edgeObj.containsKey("tscore")) {
+			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, "stringdb::textmining");
+			edgeRow.set("stringdb::textmining", makeDouble(edgeObj.get("tscore")));
+		}
+
+	}
+
+	private static Double makeDouble(Object v) {
+		if (v instanceof Long)
+			return ((Long)v).doubleValue();
+		if (v instanceof Double)
+			return (Double)v;
+		return null;
 	}
 
 	private static void createEdge(CyNetwork network, JSONObject edgeObj,
@@ -1411,6 +1694,8 @@ public class ModelUtils {
 			availableTypes.add(netSp);
 		}
 		availableTypes.addAll(species);
+		if (Species.getSpecies(netSp).isCustom())
+			return availableTypes;
 		availableTypes.add(COMPOUND);
 		Set<String> spPartners = new TreeSet<String>();
 		for (String sp : species) {

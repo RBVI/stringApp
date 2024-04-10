@@ -36,11 +36,13 @@ import org.cytoscape.work.util.ListSingleSelection;
 import org.json.simple.JSONObject;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.StringResults;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
@@ -174,42 +176,67 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			monitor.showMessage(TaskMonitor.Level.WARN, "No node type to expand by");
 			return;
 		}
+
+		Double score = 0.4;
+		Double conf = ModelUtils.getConfidence(network);
+		if (conf != null)
+			score = conf;
+
+		NetworkType currentType = NetworkType.getType(ModelUtils.getNetworkType(network));
+		String database = NetworkType.FUNCTIONAL.getAPIName();
+		if (currentType != null)
+			database = currentType.getAPIName();
+
 		// int taxonId = Species.getSpeciesTaxId(species);
 		int taxonId = Species.getSpeciesTaxId(selectedType);
-		Map<String, String> args = new HashMap<>();
-		args.put("existing",existing.trim());
-		if (selected != null && selected.length() > 0)
-			args.put("selected",selected.trim());
-		Double conf = ModelUtils.getConfidence(network);
-		if (conf == null)
-			args.put("score", "0.4");
-		else
-			args.put("score", conf.toString());
-		if (additionalNodes > 0)
-			args.put("additional", Integer.toString(additionalNodes));
-		// String nodeType = nodeTypes.getSelectedValue().toLowerCase();
-		args.put("alpha", selectivityAlpha.getValue().toString());
+		Species selSpecies = Species.getSpecies(selectedType);
+		String filterString = "";
 		String useDatabase = "";
+		Map<String, String> args = new HashMap<>();
 		if (selectedType.equals(ModelUtils.COMPOUND)) {
 			useDatabase = Databases.STITCH.getAPIName();
 			args.put("filter", "CIDm%%");			
+			args.put("existing",existing.trim());
+			args.put("score", conf.toString());
+			args.put("database", database);
+			args.put("alpha", selectivityAlpha.getValue().toString());
+			if (additionalNodes > 0)
+				args.put("additional", Integer.toString(additionalNodes));
+		} else if (selSpecies.isCustom()) {
+			filterString = selSpecies.toString();
+			useDatabase = Databases.STRINGDB.getAPIName();
+			args.put("species",selSpecies.toString());
+			args.put("existing_string_identifiers",existing.trim());
+			args.put("identifiers",existing.trim());
+			args.put("required_score",String.valueOf((int)(conf*10)));
+			args.put("network_type", database);
+			if (additionalNodes > 0)
+				args.put("add_nodes", Integer.toString(additionalNodes));
 		} else {
 			useDatabase = Databases.STRING.getAPIName();
-			if (taxonId != -1) 
-				args.put("filter", taxonId + ".%%");
+			filterString = String.valueOf(selSpecies.getTaxId());
+			args.put("filter", filterString + ".%%");
+			args.put("existing",existing.trim());
+			args.put("score", conf.toString());
+			args.put("database", database);
+			args.put("alpha", selectivityAlpha.getValue().toString());
+			if (additionalNodes > 0)
+				args.put("additional", Integer.toString(additionalNodes));
 		}
-		// set network type
-		NetworkType currentType = NetworkType.getType(ModelUtils.getNetworkType(network));
-		if (currentType != null)
-			args.put("database", currentType.getAPIName());
-		else
-			args.put("database", Databases.STRING.getAPIName());
-		
-		monitor.setStatusMessage("Getting additional nodes from: "+manager.getNetworkURL());
+
+		if (selected != null && selected.length() > 0)
+			args.put("selected",selected.trim());
+		// String nodeType = nodeTypes.getSelectedValue().toLowerCase();
 
 		JSONObject results;
 		try {
-			results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+				if (useDatabase.equals(Databases.STRINGDB.getAPIName())) {
+					monitor.setStatusMessage("Getting additional nodes from: "+manager.getStringNetworkURL());
+					results = HttpUtils.postJSON(manager.getStringNetworkURL(), args, manager);
+				} else {
+					monitor.setStatusMessage("Getting additional nodes from: "+manager.getNetworkURL());
+					results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+				}
 		} catch (ConnectionException e) {
 			e.printStackTrace();
 			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
@@ -219,8 +246,9 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		monitor.setStatusMessage("Augmenting network");
 
 		// This may change...
+		StringNetwork stringNet = manager.getStringNetwork(network);
 		List<CyEdge> newEdges = new ArrayList<>();
-		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager, network, newEdges, results, null, useDatabase, currentType.getAPIName());
+		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(stringNet, network, newEdges, results, null, useDatabase, currentType.getAPIName());
 
 		if (newNodes.size() == 0 && newEdges.size() == 0) {
 			if (conf == 1.0) { 
@@ -242,6 +270,30 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			// return;
 		}
 		monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
+
+		// Finally, update any node information if we're using from STRING
+		// Only do this when we asked for additional nodes
+		if (useDatabase.equals(Databases.STRINGDB.getAPIName()) && additionalNodes > 0) {
+			Map<String, CyNode> nodeMap = new HashMap<>();
+			for (CyNode newNode: newNodes) {
+				nodeMap.put(ModelUtils.getName(network, newNode), newNode);
+			}
+
+			String terms = "";
+			for (String term: nodeMap.keySet()) {
+				terms += term+"\n";
+			}
+			try {
+				Map<String, List<Annotation>> annotations = stringNet.getAnnotations(stringNet.getManager(), selSpecies, terms, useDatabase, true);
+				// TODO: [Custom] do we need to resolve or just take the first annotation or last one, which is currently the case...?
+				for (String s: annotations.keySet()) {
+					CyNode node = nodeMap.get(s);
+					ModelUtils.updateNodeAttributes(network.getRow(node), annotations.get(s).get(0), false);
+				}
+			} catch (ConnectionException ce) {
+				monitor.showMessage(TaskMonitor.Level.ERROR, "Unable to get additional node annotations");
+			}
+		}
 
 		// If we have a view, re-apply the style and layout
 		monitor.setStatusMessage("Updating style");

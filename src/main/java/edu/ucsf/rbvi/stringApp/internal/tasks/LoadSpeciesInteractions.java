@@ -32,10 +32,9 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 public class LoadSpeciesInteractions extends AbstractTask {
 
 	final StringNetwork stringNet;
-	final String species;
-	String species2 = null;
-	final int taxonId;
-	int taxonId2 = -1;
+	final String speciesName;
+	final Species species;
+	Species species2 = null;
 	final int confidence;
 	// final int additionalNodes;
 	// final List<String> stringIds;
@@ -47,27 +46,26 @@ public class LoadSpeciesInteractions extends AbstractTask {
 
 	public LoadSpeciesInteractions(final StringNetwork stringNet, final Species species1,
 	                               final Species species2, final int confidence, final NetworkType netType, final String netName) {
-		this(stringNet, species1.toString(), species1.getTaxId(), confidence, netName, Databases.STRING.getAPIName());
-		this.species2 = species2.toString();
-		this.taxonId2 = species2.getTaxId();
+		this(stringNet, species1.toString(), species1, confidence, netName, Databases.STRING.getAPIName());
+		this.species2 = species2;
 		this.netType = netType;
 	}
 	
-	public LoadSpeciesInteractions(final StringNetwork stringNet, final String species,
-			final int taxonId, final int confidence, final String netName,
+	public LoadSpeciesInteractions(final StringNetwork stringNet, final String speciesName,
+			final Species species, final int confidence, final String netName,
 			final String useDATABASE, final NetworkType netType) {
-		this(stringNet, species, taxonId, confidence, netName, useDATABASE);
+		this(stringNet, speciesName, species, confidence, netName, useDATABASE);
 		this.netType = netType;
 	}
 
-	public LoadSpeciesInteractions(final StringNetwork stringNet, final String species,
-			final int taxonId, final int confidence, final String netName,
+	public LoadSpeciesInteractions(final StringNetwork stringNet, final String speciesName,
+			final Species species, final int confidence, final String netName,
 			final String useDATABASE) {
 
 		this.stringNet = stringNet;
-		this.taxonId = taxonId;
-		this.confidence = confidence;
 		this.species = species;
+		this.confidence = confidence;
+		this.speciesName = speciesName;
 		this.netName = netName;
 		this.useDATABASE = useDATABASE;
 		this.errorMsg = null;
@@ -91,9 +89,12 @@ public class LoadSpeciesInteractions extends AbstractTask {
 
 		Map<String, String> args = new HashMap<>();
 		args.put("database", netType.getAPIName());
-		args.put("organism", String.valueOf(taxonId));
+		if (species.isCustom())
+			args.put("organism", species.toString());
+		else
+			args.put("organism", String.valueOf(species.getTaxId()));
 		if (species2 != null) {
-			args.put("organism2", String.valueOf(taxonId2));
+			args.put("organism2", String.valueOf(species2.getTaxId()));
 		}
 		args.put("score", conf);
 		args.put("caller_identity", StringManager.CallerIdentity);
@@ -111,7 +112,8 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		// "postJSON method " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
 		// time = System.currentTimeMillis();
 
-		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, species, results, null,
+		Map<String, CyNode> nodeMap = new HashMap<>();
+		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, speciesName, results, null, nodeMap,
 		                                                     null, netName, useDATABASE, netType.getAPIName());
 		// System.out.println("createNetworkFromJSON method "
 		// + (System.currentTimeMillis() - time) / 1000 + " seconds.");
@@ -127,7 +129,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		ModelUtils.setConfidence(network, ((double) confidence) / 100.0);
 		ModelUtils.setNetworkType(network, netType.toString());
 		ModelUtils.setDatabase(network, useDATABASE);
-		ModelUtils.setNetSpecies(network, species);
+		ModelUtils.setNetSpecies(network, species.toString());
 		ModelUtils.setDataVersion(network, manager.getDataVersion());
 		ModelUtils.setNetURI(network, manager.getNetworkURL());
 		stringNet.setNetwork(network);
@@ -139,7 +141,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 			CyNetworkView networkView = manager.createNetworkView(network);
 			ViewUtils.styleNetwork(manager, network, networkView);
 			if (species2 != null) {
-				ViewUtils.updateNodeColors(manager, network, networkView, Arrays.asList(species2, species));
+				ViewUtils.updateNodeColors(manager, network, networkView, Arrays.asList(species2.toString(), species.toString()));
 			}
 			// And lay it out
 			CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class)
@@ -156,7 +158,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		} else {
 			ViewUtils.styleNetwork(manager, network, null);
 			if (species2 != null) {
-				ViewUtils.updateNodeColors(manager, network, null, Arrays.asList(species2, species));
+				ViewUtils.updateNodeColors(manager, network, null, Arrays.asList(species2.toString(), species.toString()));
 			}
 		}
 		manager.updateControls();

@@ -207,10 +207,15 @@ public class EnrichmentTableModel extends AbstractTableModel {
 			if (!shownRows.contains(rowID)) {
 				continue;
 			}
-			List<Long> genesSUID = new ArrayList<Long>(row.getList(EnrichmentTerm.colGenesSUID, Long.class));
-			genesSUID.retainAll(nodesToFilterSUID);
-			if ((genesSUID.size() > 0 && !annotateAllNodes) || 
-					(annotateAllNodes && genesSUID.size() == nodesToFilterSUID.size())) {
+			if (nodesToFilterSUID != null && nodesToFilterSUID.size() > 0) {
+				List<Long> genesSUID = new ArrayList<Long>(row.getList(EnrichmentTerm.colGenesSUID, Long.class));
+				genesSUID.retainAll(nodesToFilterSUID);
+				if ((genesSUID.size() > 0 && !annotateAllNodes) || 
+						(annotateAllNodes && genesSUID.size() == nodesToFilterSUID.size())) {
+					rowArray[i] = rowID;
+					i++;
+				}
+			} else {
 				rowArray[i] = rowID;
 				i++;
 			} 

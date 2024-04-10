@@ -257,23 +257,11 @@ public class SearchOptionsPanel extends JPanel {
 		JLabel speciesLabel = new JLabel("Species:");
 		c.noExpand().insets(0,5,0,5);
 		speciesPanel.add(speciesLabel, c);
-		speciesCombo = new JComboBox<Species>(speciesList.toArray(new Species[1]));
+		if (isDisease)
+			speciesCombo = new SpeciesComboBox(manager, netSpecies);
+		else
+			speciesCombo = new SpeciesComboBox(manager, defaultSpecies);
 
-		if (isDisease) {
-			// Set Human as the default
-			for (Species s: speciesList) {
-				if (s.toString().equals(netSpecies)) {
-					speciesCombo.setSelectedItem(s);
-					break;
-				}
-			}
-		} else if (defaultSpecies == null ) {
-			speciesCombo.setSelectedItem(Species.getSpecies(manager.getDefaultSpecies()));
-		} else {
-			speciesCombo.setSelectedItem(Species.getSpecies(defaultSpecies));
-		}
-    JComboBoxDecorator decorator = new JComboBoxDecorator(speciesCombo, true, true, speciesList);
-		decorator.decorate(speciesList); 
 		c.right().expandHoriz().insets(0,5,0,5);
 		if (isDisease)
 			speciesCombo.setEnabled(false);

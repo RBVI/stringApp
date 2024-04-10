@@ -29,6 +29,7 @@ import org.cytoscape.work.TaskObserver;
 import org.cytoscape.work.TunableSetter;
 
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
+import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
@@ -85,8 +86,7 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 		// Strip off any blank lines as well as trailing spaces
 
 		stringNetwork = new StringNetwork(manager);
-		int taxon = getTaxId();
-		return new TaskIterator(new GetAnnotationsTask(stringNetwork, taxon, terms, Databases.STRING.getAPIName()));
+		return new TaskIterator(new GetAnnotationsTask(stringNetwork, getSpecies(), terms, Databases.STRING.getAPIName()));
 	}
 
 	@Override
@@ -150,7 +150,14 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 		}
 	}
 
-	public String getSpecies() {
+	public Species getSpecies() {
+		// System.out.println("GetSpecies: "+optionsPanel.getSpecies().toString());
+		if (optionsPanel.getSpecies() != null)
+			return optionsPanel.getSpecies();
+		return Species.getHumanSpecies();
+	}
+
+	public String getSpeciesName() {
 		// This will eventually come from the OptionsComponent...
 		if (optionsPanel.getSpecies() != null)
 			return optionsPanel.getSpecies().toString();
@@ -191,7 +198,7 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 		}
 		GetAnnotationsTask annTask = (GetAnnotationsTask)task;
 
-		final int taxon = annTask.getTaxon();
+		final Species species = annTask.getSpecies();
 		if (stringNetwork.getAnnotations() == null || stringNetwork.getAnnotations().size() == 0) {
 			if (annTask.getErrorMessage() != "") {
 				SwingUtilities.invokeLater(new Runnable() {
@@ -225,7 +232,7 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					importNetwork(taxon, getConfidence(), addNodes);
+					importNetwork(species, getConfidence(), addNodes);
 				}
 			});
 		} else {
@@ -248,13 +255,16 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 		}
 	}
 
-	void importNetwork(int taxon, int confidence, int additionalNodes) {
+	void importNetwork(Species species, int confidence, int additionalNodes) {
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
 		// System.out.println("Importing "+stringIds);
-		TaskFactory factory = new ImportNetworkTaskFactory(stringNetwork, getSpecies(), 
-		                                                   taxon, confidence, additionalNodes, stringIds,
-		                                                   queryTermMap, "", Databases.STRING.getAPIName(),
+		String useDATABASE = Databases.STRING.getAPIName();
+		if (species.isCustom())
+			useDATABASE = Databases.STRINGDB.getAPIName();
+		TaskFactory factory = new ImportNetworkTaskFactory(stringNetwork, getSpeciesName(), 
+		                                                   species, confidence, additionalNodes, stringIds,
+		                                                   queryTermMap, "", useDATABASE,
 		                                                   optionsPanel.getNetworkType());
 		if (optionsPanel.getLoadEnrichment())
 			manager.execute(factory.createTaskIterator(), this);
