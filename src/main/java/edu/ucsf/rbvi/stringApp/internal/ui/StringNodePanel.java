@@ -399,7 +399,7 @@ public class StringNodePanel extends AbstractStringPanel {
 
 		List<String> tissueList = ModelUtils.getTissueList(currentNetwork);
 		for (String tissue: tissueList) {
-			tissuesPanel.add(createFilterSlider("tissue", tissue, currentNetwork, true, 500.0), 
+			tissuesPanel.add(createFilterSlider("tissue", tissue, tissue, currentNetwork, true, 500.0), 
 			                 c.anchor("west").down().expandHoriz());
 		}
 
@@ -415,7 +415,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		EasyGBC c = new EasyGBC();
 		List<String> tissueList = ModelUtils.getTissueList(currentNetwork);
 		for (String tissue: tissueList) {
-			tissuesPanel.add(createFilterSlider("tissue", tissue, currentNetwork, true, 500.0), 
+			tissuesPanel.add(createFilterSlider("tissue", tissue, tissue, currentNetwork, true, 500.0), 
 			                 c.anchor("west").down().expandHoriz());
 		}
 		return;
@@ -427,7 +427,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		EasyGBC c = new EasyGBC();
 		List<String> compartmentList = ModelUtils.getCompartmentList(currentNetwork);
 		for (String compartment: compartmentList) {
-			compartmentsPanel.add(createFilterSlider("compartment", compartment, currentNetwork, true, 500.0), 
+			compartmentsPanel.add(createFilterSlider("compartment", compartment, compartment, currentNetwork, true, 500.0), 
 			          c.anchor("west").down().expandHoriz());
 		}
 		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Compartment filters", compartmentsPanel, true, 10);
@@ -442,7 +442,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		EasyGBC c = new EasyGBC();
 		List<String> compartmentsList = ModelUtils.getCompartmentList(currentNetwork);
 		for (String compartments: compartmentsList) {
-			compartmentsPanel.add(createFilterSlider("compartment", compartments, currentNetwork, true, 500.0), 
+			compartmentsPanel.add(createFilterSlider("compartment", compartments, compartments, currentNetwork, true, 500.0), 
 			                      c.anchor("west").down().expandHoriz());
 		}
 		return;
@@ -455,11 +455,19 @@ public class StringNodePanel extends AbstractStringPanel {
 
 		List<CyNode> nodes = CyTableUtil.getNodesInState(currentNetwork, CyNetwork.SELECTED, true);
 		// TODO: test if this improves performance with large networks!
-		if (nodes.size() > 50) {
+		if (nodes.size() > ModelUtils.MAX_NODE_PANELS) {
+			JPanel newPanel = new JPanel();
+			newPanel.setLayout(new GridLayout(1,0));
+			JLabel label = new JLabel("  Select less than " + ModelUtils.MAX_NODE_PANELS + " nodes to see node panels.");
+			newPanel.add(label);
+			newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
+			nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
 			return;
 		}
 		for (CyNode node: nodes) {
 			JPanel newPanel = createNodePanel(node);
+			if (newPanel == null)
+				continue;
 			newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
 			nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
 		}
@@ -475,6 +483,8 @@ public class StringNodePanel extends AbstractStringPanel {
 			List<CyNode> nodes = CyTableUtil.getNodesInState(currentNetwork, CyNetwork.SELECTED, true);
 			for (CyNode node: nodes) {
 				JPanel newPanel = createNodePanel(node);
+				if (newPanel == null)
+					continue;
 				newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
 	
 				nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
@@ -556,6 +566,8 @@ public class StringNodePanel extends AbstractStringPanel {
 	private JPanel createNodePanel(CyNode node) {
 		JPanel panel = new JPanel();
 		StringNode sNode = new StringNode(manager.getStringNetwork(currentNetwork), node);
+		if (sNode.getNodeType() == null || (!sNode.getNodeType().equals("protein") && !sNode.getNodeType().equals("compound")))
+			return null;
 		EasyGBC c = new EasyGBC();
 		panel.setLayout(new GridBagLayout());
 
@@ -572,37 +584,37 @@ public class StringNodePanel extends AbstractStringPanel {
 			crosslinkPanel.setLayout(layout);
 			crosslinkPanel.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
 			if (sNode.haveUniprot()) {
-  			JLabel link = new SwingLink("UniProt", sNode.getUniprotURL(), openBrowser);
+  			JLabel link = new SwingLinkOSBrowser("UniProt", sNode.getUniprotURL());
 				link.setFont(textFont);
 				crosslinkPanel.add(link);
 			}
 			if (sNode.haveGeneCard()) {
-  			JLabel link = new SwingLink("GeneCards", sNode.getGeneCardURL(), openBrowser);
+  			JLabel link = new SwingLinkCyBrowser("GeneCards", sNode.getGeneCardURL(), openBrowser);
 				link.setFont(textFont);
 				crosslinkPanel.add(link);
 			}
 			if (sNode.haveCompartments()) {
-  			JLabel link = new SwingLink("COMPARTMENTS", sNode.getCompartmentsURL(), openBrowser);
+  			JLabel link = new SwingLinkCyBrowser("COMPARTMENTS", sNode.getCompartmentsURL(), openBrowser);
 				link.setFont(textFont);
 				crosslinkPanel.add(link);
 			}
 			if (sNode.haveTissues()) {
-  			JLabel link = new SwingLink("TISSUES", sNode.getTissuesURL(), openBrowser);
+  			JLabel link = new SwingLinkCyBrowser("TISSUES", sNode.getTissuesURL(), openBrowser);
 				link.setFont(textFont);
 				crosslinkPanel.add(link);
 			}
 			if (sNode.haveDisease()) {
-  			JLabel link = new SwingLink("DISEASES", sNode.getDiseaseURL(), openBrowser);
+  			JLabel link = new SwingLinkCyBrowser("DISEASES", sNode.getDiseaseURL(), openBrowser);
 				link.setFont(textFont);
 				crosslinkPanel.add(link);
 			}
 			if (sNode.havePharos()) {
-  			JLabel link = new SwingLink("Pharos", sNode.getPharosURL(), openBrowser);
+  			JLabel link = new SwingLinkCyBrowser("Pharos", sNode.getPharosURL(), openBrowser);
 				link.setFont(textFont);
 				crosslinkPanel.add(link);
 			}
 			if (sNode.havePubChem()) {
-  			JLabel link = new SwingLink("PubChem", sNode.getPubChemURL(), openBrowser);
+  			JLabel link = new SwingLinkCyBrowser("PubChem", sNode.getPubChemURL(), openBrowser);
 				link.setFont(textFont);
 				crosslinkPanel.add(link);
 			}
@@ -635,18 +647,28 @@ public class StringNodePanel extends AbstractStringPanel {
 
 		Image img = sNode.getStructureImage();
 		if (img != null) {
-			JLabel lbl = new JLabel("Structure");
-			lbl.setFont(labelFont);
-			lbl.setBorder(BorderFactory.createEmptyBorder(10,2,5,0));
-			panel.add(lbl, c.anchor("west").down().expandHoriz());
-
+			String imgSource = sNode.getStructureSource();
+			JLabel link = null;
+			if (imgSource.equals(ModelUtils.STRUCTURE_SOURCE_PDB)) {
+				link = new SwingLinkCyBrowser("Structure" + " (from " + imgSource + ")", sNode.getPDBURL(), openBrowser);
+			} else if (imgSource.equals(ModelUtils.STRUCTURE_SOURCE_AF) && sNode.haveUniprot()) {
+				link = new SwingLinkCyBrowser("Structure" + " (from " + imgSource + ")", sNode.getAlphaFoldURL(), openBrowser);
+			} else if (imgSource.equals(ModelUtils.STRUCTURE_SOURCE_SM) && sNode.haveUniprot()) {
+				link = new SwingLinkCyBrowser("Structure" + " (from " + imgSource + ")", sNode.getSwissModelURL(), openBrowser);
+			} else {
+				link = new JLabel("Structure");
+			}
+			link.setFont(labelFont);
+			link.setBorder(BorderFactory.createEmptyBorder(10,2,5,0));
+			panel.add(link, c.anchor("west").down().expandHoriz());
+			
 			// Now add our image
 			Image scaledImage = img.getScaledInstance(200,200,Image.SCALE_SMOOTH);
 			JLabel label = new JLabel(new ImageIcon(scaledImage));
 			// label.setPreferredSize(new Dimension(100,100));
 			// label.setMinimumSize(new Dimension(100,100));
 			label.setAlignmentX(Component.LEFT_ALIGNMENT);
-			panel.add(label, c.anchor("west").down().noExpand());
+			panel.add(label, c.anchor("north").down().noExpand());
 		}
 
 		String name = sNode.getDisplayName();
@@ -715,10 +737,19 @@ public class StringNodePanel extends AbstractStringPanel {
 		if (nodes.size() <= ModelUtils.MAX_NODE_PANELS) {
 			for (CyNode node: nodes) {
 				JPanel newPanel = createNodePanel(node);
+				if (newPanel == null)
+					continue;
 				newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
 	
 				nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
 			}
+		} else {
+			JPanel newPanel = new JPanel();
+			newPanel.setLayout(new GridLayout(1,0));
+			JLabel label = new JLabel("  Select less than" + ModelUtils.MAX_NODE_PANELS + " nodes to see node panels.");
+			newPanel.add(label);
+			newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
+			nodesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
 		}
 		
 		if(manager.highlightNeighbors()) {

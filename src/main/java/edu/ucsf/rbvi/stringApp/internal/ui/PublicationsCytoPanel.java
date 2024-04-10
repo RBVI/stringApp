@@ -422,7 +422,7 @@ public class PublicationsCytoPanel extends JPanel
 		@Override
 		public Component getTableCellRendererComponent(JTable table, final Object value,
 				boolean arg2, boolean arg3, int arg4, int arg5) {
-			final JLabel lab = new SwingLink(value.toString(),
+			final JLabel lab = new SwingLinkCyBrowser(value.toString(),
 					"https://www.ncbi.nlm.nih.gov/pubmed/" + value, null);
 			return lab;
 		}

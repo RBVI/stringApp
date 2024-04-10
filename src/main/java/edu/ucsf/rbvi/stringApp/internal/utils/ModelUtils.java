@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -117,6 +118,10 @@ public class ModelUtils {
 	
 	//public static Pattern cidmPattern = Pattern.compile("\\(CIDm\\)0*");
 	public static Pattern cidmPattern = Pattern.compile("CIDm0*");
+	
+	public static String STRUCTURE_SOURCE_PDB = "PDB";
+	public static String STRUCTURE_SOURCE_AF = "AlphaFold DB";
+	public static String STRUCTURE_SOURCE_SM = "SWISS-MODEL";
 	// public static String DISEASEINFO =
 	// "http://diseases.jensenlab.org/Entity?type1=9606&type2=-26";
 
@@ -167,6 +172,7 @@ public class ModelUtils {
 	
 	public static int MAX_NODES_STRUCTURE_DISPLAY = 300;
 	public static int MAX_NODE_PANELS = 25;
+	public static int MAX_EDGE_PANELS = 25;
 	
 	
 	// Enrichment node information
@@ -227,6 +233,7 @@ public class ModelUtils {
 				continue;
 			scores.add(col.getNameOnly());
 		}
+		Collections.sort(scores);
 		return scores;
 	}
 
@@ -244,6 +251,21 @@ public class ModelUtils {
 		return tissues;
 	}
 	
+	public static Map<String, Double> getSubScores(CyNetwork network, CyEdge edge) {
+		Map<String, Double> scores = new HashMap<>();
+		if (network == null) return scores;
+		Collection<CyColumn> columns = network.getDefaultEdgeTable().getColumns(STRINGDB_NAMESPACE);
+		if (columns == null || columns.size() == 0) return scores;
+		for (CyColumn col: columns) {
+			if (col.getNameOnly().equals("score") || !col.getType().equals(Double.class))
+				continue;
+			Double score = network.getRow(edge).get(col.getName(), Double.class);
+			if (score != null)
+				scores.put(col.getNameOnly(), score);
+		}
+		return scores;
+	}
+
 	public static List<EntityIdentifier> getEntityIdsFromJSON(StringManager manager,
 			JSONObject object) {
 		JSONArray tmResults = getResultsFromJSON(object, JSONArray.class);
@@ -1625,6 +1647,16 @@ public class ModelUtils {
 		try {
 			if (network.getRow(ident, CyNetwork.DEFAULT_ATTRS) != null)
 				return network.getRow(ident, CyNetwork.DEFAULT_ATTRS).get(column, String.class);
+		} catch (Exception ex) {
+			// ignore
+		}
+		return null;
+	}
+
+	public static Double getDouble(CyNetwork network, CyIdentifiable ident, String column) {
+		try {
+			if (network.getRow(ident, CyNetwork.DEFAULT_ATTRS) != null)
+				return network.getRow(ident, CyNetwork.DEFAULT_ATTRS).get(column, Double.class);
 		} catch (Exception ex) {
 			// ignore
 		}

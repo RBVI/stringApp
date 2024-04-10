@@ -59,19 +59,19 @@ public abstract class AbstractStringPanel extends JPanel {
 	
 	abstract double initFilter(String type, String text);
 
-	protected JComponent createFilterSlider(String type, String text, CyNetwork network, boolean labels, double max) {
+	protected JComponent createFilterSlider(String type, String name, String labelText, CyNetwork network, boolean labels, double max) {
 		double value = 0.0;
 		if (filters.containsKey(network) && 
 		    filters.get(network).containsKey(type) && 
-		    filters.get(network).get(type).containsKey(text)) {
-			value = filters.get(network).get(type).get(text);
+		    filters.get(network).get(type).containsKey(name)) {
+			value = filters.get(network).get(type).get(name);
 			// System.out.println("value = "+value);
 		} else {
-			value = initFilter(type, text);
+			value = initFilter(type, name);
 		}
 		Box box = Box.createHorizontalBox();
 		if (labels) {
-			JLabel label = new JLabel(text);
+			JLabel label = new JLabel(labelText);
 			label.setFont(labelFont);
 			label.setPreferredSize(new Dimension(100,20));
 			box.add(Box.createRigidArea(new Dimension(10,0)));
@@ -91,7 +91,7 @@ public abstract class AbstractStringPanel extends JPanel {
 		textField.setFont(textFont);
 		box.add(textField);
 		// Hook it up
-		addChangeListeners(type, text, slider, textField, max);
+		addChangeListeners(type, name, slider, textField, max);
 		box.setAlignmentX(Component.LEFT_ALIGNMENT);
 		return box;
 	}

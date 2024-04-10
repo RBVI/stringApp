@@ -22,18 +22,22 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.border.Border;
 
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyRow;
+import org.cytoscape.model.CyTableUtil;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
+import edu.ucsf.rbvi.stringApp.internal.model.EvidenceType;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeNetTypeTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
 /**
  * Displays information about a protein taken from STRING
@@ -43,6 +47,7 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 public class StringEdgePanel extends AbstractStringPanel {
 	JPanel subScorePanel;
 	JPanel scorePanel;
+	JPanel edgesPanel;
 	JButton fetchEdges;
 	JButton deleteEdges;
 	private Map<CyNetwork, Map<String, Boolean>> colors;
@@ -61,43 +66,79 @@ public class StringEdgePanel extends AbstractStringPanel {
 
 	private void init() {
 		setLayout(new GridBagLayout());
+		EasyGBC c = new EasyGBC();
+		// add(new JSeparator(SwingConstants.HORIZONTAL), c.anchor("west").expandHoriz());
+		JComponent scoreSlider = createFilterSlider("score", "Score", createScoreLabel(), currentNetwork, true, 100.0);
 		{
-			EasyGBC c = new EasyGBC();
-			// add(new JSeparator(SwingConstants.HORIZONTAL), c.anchor("west").expandHoriz());
-			//String networkType = NetworkType.FUNCTIONAL.getAPIName();
-			//if (ModelUtils.getNetworkType(currentNetwork) != null)
-			//	networkType = NetworkType.getType(ModelUtils.getNetworkType(currentNetwork)).getAPIName();
-			// controlPanel.setBorder(BorderFactory.createTitledBorder(networkType));
-			// JComponent scoreSlider = createFilterSlider("score", "Score (" + networkType + ")", currentNetwork, true, 100.0);
-			JComponent scoreSlider = createFilterSlider("score", "Score", currentNetwork, true, 100.0);
-			{
-				scorePanel = new JPanel();
-				scorePanel.setLayout(new GridBagLayout());
-				EasyGBC d = new EasyGBC();
-				scorePanel.add(scoreSlider, d.anchor("northwest").expandHoriz());
-				
-				JPanel controlPanel = createControlPanel();
-				controlPanel.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
-				scorePanel.add(controlPanel, d.anchor("west").down().noExpand());				
-			}
-			add(scorePanel, c.down().anchor("west").expandHoriz());
+			scorePanel = new JPanel();
+			scorePanel.setLayout(new GridBagLayout());
+			EasyGBC d = new EasyGBC();
+			scorePanel.add(scoreSlider, d.anchor("northwest").expandHoriz());
+			
+			JPanel controlPanel = createControlPanel();
+			controlPanel.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
+			scorePanel.add(controlPanel, d.anchor("west").down().noExpand());				
+		}
+		add(scorePanel, c.down().anchor("west").noExpand());
+
+		
+		JPanel mainPanel = new JPanel();
+		{
+			mainPanel.setLayout(new GridBagLayout());
+			// mainPanel.setBackground(defaultBackground);
+			EasyGBC d = new EasyGBC();
 
 			{
 				subScorePanel = new JPanel();
 				subScorePanel.setLayout(new GridBagLayout());
-				EasyGBC d = new EasyGBC();
-				subScorePanel.add(createSubScorePanel(), d.anchor("west").expandHoriz());
-				subScorePanel.add(new JPanel(), d.down().anchor("west").expandBoth());
+				EasyGBC e = new EasyGBC();
+				subScorePanel.add(createSubScorePanel(), e.anchor("west").expandHoriz());
+				subScorePanel.add(new JPanel(), e.down().anchor("west").expandBoth());
+			}
+			
+			mainPanel.add(subScorePanel, d.anchor("west").expandHoriz());
+
+			{
+				edgesPanel = new JPanel();
+				edgesPanel.setLayout(new GridBagLayout());
+				EasyGBC e = new EasyGBC();
+
+				if (currentNetwork != null) {
+					List<CyEdge> edges = CyTableUtil.getEdgesInState(currentNetwork, CyNetwork.SELECTED, true);
+					for (CyEdge edge : edges) {
+						JPanel newPanel = createEdgePanel(edge);
+						newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
+			
+						edgesPanel.add(newPanel, e.anchor("west").down().expandHoriz());
+					}
+				}
+				edgesPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 			}
 
-			JScrollPane scrollPane = new JScrollPane(subScorePanel, JScrollPane.VERTICAL_SCROLLBAR_NEVER,
-		                                         JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-			add(scrollPane, c.down().anchor("west").expandBoth());
-			// add(new JPanel(), c.down().anchor("west").expandBoth());
+			mainPanel.add(edgesPanel, d.down().anchor("west").expandHoriz());
+			mainPanel.add(new JLabel(""), d.down().anchor("west").expandBoth());
 		}
+		JScrollPane scrollPane = new JScrollPane(mainPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+		                                         JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
+		add(scrollPane, c.down().anchor("west").expandBoth());
+
+
+		// add(new JPanel(), c.down().anchor("west").expandBoth());
 	}
 
+	private String createScoreLabel() {
+		String scoreLabel = "Score";
+		if (ModelUtils.getNetworkType(currentNetwork) != null) {
+			String netType = ModelUtils.getNetworkType(currentNetwork);	
+			if (netType.equals(NetworkType.PHYSICAL.toString()))
+				scoreLabel += " (" +  NetworkType.PHYSICAL.getAPIName() + ")";
+			else if (netType.equals(NetworkType.FUNCTIONAL.toString()))
+				scoreLabel += " (" +  NetworkType.FUNCTIONAL.getAPIName() + ")";
+		}
+		return scoreLabel;
+	}
+	
 	private JPanel createControlPanel() {
 		JPanel controlPanel = new JPanel();
 		GridLayout layout = new GridLayout(2,2);
@@ -167,7 +208,8 @@ public class StringEdgePanel extends AbstractStringPanel {
 		panel.setLayout(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
 
-		List<String> subScoreList = ModelUtils.getSubScoreList(currentNetwork);
+		//List<String> subScoreList = ModelUtils.getSubScoreList(currentNetwork);
+		List<String> subScoreList = EvidenceType.getOrderedEvidenceTypes(ModelUtils.getNetworkType(currentNetwork));
 
 		// OK, now we want to create 3 panels: Color, Label, and Filter
 		{
@@ -193,7 +235,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 			JPanel labelPanel = new JPanel();
 			labelPanel.setLayout(new GridBagLayout());
 			EasyGBC d = new EasyGBC();
-			JLabel lbl = new JLabel("Subscore");
+			JLabel lbl = new JLabel("Evidence");
 			lbl.setFont(labelFont);
 			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 			labelPanel.add(lbl, d.anchor("north").noExpand());
@@ -218,7 +260,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 			filterPanel.add(lbl, d.anchor("north").noExpand());
 			for (String subScore: subScoreList) {
-				JComponent scoreSlider = createFilterSlider("score", subScore, currentNetwork, false, 100.0);
+				JComponent scoreSlider = createFilterSlider("score", subScore, subScore, currentNetwork, false, 100.0);
 				scoreSlider.setMinimumSize(new Dimension(100,30));
 				// scoreSlider.setMaximumSize(new Dimension(100,30));
 				filterPanel.add(scoreSlider, d.down().expandBoth());
@@ -232,6 +274,139 @@ public class StringEdgePanel extends AbstractStringPanel {
 		return collapsablePanel;
 
 	}
+
+	private JPanel createEdgePanel(CyEdge edge) {
+		JPanel panel = new JPanel();
+		EasyGBC c = new EasyGBC();
+		panel.setLayout(new GridBagLayout());
+
+		List<String> subScoreList = EvidenceType.getOrderedEvidenceTypes(ModelUtils.getNetworkType(currentNetwork));
+		Map<String, Double> subScoresMap = ModelUtils.getSubScores(currentNetwork, edge);
+		{
+			JPanel labelPanel = new JPanel();
+			labelPanel.setLayout(new GridBagLayout());
+			EasyGBC d = new EasyGBC();
+			JLabel lbl = new JLabel("Evidence");
+			lbl.setFont(labelFont);
+			labelPanel.add(lbl, d.anchor("west").down().noExpand());
+			for (String subScore: subScoreList) {
+				JLabel scoreLabel = new JLabel(subScore);
+				scoreLabel.setFont(textFont);
+				scoreLabel.setMinimumSize(new Dimension(50,30));
+				scoreLabel.setMaximumSize(new Dimension(50,30));
+				labelPanel.add(scoreLabel, d.anchor("west").down().expandVert());
+			}
+			// add combined score as the last row
+			JLabel scoreLabel = new JLabel("combined");
+			scoreLabel.setFont(labelFont);
+			scoreLabel.setMinimumSize(new Dimension(50,30));
+			scoreLabel.setMaximumSize(new Dimension(50,30));
+			labelPanel.add(scoreLabel, d.anchor("west").down().expandVert());
+			// add border, etc. 
+			labelPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 30));
+			panel.add(labelPanel, c.right().expandVert());
+		}
+
+		{
+			JPanel valuesPanel = new JPanel();
+			valuesPanel.setLayout(new GridBagLayout());
+			EasyGBC d = new EasyGBC();
+			JLabel lbl = new JLabel("Score");
+			lbl.setFont(labelFont);
+			valuesPanel.add(lbl, d.anchor("west").down().noExpand());
+			for (String subScore: subScoreList) {
+				JLabel valueLabel;
+				if (subScoresMap.get(subScore) == null)
+					valueLabel = new JLabel("--");
+				else
+					valueLabel = new JLabel(subScoresMap.get(subScore).toString());
+				valueLabel.setFont(textFont);
+				valueLabel.setMinimumSize(new Dimension(50,30));
+				valueLabel.setMaximumSize(new Dimension(50,30));
+				valuesPanel.add(valueLabel, d.anchor("west").down().expandBoth());				
+			}
+			// add combined score
+			JLabel valueLabel = new JLabel("--");
+			Double score = ModelUtils.getDouble(currentNetwork, edge, ModelUtils.SCORE);
+			if (score != null) {
+				valueLabel = new JLabel(score.toString());
+			}			
+			valueLabel.setFont(labelFont);
+			valueLabel.setMinimumSize(new Dimension(50,30));
+			valueLabel.setMaximumSize(new Dimension(50,30));
+			valuesPanel.add(valueLabel, d.anchor("west").down().expandBoth());
+			panel.add(valuesPanel, c.right().expandHoriz());
+			
+		}
+		
+		{
+	  		JLabel link = new SwingLinkOSBrowser("See STRING interaction page", getInteractionURL(edge));
+			link.setFont(textFont);
+			panel.add(link, c.right().expandBoth());
+		}
+		
+
+		
+		// String name = ModelUtils.getName(currentNetwork, edge);
+		String name = ModelUtils.getString(currentNetwork, edge.getSource(), ModelUtils.DISPLAY) + " - "
+				+ ModelUtils.getString(currentNetwork, edge.getTarget(), ModelUtils.DISPLAY);
+		
+		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, name, panel, false, 10);
+		Border etchedBorder = BorderFactory.createEtchedBorder();
+		Border emptyBorder = BorderFactory.createEmptyBorder(0,5,0,0);
+		collapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
+		return collapsablePanel;
+	}
+	
+	private String getInteractionURL(CyEdge edge) {
+		
+		
+		String sourceNode = ModelUtils.getName(currentNetwork, edge.getSource());
+		String targetNode = ModelUtils.getName(currentNetwork, edge.getTarget());
+		String netType = "interaction";
+		if (ModelUtils.getString(currentNetwork, currentNetwork, ModelUtils.NETWORK_TYPE) != null
+				&& ModelUtils.getString(currentNetwork, currentNetwork, ModelUtils.NETWORK_TYPE)
+						.equals(NetworkType.PHYSICAL.toString()))
+			netType = "interaction-physical";
+
+		CyNetworkView view = manager.getCurrentNetworkView();
+		Color sourceNodeColor = (Color)view.getNodeView(edge.getSource()).getVisualProperty(BasicVisualLexicon.NODE_FILL_COLOR);
+		Color targetNodeColor = (Color)view.getNodeView(edge.getTarget()).getVisualProperty(BasicVisualLexicon.NODE_FILL_COLOR);
+		String colors = "?c1=" + Integer.toHexString(sourceNodeColor.getRGB()).substring(2);
+		// String.format("%02x%02x%02x", sourceNodeColor.getRed(), sourceNodeColor.getGreen(), sourceNodeColor.getBlue()); 
+		colors += "&c2=" + Integer.toHexString(targetNodeColor.getRGB()).substring(2);
+		// String.format("%02x%02x%02x", targetNodeColor.getRed(), targetNodeColor.getGreen(), targetNodeColor.getBlue());
+		
+		if (sourceNode == null || targetNode == null || netType == null || colors == null) 
+			return "";
+		
+		String url = "https://string-db.org/" + netType + "/" + sourceNode + "/" + targetNode + colors;		
+		return url;
+	}
+	
+	private void updateEdgesPanel() {
+		if (edgesPanel == null) return;
+		edgesPanel.removeAll();
+		EasyGBC c = new EasyGBC();
+
+		List<CyEdge> edges = CyTableUtil.getEdgesInState(currentNetwork, CyNetwork.SELECTED, true);
+		if (edges.size() > ModelUtils.MAX_EDGE_PANELS) {
+			JPanel newPanel = new JPanel();
+			newPanel.setLayout(new GridLayout(1,0));
+			JLabel label = new JLabel("  Select less than "+ ModelUtils.MAX_EDGE_PANELS + " edges to see edge panels.");
+			newPanel.add(label);
+			newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
+			edgesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
+			return;
+		}
+		for (CyEdge edge: edges) {
+			JPanel newPanel = createEdgePanel(edge);
+			newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
+			edgesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
+		}
+		return ;
+	}
+	
 
 	private JComponent createScoreCheckBox(String subScore) {
 		Map<String, Color> colorMap = manager.getChannelColors();
@@ -355,7 +530,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 	public void updateScore() {
 		scorePanel.removeAll();
 		EasyGBC d = new EasyGBC();
-		JComponent scoreSlider = createFilterSlider("score", "Score", currentNetwork, true, 100.0);
+		JComponent scoreSlider = createFilterSlider("score", "Score", createScoreLabel(), currentNetwork, true, 100.0);
 		scorePanel.add(scoreSlider, d.anchor("northwest").expandHoriz());
 
 		JPanel controlPanel = createControlPanel();
@@ -383,8 +558,31 @@ public class StringEdgePanel extends AbstractStringPanel {
 
 		updateSubPanel();
 		updateScore();
+		updateEdgesPanel();
 	}
 
 	public void selectedEdges(Collection<CyEdge> edges) {
+		edgesPanel.removeAll();
+		EasyGBC c = new EasyGBC();
+		ViewUtils.clearHighlight(manager, manager.getCurrentNetworkView());
+
+		if (edges.size() <= ModelUtils.MAX_EDGE_PANELS) {
+			for (CyEdge edge : edges) {
+				JPanel newPanel = createEdgePanel(edge);
+				newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
+				edgesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
+			}
+		} else {
+			JPanel newPanel = new JPanel();
+			newPanel.setLayout(new GridLayout(1,0));
+			JLabel label = new JLabel("  Select less than "+ ModelUtils.MAX_EDGE_PANELS + " edges to see edge panels.");
+			newPanel.add(label);
+			newPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
+			edgesPanel.add(newPanel, c.anchor("west").down().expandHoriz());
+		}
+		
+		revalidate();
+		repaint();
+
 	}
 }
