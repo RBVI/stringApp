@@ -33,6 +33,7 @@ import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
+import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
@@ -124,20 +125,37 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 			// We're decreasing the confidence, so we need to get new edges
 			// Get all of the current nodes for our "existing" list
 			String existing = ModelUtils.getExisting(network);
+			String species = ModelUtils.getNetSpecies(network);
+			if (species == null) {
+				species = ModelUtils.getMostCommonNetSpecies(network);
+				ModelUtils.setNetSpecies(network, species);
+			}
+			Species selSpecies = Species.getSpecies(species);
+			String currentType = NetworkType.getType(ModelUtils.getNetworkType(network)).getAPIName();
 			String database = ModelUtils.getDatabase(network);
 			Map<String, String> args = new HashMap<>();
-			args.put("existing", existing.trim());
-			args.put("score", confidence.getValue().toString());
-			args.put("maxscore", Float.toString(currentConfidence));
+			if (selSpecies.isCustom()) {
+				database = Databases.STRINGDB.getAPIName();
+				args.put("identifiers", existing.trim());
+				args.put("required_score", String.valueOf((int)(confidence.getValue()*1000)));
+				args.put("network_type", currentType);				
+				args.put("species", selSpecies.toString());
+			} else {
+				args.put("existing", existing.trim());
+				args.put("score", confidence.getValue().toString());
+				args.put("maxscore", Float.toString(currentConfidence));
+				args.put("database", currentType);
+			}
 			// set network type
-			NetworkType currentType = NetworkType.getType(ModelUtils.getNetworkType(network));
-			if (currentType != null)
-				args.put("database", currentType.getAPIName());
-			else
-				args.put("database", Databases.STRING.getAPIName());
 			JSONObject results;
 			try {
-				results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+				if (database.equals(Databases.STRINGDB.getAPIName())) {
+					monitor.setStatusMessage("Fetching data from: "+manager.getStringNetworkURL());
+					results = HttpUtils.postJSON(manager.getStringNetworkURL(), args, manager);
+				} else {
+					monitor.setStatusMessage("Fetching data from: "+manager.getNetworkURL());
+					results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+				}
 			} catch (ConnectionException e) {
 				e.printStackTrace();
 				monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
@@ -147,9 +165,11 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 			if (results != null) {
 				// This may change...
 				List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, 
-						                                                      results, null, database, currentType.getAPIName());
-	
-				monitor.setStatusMessage("Adding "+newEdges.size()+" edges");
+						                                                      results, null, database, currentType);
+
+				// TODO: newEdges appears empty when this status message is printed
+				//monitor.setStatusMessage("Adding "+newEdges.size()+" edges");
+				monitor.setStatusMessage("Adding new edges");
 	
 				ModelUtils.setConfidence(network, (double)Math.round(confidence.getValue()*1000)/1000);
 			}

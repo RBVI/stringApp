@@ -25,9 +25,10 @@ import org.json.simple.JSONObject;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
+import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
+import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
-import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
@@ -152,16 +153,36 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			String existing = ModelUtils.getExisting(network);
 			// Get current database & confidence
 			String database = ModelUtils.getDatabase(network);
-			// Double confidence = ModelUtils.getConfidence(network);
+			// Get species
+			String species = ModelUtils.getNetSpecies(network);
+			if (species == null) {
+				species = ModelUtils.getMostCommonNetSpecies(network);
+				ModelUtils.setNetSpecies(network, species);
+			}
+			Species selSpecies = Species.getSpecies(species);
 			Map<String, String> args = new HashMap<>();
-			args.put("existing", existing.trim());
-			// Get chosen network type
-			args.put("database", newType.getAPIName());
-			args.put("score", confidence.getValue().toString());
-			// args.put("maxscore", Float.toString(currentConfidence));
+			if (selSpecies.isCustom()) {
+				database = Databases.STRINGDB.getAPIName();
+				args.put("identifiers", existing.trim());
+				args.put("required_score", String.valueOf((int)(confidence.getValue()*1000)));
+				args.put("network_type", newType.getAPIName());				
+				args.put("species", selSpecies.toString());
+			} else {
+				args.put("existing", existing.trim());
+				args.put("score", confidence.getValue().toString());
+				//args.put("maxscore", Float.toString(currentConfidence));
+				args.put("database", newType.getAPIName());
+			}
+			
 			JSONObject results;
 			try {
-				results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+				if (database.equals(Databases.STRINGDB.getAPIName())) {
+					monitor.setStatusMessage("Fetching data from: "+manager.getStringNetworkURL());
+					results = HttpUtils.postJSON(manager.getStringNetworkURL(), args, manager);
+				} else {
+					monitor.setStatusMessage("Fetching data from: "+manager.getNetworkURL());
+					results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+				}
 			} catch (ConnectionException e) {
 				e.printStackTrace();
 				monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());

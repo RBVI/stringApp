@@ -188,7 +188,6 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			database = currentType.getAPIName();
 
 		// int taxonId = Species.getSpeciesTaxId(species);
-		int taxonId = Species.getSpeciesTaxId(selectedType);
 		Species selSpecies = Species.getSpecies(selectedType);
 		String filterString = "";
 		String useDatabase = "";
@@ -205,7 +204,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		} else if (selSpecies.isCustom()) {
 			filterString = selSpecies.toString();
 			useDatabase = Databases.STRINGDB.getAPIName();
-			args.put("species",selSpecies.toString());
+			args.put("species",filterString);
 			args.put("existing_string_identifiers",existing.trim());
 			args.put("identifiers",existing.trim());
 			args.put("required_score",String.valueOf((int)(conf*10)));

@@ -369,16 +369,18 @@ public class StringEdgePanel extends AbstractStringPanel {
 						.equals(NetworkType.PHYSICAL.toString()))
 			netType = "interaction-physical";
 
+		if (sourceNode == null || targetNode == null || netType == null) 
+			return "";
+
 		CyNetworkView view = manager.getCurrentNetworkView();
+		if (view == null || view.getNodeView(edge.getSource()) == null || view.getNodeView(edge.getSource()) == null)
+			return "";
 		Color sourceNodeColor = (Color)view.getNodeView(edge.getSource()).getVisualProperty(BasicVisualLexicon.NODE_FILL_COLOR);
 		Color targetNodeColor = (Color)view.getNodeView(edge.getTarget()).getVisualProperty(BasicVisualLexicon.NODE_FILL_COLOR);
 		String colors = "?c1=" + Integer.toHexString(sourceNodeColor.getRGB()).substring(2);
 		// String.format("%02x%02x%02x", sourceNodeColor.getRed(), sourceNodeColor.getGreen(), sourceNodeColor.getBlue()); 
 		colors += "&c2=" + Integer.toHexString(targetNodeColor.getRGB()).substring(2);
 		// String.format("%02x%02x%02x", targetNodeColor.getRed(), targetNodeColor.getGreen(), targetNodeColor.getBlue());
-		
-		if (sourceNode == null || targetNode == null || netType == null || colors == null) 
-			return "";
 		
 		String url = "https://string-db.org/" + netType + "/" + sourceNode + "/" + targetNode + colors;		
 		return url;
