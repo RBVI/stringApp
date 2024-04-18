@@ -527,46 +527,48 @@ public class ViewUtils {
 				.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
 
 		// get previous mapping
-		DiscreteMapping<String, Color> dMapping = (DiscreteMapping) style
-				.getVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
-
-		// get network species
-		List<String> species = ModelUtils.getAllNetSpecies(view.getModel());
-
-		// save previous color mapping
-		Map<String, Color> mapValues = new HashMap<String, Color>();
-		if (dMapping != null) {
-			Map<String, Color> mappedValues = dMapping.getAll();
-			for (String spKey : mappedValues.keySet()) {
-				if (species.contains(spKey)) {
-					mapValues.put(spKey, mappedValues.get(spKey));
+		if (style.getVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR) instanceof DiscreteMapping) {
+			DiscreteMapping<String, Color> dMapping = (DiscreteMapping) style
+					.getVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
+	
+			// get network species
+			List<String> species = ModelUtils.getAllNetSpecies(view.getModel());
+	
+			// save previous color mapping
+			Map<String, Color> mapValues = new HashMap<String, Color>();
+			if (dMapping != null) {
+				Map<String, Color> mappedValues = dMapping.getAll();
+				for (String spKey : mappedValues.keySet()) {
+					if (species.contains(spKey)) {
+						mapValues.put(spKey, mappedValues.get(spKey));
+					}
 				}
+				style.removeVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
+			} 
+			
+			// make the new mapping after removing the old one
+			dMapping = (DiscreteMapping) discreteFactory.createVisualMappingFunction(
+					ModelUtils.SPECIES, String.class, BasicVisualLexicon.NODE_FILL_COLOR);
+			if (mapValues.size() == 0) {
+				dMapping.putMapValue(originalSpiecesList.get(0), Color.decode(organismColors.get(0)));
+				dMapping.putMapValue(originalSpiecesList.get(1), Color.decode(organismColors.get(1)));
+			} else {
+				int colorNumber = mapValues.size();
+				// Set the species colors
+				for (String sp : species) {
+					if (mapValues.containsKey(sp)) {
+						dMapping.putMapValue(sp, mapValues.get(sp));
+					} else if (colorNumber < 6){
+						dMapping.putMapValue(sp, Color.decode(organismColors.get(colorNumber)));
+					} else {
+						dMapping.putMapValue(sp, getRandomColor());
+					}
+				}			
 			}
-			style.removeVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
-		} 
-		
-		// make the new mapping after removing the old one
-		dMapping = (DiscreteMapping) discreteFactory.createVisualMappingFunction(
-				ModelUtils.SPECIES, String.class, BasicVisualLexicon.NODE_FILL_COLOR);
-		if (mapValues.size() == 0) {
-			dMapping.putMapValue(originalSpiecesList.get(0), Color.decode(organismColors.get(0)));
-			dMapping.putMapValue(originalSpiecesList.get(1), Color.decode(organismColors.get(1)));
-		} else {
-			int colorNumber = mapValues.size();
-			// Set the species colors
-			for (String sp : species) {
-				if (mapValues.containsKey(sp)) {
-					dMapping.putMapValue(sp, mapValues.get(sp));
-				} else if (colorNumber < 6){
-					dMapping.putMapValue(sp, Color.decode(organismColors.get(colorNumber)));
-				} else {
-					dMapping.putMapValue(sp, getRandomColor());
-				}
-			}			
+			
+			style.addVisualMappingFunction(dMapping);
+			style.apply(view);
 		}
-		
-		style.addVisualMappingFunction(dMapping);
-		style.apply(view);
 	}
 
 	public static Color getRandomColor() {

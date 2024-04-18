@@ -209,6 +209,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			args.put("identifiers",existing.trim());
 			args.put("required_score",String.valueOf((int)(conf*10)));
 			args.put("network_type", database);
+			args.put("custom_alpha", selectivityAlpha.getValue().toString());
 			if (additionalNodes > 0)
 				args.put("add_nodes", Integer.toString(additionalNodes));
 		} else {
