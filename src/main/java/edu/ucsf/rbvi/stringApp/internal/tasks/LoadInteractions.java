@@ -106,7 +106,7 @@ public class LoadInteractions extends AbstractTask {
 			args.put("network_type", netType.getAPIName());
 			networkURL = manager.getStringNetworkURL();
 			if (additionalNodes > 0) {
-				args.put("add_color_nodes", Integer.toString(additionalNodes));
+				args.put("additional_network_nodes", Integer.toString(additionalNodes));
 			}
 			args.put("caller_identity", StringManager.CallerIdentity);
 			args.put("species", species.getName());

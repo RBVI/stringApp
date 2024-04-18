@@ -109,7 +109,7 @@ public class LoadTermsTask extends AbstractTask {
 			args.put("required_score", String.valueOf(confidence*10));
 			args.put("identifiers",ids.trim());
 			if (additionalNodes > 0)
-				args.put("add_color_nodes", Integer.toString(additionalNodes));
+				args.put("additional_network_nodes", Integer.toString(additionalNodes));
 		} else {
 			args.put("entities",ids.trim());
 			args.put("database", netType.getAPIName());

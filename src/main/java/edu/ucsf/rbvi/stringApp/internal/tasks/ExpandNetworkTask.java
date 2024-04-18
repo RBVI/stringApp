@@ -211,7 +211,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			args.put("network_type", database);
 			args.put("custom_alpha", selectivityAlpha.getValue().toString());
 			if (additionalNodes > 0)
-				args.put("add_nodes", Integer.toString(additionalNodes));
+				args.put("additional_network_nodes", Integer.toString(additionalNodes));
 		} else {
 			useDatabase = Databases.STRING.getAPIName();
 			filterString = String.valueOf(selSpecies.getTaxId());
