@@ -76,7 +76,7 @@ public class ModelUtils {
 	public static String DEFAULT_NAME_ADDON_PHYSICAL_REGEXP = " \\(physical\\)";
 	
 	// Node information
-	public static String COLOR = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "color";
+	public static String COLOR = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "node color";
 	public static String CANONICAL = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "canonical name";
 	public static String CV_STYLE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "chemViz Passthrough";
 	public static String DESCRIPTION = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "description";
