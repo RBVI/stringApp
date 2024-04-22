@@ -1,14 +1,15 @@
 package edu.ucsf.rbvi.stringApp.internal.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class Annotation {
@@ -77,9 +78,9 @@ public class Annotation {
 	public boolean isResolved() {return resolved;}
 	public void setResolved(boolean resolved) {this.resolved = resolved;}
 	
-	public static Map<String, List<Annotation>> getAnnotations(JSONObject json, String queryTerms, Species species) {
+	public static Map<String, List<Annotation>> getAnnotations(JSONObject json, String queryTerms, Species species, String useDATABASE) {
 		Map<String, List<Annotation>> map = new HashMap<>();
-		return getAnnotations(json, queryTerms, map, species);
+		return getAnnotations(json, queryTerms, map, species, useDATABASE);
 	}
 
 	public static boolean allResolved(List<Annotation> annotations) {
@@ -91,9 +92,12 @@ public class Annotation {
 	}
 
 	public static Map<String, List<Annotation>> getAnnotations(JSONObject json, String queryTerms,
-	                                                           Map<String, List<Annotation>> map, Species species) {
-		String[] terms = queryTerms.trim().split("\n");
+	                                                           Map<String, List<Annotation>> map, Species species, String useDATABASE) {
+		// TODO: [N] Can we not change this from \n to \r?
+		String[] terms = queryTerms.trim().split("\r");
 		JSONArray annotationArray = ModelUtils.getResultsFromJSON(json, JSONArray.class);
+		if (useDATABASE.equals(Databases.JENSENLAB.getAPIName()))
+			annotationArray = (JSONArray) annotationArray.get(0);
 		Integer version = ModelUtils.getVersionFromJSON(json);
 
 		// If we switch the API back to use a start of 0, this will need to change
@@ -110,11 +114,13 @@ public class Annotation {
 			String taxonName = null;
 			int taxId = -1;
 			int queryIndex = -1;
+			String query = null;
 			String uniprot = null;
 			String sequence = null;
 			String image = null;
 			String color = null;
 
+			// Fields coming from string-db
 			if (ann.containsKey("preferredName"))
 				preferredName = (String)ann.get("preferredName");
 			if (ann.containsKey("annotation"))
@@ -143,6 +149,7 @@ public class Annotation {
 					species.setOfficialName(taxonName);
 				}
 			}
+			// Fields coming from string-db with csdata=1
 			if (ann.containsKey("uniprot"))
 				uniprot = (String)ann.get("uniprot");
 			if (ann.containsKey("sequence"))
@@ -151,6 +158,28 @@ public class Annotation {
 				color = (String)ann.get("color");
 			if (ann.containsKey("image"))
 				image = (String)ann.get("image");
+			
+			// Fields coming from jensenlab
+			if(ann.containsKey("primary")) {
+				preferredName = (String)ann.get("primary");
+				annotation = (String)ann.get("primary");
+			}
+			// TODO: type is actually the taxId, but do we need it?
+			//if (ann.containsKey("type"))
+			//	taxId = (Long)ann.get("type");
+			if(ann.containsKey("id")) {
+				if (ann.containsKey("type") && (Long)ann.get("type") != -1)
+					stringId = (Long)ann.get("type") + "." +(String)ann.get("id");
+				else
+					stringId = (String)ann.get("id");
+			}
+			// TODO: [N] Can we not get those? And can we also get a description?
+			if (stringId.startsWith("CIDs"))
+				continue;
+			if(ann.containsKey("query")) {
+				query = (String)ann.get("query");
+				queryIndex = Arrays.asList(terms).indexOf(query);
+			}
 			
 			// Temporary HACK
 			// if (stringId.startsWith("-1.CID1"))
