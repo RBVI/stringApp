@@ -1385,9 +1385,7 @@ public class ModelUtils {
 			updateNodeAttributes(row, nodeAnnot, true);
 			// Special case depending of whether we create the node from the annotations or from the network json data 
 			if (name.equals("") && nodeAnnot.getPreferredName() != null)
-				row.set(DISPLAY, nodeAnnot.getPreferredName());
-			
-			// TODO: [Custom] add color and structures
+				row.set(DISPLAY, nodeAnnot.getPreferredName());			
 		}
 		
 		if (queryTermMap != null) {
