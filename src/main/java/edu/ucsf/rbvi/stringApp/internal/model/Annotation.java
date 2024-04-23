@@ -122,6 +122,7 @@ public class Annotation {
 			// Fields coming from string-db
 			if (ann.containsKey("preferredName"))
 				preferredName = (String)ann.get("preferredName");
+			// annotation contains the description of the entity as it comes from STRING-DB
 			if (ann.containsKey("annotation"))
 				annotation = (String)ann.get("annotation");
 			if (ann.containsKey("stringId"))
@@ -161,8 +162,10 @@ public class Annotation {
 			// Fields coming from jensenlab
 			if(ann.containsKey("primary")) {
 				preferredName = (String)ann.get("primary");
-				// TODO: set annotation to description if description is != ""
-				annotation = (String)ann.get("primary");
+				if (description != null && !description.equals(""))
+					annotation = description;
+				else	
+					annotation = preferredName;
 			}
 			// TODO: type is actually the taxId, but do we need it?
 			//if (ann.containsKey("type"))
@@ -173,7 +176,8 @@ public class Annotation {
 				else
 					stringId = (String)ann.get("id");
 			}
-			// TODO: [N] Can we not get those? And can we also get a description?
+			// TODO: [N] Currently, we still get both CIDm and CIDs
+			// We only have networks for the CIDm, so we ignore the others for now
 			if (stringId.startsWith("CIDs"))
 				continue;
 			if(ann.containsKey("query")) {
