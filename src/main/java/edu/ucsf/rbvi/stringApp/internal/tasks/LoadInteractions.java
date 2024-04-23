@@ -121,9 +121,9 @@ public class LoadInteractions extends AbstractTask {
 			if (additionalNodes > 0) {
 				args.put("additional", Integer.toString(additionalNodes));
 				if (useDATABASE.equals(Databases.STRING.getAPIName())) {
-					args.put("filter", String.valueOf(species.getTaxId()) + ".%%");
+					args.put("filter", String.valueOf(species.getTaxId()) + ".%");
 				} else {
-					args.put("filter", String.valueOf(species.getTaxId()) + ".%%|CIDm%%");
+					args.put("filter", String.valueOf(species.getTaxId()) + ".%|CIDm%");
 				}
 			}
 		}

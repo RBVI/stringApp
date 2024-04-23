@@ -194,7 +194,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		Map<String, String> args = new HashMap<>();
 		if (selectedType.equals(ModelUtils.COMPOUND)) {
 			useDatabase = Databases.STITCH.getAPIName();
-			args.put("filter", "CIDm%%");			
+			args.put("filter", "CIDm%");			
 			args.put("existing",existing.trim());
 			args.put("score", conf.toString());
 			args.put("database", database);
@@ -215,7 +215,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		} else {
 			useDatabase = Databases.STRING.getAPIName();
 			filterString = String.valueOf(selSpecies.getTaxId());
-			args.put("filter", filterString + ".%%");
+			args.put("filter", filterString + ".%");
 			args.put("existing",existing.trim());
 			args.put("score", conf.toString());
 			args.put("database", database);

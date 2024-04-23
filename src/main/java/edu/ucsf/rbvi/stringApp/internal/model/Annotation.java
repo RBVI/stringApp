@@ -93,8 +93,7 @@ public class Annotation {
 
 	public static Map<String, List<Annotation>> getAnnotations(JSONObject json, String queryTerms,
 	                                                           Map<String, List<Annotation>> map, Species species, String useDATABASE) {
-		// TODO: [N] Can we not change this from \n to \r?
-		String[] terms = queryTerms.trim().split("\r");
+		String[] terms = queryTerms.trim().split("\n");
 		JSONArray annotationArray = ModelUtils.getResultsFromJSON(json, JSONArray.class);
 		if (useDATABASE.equals(Databases.JENSENLAB.getAPIName()))
 			annotationArray = (JSONArray) annotationArray.get(0);
@@ -162,6 +161,7 @@ public class Annotation {
 			// Fields coming from jensenlab
 			if(ann.containsKey("primary")) {
 				preferredName = (String)ann.get("primary");
+				// TODO: set annotation to description if description is != ""
 				annotation = (String)ann.get("primary");
 			}
 			// TODO: type is actually the taxId, but do we need it?
