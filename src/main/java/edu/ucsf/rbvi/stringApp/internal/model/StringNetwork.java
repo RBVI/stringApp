@@ -444,11 +444,12 @@ public class StringNetwork {
 			
 			url = manager.getEntityQueryURL();
 			args = new HashMap<>();
-			args.put("limit", "5");
+			// we ask for 10 since half of them are CIDs, which we ignore
+			args.put("limit", "10");
 			args.put("types", "-1");
 			args.put("format", "json");
 			args.put("query", encTerms);
-			manager.info("URL: "+url+"?types=-1&limit=5&format=json"+"&identifiers="+HttpUtils.truncate(encTerms));
+			manager.info("URL: "+url+"?types=-1&limit=10&format=json"+"&identifiers="+HttpUtils.truncate(encTerms));
 			
 			// Get the results
 			// System.out.println("Getting STITCH term resolution");

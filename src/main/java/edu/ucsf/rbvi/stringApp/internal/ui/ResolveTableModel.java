@@ -32,7 +32,7 @@ class ResolveTableModel extends AbstractTableModel {
 	}
 
 	@Override
-	public int getColumnCount() { return 3; }
+	public int getColumnCount() { return 4; }
 
 	@Override
 	public int getRowCount() { 
@@ -48,6 +48,8 @@ class ResolveTableModel extends AbstractTableModel {
 		case 1:
 			return "Name";
 		case 2:
+			return "ID";
+		case 3:
 			return "Description";
 		}
 		return "";
@@ -62,6 +64,8 @@ class ResolveTableModel extends AbstractTableModel {
 			return String.class;
 		case 2:
 			return String.class;
+		case 3:
+			return String.class;
 		}
 		return null;
 	}
@@ -75,6 +79,8 @@ class ResolveTableModel extends AbstractTableModel {
 		case 1:
 			return ann.getPreferredName();
 		case 2:
+			return ann.getStringId();
+		case 3:
 			return ann.getAnnotation();
 		}
 		return null;

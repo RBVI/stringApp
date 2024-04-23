@@ -164,8 +164,6 @@ public class Annotation {
 				preferredName = (String)ann.get("primary");
 				if (description != null && !description.equals(""))
 					annotation = description;
-				else	
-					annotation = preferredName;
 			}
 			// TODO: type is actually the taxId, but do we need it?
 			//if (ann.containsKey("type"))

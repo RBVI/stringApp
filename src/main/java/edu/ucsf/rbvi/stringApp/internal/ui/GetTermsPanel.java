@@ -506,14 +506,16 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		TableRowSorter sorter = new TableRowSorter(tableModelMap.get(term));
 		sorter.setSortable(0, false);
 		sorter.setSortable(1, true);
-		sorter.setSortable(2, false);
+		sorter.setSortable(2, true);
+		sorter.setSortable(3, false);
 		table.setModel(tableModelMap.get(term));
 		table.setRowSorter(sorter);
 		table.setAutoResizeMode( JTable.AUTO_RESIZE_OFF );
-		table.getColumnModel().getColumn(2).setCellRenderer(new TextAreaRenderer());
+		table.getColumnModel().getColumn(3).setCellRenderer(new TextAreaRenderer());
 		table.getColumnModel().getColumn(0).setPreferredWidth(50);
 		table.getColumnModel().getColumn(1).setPreferredWidth(75);
-		table.getColumnModel().getColumn(2).setPreferredWidth(525);
+		table.getColumnModel().getColumn(2).setPreferredWidth(75);
+		table.getColumnModel().getColumn(3).setPreferredWidth(525);
 	}
 
 	public void cancel() {
