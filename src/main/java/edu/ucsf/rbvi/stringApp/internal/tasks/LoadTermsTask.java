@@ -118,9 +118,9 @@ public class LoadTermsTask extends AbstractTask {
 			if (additionalNodes > 0) {
 				args.put("additional", Integer.toString(additionalNodes));
 				if (useDATABASE.equals(Databases.STRING.getAPIName())) {
-					args.put("filter", taxString + ".%%");
+					args.put("filter", taxString + ".%");
 				} else if (useDATABASE.equals(Databases.STITCH.getAPIName())) {
-					args.put("filter", taxString + ".%%|CIDm%%");
+					args.put("filter", taxString + ".%|CIDm%");
 				}
 			}
 		}

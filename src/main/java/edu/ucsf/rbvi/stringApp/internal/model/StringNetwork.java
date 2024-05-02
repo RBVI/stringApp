@@ -391,48 +391,72 @@ public class StringNetwork {
 		try {
 			results = HttpUtils.postJSON(url, args, manager);
 			// System.out.println(results.toString());
+			if (results != null) {
+				// System.out.println("Got results");
+				annotations = Annotation.getAnnotations(results, encTerms, annotations, species, Databases.STRING.getAPIName());
+				// System.out.println("Get annotations returns "+annotations.size());
+			}
 		} catch (ConnectionException ex) {
 			if (ex instanceof UnknownSpeciesException && manager.isVirusesEnabled() && annotations.size() == 0 && includeViruses) {
 				// also call the viruses API
 				// http://viruses.string-db.org/cgi/webservice_handler.pl?species=11320&identifiers=NS1_I34A1
 				// &caller_identity=string_app_v1_1_1&output=json&request=resolveList
-				url = manager.getResolveURL(Databases.VIRUSES.getAPIName());
+				//url = manager.getResolveURL(Databases.VIRUSES.getAPIName());
+				//args = new HashMap<>();
+				//args.put("species", speciesId);
+				//args.put("identifiers", encTerms);
+				//args.put("caller_identity", StringManager.CallerIdentity);
+				//args.put("output", "json");
+				//args.put("request", "resolveList");
+				//manager.info("URL:" + url + "?species=" + speciesId + "&caller_identity="
+				//		+ StringManager.CallerIdentity + "&identifiers=" + HttpUtils.truncate(encTerms));
+				
+				url = manager.getEntityQueryURL();
 				args = new HashMap<>();
-				args.put("species", speciesId);
-				args.put("identifiers", encTerms);
-				args.put("caller_identity", StringManager.CallerIdentity);
-				args.put("output", "json");
-				args.put("request", "resolveList");
-				manager.info("URL:" + url + "?species=" + speciesId + "&caller_identity="
-						+ StringManager.CallerIdentity + "&identifiers=" + HttpUtils.truncate(encTerms));
+				args.put("limit", "5");
+				args.put("types", speciesId);
+				args.put("format", "json");
+				args.put("query", encTerms);
+				manager.info("URL: "+url+"?types=" + speciesId + "&limit=5&format=json"+"&identifiers="+HttpUtils.truncate(encTerms));
+				
 				// Get the results
 				// System.out.println("Getting VIRUSES term resolution");
 				results = HttpUtils.postJSON(url, args, manager);
+				if (results != null) {
+					// System.out.println("Got results");
+					annotations = Annotation.getAnnotations(results, encTerms, annotations, species, Databases.JENSENLAB.getAPIName());
+					// System.out.println("Get annotations returns "+annotations.size());
+				}
 			}
 		}
 		
-		if (results != null) {
-			// System.out.println("Got results");
-			annotations = Annotation.getAnnotations(results, encTerms, annotations, species);
-			// System.out.println("Get annotations returns "+annotations.size());
-		}
 		results = null;
 		
 		// then, call other APIs to get resolve them
 		// resolve compounds 
 		if (useDATABASE.equals(Databases.STITCH.getAPIName())) {
-			url = manager.getResolveURL(Databases.STITCH.getAPIName())+"json/resolveList";
+			//url = manager.getResolveURL(Databases.STITCH.getAPIName())+"json/resolveList";
+			//args = new HashMap<>();
+			//args.put("species", "CIDm");
+			//args.put("identifiers", encTerms);
+			//args.put("caller_identity", StringManager.CallerIdentity);
+			// manager.info("URL: "+url+"?species="+speciesId+"&caller_identity="+StringManager.CallerIdentity+"&identifiers="+HttpUtils.truncate(encTerms));
+			
+			url = manager.getEntityQueryURL();
 			args = new HashMap<>();
-			args.put("species", "CIDm");
-			args.put("identifiers", encTerms);
-			args.put("caller_identity", StringManager.CallerIdentity);
-			manager.info("URL: "+url+"?species="+speciesId+"&caller_identity="+StringManager.CallerIdentity+"&identifiers="+HttpUtils.truncate(encTerms));
+			// we ask for 10 since half of them are CIDs, which we ignore
+			args.put("limit", "10");
+			args.put("types", "-1");
+			args.put("format", "json");
+			args.put("query", encTerms);
+			manager.info("URL: "+url+"?types=-1&limit=10&format=json"+"&identifiers="+HttpUtils.truncate(encTerms));
+			
 			// Get the results
 			// System.out.println("Getting STITCH term resolution");
 			results = HttpUtils.postJSON(url, args, manager);
 
 			if (results != null) {
-				updateAnnotations(results, encTerms, species);
+				updateAnnotations(results, encTerms, species, Databases.JENSENLAB.getAPIName());
 			}
 			results = null;
 		} 
@@ -526,9 +550,9 @@ public class StringNetwork {
 		return ids;
 	}
 	
-	private void updateAnnotations(JSONObject results, String terms, Species species) {
+	private void updateAnnotations(JSONObject results, String terms, Species species, String useDATABASE) {
 		Map<String, List<Annotation>> newAnnotations = Annotation.getAnnotations(results,
-				terms, species);
+				terms, species, useDATABASE);
 		for (String newAnn : newAnnotations.keySet()) {
 			List<Annotation> allAnn = new ArrayList<Annotation>(newAnnotations.get(newAnn));
 			if (annotations.containsKey(newAnn)) {
