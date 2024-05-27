@@ -1360,7 +1360,7 @@ public class ModelUtils {
 		CyRow row = network.getRow(newNode);
 		nodeMap.put(id, newNode);
 
-		System.out.println("Creating node "+id);
+		// System.out.println("Creating node "+id);
 
 		row.set(CyNetwork.NAME, id);
 		// row.set(CyRootNetwork.SHARED_NAME, stringId);
