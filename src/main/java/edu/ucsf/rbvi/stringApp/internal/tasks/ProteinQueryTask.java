@@ -120,7 +120,9 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 	public void run(TaskMonitor monitor) {
 		monitor.setTitle("STRING Protein Query");
 		Species sp = Species.getSpecies(species);
-		if (taxonID != -1 && !sp.isCustom()) {
+		// if (taxonID != -1 && sp != null && !sp.isCustom()) {
+		// Fallback to species taxonID if species name was not enough to find our species
+		if (sp == null && taxonID != -1) {
 			for (Species s : speciesList) {
 				if (s.getTaxId() == taxonID) {
 					if (!s.toString().equals(species)) {
