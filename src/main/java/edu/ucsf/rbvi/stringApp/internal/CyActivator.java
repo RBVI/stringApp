@@ -6,18 +6,17 @@ import static org.cytoscape.work.ServiceProperties.COMMAND_EXAMPLE_JSON;
 import static org.cytoscape.work.ServiceProperties.COMMAND_LONG_DESCRIPTION;
 import static org.cytoscape.work.ServiceProperties.COMMAND_NAMESPACE;
 import static org.cytoscape.work.ServiceProperties.COMMAND_SUPPORTS_JSON;
+import static org.cytoscape.work.ServiceProperties.INSERT_SEPARATOR_BEFORE;
 import static org.cytoscape.work.ServiceProperties.IN_MENU_BAR;
 import static org.cytoscape.work.ServiceProperties.MENU_GRAVITY;
 import static org.cytoscape.work.ServiceProperties.PREFERRED_MENU;
 import static org.cytoscape.work.ServiceProperties.TITLE;
-import static org.cytoscape.work.ServiceProperties.INSERT_SEPARATOR_BEFORE;
 
 import java.util.Properties;
 
 import org.cytoscape.application.events.SetCurrentNetworkListener;
 import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.application.swing.CySwingApplication;
-import org.cytoscape.application.swing.search.NetworkSearchTaskFactory;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.events.NetworkAboutToBeDestroyedListener;
 import org.cytoscape.model.events.NetworkAddedListener;
@@ -35,9 +34,9 @@ import org.osgi.framework.Version;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.tasks.AddTermsTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.AssignCompartmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeConfidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeNetTypeTaskFactory;
-import edu.ucsf.rbvi.stringApp.internal.tasks.DiseaseSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExpandNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ExportPublicationsTaskFactory;
@@ -50,9 +49,6 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.GetPublicationsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetSelectedSpeciesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetSpeciesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.HideChartsTaskFactory;
-// import edu.ucsf.rbvi.stringApp.internal.tasks.FindProteinsTaskFactory;
-// import edu.ucsf.rbvi.stringApp.internal.tasks.OpenEvidenceTaskFactory;
-import edu.ucsf.rbvi.stringApp.internal.tasks.PubmedSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.SetConfidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.SetLabelAttributeTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.SettingsTaskFactory;
@@ -62,23 +58,17 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowFlatNodeDesignPanelAction;
+import edu.ucsf.rbvi.stringApp.internal.tasks.ShowFlatNodeDesignTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectTaskFactory;
-import edu.ucsf.rbvi.stringApp.internal.tasks.ShowFlatNodeDesignTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowPublicationsPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowPublicationsPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowResultsPanelTaskFactory;
-import edu.ucsf.rbvi.stringApp.internal.tasks.StitchSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.StringifyTaskFactory;
-import edu.ucsf.rbvi.stringApp.internal.tasks.StringSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.VersionTaskFactory;
-import edu.ucsf.rbvi.stringApp.internal.ui.DiseaseNetworkWebServiceClient;
-import edu.ucsf.rbvi.stringApp.internal.ui.StitchWebServiceClient;
-import edu.ucsf.rbvi.stringApp.internal.ui.StringWebServiceClient;
-import edu.ucsf.rbvi.stringApp.internal.ui.TextMiningWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.view.StringCustomGraphicsFactory;
 import edu.ucsf.rbvi.stringApp.internal.view.StringLayer;
@@ -459,7 +449,7 @@ public class CyActivator extends AbstractCyActivator {
 			                            "was originally derived from STRING and has all of the necessary STRING "+
 			                            "columns.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-    	props.setProperty(COMMAND_EXAMPLE_JSON, "{\"network\": 123}");
+			props.setProperty(COMMAND_EXAMPLE_JSON, "{\"network\": 123}");
 			registerService(bc, setConfidence, NetworkTaskFactory.class, props);
 		}
 
@@ -482,10 +472,31 @@ public class CyActivator extends AbstractCyActivator {
 			                            "by querying STRING for all of the nodes and then copying over the edges "+
 			                            "from the original network.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-    	props.setProperty(COMMAND_EXAMPLE_JSON, "{\"network\": 123}");
+			props.setProperty(COMMAND_EXAMPLE_JSON, "{\"network\": 123}");
 			registerService(bc, stringify, TaskFactory.class, props);
 		}
 
+		{
+			// Register "Assign compartment" factory
+			AssignCompartmentTaskFactory assignComp = new AssignCompartmentTaskFactory(manager);
+			Properties props = new Properties();
+			props.setProperty(PREFERRED_MENU, "Apps.STRING COMPARTMENTS");
+			props.setProperty(TITLE, "Assign compartment");
+			props.setProperty(MENU_GRAVITY, "1.0");
+			props.setProperty(IN_MENU_BAR, "true");
+			registerService(bc, assignComp, NetworkTaskFactory.class, props);			
+
+			props = new Properties();
+			props.setProperty(COMMAND_NAMESPACE, "string");
+			props.setProperty(COMMAND, "assign compartment");
+			props.setProperty(COMMAND_DESCRIPTION, "");
+			props.setProperty(COMMAND_LONG_DESCRIPTION, "");
+			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			props.setProperty(COMMAND_EXAMPLE_JSON, "{\"network\": 123}");
+			registerService(bc, assignComp, TaskFactory.class, props);
+}
+
+		
 		{
 			ExportEnrichmentTaskFactory exportEnrichment = new ExportEnrichmentTaskFactory(manager);
 			// Properties props = new Properties();

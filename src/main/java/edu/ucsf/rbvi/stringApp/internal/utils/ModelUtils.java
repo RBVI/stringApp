@@ -102,6 +102,9 @@ public class ModelUtils {
 
 	public static String TISSUE_NAMESPACE = "tissue";
 	public static String COMPARTMENT_NAMESPACE = "compartment";
+	
+	public static String NODE_COMPARTMENT = "compartment";
+	
 	// public static String TM_LINKOUT = "TextMining Linkout";
 	public static List<String> ignoreKeys = new ArrayList<String>(Arrays.asList("image", "canonical", "@id", "description"));
 	public static List<String> namespacedNodeAttributes = new ArrayList<String>(Arrays.asList("canonical name", "full name", "chemViz Passthrough", 
