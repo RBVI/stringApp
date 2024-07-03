@@ -39,7 +39,7 @@ public class AssignCompartmentTask extends AbstractTask {
 				if (compScore != null && compScore > maxScore) {
 					maxScore = compScore;
 					maxScoreCol = col;
-					System.out.println("found max score for comp " + col);
+					// System.out.println("found max score for comp " + col);
 				}
 			}
 			if (maxScore > 0.0 && !maxScoreCol.equals("")) {
