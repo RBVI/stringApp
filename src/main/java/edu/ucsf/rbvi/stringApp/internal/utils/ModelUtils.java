@@ -57,6 +57,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.EntityIdentifier;
+import edu.ucsf.rbvi.stringApp.internal.model.EvidenceType;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
@@ -1499,31 +1500,31 @@ public class ModelUtils {
 		if (edgeObj.containsKey("score"))
 			edgeRow.set("stringdb::score", makeDouble(edgeObj.get("score")));
 		if (edgeObj.containsKey("nscore")) {
-			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, "stringdb::neighborhood");
+			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, EvidenceType.NEIGHBORHOOD.name());
 			edgeRow.set("stringdb::neighborhood", makeDouble(edgeObj.get("nscore")));
 		}
 		if (edgeObj.containsKey("fscore")) {
-			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, "stringdb::fusion");
+			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, EvidenceType.GENEFUSIONS.name());
 			edgeRow.set("stringdb::fusion", makeDouble(edgeObj.get("fscore")));
 		}
 		if (edgeObj.containsKey("pscore")) {
-			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, "stringdb::coocurrence");
+			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, EvidenceType.COOCCURRENCE.name());
 			edgeRow.set("stringdb::coocurrence", makeDouble(edgeObj.get("pscore")));
 		}
 		if (edgeObj.containsKey("ascore")) {
-			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, "stringdb::coexpression");
+			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, EvidenceType.COEXPRESSION.name());
 			edgeRow.set("stringdb::coexpression", makeDouble(edgeObj.get("ascore")));
 		}
 		if (edgeObj.containsKey("escore")) {
-			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, "stringdb::experiments");
+			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, EvidenceType.EXPERIMENTS.name());
 			edgeRow.set("stringdb::experiments", makeDouble(edgeObj.get("escore")));
 		}
 		if (edgeObj.containsKey("dscore")) {
-			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, "stringdb::databases");
+			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, EvidenceType.DATABASES.name());
 			edgeRow.set("stringdb::databases", makeDouble(edgeObj.get("dscore")));
 		}
 		if (edgeObj.containsKey("tscore")) {
-			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, "stringdb::textmining");
+			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, EvidenceType.TEXTMINING.name());
 			edgeRow.set("stringdb::textmining", makeDouble(edgeObj.get("tscore")));
 		}
 
