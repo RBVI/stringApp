@@ -1519,8 +1519,8 @@ public class ModelUtils {
 			edgeRow.set("stringdb::experiments", makeDouble(edgeObj.get("escore")));
 		}
 		if (edgeObj.containsKey("dscore")) {
-			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, "stringdb::database");
-			edgeRow.set("stringdb::database", makeDouble(edgeObj.get("dscore")));
+			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, "stringdb::databases");
+			edgeRow.set("stringdb::databases", makeDouble(edgeObj.get("dscore")));
 		}
 		if (edgeObj.containsKey("tscore")) {
 			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, "stringdb::textmining");
