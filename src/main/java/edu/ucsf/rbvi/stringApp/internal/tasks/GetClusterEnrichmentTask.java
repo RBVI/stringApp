@@ -147,8 +147,11 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		}
 
 		// get species
-		String species = String.valueOf(Species.getSpeciesTaxId(allNetSpecies.getSelectedValue()));
-
+		Species selSpecies = Species.getSpecies(allNetSpecies.getSelectedValue());
+		String species = String.valueOf(selSpecies.getTaxId());
+		if (selSpecies.isCustom())
+			species = selSpecies.toString();
+		
 		// map of STRING ID to CyNodes
 		CyTable nodeTable = network.getDefaultNodeTable();
 		for (final CyNode node : network.getNodeList()) {
