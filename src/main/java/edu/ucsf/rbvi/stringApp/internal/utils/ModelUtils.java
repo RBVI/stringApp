@@ -1501,31 +1501,31 @@ public class ModelUtils {
 			edgeRow.set("stringdb::score", makeDouble(edgeObj.get("score")));
 		if (edgeObj.containsKey("nscore")) {
 			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, EvidenceType.NEIGHBORHOOD.name());
-			edgeRow.set("stringdb::neighborhood", makeDouble(edgeObj.get("nscore")));
+			edgeRow.set(EvidenceType.NEIGHBORHOOD.name(), makeDouble(edgeObj.get("nscore")));
 		}
 		if (edgeObj.containsKey("fscore")) {
 			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, EvidenceType.GENEFUSIONS.name());
-			edgeRow.set("stringdb::fusion", makeDouble(edgeObj.get("fscore")));
+			edgeRow.set(EvidenceType.GENEFUSIONS.name(), makeDouble(edgeObj.get("fscore")));
 		}
 		if (edgeObj.containsKey("pscore")) {
 			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, EvidenceType.COOCCURRENCE.name());
-			edgeRow.set("stringdb::coocurrence", makeDouble(edgeObj.get("pscore")));
+			edgeRow.set(EvidenceType.COOCCURRENCE.name(), makeDouble(edgeObj.get("pscore")));
 		}
 		if (edgeObj.containsKey("ascore")) {
 			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, EvidenceType.COEXPRESSION.name());
-			edgeRow.set("stringdb::coexpression", makeDouble(edgeObj.get("ascore")));
+			edgeRow.set(EvidenceType.COEXPRESSION.name(), makeDouble(edgeObj.get("ascore")));
 		}
 		if (edgeObj.containsKey("escore")) {
 			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, EvidenceType.EXPERIMENTS.name());
-			edgeRow.set("stringdb::experiments", makeDouble(edgeObj.get("escore")));
+			edgeRow.set(EvidenceType.EXPERIMENTS.name(), makeDouble(edgeObj.get("escore")));
 		}
 		if (edgeObj.containsKey("dscore")) {
 			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, EvidenceType.DATABASES.name());
-			edgeRow.set("stringdb::databases", makeDouble(edgeObj.get("dscore")));
+			edgeRow.set(EvidenceType.DATABASES.name(), makeDouble(edgeObj.get("dscore")));
 		}
 		if (edgeObj.containsKey("tscore")) {
 			createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, EvidenceType.TEXTMINING.name());
-			edgeRow.set("stringdb::textmining", makeDouble(edgeObj.get("tscore")));
+			edgeRow.set(EvidenceType.TEXTMINING.name(), makeDouble(edgeObj.get("tscore")));
 		}
 
 	}
