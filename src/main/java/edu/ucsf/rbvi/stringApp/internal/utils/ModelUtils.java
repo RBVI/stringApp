@@ -661,14 +661,6 @@ public class ModelUtils {
 					    useDATABASE, netType);
 		}
 
-		// cutoff for max number of nodes with structure displayed is currently 300, the same as on the STRING page
-		if (newNetwork.getNodeCount() <= MAX_NODES_STRUCTURE_DISPLAY) {
-			fetchImages(newNetwork);
-		} else {
-			manager.setShowImage(false);
-			ModelUtils.setNetworkHasImages(newNetwork, false);
-		}
-		
 		manager.addNetwork(newNetwork);
 		return newNetwork;
 	}

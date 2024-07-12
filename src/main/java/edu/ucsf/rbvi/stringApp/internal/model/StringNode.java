@@ -30,6 +30,10 @@ public class StringNode {
 		return ModelUtils.getName(stringNetwork.getNetwork(), stringNode);
 	}
 
+	public boolean haveDisplayName() {
+		return (getDisplayName() != null && !getDisplayName().equals(""));
+	}
+	
 	public String getDisplayName() {
 		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.DISPLAY);
 	}
@@ -67,15 +71,15 @@ public class StringNode {
 	}
 
 	public boolean haveGeneCard() {
-		return (haveUniprot() && getSpecies().equals("Homo sapiens"));
+		return (haveDisplayName() && getSpecies().equals("Homo sapiens"));
 	}
 	
 	public String getGeneCardURL() {
-		String uniprot = getUniprot();
-		if (uniprot == null) return null;
+		String name = getDisplayName();
+		if (name == null) return null;
 		// GeneCards only supports human proteins
 		if (getSpecies().equals("Homo sapiens"))
-			return "http://www.genecards.org/cgi-bin/carddisp.pl?gene="+uniprot;
+			return "http://www.genecards.org/cgi-bin/carddisp.pl?gene="+name;
 		return null;
 	}
 
@@ -111,15 +115,11 @@ public class StringNode {
 		// return haveData("pharos ", 4);
 		// pharos* columns were renamed to target*
 		// every human protein is in pharos as of now
-		return (haveUniprot() && getSpecies().equals("Homo sapiens"));
-	}
-
-	public String getPharos() {
-		return getUniprot();
+		return (haveDisplayName() && getSpecies().equals("Homo sapiens"));
 	}
 
 	public String getPharosURL() {
-		String id = getPharos();
+		String id = getDisplayName();
 		if (id == null) return null;
 		return "http://pharos.nih.gov/idg/targets/"+id;
 	}

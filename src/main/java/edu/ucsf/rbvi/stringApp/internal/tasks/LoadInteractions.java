@@ -202,8 +202,6 @@ public class LoadInteractions extends AbstractTask {
 
 		}
 
-
-
 		// System.out.println("Results: "+results.toString());
 		int viewThreshold = ModelUtils.getViewThreshold(manager);
 		int networkSize = network.getNodeList().size() + network.getEdgeList().size();
@@ -213,6 +211,14 @@ public class LoadInteractions extends AbstractTask {
 			CyNetworkView networkView = manager.createNetworkView(network);
 			ViewUtils.styleNetwork(manager, network, networkView);
 	
+			// cutoff for max number of nodes with structure displayed is currently 300, the same as on the STRING page
+			if (network.getNodeCount() <= ModelUtils.MAX_NODES_STRUCTURE_DISPLAY) {
+				ModelUtils.fetchImages(network);
+			} else {
+				manager.setShowImage(false);
+				ModelUtils.setNetworkHasImages(network, false);
+			}
+			
 			// And lay it out
 			CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");
 			Object context = alg.createLayoutContext();

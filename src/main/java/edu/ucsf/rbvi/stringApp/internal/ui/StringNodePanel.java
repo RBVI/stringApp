@@ -589,7 +589,7 @@ public class StringNodePanel extends AbstractStringPanel {
 				crosslinkPanel.add(link);
 			}
 			if (sNode.haveGeneCard()) {
-  			JLabel link = new SwingLinkCyBrowser("GeneCards", sNode.getGeneCardURL(), openBrowser);
+  			JLabel link = new SwingLinkOSBrowser("GeneCards", sNode.getGeneCardURL());
 				link.setFont(textFont);
 				crosslinkPanel.add(link);
 			}

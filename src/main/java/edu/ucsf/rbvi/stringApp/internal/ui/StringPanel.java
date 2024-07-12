@@ -60,7 +60,7 @@ public class StringPanel extends JPanel
 			}
 			if (sNode.haveGeneCard()) {
 				message += "<tr><td>GeneCard: </td>";
-				message += "<td><a href=\""+sNode.getGeneCardURL()+"\">"+sNode.getUniprot()+"</a></td></tr>";
+				message += "<td><a href=\""+sNode.getGeneCardURL()+"\">"+sNode.getDisplayName()+"</a></td></tr>";
 			}
 
 			if (sNode.haveCompartments()) {
@@ -80,7 +80,7 @@ public class StringPanel extends JPanel
 
 			if (sNode.havePharos()) {
 				message += "<tr><td>Pharos: </td>";
-				message += "<td><a href=\""+sNode.getPharosURL()+"\">"+sNode.getPharos()+"</a></td></tr>";
+				message += "<td><a href=\""+sNode.getPharosURL()+"\">"+sNode.getDisplayName()+"</a></td></tr>";
 			}
 
 			if (sNode.havePubChem()) {
