@@ -1359,6 +1359,7 @@ public class ModelUtils {
 			for (Object extraObj: nodeObj.keySet()) {
 				String extraName = (String)extraObj;
 				// Skip over the data we already got from string-db
+				// TODO: pre-create columns beforehand to have them in the right order?
 				if (extraName.startsWith(TARGET_NAMESPACE)) {
 					createColumnIfNeeded(network.getDefaultNodeTable(), String.class, extraName);
 					row.set(extraName, (String)nodeObj.get(extraObj));

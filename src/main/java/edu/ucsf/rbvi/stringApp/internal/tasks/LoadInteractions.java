@@ -184,9 +184,20 @@ public class LoadInteractions extends AbstractTask {
 			} catch (ConnectionException ce) {
 				monitor.showMessage(TaskMonitor.Level.ERROR, "Unable to get additional node annotations");
 			}
-		} else if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
+		} 
+		if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
 			// OK, now get data from TISSUES, COMPARTMENTS, etc.
 			args.clear();
+			// we need to get all ids, not just the query ids 
+			if (additionalNodes > 0) {
+				ids = null;
+				for (String id: nodeMap.keySet()) {
+					if (ids == null)
+						ids = id;
+					else
+						ids += "\n"+id;
+				}
+			}
 			args.put("entities",ids.trim());
 			args.put("caller_identity", StringManager.CallerIdentity);
 			networkURL = manager.getNodeInfoURL();
