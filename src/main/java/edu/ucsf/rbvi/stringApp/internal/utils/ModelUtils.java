@@ -1360,8 +1360,8 @@ public class ModelUtils {
 				String extraName = (String)extraObj;
 				// Skip over the data we already got from string-db
 				if (extraName.startsWith(TARGET_NAMESPACE)) {
-					createColumnIfNeeded(network.getDefaultNodeTable(), Double.class, extraName);
-					row.set(extraName, (Double)nodeObj.get(extraObj));
+					createColumnIfNeeded(network.getDefaultNodeTable(), String.class, extraName);
+					row.set(extraName, (String)nodeObj.get(extraObj));
 				} else if (extraName.startsWith(TISSUE_NAMESPACE)) {
 					createColumnIfNeeded(network.getDefaultNodeTable(), Double.class, extraName);
 					row.set(extraName, (Double)nodeObj.get(extraObj));
