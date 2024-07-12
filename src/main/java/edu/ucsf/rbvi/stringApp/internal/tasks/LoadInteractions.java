@@ -184,7 +184,25 @@ public class LoadInteractions extends AbstractTask {
 			} catch (ConnectionException ce) {
 				monitor.showMessage(TaskMonitor.Level.ERROR, "Unable to get additional node annotations");
 			}
+		} else if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
+			// OK, now get data from TISSUES, COMPARTMENTS, etc.
+			args.clear();
+			args.put("entities",ids.trim());
+			args.put("caller_identity", StringManager.CallerIdentity);
+			networkURL = manager.getNodeInfoURL();
+			System.out.println("Network URL: "+networkURL);
+			try {
+				results = HttpUtils.postJSON(networkURL, args, manager);
+				ModelUtils.addExtraNodeData(stringNet, results);
+			} catch (ConnectionException e) {
+				e.printStackTrace();
+				monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+				return;
+			}
+
 		}
+
+
 
 		// System.out.println("Results: "+results.toString());
 		int viewThreshold = ModelUtils.getViewThreshold(manager);

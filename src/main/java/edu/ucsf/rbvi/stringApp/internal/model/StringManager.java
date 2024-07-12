@@ -708,6 +708,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		return getDataAPIURL()+"Integration";
 	}
 
+	public String getNodeInfoURL() {
+		return getDataAPIURL()+"nodes";
+	}
+
 	public String getResolveURL(String useDATABASE) {
 		if (useDATABASE.equals(Databases.STITCH.getAPIName()))
 			return STITCHResolveURI;

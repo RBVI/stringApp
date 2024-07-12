@@ -101,6 +101,7 @@ public class ModelUtils {
 	public static String TM_SCORE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "textmining score";
 	public static String USE_ENRICHMENT = "use for enrichment";
 
+	public static String TARGET_NAMESPACE = "target";
 	public static String TISSUE_NAMESPACE = "tissue";
 	public static String COMPARTMENT_NAMESPACE = "compartment";
 	// public static String TM_LINKOUT = "TextMining Linkout";
@@ -830,10 +831,8 @@ public class ModelUtils {
 		List<String> species = new ArrayList<String>();
 		for (CyNode node : net.getNodeList()) {
 			String nSpecies = net.getRow(node).get(SPECIES, String.class);
-			System.out.println("Node: "+node.getSUID()+" = "+nSpecies);
 			if (nSpecies != null && !nSpecies.equals("") && !species.contains(nSpecies)) {
 				Species theSpecies = Species.getSpecies(nSpecies);
-				System.out.println("Species: "+theSpecies);
 
 				// TODO: This is kind of a hack for now and will be updated once we get the kingdom data from the server 
 				if (theSpecies != null
@@ -1352,6 +1351,35 @@ public class ModelUtils {
 		return "unknown";
 	}
 
+	public static void addExtraNodeData(StringNetwork stringNet, JSONObject results) {
+		JSONArray obj = getResultsFromJSON(results, JSONArray.class);
+		CyNetwork network = stringNet.getNetwork();
+		Map<String, CyRow> nodeMap = new HashMap<>();
+		for (CyNode node: network.getNodeList()) {
+			CyRow row = network.getRow(node);
+			nodeMap.put(row.get(ID, String.class), row);
+		}
+		for (Object nodeData: obj) {
+			JSONObject nodeObj = (JSONObject)nodeData;
+			String id = (String)nodeObj.get(ID);
+			CyRow row = nodeMap.get(id);
+			if (row == null) continue;
+			for (Object extraObj: nodeObj.keySet()) {
+				String extraName = (String)extraObj;
+				// Skip over the data we already got from string-db
+				if (extraName.startsWith(TARGET_NAMESPACE)) {
+					createColumnIfNeeded(network.getDefaultNodeTable(), Double.class, extraName);
+					row.set(extraName, (Double)nodeObj.get(extraObj));
+				} else if (extraName.startsWith(TISSUE_NAMESPACE)) {
+					createColumnIfNeeded(network.getDefaultNodeTable(), Double.class, extraName);
+					row.set(extraName, (Double)nodeObj.get(extraObj));
+				} else if (extraName.startsWith(COMPARTMENT_NAMESPACE)) {
+					createColumnIfNeeded(network.getDefaultNodeTable(), Double.class, extraName);
+					row.set(extraName, (Double)nodeObj.get(extraObj));
+				}
+			}
+		}
+	}
 		
 	private static CyNode createNodeFromStringDb(CyNetwork network, String id, String name,
 			String speciesName, Map<String, CyNode> nodeMap, Map<String, String> nodeNameMap, 
@@ -1370,9 +1398,8 @@ public class ModelUtils {
 		// row.set(CyRootNetwork.SHARED_NAME, stringId);
 		row.set(DISPLAY, name);
 		row.set(STRINGID, id);
-		System.out.println("Node: "+newNode+" Species: "+speciesName);
 		row.set(SPECIES, speciesName);
-		row.set(ID, "string:"+id);
+		row.set(ID, "stringdb:"+id);
 		row.set(NAMESPACE, "stringdb");
 		row.set(STYLE, "string:"); // We may overwrite this, if we get an image
 		row.set(TYPE, "protein");
