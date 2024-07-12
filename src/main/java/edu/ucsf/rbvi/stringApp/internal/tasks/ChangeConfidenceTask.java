@@ -134,8 +134,7 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 			String currentType = NetworkType.getType(ModelUtils.getNetworkType(network)).getAPIName();
 			String database = ModelUtils.getDatabase(network);
 			Map<String, String> args = new HashMap<>();
-			if (selSpecies.isCustom()) {
-				database = Databases.STRINGDB.getAPIName();
+			if (database.equals(Databases.STRINGDB.getAPIName())) {
 				args.put("identifiers", existing.trim());
 				args.put("required_score", String.valueOf((int)(confidence.getValue()*1000)));
 				args.put("network_type", currentType);				

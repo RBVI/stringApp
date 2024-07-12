@@ -201,7 +201,8 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			args.put("alpha", selectivityAlpha.getValue().toString());
 			if (additionalNodes > 0)
 				args.put("additional", Integer.toString(additionalNodes));
-		} else if (selSpecies.isCustom()) {
+		// } else if (selSpecies.isCustom()) {
+		} else {
 			filterString = selSpecies.toString();
 			useDatabase = Databases.STRINGDB.getAPIName();
 			args.put("species",filterString);
@@ -212,7 +213,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			args.put("custom_alpha", selectivityAlpha.getValue().toString());
 			if (additionalNodes > 0)
 				args.put("additional_network_nodes", Integer.toString(additionalNodes));
-		} else {
+		} /*else {
 			useDatabase = Databases.STRING.getAPIName();
 			filterString = String.valueOf(selSpecies.getTaxId());
 			args.put("filter", filterString + ".%");
@@ -222,7 +223,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			args.put("alpha", selectivityAlpha.getValue().toString());
 			if (additionalNodes > 0)
 				args.put("additional", Integer.toString(additionalNodes));
-		}
+		}*/
 
 		if (selected != null && selected.length() > 0)
 			args.put("selected",selected.trim());

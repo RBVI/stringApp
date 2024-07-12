@@ -259,9 +259,9 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
 		// System.out.println("Importing "+stringIds);
-		String useDATABASE = Databases.STRING.getAPIName();
-		if (species.isCustom())
-			useDATABASE = Databases.STRINGDB.getAPIName();
+		String useDATABASE = Databases.STRINGDB.getAPIName();
+		// if (species.isCustom())
+		// 	useDATABASE = Databases.STRINGDB.getAPIName();
 		TaskFactory factory = new ImportNetworkTaskFactory(stringNetwork, getSpeciesName(), 
 		                                                   species, confidence, additionalNodes, stringIds,
 		                                                   queryTermMap, "", useDATABASE,

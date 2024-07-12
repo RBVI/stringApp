@@ -187,9 +187,9 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
 
 		// Temporary workaround until the database is completely moved
-		String database = Databases.STRING.getAPIName();
-		if (sp.isCustom())
-			database = Databases.STRINGDB.getAPIName();
+		String database = Databases.STRINGDB.getAPIName();
+		// if (sp.isCustom())
+		// 	database = Databases.STRINGDB.getAPIName();
 		LoadInteractions load = new LoadInteractions(stringNetwork, sp.toString(), sp,
 								confidence, limit.getValue(), stringIds, queryTermMap, newNetName, 
 								database, networkType.getSelectedValue());

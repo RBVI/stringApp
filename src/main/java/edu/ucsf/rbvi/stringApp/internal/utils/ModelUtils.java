@@ -830,8 +830,11 @@ public class ModelUtils {
 		List<String> species = new ArrayList<String>();
 		for (CyNode node : net.getNodeList()) {
 			String nSpecies = net.getRow(node).get(SPECIES, String.class);
+			System.out.println("Node: "+node.getSUID()+" = "+nSpecies);
 			if (nSpecies != null && !nSpecies.equals("") && !species.contains(nSpecies)) {
 				Species theSpecies = Species.getSpecies(nSpecies);
+				System.out.println("Species: "+theSpecies);
+
 				// TODO: This is kind of a hack for now and will be updated once we get the kingdom data from the server 
 				if (theSpecies != null
 						&& (theSpecies.getType().equals("core") || theSpecies.getType().equals("periphery")
@@ -1367,6 +1370,7 @@ public class ModelUtils {
 		// row.set(CyRootNetwork.SHARED_NAME, stringId);
 		row.set(DISPLAY, name);
 		row.set(STRINGID, id);
+		System.out.println("Node: "+newNode+" Species: "+speciesName);
 		row.set(SPECIES, speciesName);
 		row.set(ID, "string:"+id);
 		row.set(NAMESPACE, "stringdb");
@@ -1432,7 +1436,8 @@ public class ModelUtils {
 		String target = (String) edgeObj.get("stringId_B");
 		String sourceName = (String) edgeObj.get("preferredName_A");
 		String targetName = (String) edgeObj.get("preferredName_B");
-		String speciesName = (String) edgeObj.get("ncbiTaxonId");
+		String taxIdName = (String) edgeObj.get("ncbiTaxonId");
+		String speciesName = Species.getSpeciesName(taxIdName);
 		CyNode sourceNode;
 		CyNode targetNode;
 		if (nodeMap.get(source) == null) {

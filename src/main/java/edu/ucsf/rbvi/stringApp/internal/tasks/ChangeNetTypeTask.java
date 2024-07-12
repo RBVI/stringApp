@@ -161,8 +161,7 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			}
 			Species selSpecies = Species.getSpecies(species);
 			Map<String, String> args = new HashMap<>();
-			if (selSpecies.isCustom()) {
-				database = Databases.STRINGDB.getAPIName();
+			if (database.equals(Databases.STRINGDB.getAPIName())) {
 				args.put("identifiers", existing.trim());
 				args.put("required_score", String.valueOf((int)(confidence.getValue()*1000)));
 				args.put("network_type", newType.getAPIName());				

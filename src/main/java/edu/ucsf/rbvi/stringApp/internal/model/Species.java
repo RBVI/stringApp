@@ -315,7 +315,7 @@ public class Species implements Comparable<Species> {
 		} catch (Exception e) {
 			// ignore
 		}		
-		return "";
+		return taxId;
 	}
 
 	public static String getSpeciesOfficialName(String taxId) {
@@ -327,7 +327,7 @@ public class Species implements Comparable<Species> {
 		} catch (Exception e) {
 			// ignore
 		}		
-		return "";
+		return taxId;
 	}
 
 	public static int getSpeciesTaxId(String speciesName) {
