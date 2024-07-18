@@ -19,6 +19,7 @@ import org.cytoscape.work.util.ListMultipleSelection;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
+
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class ExportEnrichmentTableTask extends AbstractTask {

@@ -1,6 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Set;
 
 import org.json.simple.JSONObject;
 
+import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.task.edit.EditNetworkTitleTaskFactory;
@@ -36,7 +38,12 @@ import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
-public class LoadInteractions extends AbstractTask {
+/**
+ * This version of LoadInteractions will query the jensenlab database first, then
+ * query string-db.  This is used for STITCH, and Cross-species queries.
+ */
+
+public class LoadInteractions2 extends AbstractTask {
 	final StringNetwork stringNet;
 	final String speciesName;
 	final Species species;
@@ -48,23 +55,23 @@ public class LoadInteractions extends AbstractTask {
 	final String useDATABASE;
 	NetworkType netType;
 
-	public LoadInteractions(final StringNetwork stringNet, final String speciesName, final Species species, 
-            final int confidence, final int additionalNodes,
-									final List<String>stringIds,
-									final Map<String, String> queryTermMap,
-									final String netName,
-									final String useDATABASE,
-									final NetworkType netType) {
+	public LoadInteractions2(final StringNetwork stringNet, final String speciesName, final Species species, 
+                           final int confidence, final int additionalNodes,
+									         final List<String>stringIds,
+									         final Map<String, String> queryTermMap,
+									         final String netName,
+									         final String useDATABASE,
+									         final NetworkType netType) {
 		this(stringNet, speciesName, species, confidence, additionalNodes, stringIds, queryTermMap, netName, useDATABASE);
 		this.netType = netType;
 	}
 	
-	public LoadInteractions(final StringNetwork stringNet, final String speciesName, final Species species, 
-	                        final int confidence, final int additionalNodes,
-													final List<String>stringIds,
-													final Map<String, String> queryTermMap,
-													final String netName,
-													final String useDATABASE) {
+	public LoadInteractions2(final StringNetwork stringNet, final String speciesName, final Species species, 
+	                         final int confidence, final int additionalNodes,
+													 final List<String>stringIds,
+													 final Map<String, String> queryTermMap,
+													 final String netName,
+													 final String useDATABASE) {
 		this.stringNet = stringNet;
 		this.species = species;
 		this.additionalNodes = additionalNodes;
@@ -83,8 +90,6 @@ public class LoadInteractions extends AbstractTask {
 			monitor.setTitle("Loading data from STRING for " + uniqueIds.size() + " identifier(s).");
 		else if (useDATABASE.equals(Databases.STITCH.getAPIName()))
 			monitor.setTitle("Loading data from STITCH for " + uniqueIds.size() + " identifier(s).");
-		else if (useDATABASE.equals(Databases.STRINGDB.getAPIName()))
-			monitor.setTitle("Loading data from STRING-DB for " + uniqueIds.size() + " identifier(s).");
 
 		// System.out.println("Using database: "+useDATABASE);
 		StringManager manager = stringNet.getManager();
@@ -101,35 +106,24 @@ public class LoadInteractions extends AbstractTask {
 		Map<String, String> args = new HashMap<>();
 		String networkURL = manager.getNetworkURL();
 
-		// We use different arguments depending on the database
-		if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
-			// System.out.println("Identifiers: "+ids.trim());
-			args.put("identifiers",ids.trim());
-			args.put("required_score",String.valueOf(confidence*10));
-			args.put("network_type", netType.getAPIName());
-			networkURL = manager.getStringNetworkURL();
-			if (additionalNodes > 0) {
-				args.put("additional_network_nodes", Integer.toString(additionalNodes));
-			}
-			args.put("caller_identity", StringManager.CallerIdentity);
-			args.put("species", species.getName());
-		} else {
-			String conf = "0."+confidence;
-			if (confidence == 100) 
-				conf = "1.0";
-			args.put("database", netType.getAPIName());
-			args.put("entities",ids.trim());
-			args.put("score", conf);
-			args.put("caller_identity", StringManager.CallerIdentity);
-			if (additionalNodes > 0) {
-				args.put("additional", Integer.toString(additionalNodes));
-				if (useDATABASE.equals(Databases.STRING.getAPIName())) {
-					args.put("filter", String.valueOf(species.getTaxId()) + ".%");
-				} else {
-					args.put("filter", String.valueOf(species.getTaxId()) + ".%|CIDm%");
-				}
+		// FIXME: we need to be a bit careful with the "additional nodes" here since we don't really know how to get
+		// additional protein nodes at this point if we've queried with a compound
+		String conf = "0."+confidence;
+		if (confidence == 100) 
+			conf = "1.0";
+		args.put("database", netType.getAPIName());
+		args.put("entities",ids.trim());
+		args.put("score", conf);
+		args.put("caller_identity", StringManager.CallerIdentity);
+		if (additionalNodes > 0) {
+			args.put("additional", Integer.toString(additionalNodes));
+			if (useDATABASE.equals(Databases.STRING.getAPIName())) {
+				args.put("filter", String.valueOf(species.getTaxId()) + ".%");
+			} else {
+				args.put("filter", String.valueOf(species.getTaxId()) + ".%|CIDm%");
 			}
 		}
+
 		JSONObject results;
 		// System.out.println("URL: "+networkURL);
 		try {
@@ -143,7 +137,6 @@ public class LoadInteractions extends AbstractTask {
 		// System.out.println("results: "+results.toString());
 
 		Map<String, CyNode> nodeMap = new HashMap<>();
-		// This may change...
 		CyNetwork network = JSONUtils.createNetworkFromJSON(stringNet, speciesName, results, 
 		                                                    queryTermMap, nodeMap, ids.trim(), 
 		                                                    netName, useDATABASE, netType.getAPIName());
@@ -153,12 +146,6 @@ public class LoadInteractions extends AbstractTask {
 			return;
 		}
 
-		// Rename network collection to have the same name as network
-		// EditNetworkTitleTaskFactory editNetworkTitle = (EditNetworkTitleTaskFactory) manager
-		//		.getService(EditNetworkTitleTaskFactory.class);
-		//insertTasksAfterCurrentTask(editNetworkTitle.createTaskIterator(network,
-		//		network.getRow(network).get(CyNetwork.NAME, String.class)));
-		
 		// Set our confidence score
 		ModelUtils.setConfidence(network, ((double)confidence)/100.0);
 		ModelUtils.setNetworkType(network, netType.toString());
@@ -168,53 +155,46 @@ public class LoadInteractions extends AbstractTask {
 		ModelUtils.setNetURI(network, manager.getNetworkURL());
 		stringNet.setNetwork(network);
 
-		// Finally, update any node information if we're using from STRING
-		// Only do this when we asked for additional nodes
-		if (useDATABASE.equals(Databases.STRINGDB.getAPIName()) && additionalNodes > 0) {
-			String terms = "";
-			for (String term: nodeMap.keySet()) {
-				terms += term+"\n";
-			}
-			try {
-				Map<String, List<Annotation>> annotations = stringNet.getAnnotations(stringNet.getManager(), species, terms, useDATABASE, true);
-				// TODO: [Custom] do we need to resolve or just take the first annotation or last one, which is currently the case...?
-				for (String s: annotations.keySet()) {
-					CyNode node = nodeMap.get(s);
-					for (Annotation a: annotations.get(s)) {
-						ModelUtils.updateNodeAttributes(network.getRow(node), a, false);
-					}
-				}
-			} catch (ConnectionException ce) {
-				monitor.showMessage(TaskMonitor.Level.ERROR, "Unable to get additional node annotations");
-			}
-		} 
-		if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
-			// OK, now get data from TISSUES, COMPARTMENTS, etc.
-			args.clear();
-			// we need to get all ids, not just the query ids 
-			if (additionalNodes > 0) {
-				ids = null;
-				for (String id: nodeMap.keySet()) {
-					if (ids == null)
-						ids = id;
-					else
-						ids += "\n"+id;
-				}
-			}
-			args.put("entities",ids.trim());
-			args.put("caller_identity", StringManager.CallerIdentity);
-			networkURL = manager.getNodeInfoURL();
-			System.out.println("Network URL: "+networkURL);
-			try {
-				results = HttpUtils.postJSON(networkURL, args, manager);
-				JSONUtils.addExtraNodeData(stringNet, results);
-			} catch (ConnectionException e) {
-				e.printStackTrace();
-				monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
-				return;
-			}
+		/**
+		 * At this point, we have the interactions from the jensenlab servers -- specifically,
+		 * either inter-species interactions or compound-compound and compound-protein interactions.
+		 * The next step is to augment those with the intra-species protein-protein interactions.
+		 */
 
+		// Find all of the protein node identifiers
+		List<String> proteins = ModelUtils.getProteinNodes(network);
+		ids = null;
+		for (String protein: proteins) {
+			if (ids == null)
+				ids = protein;
+			else
+				ids += "\n"+protein;
 		}
+
+		// Query string
+		args.clear();
+		// System.out.println("Identifiers: "+proteins.trim());
+		networkURL = manager.getStringNetworkURL();
+		args.put("identifiers",ids.trim());
+		args.put("required_score",String.valueOf(confidence*10));
+		args.put("network_type", netType.getAPIName());
+		if (additionalNodes > 0) {
+			args.put("additional_network_nodes", Integer.toString(additionalNodes));
+		}
+		args.put("caller_identity", StringManager.CallerIdentity);
+
+		try {
+			results = HttpUtils.postJSON(networkURL, args, manager);
+		} catch (ConnectionException e) {
+			e.printStackTrace();
+			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+			return;
+		}
+
+		// Add to network
+		List<CyEdge> newEdges = new ArrayList<>();
+		List<CyNode> newNodes = JSONUtils.augmentNetworkFromJSON(stringNet, network, newEdges, 
+						                                                 results, null, useDATABASE, netType.getAPIName());
 
 		// System.out.println("Results: "+results.toString());
 		int viewThreshold = ModelUtils.getViewThreshold(manager);

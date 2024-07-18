@@ -22,6 +22,8 @@ import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.model.TextMiningResult;
+
+import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class GetStringIDsFromPubmedTask extends AbstractTask implements ObservableTask {
@@ -88,7 +90,7 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 			return;
 		}
 		
-		JSONObject result = ModelUtils.getResultsFromJSON(object, JSONObject.class);
+		JSONObject result = JSONUtils.getResultsFromJSON(object, JSONObject.class);
 		if (result == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"Pubmed returned no results");
 			// System.out.println("object wrong type: "+object.toString());
@@ -136,7 +138,7 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 			return;
 		}
 
-		tmResults = ModelUtils.getIdsFromJSON(manager, species.getTaxId(), tmobject, query, false);
+		tmResults = JSONUtils.getIdsFromJSON(manager, species.getTaxId(), tmobject, query, false);
 
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = new ArrayList<>();

@@ -9,6 +9,7 @@ import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.TaskIterator;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.utils.EnrichmentUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class GetPublicationsTaskFactory extends AbstractNetworkTaskFactory
@@ -28,7 +29,7 @@ public class GetPublicationsTaskFactory extends AbstractNetworkTaskFactory
 
 	public boolean isReady(CyNetwork network) {
 		if (manager.haveURIs() && ModelUtils.isStringNetwork(network)) {
-			List<String> netSpecies = ModelUtils.getEnrichmentNetSpecies(network);
+			List<String> netSpecies = EnrichmentUtils.getEnrichmentNetSpecies(network);
 			if (netSpecies.size() > 0) {
 				return true;
 			}
@@ -46,7 +47,7 @@ public class GetPublicationsTaskFactory extends AbstractNetworkTaskFactory
 
 	public boolean isReady(CyNetworkView netView) {
 		if (manager.haveURIs() && ModelUtils.isStringNetwork(netView.getModel())) {
-			List<String> netSpecies = ModelUtils.getEnrichmentNetSpecies(netView.getModel());
+			List<String> netSpecies = EnrichmentUtils.getEnrichmentNetSpecies(netView.getModel());
 			if (netSpecies.size() > 0) {
 				return true;
 			}

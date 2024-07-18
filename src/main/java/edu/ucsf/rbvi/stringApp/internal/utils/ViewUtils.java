@@ -41,6 +41,8 @@ import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.ChartType;
 
+import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
+
 public class ViewUtils {
 	public static String STYLE_NAME_SIMPLE = "STRING";
 	public static String STYLE_NAME = "STRING style";
@@ -59,7 +61,7 @@ public class ViewUtils {
 	public static CyNetworkView styleNetwork(StringManager manager, CyNetwork network,
 	                                         CyNetworkView netView) {
 		boolean useStitch = false;
-		if (network.getDefaultNodeTable().getColumn(ModelUtils.TYPE) != null)
+		if (network.getDefaultNodeTable().getColumn(ColumnNames.TYPE) != null)
 			useStitch = true;
 		VisualStyle stringStyle = createStyle(manager, network, useStitch);
 
@@ -168,7 +170,7 @@ public class ViewUtils {
 		{
 			VisualProperty customGraphics = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_1");
 			PassthroughMapping pMapping = 
-				(PassthroughMapping) passthroughFactory.createVisualMappingFunction(ModelUtils.STYLE, 
+				(PassthroughMapping) passthroughFactory.createVisualMappingFunction(ColumnNames.STYLE, 
 				                                                                    String.class, customGraphics);
 			stringStyle.addVisualMappingFunction(pMapping);
 		}
@@ -186,7 +188,7 @@ public class ViewUtils {
 		// Set the edge width to be dependent on the total score
 		{
 			ContinuousMapping<Double,Double> cMapping = 
-				(ContinuousMapping) continuousFactory.createVisualMappingFunction(ModelUtils.SCORE, Double.class, 
+				(ContinuousMapping) continuousFactory.createVisualMappingFunction(ColumnNames.SCORE, Double.class, 
 				                                                                  BasicVisualLexicon.EDGE_WIDTH);
 			cMapping.addPoint(0.2, new BoundaryRangeValues<Double>(0.8,0.8,0.8));
 			cMapping.addPoint(0.5, new BoundaryRangeValues<Double>(2.0,2.0,2.0));
@@ -196,7 +198,7 @@ public class ViewUtils {
 
 		{
 			ContinuousMapping<Double,Integer> cMapping = 
-				(ContinuousMapping) continuousFactory.createVisualMappingFunction(ModelUtils.SCORE, Double.class, 
+				(ContinuousMapping) continuousFactory.createVisualMappingFunction(ColumnNames.SCORE, Double.class, 
 				                                                                  BasicVisualLexicon.EDGE_TRANSPARENCY);
 			cMapping.addPoint(0.2, new BoundaryRangeValues<Integer>(34,34,34));
 			cMapping.addPoint(0.5, new BoundaryRangeValues<Integer>(85,85,85));
@@ -251,7 +253,7 @@ public class ViewUtils {
 			// need to do this because Cytoscape doesn't have a "pill" shape
 			{
 				DiscreteMapping<String,Integer> dMapping = 
-					(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 
+					(DiscreteMapping) discreteFactory.createVisualMappingFunction(ColumnNames.TYPE, String.class, 
 												   	                                            BasicVisualLexicon.NODE_TRANSPARENCY);
 				dMapping.putMapValue("compound", 0);
 				dMapping.putMapValue("protein", 255);
@@ -261,7 +263,7 @@ public class ViewUtils {
 			// Set the appropriate width
 			{
 				DiscreteMapping<String,Double> dMapping = 
-					(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 
+					(DiscreteMapping) discreteFactory.createVisualMappingFunction(ColumnNames.TYPE, String.class, 
 											   	                                            BasicVisualLexicon.NODE_WIDTH);
 				dMapping.putMapValue("compound", 100.0);
 				dMapping.putMapValue("protein", 50.0);
@@ -271,7 +273,7 @@ public class ViewUtils {
 			// Set the appropriate height
 			{
 				DiscreteMapping<String,Double> dMapping = 
-					(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 
+					(DiscreteMapping) discreteFactory.createVisualMappingFunction(ColumnNames.TYPE, String.class, 
 											   	                                            BasicVisualLexicon.NODE_HEIGHT);
 				dMapping.putMapValue("compound", 40.0);
 				dMapping.putMapValue("protein", 50.0);
@@ -281,7 +283,7 @@ public class ViewUtils {
 			// Set the appropriate shape
 			{
 				DiscreteMapping<String,NodeShape> dMapping = 
-					(DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE, String.class, 
+					(DiscreteMapping) discreteFactory.createVisualMappingFunction(ColumnNames.TYPE, String.class, 
 											   	                                            BasicVisualLexicon.NODE_SHAPE);
 				dMapping.putMapValue("compound", NodeShapeVisualProperty.ROUND_RECTANGLE);
 				dMapping.putMapValue("protein", NodeShapeVisualProperty.ELLIPSE);
@@ -307,7 +309,7 @@ public class ViewUtils {
 			{
 				VisualProperty customGraphics = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_2");
 				PassthroughMapping pMapping = 
-					(PassthroughMapping) passthroughFactory.createVisualMappingFunction(ModelUtils.CV_STYLE, 
+					(PassthroughMapping) passthroughFactory.createVisualMappingFunction(ColumnNames.CV_STYLE, 
 					                                                                    String.class, customGraphics);
 				stringStyle.addVisualMappingFunction(pMapping);
 			}
@@ -352,7 +354,7 @@ public class ViewUtils {
 		if (show && manager.haveChemViz()) {
 			VisualProperty customGraphics = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_2");
 			PassthroughMapping pMapping = 
-				(PassthroughMapping) passthroughFactory.createVisualMappingFunction(ModelUtils.CV_STYLE, 
+				(PassthroughMapping) passthroughFactory.createVisualMappingFunction(ColumnNames.CV_STYLE, 
 				                                                                    String.class, customGraphics);
 			stringStyle.addVisualMappingFunction(pMapping);
 		} else {
@@ -365,7 +367,7 @@ public class ViewUtils {
 	                                        CyNetwork net, boolean show) {
 
 		boolean useStitch = false;
-		if (net.getDefaultNodeTable().getColumn(ModelUtils.TYPE) != null)
+		if (net.getDefaultNodeTable().getColumn(ColumnNames.TYPE) != null)
 		 	useStitch = true;
 
 		VisualMappingFunctionFactory discreteFactory = 
@@ -378,7 +380,7 @@ public class ViewUtils {
 			{
 				VisualProperty customGraphics = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_3");
 				PassthroughMapping pMapping = 
-					(PassthroughMapping) passthroughFactory.createVisualMappingFunction(ModelUtils.ELABEL_STYLE, 
+					(PassthroughMapping) passthroughFactory.createVisualMappingFunction(ColumnNames.ELABEL_STYLE, 
 					                                                                    String.class, customGraphics);
 				stringStyle.addVisualMappingFunction(pMapping);
 			}
@@ -411,7 +413,7 @@ public class ViewUtils {
 
 			{
 				PassthroughMapping pMapping = (PassthroughMapping) passthroughFactory
-						.createVisualMappingFunction(ModelUtils.DISPLAY, String.class,
+						.createVisualMappingFunction(ColumnNames.DISPLAY, String.class,
 								BasicVisualLexicon.NODE_LABEL);
 				stringStyle.addVisualMappingFunction(pMapping);
 			}
@@ -444,7 +446,7 @@ public class ViewUtils {
 			{
 				VisualProperty customGraphics = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_1");
 				PassthroughMapping pMapping = 
-					(PassthroughMapping) passthroughFactory.createVisualMappingFunction(ModelUtils.STYLE, 
+					(PassthroughMapping) passthroughFactory.createVisualMappingFunction(ColumnNames.STYLE, 
 					                                                                    String.class, customGraphics);
 				stringStyle.addVisualMappingFunction(pMapping);
 			}
@@ -548,7 +550,7 @@ public class ViewUtils {
 			
 			// make the new mapping after removing the old one
 			dMapping = (DiscreteMapping) discreteFactory.createVisualMappingFunction(
-					ModelUtils.SPECIES, String.class, BasicVisualLexicon.NODE_FILL_COLOR);
+					ColumnNames.SPECIES, String.class, BasicVisualLexicon.NODE_FILL_COLOR);
 			if (mapValues.size() == 0) {
 				dMapping.putMapValue(originalSpiecesList.get(0), Color.decode(organismColors.get(0)));
 				dMapping.putMapValue(originalSpiecesList.get(1), Color.decode(organismColors.get(1)));
@@ -692,11 +694,11 @@ public class ViewUtils {
 		}		
 		// save in network table
 		CyTable netTable = network.getDefaultNetworkTable();
-		ModelUtils.createListColumnIfNeeded(netTable, String.class, ModelUtils.NET_ENRICHMENT_VISTEMRS);
-		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_VISTEMRS, shownTermNames);
+		ModelUtils.createListColumnIfNeeded(netTable, String.class, ColumnNames.NET_ENRICHMENT_VISTEMRS);
+		netTable.getRow(network.getSUID()).set(ColumnNames.NET_ENRICHMENT_VISTEMRS, shownTermNames);
 		
-		ModelUtils.createListColumnIfNeeded(netTable, String.class, ModelUtils.NET_ENRICHMENT_VISCOLORS);
-		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_VISCOLORS, colorList);
+		ModelUtils.createListColumnIfNeeded(netTable, String.class, ColumnNames.NET_ENRICHMENT_VISCOLORS);
+		netTable.getRow(network.getSUID()).set(ColumnNames.NET_ENRICHMENT_VISCOLORS, colorList);
 	}
 
 	private static void createColumns(CyTable nodeTable) {

@@ -36,6 +36,8 @@ import edu.ucsf.rbvi.stringApp.internal.model.EvidenceType;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ChangeNetTypeTaskFactory;
+
+import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
@@ -327,7 +329,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 			}
 			// add combined score
 			JLabel valueLabel = new JLabel("--");
-			Double score = ModelUtils.getDouble(currentNetwork, edge, ModelUtils.SCORE);
+			Double score = ModelUtils.getDouble(currentNetwork, edge, ColumnNames.SCORE);
 			if (score != null) {
 				valueLabel = new JLabel(score.toString());
 			}			
@@ -348,8 +350,8 @@ public class StringEdgePanel extends AbstractStringPanel {
 
 		
 		// String name = ModelUtils.getName(currentNetwork, edge);
-		String name = ModelUtils.getString(currentNetwork, edge.getSource(), ModelUtils.DISPLAY) + " - "
-				+ ModelUtils.getString(currentNetwork, edge.getTarget(), ModelUtils.DISPLAY);
+		String name = ModelUtils.getString(currentNetwork, edge.getSource(), ColumnNames.DISPLAY) + " - "
+				+ ModelUtils.getString(currentNetwork, edge.getTarget(), ColumnNames.DISPLAY);
 		
 		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, name, panel, false, 10);
 		Border etchedBorder = BorderFactory.createEtchedBorder();
@@ -364,8 +366,8 @@ public class StringEdgePanel extends AbstractStringPanel {
 		String sourceNode = ModelUtils.getName(currentNetwork, edge.getSource());
 		String targetNode = ModelUtils.getName(currentNetwork, edge.getTarget());
 		String netType = "interaction";
-		if (ModelUtils.getString(currentNetwork, currentNetwork, ModelUtils.NETWORK_TYPE) != null
-				&& ModelUtils.getString(currentNetwork, currentNetwork, ModelUtils.NETWORK_TYPE)
+		if (ModelUtils.getString(currentNetwork, currentNetwork, ColumnNames.NETWORK_TYPE) != null
+				&& ModelUtils.getString(currentNetwork, currentNetwork, ColumnNames.NETWORK_TYPE)
 						.equals(NetworkType.PHYSICAL.toString()))
 			netType = "interaction-physical";
 
@@ -439,10 +441,10 @@ public class StringEdgePanel extends AbstractStringPanel {
 		double minValue = 1.0;
 		for (CyEdge edge: currentNetwork.getEdgeList()) {
 			CyRow edgeRow = currentNetwork.getRow(edge);
-			Double edgeScore = edgeRow.get(ModelUtils.SCORE, Double.class);
+			Double edgeScore = edgeRow.get(ColumnNames.SCORE, Double.class);
 			if (edgeScore == null) 
 				continue;
-			Double v = edgeRow.get(ModelUtils.STRINGDB_NAMESPACE, label, Double.class);
+			Double v = edgeRow.get(ColumnNames.STRINGDB_NAMESPACE, label, Double.class);
 			if (v == null) {
 				minValue = 0.0;
 				break;
@@ -460,12 +462,12 @@ public class StringEdgePanel extends AbstractStringPanel {
 		CyNetworkView view = manager.getCurrentNetworkView();
 		for (CyEdge edge: currentNetwork.getEdgeList()) {
 			CyRow edgeRow = currentNetwork.getRow(edge);
-			Double edgeScore = edgeRow.get(ModelUtils.SCORE, Double.class);
+			Double edgeScore = edgeRow.get(ColumnNames.SCORE, Double.class);
 			if (edgeScore == null) 
 				continue;
 			boolean show = true;
 			for (String lbl: filter.keySet()) {
-				Double v = edgeRow.get(ModelUtils.STRINGDB_NAMESPACE, lbl.toLowerCase(), Double.class);
+				Double v = edgeRow.get(ColumnNames.STRINGDB_NAMESPACE, lbl.toLowerCase(), Double.class);
 				// hack needed in order to avoid mistakes in the comparison of the numbers
 				int nv = (int)(filter.get(lbl)*1000);
 				if (lbl.equals("Score"))
@@ -516,7 +518,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 			for (String lbl: color.keySet()) {
 				if (!color.get(lbl))
 					continue;
-				Double v = edgeRow.get(ModelUtils.STRINGDB_NAMESPACE, lbl, Double.class);
+				Double v = edgeRow.get(ColumnNames.STRINGDB_NAMESPACE, lbl, Double.class);
 				if (v != null && v > max) {
 					max = v;
 					clr = colorMap.get(lbl);

@@ -80,6 +80,9 @@ import edu.ucsf.rbvi.stringApp.internal.ui.TextMiningWebServiceClient;
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.PublicationsCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.StringCytoPanel;
+
+import edu.ucsf.rbvi.stringApp.internal.utils.EnrichmentUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class StringManager implements NetworkAddedListener, SessionLoadedListener, NetworkAboutToBeDestroyedListener, SetCurrentNetworkListener {
@@ -324,11 +327,11 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 					// based on the app version
 					try {
 						if (alternativeCONFIGURI != null && alternativeCONFIGURI.length() > 0) {
-							uris = ModelUtils.getResultsFromJSON(
+							uris = JSONUtils.getResultsFromJSON(
 									HttpUtils.getJSON(alternativeCONFIGURI, args, manager, 10000),
 									JSONObject.class);
 						} else {
-							uris = ModelUtils.getResultsFromJSON(HttpUtils.getJSON(url, args, manager, 10000), JSONObject.class);
+							uris = JSONUtils.getResultsFromJSON(HttpUtils.getJSON(url, args, manager, 10000), JSONObject.class);
 						}
 					} catch (ConnectionException e) {
 						e.printStackTrace();
@@ -935,7 +938,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		CyNetwork network = e.getNetwork();
 		// delete enrichment tables
 		CyTableManager tableManager = getService(CyTableManager.class);
-		Set<CyTable> oldTables = ModelUtils.getAllEnrichmentTables(this, network, EnrichmentTerm.ENRICHMENT_TABLE_PREFIX);
+		Set<CyTable> oldTables = EnrichmentUtils.getAllEnrichmentTables(this, network, EnrichmentTerm.ENRICHMENT_TABLE_PREFIX);
 		for (CyTable table : oldTables) {
 			tableManager.deleteTable(table.getSUID());
 		}

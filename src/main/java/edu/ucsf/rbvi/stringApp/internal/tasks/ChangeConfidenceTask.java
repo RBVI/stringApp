@@ -35,6 +35,9 @@ import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+
+import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
+import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
@@ -111,7 +114,7 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 			// Yes, just trim the network
 			List<CyEdge> removeEdges = new ArrayList<>();
 			for (CyEdge edge: network.getEdgeList()) {
-				Double score = network.getRow(edge).get(ModelUtils.SCORE, Double.class);
+				Double score = network.getRow(edge).get(ColumnNames.SCORE, Double.class);
 				if (score != null && (int)(score*1000) < newConfidence) {
 					removeEdges.add(edge);
 				}
@@ -163,8 +166,8 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 
 			if (results != null) {
 				// This may change...
-				List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, 
-						                                                      results, null, database, currentType);
+				List<CyNode> newNodes = JSONUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, 
+						                                                     results, null, database, currentType);
 
 				// TODO: newEdges appears empty when this status message is printed
 				//monitor.setStatusMessage("Adding "+newEdges.size()+" edges");

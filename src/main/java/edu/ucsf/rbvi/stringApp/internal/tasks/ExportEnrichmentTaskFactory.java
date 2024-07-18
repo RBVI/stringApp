@@ -11,7 +11,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
-import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.EnrichmentUtils;
 
 public class ExportEnrichmentTaskFactory extends AbstractNetworkTaskFactory {
 	// implements ExportTableTaskFactory {
@@ -31,7 +31,7 @@ public class ExportEnrichmentTaskFactory extends AbstractNetworkTaskFactory {
 	}
 
 	public boolean isReady(CyNetwork network) {
-		if (ModelUtils.getAllEnrichmentTables(manager, network, EnrichmentTerm.ENRICHMENT_TABLE_PREFIX).size() > 0)
+		if (EnrichmentUtils.getAllEnrichmentTables(manager, network, EnrichmentTerm.ENRICHMENT_TABLE_PREFIX).size() > 0)
 			return true;
 		else
 			return false;
@@ -40,7 +40,7 @@ public class ExportEnrichmentTaskFactory extends AbstractNetworkTaskFactory {
 	@Override
 	public TaskIterator createTaskIterator(CyNetwork network) {
 		return new TaskIterator(new ExportEnrichmentTableTask(manager, network, panel,
-				ModelUtils.getEnrichmentTable(manager, network, TermCategory.ALL.getTable()), false));
+				EnrichmentUtils.getEnrichmentTable(manager, network, TermCategory.ALL.getTable()), false));
 	}
 
 }

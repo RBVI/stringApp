@@ -51,8 +51,11 @@ import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
+
 import edu.ucsf.rbvi.stringApp.internal.ui.GetTermsPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.SearchOptionsPanel;
+
+import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class StringifyTask extends AbstractTask implements ObservableTask, TaskObserver {
@@ -457,11 +460,11 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 			CyNetwork loadedNetwork = stringNetwork.getNetwork();
 
 			// Get all of the nodes in the network
-			ModelUtils.createNodeMap(network, loadedNetwork, nodeMap, column, ModelUtils.QUERYTERM);
+			ModelUtils.createNodeMap(network, loadedNetwork, nodeMap, column, ColumnNames.QUERYTERM);
 
 			List<String> cols = new ArrayList<String>();
-			cols.add(ModelUtils.QUERYTERM);
-			cols.add(ModelUtils.DISPLAY);
+			cols.add(ColumnNames.QUERYTERM);
+			cols.add(ColumnNames.DISPLAY);
 
 			// Copy over any missing nodes that we didn't find in STRING
 			// column is the node attribute column chosen by the user to be used as IDs

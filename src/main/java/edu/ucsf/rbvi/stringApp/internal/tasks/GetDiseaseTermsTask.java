@@ -15,6 +15,8 @@ import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.EntityIdentifier;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
+
+import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class GetDiseaseTermsTask extends AbstractTask implements ObservableTask {
@@ -62,7 +64,7 @@ public class GetDiseaseTermsTask extends AbstractTask implements ObservableTask 
 			return;
 		}
 
-		matches = ModelUtils.getEntityIdsFromJSON(stringManager, results);
+		matches = JSONUtils.getEntityIdsFromJSON(stringManager, results);
 		
 	}
 	

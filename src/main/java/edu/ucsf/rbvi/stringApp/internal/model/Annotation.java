@@ -10,7 +10,7 @@ import java.util.Map;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 
 public class Annotation {
 	String annotation;
@@ -94,10 +94,10 @@ public class Annotation {
 	public static Map<String, List<Annotation>> getAnnotations(JSONObject json, String queryTerms,
 	                                                           Map<String, List<Annotation>> map, Species species, String useDATABASE) {
 		String[] terms = queryTerms.trim().split("\n");
-		JSONArray annotationArray = ModelUtils.getResultsFromJSON(json, JSONArray.class);
+		JSONArray annotationArray = JSONUtils.getResultsFromJSON(json, JSONArray.class);
 		if (useDATABASE.equals(Databases.JENSENLAB.getAPIName()))
 			annotationArray = (JSONArray) annotationArray.get(0);
-		Integer version = ModelUtils.getVersionFromJSON(json);
+		Integer version = JSONUtils.getVersionFromJSON(json);
 
 		// If we switch the API back to use a start of 0, this will need to change
 		int queryIndexStart = 0;

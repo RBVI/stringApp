@@ -47,6 +47,10 @@ import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
+
+import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
+import edu.ucsf.rbvi.stringApp.internal.utils.EnrichmentUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
@@ -108,7 +112,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		if (selected.split("\n").length <= 1) {
 		 	selectedNodesOnly = false;
 		}
-		List<String> speciesInNetwork = ModelUtils.getEnrichmentNetSpecies(network);
+		List<String> speciesInNetwork = EnrichmentUtils.getEnrichmentNetSpecies(network);
 		allNetSpecies = new ListSingleSelection<String>(speciesInNetwork);
 		allNetSpecies.setSelectedValue(speciesInNetwork.get(0));
 
@@ -208,8 +212,8 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		// TODO: Remove specific nodes from selected?
 		CyTable nodeTable = network.getDefaultNodeTable();
 		for (final CyNode node : network.getNodeList()) {
-			if (nodeTable.getColumn(ModelUtils.STRINGID) != null) {
-				String stringid = nodeTable.getRow(node.getSUID()).get(ModelUtils.STRINGID,
+			if (nodeTable.getColumn(ColumnNames.STRINGID) != null) {
+				String stringid = nodeTable.getRow(node.getSUID()).get(ColumnNames.STRINGID,
 						String.class);
 				if (stringid != null) {
 					stringNodesMap.put(stringid, node.getSUID());
@@ -219,7 +223,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 
 		// clear old results
 		// TODO: [N] test deletion of old tables
-		ModelUtils.deleteMainEnrichmentTables(network, manager, publOnly);
+		EnrichmentUtils.deleteMainEnrichmentTables(network, manager, publOnly);
 
 		// retrieve enrichment (new API)
 		getEnrichmentJSON(selected, species, bgNodes);
@@ -241,41 +245,41 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		if (!publOnly) {
 			String defaultGroup = TermCategory.ALL.getTable();
 			// Add enrichment table All to the groups
-			ModelUtils.createListColumnIfNeeded(netTable, String.class, ModelUtils.NET_ENRICHMENT_TABLES);
-			List<String> enrichmentGroups = netTable.getRow(network.getSUID()).getList(ModelUtils.NET_ENRICHMENT_TABLES, String.class);
+			ModelUtils.createListColumnIfNeeded(netTable, String.class, ColumnNames.NET_ENRICHMENT_TABLES);
+			List<String> enrichmentGroups = netTable.getRow(network.getSUID()).getList(ColumnNames.NET_ENRICHMENT_TABLES, String.class);
 			if (enrichmentGroups == null) 
 				enrichmentGroups = new ArrayList<String>();
 			if (!enrichmentGroups.contains(defaultGroup))
 				enrichmentGroups.add(defaultGroup);
-			netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_TABLES, enrichmentGroups);
+			netTable.getRow(network.getSUID()).set(ColumnNames.NET_ENRICHMENT_TABLES, enrichmentGroups);
 	
 			// Create settings table if needed and save its SUID in the network table
-			ModelUtils.createColumnIfNeeded(netTable, Long.class, ModelUtils.NET_ENRICHMENT_SETTINGS_TABLE_SUID);
-			CyTable settignsTable = ModelUtils.getEnrichmentSettingsTable(manager, network);
-			netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_SETTINGS_TABLE_SUID, settignsTable.getSUID());
+			ModelUtils.createColumnIfNeeded(netTable, Long.class, ColumnNames.NET_ENRICHMENT_SETTINGS_TABLE_SUID);
+			CyTable settignsTable = EnrichmentUtils.getEnrichmentSettingsTable(manager, network);
+			netTable.getRow(network.getSUID()).set(ColumnNames.NET_ENRICHMENT_SETTINGS_TABLE_SUID, settignsTable.getSUID());
 			// Save analyzed nodes into the new settings table
-			ModelUtils.createListColumnIfNeeded(settignsTable, Long.class, ModelUtils.NET_ANALYZED_NODES);
-			settignsTable.getRow(defaultGroup).set(ModelUtils.NET_ANALYZED_NODES, analyzedNodesSUID);
+			ModelUtils.createListColumnIfNeeded(settignsTable, Long.class, ColumnNames.NET_ANALYZED_NODES);
+			settignsTable.getRow(defaultGroup).set(ColumnNames.NET_ANALYZED_NODES, analyzedNodesSUID);
 		} else {
-			ModelUtils.createListColumnIfNeeded(netTable, Long.class, ModelUtils.NET_ANALYZED_NODES_PUBL);
-			netTable.getRow(network.getSUID()).set(ModelUtils.NET_ANALYZED_NODES_PUBL, analyzedNodesSUID);
+			ModelUtils.createListColumnIfNeeded(netTable, Long.class, ColumnNames.NET_ANALYZED_NODES_PUBL);
+			netTable.getRow(network.getSUID()).set(ColumnNames.NET_ANALYZED_NODES_PUBL, analyzedNodesSUID);
 		}
 			
 		// save ppi enrichment in network table
 		if (ppiSummary != null) {
-			writeDouble(netTable, ppiSummary, ModelUtils.NET_PPI_ENRICHMENT);
-			writeInteger(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_NODES);
-			writeInteger(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_EXPECTED_EDGES);
-			writeInteger(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_EDGES);
-			writeDouble(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_CLSTR);
-			writeDouble(netTable, ppiSummary, ModelUtils.NET_ENRICHMENT_DEGREE);
+			writeDouble(netTable, ppiSummary, ColumnNames.NET_PPI_ENRICHMENT);
+			writeInteger(netTable, ppiSummary, ColumnNames.NET_ENRICHMENT_NODES);
+			writeInteger(netTable, ppiSummary, ColumnNames.NET_ENRICHMENT_EXPECTED_EDGES);
+			writeInteger(netTable, ppiSummary, ColumnNames.NET_ENRICHMENT_EDGES);
+			writeDouble(netTable, ppiSummary, ColumnNames.NET_ENRICHMENT_CLSTR);
+			writeDouble(netTable, ppiSummary, ColumnNames.NET_ENRICHMENT_DEGREE);
 		} else {
-			ModelUtils.deleteColumnIfExisting(netTable, ModelUtils.NET_PPI_ENRICHMENT);
-			ModelUtils.deleteColumnIfExisting(netTable, ModelUtils.NET_ENRICHMENT_NODES);
-			ModelUtils.deleteColumnIfExisting(netTable, ModelUtils.NET_ENRICHMENT_EXPECTED_EDGES);
-			ModelUtils.deleteColumnIfExisting(netTable, ModelUtils.NET_ENRICHMENT_EDGES);
-			ModelUtils.deleteColumnIfExisting(netTable, ModelUtils.NET_ENRICHMENT_CLSTR);
-			ModelUtils.deleteColumnIfExisting(netTable, ModelUtils.NET_ENRICHMENT_DEGREE);
+			ModelUtils.deleteColumnIfExisting(netTable, ColumnNames.NET_PPI_ENRICHMENT);
+			ModelUtils.deleteColumnIfExisting(netTable, ColumnNames.NET_ENRICHMENT_NODES);
+			ModelUtils.deleteColumnIfExisting(netTable, ColumnNames.NET_ENRICHMENT_EXPECTED_EDGES);
+			ModelUtils.deleteColumnIfExisting(netTable, ColumnNames.NET_ENRICHMENT_EDGES);
+			ModelUtils.deleteColumnIfExisting(netTable, ColumnNames.NET_ENRICHMENT_CLSTR);
+			ModelUtils.deleteColumnIfExisting(netTable, ColumnNames.NET_ENRICHMENT_DEGREE);
 		}
 		
 		// show enrichment results
@@ -339,9 +343,9 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			return;
 			// throw new RuntimeException("Enrichment retrieval returned no results, possibly due to an error.");
 		}
-		List<EnrichmentTerm> terms = ModelUtils.getEnrichmentFromJSON(manager, results, stringNodesMap, network);
+		List<EnrichmentTerm> terms = JSONUtils.getEnrichmentFromJSON(manager, results, stringNodesMap, network);
 		if (terms == null) {
-			String errorMsg = ModelUtils.getErrorMessageFromJSON(manager, results);
+			String errorMsg = JSONUtils.getErrorMessageFromJSON(manager, results);
 			monitor.showMessage(Level.ERROR,
 					"Enrichment retrieval returned no results, possibly due to an error. " + errorMsg);
 			enrichmentResult = null;
@@ -412,7 +416,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			return null;
 		}
 		Map<String, String> ppiEnrichment = 
-						ModelUtils.getEnrichmentPPIFromJSON(manager, results, stringNodesMap, network);
+						JSONUtils.getEnrichmentPPIFromJSON(manager, results, stringNodesMap, network);
 		if (ppiEnrichment == null) {
 			monitor.showMessage(Level.ERROR,
 					"PPI Enrichment retrieval returned no results, possibly due to an error.");
@@ -427,84 +431,6 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		return ppiEnrichment;
 	}
 
-	// private boolean getEnrichment(String[] selectedNodes, String filter, String species,
-	// String enrichmentCategory) throws Exception {
-	// Map<String, String> queryMap = new HashMap<String, String>();
-	// String xmlQuery = "<experiment>";
-	// if (filter.length() > 0) {
-	// xmlQuery += "<filter>" + filter + "</filter>";
-	// }
-	// xmlQuery += "<tax_id>" + species + "</tax_id>";
-	// xmlQuery += "<category>" + enrichmentCategory + "</category>";
-	// xmlQuery += "<hits>";
-	// for (String selectedNode : selectedNodes) {
-	// xmlQuery += "<gene>" + selectedNode + "</gene>";
-	// }
-	// xmlQuery += "</hits></experiment>";
-	// // System.out.println(xmlQuery);
-	// queryMap.put("xml", xmlQuery);
-	//
-	// // get and parse enrichment results
-	// List<EnrichmentTerm> enrichmentTerms = null;
-	// // System.out.println(enrichmentCategory);
-	// // double time = System.currentTimeMillis();
-	// // parse using DOM
-	// //Object results = HttpUtils.postXMLDOM(EnrichmentTerm.enrichmentURL, queryMap, manager);
-	// //enrichmentTerms = ModelUtils.parseXMLDOM(results, cutoff, network, stringNodesMap,
-	// manager);
-	// //System.out.println("dom output: " + enrichmentTerms.size());
-	// // System.out
-	// // .println("from dom document to java structure: " + (System.currentTimeMillis() - time) /
-	// // 1000 + " seconds.");
-	// // time = System.currentTimeMillis();
-	// // parse using SAX
-	// EnrichmentSAXHandler myHandler = new EnrichmentSAXHandler(network, stringNodesMap,
-	// enrichmentCategory);
-	// // TODO: change for release
-	// HttpUtils.postXMLSAX(EnrichmentTerm.enrichmentURL, queryMap, manager, myHandler);
-	// if (!myHandler.isStatusOK()) {
-	// // monitor.showMessage(Level.ERROR, "Error returned by enrichment webservice: " +
-	// // myHandler.getStatusCode());
-	// // return false;
-	// if (myHandler.getMessage().equals("No genes found in the XML")) {
-	// throw new RuntimeException(
-	// "Task cannot be performed. Current node identifiers were not recognized by the enrichment
-	// service.");
-	// }
-	// else if (myHandler.getStatusCode() != null)
-	// throw new RuntimeException(
-	// "Task cannot be performed. Error returned by enrichment webservice: " +
-	// myHandler.getMessage());
-	// else
-	// throw new RuntimeException(
-	// "Task cannot be performed. Uknown error while receiving or parsing output from the enrichment
-	// service.");
-	// } else if (myHandler.getWarning() != null) {
-	// monitor.showMessage(Level.WARN,
-	// "Warning returned by enrichment webservice: " + myHandler.getWarning());
-	// }
-	// enrichmentTerms = myHandler.getParsedData();
-	//
-	// // save results
-	// if (enrichmentTerms == null) {
-	// // monitor.showMessage(Level.ERROR,
-	// // "No terms retrieved from the enrichment webservice for this category.");
-	// throw new RuntimeException(
-	// "No terms retrieved from the enrichment webservice for this category.");
-	// // return false;
-	// } else {
-	// enrichmentResult.put(enrichmentCategory, enrichmentTerms);
-	// if (enrichmentTerms.size() == 0) {
-	// monitor.showMessage(Level.WARN,
-	// "No significant terms for this enrichment category and cut-off.");
-	// } else {
-	// monitor.setStatusMessage("Retrieved " + enrichmentTerms.size()
-	// + " significant terms for this enrichment category and cut-off.");
-	// }
-	// }
-	// return true;
-	// }
-
 	private void saveEnrichmentTable(String tableName, String enrichmentCategory) {
 		CyTableFactory tableFactory = manager.getService(CyTableFactory.class);
 		CyTableManager tableManager = manager.getService(CyTableManager.class);
@@ -513,7 +439,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 				true);
 		enrichmentTable.setSavePolicy(SavePolicy.SESSION_FILE);
 		tableManager.addTable(enrichmentTable);
-		ModelUtils.setupEnrichmentTable(enrichmentTable);
+		EnrichmentUtils.setupEnrichmentTable(enrichmentTable);
 
 		// Step 2: populate the table with some data
 		List<EnrichmentTerm> processTerms = enrichmentResult.get(enrichmentCategory);
@@ -524,7 +450,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			CyRow row = enrichmentTable.getRow((long) 0);
 			row.set(EnrichmentTerm.colNetworkSUID, network.getSUID());
 		}
-		double maxFDRLogValue = ModelUtils.getMaxFdrLogValue(processTerms);
+		double maxFDRLogValue = EnrichmentUtils.getMaxFdrLogValue(processTerms);
 		for (int i = 0; i < processTerms.size(); i++) {
 			EnrichmentTerm term = processTerms.get(i);
 			CyRow row = enrichmentTable.getRow((long) i);
@@ -558,11 +484,11 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		StringBuilder str = new StringBuilder();
 		analyzedNodes = new ArrayList<CyNode>();
 		for (CyNode node : currentNetwork.getNodeList()) {
-			String stringID = currentNetwork.getRow(node).get(ModelUtils.STRINGID, String.class);
-			String type = currentNetwork.getRow(node).get(ModelUtils.TYPE, String.class);
+			String stringID = currentNetwork.getRow(node).get(ColumnNames.STRINGID, String.class);
+			String type = currentNetwork.getRow(node).get(ColumnNames.TYPE, String.class);
 			if (stringID != null && stringID.length() > 0 
 					&& type != null && type.equals("protein")) {
-				Boolean considerForEnrichment = currentNetwork.getRow(node).get(ModelUtils.USE_ENRICHMENT, Boolean.class);
+				Boolean considerForEnrichment = currentNetwork.getRow(node).get(ColumnNames.USE_ENRICHMENT, Boolean.class);
 				if (considerForEnrichment != null && !considerForEnrichment.booleanValue())
 					continue;
 				str.append(stringID + "\n");
@@ -575,11 +501,11 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	private String getBackground(CyNetwork bgNetwork, CyNetwork fgNetwork) {
 		StringBuilder str = new StringBuilder();
 		for (CyNode node : bgNetwork.getNodeList()) {
-			String stringID = bgNetwork.getRow(node).get(ModelUtils.STRINGID, String.class);
-			String type = bgNetwork.getRow(node).get(ModelUtils.TYPE, String.class);
+			String stringID = bgNetwork.getRow(node).get(ColumnNames.STRINGID, String.class);
+			String type = bgNetwork.getRow(node).get(ColumnNames.TYPE, String.class);
 			if (stringID != null && stringID.length() > 0 
 					&& type != null && type.equals("protein")) {
-				Boolean considerForEnrichment = bgNetwork.getRow(node).get(ModelUtils.USE_ENRICHMENT, Boolean.class);
+				Boolean considerForEnrichment = bgNetwork.getRow(node).get(ColumnNames.USE_ENRICHMENT, Boolean.class);
 				if (considerForEnrichment != null && !considerForEnrichment.booleanValue())
 					continue;
 				str.append(stringID + "\n");
@@ -587,7 +513,7 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		}
 		// check if foreground is contained in background
 		for (CyNode fgNode : analyzedNodes) {
-			if (str.indexOf(fgNetwork.getRow(fgNode).get(ModelUtils.STRINGID, String.class)) == -1) {
+			if (str.indexOf(fgNetwork.getRow(fgNode).get(ColumnNames.STRINGID, String.class)) == -1) {
 				System.out.println(fgNode.getSUID());
 				return "";
 			}
@@ -600,11 +526,11 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		analyzedNodes = new ArrayList<CyNode>();
 		for (CyNode node : currentNetwork.getNodeList()) {
 			if (currentNetwork.getRow(node).get(CyNetwork.SELECTED, Boolean.class)) {
-				String stringID = currentNetwork.getRow(node).get(ModelUtils.STRINGID, String.class);
-				String type = currentNetwork.getRow(node).get(ModelUtils.TYPE, String.class);
+				String stringID = currentNetwork.getRow(node).get(ColumnNames.STRINGID, String.class);
+				String type = currentNetwork.getRow(node).get(ColumnNames.TYPE, String.class);
 				if (stringID != null && stringID.length() > 0 
 						&& type != null && type.equals("protein")) {
-					Boolean considerForEnrichment = currentNetwork.getRow(node).get(ModelUtils.USE_ENRICHMENT, Boolean.class);
+					Boolean considerForEnrichment = currentNetwork.getRow(node).get(ColumnNames.USE_ENRICHMENT, Boolean.class);
 					if (considerForEnrichment != null && !considerForEnrichment.booleanValue())
 						continue;
 					selectedStr.append(stringID + "\n");
@@ -624,12 +550,12 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 
 	public static String EXAMPLE_JSON = 
 					"{\"EnrichmentTable\": 101,"+
-					"\""+ModelUtils.NET_PPI_ENRICHMENT+"\": 1e-16,"+
-					"\""+ModelUtils.NET_ENRICHMENT_NODES+"\": 15,"+
-					"\""+ModelUtils.NET_ENRICHMENT_EDGES+"\": 30,"+
-					"\""+ModelUtils.NET_ENRICHMENT_EXPECTED_EDGES+"\": 57,"+
-					"\""+ModelUtils.NET_ENRICHMENT_CLSTR+"\": 0.177,"+
-					"\""+ModelUtils.NET_ENRICHMENT_DEGREE+"\": 2.66}";
+					"\""+ColumnNames.NET_PPI_ENRICHMENT+"\": 1e-16,"+
+					"\""+ColumnNames.NET_ENRICHMENT_NODES+"\": 15,"+
+					"\""+ColumnNames.NET_ENRICHMENT_EDGES+"\": 30,"+
+					"\""+ColumnNames.NET_ENRICHMENT_EXPECTED_EDGES+"\": 57,"+
+					"\""+ColumnNames.NET_ENRICHMENT_CLSTR+"\": 0.177,"+
+					"\""+ColumnNames.NET_ENRICHMENT_DEGREE+"\": 2.66}";
 
 	public static String EXAMPLE_JSON_PUBL = 
 			"{\"EnrichmentTable\": 101}";
@@ -646,12 +572,12 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 				return (R)("\"EnrichmentTable\": "+enrichmentTable.getSUID());
 			if (ppiSummary != null) {
 				String result = "Enrichment results summary:";
-				result = addStringResult(result, ModelUtils.NET_PPI_ENRICHMENT);
-				result = addStringResult(result, ModelUtils.NET_ENRICHMENT_NODES);
-				result = addStringResult(result, ModelUtils.NET_ENRICHMENT_EXPECTED_EDGES);
-				result = addStringResult(result, ModelUtils.NET_ENRICHMENT_EDGES);
-				result = addStringResult(result, ModelUtils.NET_ENRICHMENT_CLSTR);
-				result = addStringResult(result, ModelUtils.NET_ENRICHMENT_DEGREE);
+				result = addStringResult(result, ColumnNames.NET_PPI_ENRICHMENT);
+				result = addStringResult(result, ColumnNames.NET_ENRICHMENT_NODES);
+				result = addStringResult(result, ColumnNames.NET_ENRICHMENT_EXPECTED_EDGES);
+				result = addStringResult(result, ColumnNames.NET_ENRICHMENT_EDGES);
+				result = addStringResult(result, ColumnNames.NET_ENRICHMENT_CLSTR);
+				result = addStringResult(result, ColumnNames.NET_ENRICHMENT_DEGREE);
 				return (R)result;
 			}
 		} else if (clzz.equals(Long.class)) {
@@ -663,12 +589,12 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 				if (enrichmentTable != null)
 					result += "\"EnrichmentTable\": "+enrichmentTable.getSUID();
 				if (ppiSummary != null) {
-					result = addResult(result, ModelUtils.NET_PPI_ENRICHMENT);
-					result = addResult(result, ModelUtils.NET_ENRICHMENT_NODES);
-					result = addResult(result, ModelUtils.NET_ENRICHMENT_EXPECTED_EDGES);
-					result = addResult(result, ModelUtils.NET_ENRICHMENT_EDGES);
-					result = addResult(result, ModelUtils.NET_ENRICHMENT_CLSTR);
-					result = addResult(result, ModelUtils.NET_ENRICHMENT_DEGREE);
+					result = addResult(result, ColumnNames.NET_PPI_ENRICHMENT);
+					result = addResult(result, ColumnNames.NET_ENRICHMENT_NODES);
+					result = addResult(result, ColumnNames.NET_ENRICHMENT_EXPECTED_EDGES);
+					result = addResult(result, ColumnNames.NET_ENRICHMENT_EDGES);
+					result = addResult(result, ColumnNames.NET_ENRICHMENT_CLSTR);
+					result = addResult(result, ColumnNames.NET_ENRICHMENT_DEGREE);
 				}
 				result += "}";
 				// System.out.println(result);

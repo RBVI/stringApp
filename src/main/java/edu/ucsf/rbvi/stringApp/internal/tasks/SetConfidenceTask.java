@@ -16,6 +16,8 @@ import org.cytoscape.work.json.JSONResult;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
+
+import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class SetConfidenceTask extends AbstractTask implements ObservableTask {
@@ -44,7 +46,7 @@ public class SetConfidenceTask extends AbstractTask implements ObservableTask {
 
 		double minScore = 1.0;
 		for (CyEdge edge : net.getEdgeList()) {
-			Double score = net.getRow(edge).get(ModelUtils.SCORE, Double.class);
+			Double score = net.getRow(edge).get(ColumnNames.SCORE, Double.class);
 			if (score == null || score >= minScore)
 				continue;
 			minScore = score;

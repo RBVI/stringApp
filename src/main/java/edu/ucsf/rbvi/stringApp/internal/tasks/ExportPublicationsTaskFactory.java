@@ -6,7 +6,7 @@ import org.cytoscape.work.TaskIterator;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
-import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.EnrichmentUtils;
 
 public class ExportPublicationsTaskFactory extends AbstractNetworkTaskFactory {
 	// implements ExportTableTaskFactory {
@@ -18,7 +18,7 @@ public class ExportPublicationsTaskFactory extends AbstractNetworkTaskFactory {
 	}
 
 	public boolean isReady(CyNetwork network) {
-		if (ModelUtils.getAllEnrichmentTables(manager, network, TermCategory.PMID.getTable()).size() > 0)
+		if (EnrichmentUtils.getAllEnrichmentTables(manager, network, TermCategory.PMID.getTable()).size() > 0)
 			return true;
 		else
 			return false;
@@ -27,7 +27,7 @@ public class ExportPublicationsTaskFactory extends AbstractNetworkTaskFactory {
 	@Override
 	public TaskIterator createTaskIterator(CyNetwork network) {
 		return new TaskIterator(new ExportEnrichmentTableTask(manager, network, null, 
-				ModelUtils.getEnrichmentTable(manager, network, TermCategory.PMID.getTable()), false));
+				EnrichmentUtils.getEnrichmentTable(manager, network, TermCategory.PMID.getTable()), false));
 	}
 
 }

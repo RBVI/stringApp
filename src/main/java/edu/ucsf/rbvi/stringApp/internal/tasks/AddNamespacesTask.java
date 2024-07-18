@@ -16,6 +16,7 @@ import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class AddNamespacesTask extends AbstractTask {
@@ -62,15 +63,15 @@ public class AddNamespacesTask extends AbstractTask {
 				String columnName = col.getName();
 				if (ModelUtils.namespacedNodeAttributes.contains(columnName)) {
 					// add STRINGDB namespace
-					fromToColumns.put(col, ModelUtils.STRINGDB_NAMESPACE
-							+ ModelUtils.NAMESPACE_SEPARATOR + columnName);
+					fromToColumns.put(col, ColumnNames.STRINGDB_NAMESPACE
+							+ ColumnNames.NAMESPACE_SEPARATOR + columnName);
 					continue;
 				}
-				if (columnName.startsWith(ModelUtils.TISSUE_NAMESPACE)
-						|| columnName.startsWith(ModelUtils.COMPARTMENT_NAMESPACE)) {
+				if (columnName.startsWith(ColumnNames.TISSUE_NAMESPACE)
+						|| columnName.startsWith(ColumnNames.COMPARTMENT_NAMESPACE)) {
 					// add tissues or compartments namespace
 					fromToColumns.put(col,
-							columnName.replaceFirst(" ", ModelUtils.NAMESPACE_SEPARATOR));
+							columnName.replaceFirst(" ", ColumnNames.NAMESPACE_SEPARATOR));
 				}
 			}
 
@@ -95,8 +96,8 @@ public class AddNamespacesTask extends AbstractTask {
 			for (CyColumn col : edgeTable.getColumns()) {
 				if (ModelUtils.namespacedEdgeAttributes.contains(col.getName())) {
 					// add STRINGDB namespace
-					fromToColumns.put(col, ModelUtils.STRINGDB_NAMESPACE
-							+ ModelUtils.NAMESPACE_SEPARATOR + col.getName());
+					fromToColumns.put(col, ColumnNames.STRINGDB_NAMESPACE
+							+ ColumnNames.NAMESPACE_SEPARATOR + col.getName());
 				}
 			}
 

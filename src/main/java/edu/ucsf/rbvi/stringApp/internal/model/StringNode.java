@@ -15,6 +15,7 @@ import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyTableUtil;
 
+import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class StringNode {
@@ -35,23 +36,23 @@ public class StringNode {
 	}
 	
 	public String getDisplayName() {
-		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.DISPLAY);
+		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ColumnNames.DISPLAY);
 	}
 
 	public String getSpecies() {
-		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.SPECIES);
+		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ColumnNames.SPECIES);
 	}
 
 	public String getStringID() {
-		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.STRINGID);
+		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ColumnNames.STRINGID);
 	}
 
 	public String getStructureImageURL() {
-		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.IMAGE);
+		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ColumnNames.IMAGE);
 	}
 
 	public boolean isStringNode() {
-		if (ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.STRINGID) == null)
+		if (ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ColumnNames.STRINGID) == null)
 			return false;
 		return true;
 	}
@@ -61,7 +62,7 @@ public class StringNode {
 	}
 	
 	public String getUniprot() {
-		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.CANONICAL);
+		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ColumnNames.CANONICAL);
 	}
 
 	public String getUniprotURL() {
@@ -139,7 +140,7 @@ public class StringNode {
 	}
 
 	public String getNodeType() {
-		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.TYPE);
+		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ColumnNames.TYPE);
 	}
 	
 	public boolean havePubChem() {
@@ -182,7 +183,7 @@ public class StringNode {
 	}
 	
 	public String getStructureName() {
-		String imageURL = ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.IMAGE);
+		String imageURL = ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ColumnNames.IMAGE);
 		if (imageURL != null && !imageURL.equals("")) {
 			String[] parts = imageURL.split("/");
 			try {
@@ -201,16 +202,16 @@ public class StringNode {
 	}
 
 	public String getStructureSource() {
-		String imageURL = ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.IMAGE);
+		String imageURL = ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ColumnNames.IMAGE);
 		if (imageURL != null && !imageURL.equals("")) {
 			String[] parts = imageURL.split("/");
 			try {
 				if (parts.length == 7 && parts[5].equals("af")) {
-					return ModelUtils.STRUCTURE_SOURCE_AF;
+					return ColumnNames.STRUCTURE_SOURCE_AF;
 				} else if (parts.length == 8 && parts[5].equals("pdb")) {
-					return ModelUtils.STRUCTURE_SOURCE_PDB;
+					return ColumnNames.STRUCTURE_SOURCE_PDB;
 				} else if (parts.length == 8 && parts[5].equals("sm")) {
-					return ModelUtils.STRUCTURE_SOURCE_SM;
+					return ColumnNames.STRUCTURE_SOURCE_SM;
 				}
 			} catch (Exception ex) {
 				// ignore
@@ -222,7 +223,7 @@ public class StringNode {
 	public BufferedImage getStructureImage() {
 		BufferedImage bi = null;
 
-		String input = ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.STYLE);
+		String input = ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ColumnNames.STYLE);
 		if (input == null) return null;
 		if (input.equals("string:")) {
 			String url = getStructureImageURL();
@@ -251,7 +252,7 @@ public class StringNode {
 	}
 
 	public String getDescription() {
-		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ModelUtils.DESCRIPTION);
+		return ModelUtils.getString(stringNetwork.getNetwork(), stringNode, ColumnNames.DESCRIPTION);
 	}
 
 	public boolean haveData(String namespace, String columnMatch) {

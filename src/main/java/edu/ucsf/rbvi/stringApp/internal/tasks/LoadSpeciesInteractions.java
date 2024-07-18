@@ -26,6 +26,9 @@ import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
+
+import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
+import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
@@ -113,8 +116,8 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		// time = System.currentTimeMillis();
 
 		Map<String, CyNode> nodeMap = new HashMap<>();
-		CyNetwork network = ModelUtils.createNetworkFromJSON(stringNet, speciesName, results, null, nodeMap,
-		                                                     null, netName, useDATABASE, netType.getAPIName());
+		CyNetwork network = JSONUtils.createNetworkFromJSON(stringNet, speciesName, results, null, nodeMap,
+		                                                    null, netName, useDATABASE, netType.getAPIName());
 		// System.out.println("createNetworkFromJSON method "
 		// + (System.currentTimeMillis() - time) / 1000 + " seconds.");
 		// time = System.currentTimeMillis();
@@ -153,7 +156,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 			setter.applyTunables(context, layoutArgs);
 			Set<View<CyNode>> nodeViews = new HashSet<>(networkView.getNodeViews());
 			insertTasksAfterCurrentTask(
-					alg.createTaskIterator(networkView, context, nodeViews, ModelUtils.SCORE));
+					alg.createTaskIterator(networkView, context, nodeViews, ColumnNames.SCORE));
 
 		} else {
 			ViewUtils.styleNetwork(manager, network, null);

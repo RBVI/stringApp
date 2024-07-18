@@ -18,7 +18,8 @@ import org.cytoscape.work.util.ListMultipleSelection;
 
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
-import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+
+import edu.ucsf.rbvi.stringApp.internal.utils.EnrichmentUtils;
 
 public class ExportEnrichmentTask extends AbstractTask {
 
@@ -79,7 +80,7 @@ public class ExportEnrichmentTask extends AbstractTask {
 	}
 
 	private void getAvailableTables() {
-		enrichmentTables = ModelUtils.getAllEnrichmentTables(this.manager, this.network, EnrichmentTerm.ENRICHMENT_TABLE_PREFIX);
+		enrichmentTables = EnrichmentUtils.getAllEnrichmentTables(this.manager, this.network, EnrichmentTerm.ENRICHMENT_TABLE_PREFIX);
 		List<String> enrichmentTableNames = new ArrayList<String>();
 		for (CyTable table : enrichmentTables) {
 			enrichmentTableNames.add(table.getTitle());

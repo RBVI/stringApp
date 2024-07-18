@@ -43,6 +43,9 @@ import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
+
+import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
+import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.StringResults;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
@@ -249,7 +252,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		// This may change...
 		StringNetwork stringNet = manager.getStringNetwork(network);
 		List<CyEdge> newEdges = new ArrayList<>();
-		List<CyNode> newNodes = ModelUtils.augmentNetworkFromJSON(stringNet, network, newEdges, results, null, useDatabase, currentType.getAPIName());
+		List<CyNode> newNodes = JSONUtils.augmentNetworkFromJSON(stringNet, network, newEdges, results, null, useDatabase, currentType.getAPIName());
 
 		if (newNodes.size() == 0 && newEdges.size() == 0) {
 			if (conf == 1.0) { 
@@ -412,7 +415,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		layoutArgs.put("spacing", spacing);
 		setter.applyTunables(context, layoutArgs);
 		// Set<View<CyNode>> nodeViews = new HashSet<>(netView.getNodeViews());
-		insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, ModelUtils.SCORE));
+		insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, ColumnNames.SCORE));
 	}
 		
 	@ProvidesTitle

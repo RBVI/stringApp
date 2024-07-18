@@ -38,6 +38,10 @@ import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
+
+import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
+import edu.ucsf.rbvi.stringApp.internal.utils.EnrichmentUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class GetClusterEnrichmentTask extends AbstractTask implements ObservableTask {
@@ -104,7 +108,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		stringNodesMap = new HashMap<>();
 		monitor = null;
 		initGroupColumn(); // initializes groupColumn
-		allNetSpecies = new ListSingleSelection<String>(ModelUtils.getEnrichmentNetSpecies(network));
+		allNetSpecies = new ListSingleSelection<String>(EnrichmentUtils.getEnrichmentNetSpecies(network));
 
 		stringNetworkMap = new HashMap<>();
 
@@ -155,8 +159,8 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		// map of STRING ID to CyNodes
 		CyTable nodeTable = network.getDefaultNodeTable();
 		for (final CyNode node : network.getNodeList()) {
-			if (nodeTable.getColumn(ModelUtils.STRINGID) != null) {
-				String stringid = nodeTable.getRow(node.getSUID()).get(ModelUtils.STRINGID,
+			if (nodeTable.getColumn(ColumnNames.STRINGID) != null) {
+				String stringid = nodeTable.getRow(node.getSUID()).get(ColumnNames.STRINGID,
 						String.class);
 				if (stringid != null) {
 					stringNodesMap.put(stringid, node.getSUID());
@@ -182,17 +186,17 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		// System.out.println(groups);
 
 		// TODO: [N] test deletion of old tables
-		ModelUtils.deleteGroupEnrichmentTables(network, manager, EnrichmentTerm.ENRICHMENT_TABLE_PREFIX + colGroups.getName());
+		EnrichmentUtils.deleteGroupEnrichmentTables(network, manager, EnrichmentTerm.ENRICHMENT_TABLE_PREFIX + colGroups.getName());
 		
 		// setup enrichment settings tables
 		CyTable netTable = network.getDefaultNetworkTable();
-		ModelUtils.createListColumnIfNeeded(netTable, String.class, ModelUtils.NET_ENRICHMENT_TABLES);
-		ModelUtils.createColumnIfNeeded(netTable, Long.class, ModelUtils.NET_ENRICHMENT_SETTINGS_TABLE_SUID);
-		CyTable settignsTable = ModelUtils.getEnrichmentSettingsTable(manager, network);
-		ModelUtils.createListColumnIfNeeded(settignsTable, Long.class, ModelUtils.NET_ANALYZED_NODES);
+		ModelUtils.createListColumnIfNeeded(netTable, String.class, ColumnNames.NET_ENRICHMENT_TABLES);
+		ModelUtils.createColumnIfNeeded(netTable, Long.class, ColumnNames.NET_ENRICHMENT_SETTINGS_TABLE_SUID);
+		CyTable settignsTable = EnrichmentUtils.getEnrichmentSettingsTable(manager, network);
+		ModelUtils.createListColumnIfNeeded(settignsTable, Long.class, ColumnNames.NET_ANALYZED_NODES);
 
 		// do enrichment for each group
-		List<String> enrichmentGroups = netTable.getRow(network.getSUID()).getList(ModelUtils.NET_ENRICHMENT_TABLES, String.class);
+		List<String> enrichmentGroups = netTable.getRow(network.getSUID()).getList(ColumnNames.NET_ENRICHMENT_TABLES, String.class);
 		if (enrichmentGroups == null)
 			enrichmentGroups = new ArrayList<String>();
 		int counter = 0;
@@ -224,12 +228,12 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			for (CyNode node : analyzedNodes) {
 				analyzedNodesSUID.add(node.getSUID());
 			}
-			settignsTable.getRow(groupTableName).set(ModelUtils.NET_ANALYZED_NODES, analyzedNodesSUID);
+			settignsTable.getRow(groupTableName).set(ColumnNames.NET_ANALYZED_NODES, analyzedNodesSUID);
 			if (!enrichmentGroups.contains(groupTableName))
 				enrichmentGroups.add(groupTableName);
 		}
 		// save all new enrichment tables in the network table
-		netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_TABLES, enrichmentGroups);
+		netTable.getRow(network.getSUID()).set(ColumnNames.NET_ENRICHMENT_TABLES, enrichmentGroups);
 	
 		// show enrichment results
 		if (enrichmentResult == null) {
@@ -286,9 +290,9 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			return;
 			// throw new RuntimeException("Enrichment retrieval returned no results, possibly due to an error.");
 		}
-		List<EnrichmentTerm> terms = ModelUtils.getEnrichmentFromJSON(manager, results, stringNodesMap, network);
+		List<EnrichmentTerm> terms = JSONUtils.getEnrichmentFromJSON(manager, results, stringNodesMap, network);
 		if (terms == null) {
-			String errorMsg = ModelUtils.getErrorMessageFromJSON(manager, results);
+			String errorMsg = JSONUtils.getErrorMessageFromJSON(manager, results);
 			monitor.showMessage(Level.ERROR,
 					"Enrichment retrieval returned no results, possibly due to an error. " + errorMsg);
 			enrichmentResult = null;
@@ -332,7 +336,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 				Long.class, false, true);
 		enrichmentTable.setSavePolicy(SavePolicy.SESSION_FILE);
 		tableManager.addTable(enrichmentTable);
-		ModelUtils.setupEnrichmentTable(enrichmentTable);
+		EnrichmentUtils.setupEnrichmentTable(enrichmentTable);
 		enrichmentTables.add(enrichmentTable);
 		
 		// Step 2: populate the table with some data
@@ -344,7 +348,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			CyRow row = enrichmentTable.getRow((long) 0);
 			row.set(EnrichmentTerm.colNetworkSUID, network.getSUID());
 		}
-		double maxFDRLogValue = ModelUtils.getMaxFdrLogValue(processTerms);
+		double maxFDRLogValue = EnrichmentUtils.getMaxFdrLogValue(processTerms);
 		for (int i = 0; i < processTerms.size(); i++) {
 			EnrichmentTerm term = processTerms.get(i);
 			CyRow row = enrichmentTable.getRow((long) i);
@@ -381,15 +385,15 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			Object groupValue = currentNetwork.getRow(node).get(colGroup.getName(), colGroup.getType());
 			if (groupValue == null || !groupValue.toString().equals(group)) 
 				continue;
-			String stringID = currentNetwork.getRow(node).get(ModelUtils.STRINGID, String.class);
+			String stringID = currentNetwork.getRow(node).get(ColumnNames.STRINGID, String.class);
 			// check the node type and only accept if protein
-			String type = currentNetwork.getRow(node).get(ModelUtils.TYPE, String.class);
+			String type = currentNetwork.getRow(node).get(ColumnNames.TYPE, String.class);
 			// chech the node species and only allow if it is the same as the one chosen by the user
-			String species = currentNetwork.getRow(node).get(ModelUtils.SPECIES, String.class);
+			String species = currentNetwork.getRow(node).get(ColumnNames.SPECIES, String.class);
 			if (stringID != null && stringID.length() > 0 
 					&& type != null && type.equals("protein") 
 					&& species != null && species.equals(allNetSpecies.getSelectedValue())) {
-				Boolean considerForEnrichment = currentNetwork.getRow(node).get(ModelUtils.USE_ENRICHMENT, Boolean.class);
+				Boolean considerForEnrichment = currentNetwork.getRow(node).get(ColumnNames.USE_ENRICHMENT, Boolean.class);
 				if (considerForEnrichment != null && !considerForEnrichment.booleanValue())
 					continue;
 				str.append(stringID + "\n");
@@ -402,11 +406,11 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 	private String getBackground(CyNetwork bgNetwork, CyNetwork fgNetwork) {
 		StringBuilder str = new StringBuilder();
 		for (CyNode node : bgNetwork.getNodeList()) {
-			String stringID = bgNetwork.getRow(node).get(ModelUtils.STRINGID, String.class);
-			String type = bgNetwork.getRow(node).get(ModelUtils.TYPE, String.class);
+			String stringID = bgNetwork.getRow(node).get(ColumnNames.STRINGID, String.class);
+			String type = bgNetwork.getRow(node).get(ColumnNames.TYPE, String.class);
 			if (stringID != null && stringID.length() > 0 
 					&& type != null && type.equals("protein")) {
-				Boolean considerForEnrichment = bgNetwork.getRow(node).get(ModelUtils.USE_ENRICHMENT, Boolean.class);
+				Boolean considerForEnrichment = bgNetwork.getRow(node).get(ColumnNames.USE_ENRICHMENT, Boolean.class);
 				if (considerForEnrichment != null && !considerForEnrichment.booleanValue())
 					continue;
 				str.append(stringID + "\n");
@@ -415,7 +419,7 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		// check if foreground is contained in background
 		// instead of checking it only for analyzed nodes, check it for all nodes in the fgNetwork
 		for (CyNode fgNode : fgNetwork.getNodeList()) {
-			String fgStringID = fgNetwork.getRow(fgNode).get(ModelUtils.STRINGID, String.class);
+			String fgStringID = fgNetwork.getRow(fgNode).get(ColumnNames.STRINGID, String.class);
 			if (fgStringID != null && str.indexOf(fgStringID) == -1) {
 				System.out.println(fgNode.getSUID());
 				return "";

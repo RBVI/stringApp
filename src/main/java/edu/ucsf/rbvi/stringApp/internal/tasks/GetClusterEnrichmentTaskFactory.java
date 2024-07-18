@@ -12,6 +12,8 @@ import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.TaskIterator;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+
+import edu.ucsf.rbvi.stringApp.internal.utils.EnrichmentUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class GetClusterEnrichmentTaskFactory extends AbstractNetworkTaskFactory
@@ -31,7 +33,7 @@ public class GetClusterEnrichmentTaskFactory extends AbstractNetworkTaskFactory
 
 	public boolean isReady(CyNetwork network) {
 		if (manager.haveURIs() && ModelUtils.isStringNetwork(network)) {
-			List<String> netSpecies = ModelUtils.getEnrichmentNetSpecies(network);
+			List<String> netSpecies = EnrichmentUtils.getEnrichmentNetSpecies(network);
 			List<CyColumn> groupCols = ModelUtils.getGroupColumns(network);
 			if (groupCols.size() > 0 && netSpecies.size() > 0) {
 				return true;
@@ -57,7 +59,7 @@ public class GetClusterEnrichmentTaskFactory extends AbstractNetworkTaskFactory
 
 	public boolean isReady(CyNetworkView netView) {
 		if (manager.haveURIs() && ModelUtils.isStringNetwork(netView.getModel())) {
-			List<String> netSpecies = ModelUtils.getEnrichmentNetSpecies(netView.getModel());
+			List<String> netSpecies = EnrichmentUtils.getEnrichmentNetSpecies(netView.getModel());
 			List<CyColumn> groupCols = ModelUtils.getGroupColumns(netView.getModel());
 			if (groupCols.size() > 0 && netSpecies.size() > 0) {
 				return true;

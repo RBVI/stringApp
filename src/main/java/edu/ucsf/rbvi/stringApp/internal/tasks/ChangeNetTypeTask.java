@@ -29,6 +29,9 @@ import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
+
+import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
+import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
@@ -131,7 +134,7 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			List<CyEdge> stringEdges = ModelUtils.getStringNetEdges(network);
 			for (CyEdge edge: stringEdges) {
 				// get score of the interaction and check if the edge should be removed or not
-				Double score = network.getRow(edge).get(ModelUtils.SCORE, Double.class);					
+				Double score = network.getRow(edge).get(ColumnNames.SCORE, Double.class);					
 				if (score != null && (int)(score*1000) < newConfidence) {
 					removeEdges.add(edge);
 				}
@@ -195,7 +198,7 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 				network.removeEdges(removeEdges);
 	
 				// add new edges
-				ModelUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, results, null, database, newType.getAPIName());
+				JSONUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, results, null, database, newType.getAPIName());
 				monitor.setStatusMessage("Adding "+newEdges.size()+" edges");
 	
 				// change network attributes

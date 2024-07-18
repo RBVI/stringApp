@@ -14,7 +14,7 @@ import org.cytoscape.work.Tunable;
 import org.cytoscape.work.util.ListSingleSelection;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
-import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
 
 public class SetLabelAttributeTask extends AbstractTask {
 
@@ -35,7 +35,7 @@ public class SetLabelAttributeTask extends AbstractTask {
 	public void run(TaskMonitor monitor) throws Exception {
 		monitor.setTitle("Set STRING label attribute");
 		// System.out.println("use " + attributes.getSelectedValue());
-		if (nodeTable.getColumn(ModelUtils.ELABEL_STYLE) == null
+		if (nodeTable.getColumn(ColumnNames.ELABEL_STYLE) == null
 				|| attributes.getSelectedValue() == null)
 			return;
 		for (CyRow row : nodeTable.getAllRows()) {
@@ -73,7 +73,7 @@ public class SetLabelAttributeTask extends AbstractTask {
 	}
 
 	private void setLabelAttribute(CyRow row, String labelAttribute) {
-		String enhancedLabel = row.get(ModelUtils.ELABEL_STYLE, String.class);
+		String enhancedLabel = row.get(ColumnNames.ELABEL_STYLE, String.class);
 		String newEnhancedLabel = "";
 		if (enhancedLabel != null) {
 			// System.out.println(enhancedLabel.length());
@@ -105,11 +105,11 @@ public class SetLabelAttributeTask extends AbstractTask {
 			// newEnhancedLabel += " ";
 			// }
 		}
-		row.set(ModelUtils.ELABEL_STYLE, newEnhancedLabel);
+		row.set(ColumnNames.ELABEL_STYLE, newEnhancedLabel);
 	}
 
 	private String getLabelAttribute(CyRow row) {
-		String enhancedLabel = row.get(ModelUtils.ELABEL_STYLE, String.class);
+		String enhancedLabel = row.get(ColumnNames.ELABEL_STYLE, String.class);
 		if (enhancedLabel != null) {
 			int index1 = enhancedLabel.indexOf("attribute=") + 10;
 			// System.out.println(index1);

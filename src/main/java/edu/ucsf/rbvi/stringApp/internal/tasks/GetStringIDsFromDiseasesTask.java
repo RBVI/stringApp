@@ -21,7 +21,8 @@ import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.model.TextMiningResult;
-import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+
+import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 
 public class GetStringIDsFromDiseasesTask extends AbstractTask implements ObservableTask {
 	final StringNetwork stringNetwork;
@@ -72,7 +73,7 @@ public class GetStringIDsFromDiseasesTask extends AbstractTask implements Observ
 			return;
 		}
 
-		tmResults = ModelUtils.getIdsFromJSON(manager, species.getTaxId(), tmobject, query, true);
+		tmResults = JSONUtils.getIdsFromJSON(manager, species.getTaxId(), tmobject, query, true);
 		if (tmResults == null || tmResults.size() == 0) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results");
 			return;

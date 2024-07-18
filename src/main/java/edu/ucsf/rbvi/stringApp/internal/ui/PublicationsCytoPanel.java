@@ -88,6 +88,8 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ExportEnrichmentTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.FilterEnrichmentTableTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.EnrichmentSettingsTask;
+
+import edu.ucsf.rbvi.stringApp.internal.utils.EnrichmentUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.TextIcon;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
@@ -232,7 +234,7 @@ public class PublicationsCytoPanel extends JPanel
 		TaskManager<?, ?> tm = manager.getService(TaskManager.class);
 		CyNetwork network = manager.getCurrentNetwork();
 		if (e.getSource().equals(butAnalyzedNodes)) {
-			List<CyNode> analyzedNodes = ModelUtils.getEnrichmentNodes(manager, network, TermCategory.PMID.getTable());
+			List<CyNode> analyzedNodes = EnrichmentUtils.getEnrichmentNodes(manager, network, TermCategory.PMID.getTable());
 			if (network == null || analyzedNodes == null)
 				return;
 			for (CyNode node : analyzedNodes) {
@@ -242,7 +244,7 @@ public class PublicationsCytoPanel extends JPanel
 		} else if (e.getSource().equals(butExportTable)) {
 			if (network != null)
 				tm.execute(new TaskIterator(new ExportEnrichmentTableTask(manager, network, null,
-						ModelUtils.getEnrichmentTable(manager, network,
+						EnrichmentUtils.getEnrichmentTable(manager, network,
 								TermCategory.PMID.getTable()), false)));
 		}
 	}
@@ -257,7 +259,7 @@ public class PublicationsCytoPanel extends JPanel
 	public void initPanel(CyNetwork network, boolean noSignificant) {
 		this.removeAll();
 
-		Set<CyTable> currTables = ModelUtils.getMainEnrichmentTables(manager, network);
+		Set<CyTable> currTables = EnrichmentUtils.getMainEnrichmentTables(manager, network);
 		publicationsTable = null;
 		for (CyTable currTable : currTables) {
 			if (currTable.getTitle().equals(TermCategory.PMID.getTable())) {
@@ -428,157 +430,4 @@ public class PublicationsCytoPanel extends JPanel
 		}
 	}
 	
-	// public void resetColor(int currentRow) {
-	// // JTable currentTable = enrichmentTables.get(showTable);
-	// // currentRow = currentTable.getSelectedRow();
-	// CyNetwork network = manager.getCurrentNetwork();
-	// if (network == null || tableModel == null)
-	// return;
-	// CyTable enrichmentTable = ModelUtils.getEnrichmentTable(manager, network,
-	// TermCategory.ALL.getTable());
-	// Color color = (Color)publicationsTable.getModel().getValueAt(
-	// publicationsTable.convertRowIndexToModel(currentRow),
-	// EnrichmentTerm.chartColumnCol);
-	// String termName = (String)publicationsTable.getModel().getValueAt(
-	// publicationsTable.convertRowIndexToModel(currentRow),
-	// EnrichmentTerm.nameColumn);
-	// if (color == null || termName == null)
-	// return;
-	//
-	// //currentTable.getModel().setValueAt(Color.OPAQUE,
-	// currentTable.convertRowIndexToModel(currentRow),
-	// // EnrichmentTerm.chartColumnCol);
-	// for (CyRow row : enrichmentTable.getAllRows()) {
-	// if (enrichmentTable.getColumn(EnrichmentTerm.colName) != null
-	// && row.get(EnrichmentTerm.colName, String.class) != null
-	// && row.get(EnrichmentTerm.colName, String.class).equals(termName)) {
-	// row.set(EnrichmentTerm.colChartColor, "");
-	// }
-	// }
-	// tableModel.fireTableDataChanged();
-	//
-	// // re-draw charts if the user changed the color
-	// Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
-	// if (preselectedTerms.size() > 0)
-	// ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network));
-	// }
-	//
-	// public void resetCharts() {
-	// CyNetwork network = manager.getCurrentNetwork();
-	// if (network == null || tableModel == null)
-	// return;
-	//
-	// CyTable nodeTable = network.getDefaultNodeTable();
-	// // replace columns
-	// ModelUtils.replaceListColumnIfNeeded(nodeTable, String.class,
-	// EnrichmentTerm.colEnrichmentTermsNames);
-	// ModelUtils.replaceListColumnIfNeeded(nodeTable, Integer.class,
-	// EnrichmentTerm.colEnrichmentTermsIntegers);
-	// ModelUtils.replaceColumnIfNeeded(nodeTable, String.class,
-	// EnrichmentTerm.colEnrichmentPassthrough);
-	//
-	// // remove colors from table?
-	// CyTable currTable = ModelUtils.getEnrichmentTable(manager, network,
-	// showTable);
-	// if (currTable == null || currTable.getRowCount() == 0) {
-	// return;
-	// }
-	// for (CyRow row : currTable.getAllRows()) {
-	// if (currTable.getColumn(EnrichmentTerm.colChartColor) != null
-	// && row.get(EnrichmentTerm.colChartColor, String.class) != null
-	// && !row.get(EnrichmentTerm.colChartColor, String.class).equals("")) {
-	// row.set(EnrichmentTerm.colChartColor, "");
-	// }
-	// }
-	// // initPanel();
-	// tableModel.fireTableDataChanged();
-	// }
-
-	// public void drawCharts() {
-	// CyNetwork network = manager.getCurrentNetwork();
-	// if (network == null)
-	// return;
-	//
-	// resetCharts();
-	// Map<EnrichmentTerm, String> preselectedTerms = getUserSelectedTerms();
-	// if (preselectedTerms.size() == 0) {
-	// preselectedTerms = getAutoSelectedTopTerms(manager.getTopTerms(network));
-	// }
-	// ViewUtils.drawCharts(manager, preselectedTerms, manager.getChartType(network));
-	// }
-	//
-	// private Map<EnrichmentTerm, String> getUserSelectedTerms() {
-	// Map<EnrichmentTerm, String> selectedTerms = new LinkedHashMap<EnrichmentTerm, String>();
-	// CyNetwork network = manager.getCurrentNetwork();
-	// if (network == null)
-	// return selectedTerms;
-	//
-	// // Set<CyTable> currTables = ModelUtils.getEnrichmentTables(manager, network);
-	// // for (CyTable currTable : currTables) {
-	// CyTable currTable = ModelUtils.getEnrichmentTable(manager, network,
-	// TermCategory.ALL.getTable());
-	// // currTable.getColumn(EnrichmentTerm.colShowChart) == null ||
-	// if (currTable == null || currTable.getRowCount() == 0) {
-	// return selectedTerms;
-	// }
-	// for (CyRow row : currTable.getAllRows()) {
-	// if (currTable.getColumn(EnrichmentTerm.colChartColor) != null
-	// && row.get(EnrichmentTerm.colChartColor, String.class) != null
-	// && !row.get(EnrichmentTerm.colChartColor, String.class).equals("")
-	// && !row.get(EnrichmentTerm.colChartColor, String.class).equals("#ffffff")) {
-	// String selTerm = row.get(EnrichmentTerm.colName, String.class);
-	// if (selTerm != null) {
-	// EnrichmentTerm enrTerm = new EnrichmentTerm(selTerm,
-	// row.get(EnrichmentTerm.colDescription, String.class),
-	// row.get(EnrichmentTerm.colCategory, String.class), -1.0, -1.0,
-	// row.get(EnrichmentTerm.colFDR, Double.class), row.get(EnrichmentTerm.colGenesBG,
-	// Integer.class));
-	// enrTerm.setNodesSUID(row.getList(EnrichmentTerm.colGenesSUID, Long.class));
-	// selectedTerms.put(enrTerm, row.get(EnrichmentTerm.colChartColor, String.class));
-	// }
-	// }
-	// }
-	// // System.out.println(selectedTerms);
-	// return selectedTerms;
-	// }
-
-	// private Map<EnrichmentTerm, String> getAutoSelectedTopTerms(int termNumber) {
-	// Map<EnrichmentTerm, String> selectedTerms = new LinkedHashMap<EnrichmentTerm, String>();
-	// CyNetwork network = manager.getCurrentNetwork();
-	// if (network == null || tableModel == null)
-	// return selectedTerms;
-	//
-	// CyTable currTable = ModelUtils.getEnrichmentTable(manager, network,
-	// TermCategory.ALL.getTable());
-	// if (currTable == null || currTable.getRowCount() == 0) {
-	// return selectedTerms;
-	// }
-	//
-	// // List<CyRow> rows = currTable.getAllRows();
-	// Color[] colors =
-	// manager.getBrewerPalette(network).getColorPalette(manager.getTopTerms(network));
-	// Long[] rowNames = tableModel.getRowNames();
-	// for (int i = 0; i < manager.getTopTerms(network); i++) {
-	// if (i >= rowNames.length)
-	// continue;
-	// CyRow row = currTable.getRow(rowNames[i]);
-	// String selTerm = row.get(EnrichmentTerm.colName, String.class);
-	// if (selTerm != null) {
-	// EnrichmentTerm enrTerm = new EnrichmentTerm(selTerm,
-	// row.get(EnrichmentTerm.colDescription, String.class),
-	// row.get(EnrichmentTerm.colCategory, String.class), -1.0, -1.0,
-	// row.get(EnrichmentTerm.colFDR, Double.class), row.get(EnrichmentTerm.colGenesBG,
-	// Integer.class));
-	// enrTerm.setNodesSUID(row.getList(EnrichmentTerm.colGenesSUID, Long.class));
-	// String color = String.format("#%02x%02x%02x", colors[i].getRed(), colors[i].getGreen(),
-	// colors[i].getBlue());
-	// row.set(EnrichmentTerm.colChartColor, color);
-	// selectedTerms.put(enrTerm, color);
-	// }
-	// }
-	// // initPanel();
-	// tableModel.fireTableDataChanged();
-	// return selectedTerms;
-	// }
-
 }

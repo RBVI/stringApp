@@ -61,6 +61,8 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.GetPublicationsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.MCLClusterTask;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowPublicationsPanelTaskFactory;
+
+import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
@@ -500,7 +502,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		double minValue = 1.0;
 		for (CyNode node: currentNetwork.getNodeList()) {
 			CyRow nodeRow = currentNetwork.getRow(node);
-			String nodeType = nodeRow.get(ModelUtils.TYPE, String.class);
+			String nodeType = nodeRow.get(ColumnNames.TYPE, String.class);
 			if (nodeType == null || !nodeType.equals("protein"))
 				continue;
 			Double v = nodeRow.get(type, label, Double.class);
@@ -520,7 +522,7 @@ public class StringNodePanel extends AbstractStringPanel {
 		CyNetwork net = view.getModel();
 		for (CyNode node: currentNetwork.getNodeList()) {
 			CyRow nodeRow = currentNetwork.getRow(node);
-			String nodeType = nodeRow.get(ModelUtils.TYPE, String.class);
+			String nodeType = nodeRow.get(ColumnNames.TYPE, String.class);
 			if (nodeType == null || !nodeType.equals("protein"))
 				continue;
 			boolean show = true;
@@ -649,11 +651,11 @@ public class StringNodePanel extends AbstractStringPanel {
 		if (img != null) {
 			String imgSource = sNode.getStructureSource();
 			JLabel link = null;
-			if (imgSource.equals(ModelUtils.STRUCTURE_SOURCE_PDB)) {
+			if (imgSource.equals(ColumnNames.STRUCTURE_SOURCE_PDB)) {
 				link = new SwingLinkCyBrowser("Structure" + " (from " + imgSource + ")", sNode.getPDBURL(), openBrowser);
-			} else if (imgSource.equals(ModelUtils.STRUCTURE_SOURCE_AF) && sNode.haveUniprot()) {
+			} else if (imgSource.equals(ColumnNames.STRUCTURE_SOURCE_AF) && sNode.haveUniprot()) {
 				link = new SwingLinkCyBrowser("Structure" + " (from " + imgSource + ")", sNode.getAlphaFoldURL(), openBrowser);
-			} else if (imgSource.equals(ModelUtils.STRUCTURE_SOURCE_SM) && sNode.haveUniprot()) {
+			} else if (imgSource.equals(ColumnNames.STRUCTURE_SOURCE_SM) && sNode.haveUniprot()) {
 				link = new SwingLinkCyBrowser("Structure" + " (from " + imgSource + ")", sNode.getSwissModelURL(), openBrowser);
 			} else {
 				link = new JLabel("Structure");
