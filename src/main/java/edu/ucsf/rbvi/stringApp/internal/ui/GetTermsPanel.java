@@ -365,8 +365,8 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		}
 
 		// We need to see if we're using a custom species, and if so, we need to use a different database
-		if (species.isCustom())
-			useDATABASE = Databases.STRINGDB.getAPIName();
+		// if (species.isCustom())
+		// 	useDATABASE = Databases.STRINGDB.getAPIName();
 		TaskFactory factory = null;
 		if (!queryAddNodes) {
 			factory = new ImportNetworkTaskFactory(stringNetwork, speciesCombo.getSelectedItem().toString(), 

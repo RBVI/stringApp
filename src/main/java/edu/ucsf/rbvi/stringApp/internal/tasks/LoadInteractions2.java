@@ -178,9 +178,10 @@ public class LoadInteractions2 extends AbstractTask {
 		args.put("identifiers",ids.trim());
 		args.put("required_score",String.valueOf(confidence*10));
 		args.put("network_type", netType.getAPIName());
-		if (additionalNodes > 0) {
-			args.put("additional_network_nodes", Integer.toString(additionalNodes));
-		}
+		// if (additionalNodes > 0) {
+		// 	args.put("additional_network_nodes", Integer.toString(additionalNodes));
+		// }
+		args.put("additional_network_nodes", "0");
 		args.put("caller_identity", StringManager.CallerIdentity);
 
 		try {
@@ -191,10 +192,13 @@ public class LoadInteractions2 extends AbstractTask {
 			return;
 		}
 
+		// System.out.println("String-db results: "+results.toString());
+
 		// Add to network
 		List<CyEdge> newEdges = new ArrayList<>();
 		List<CyNode> newNodes = JSONUtils.augmentNetworkFromJSON(stringNet, network, newEdges, 
-						                                                 results, null, useDATABASE, netType.getAPIName());
+						                                                 results, null, Databases.STRINGDB.getAPIName(), 
+																														 netType.getAPIName());
 
 		// System.out.println("Results: "+results.toString());
 		int viewThreshold = ModelUtils.getViewThreshold(manager);

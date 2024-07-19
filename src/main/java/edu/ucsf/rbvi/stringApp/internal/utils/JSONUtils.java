@@ -237,6 +237,8 @@ public class JSONUtils {
 
 		StringManager manager = stringNetwork.getManager();
 
+		System.out.println("Database = "+useDATABASE);
+
 		Object results = getResultsFromJSON(object, JSONObject.class);
 		if (results == null)
 			results = getResultsFromJSON(object, JSONArray.class); // See if this is a JSONArray
@@ -267,10 +269,12 @@ public class JSONUtils {
 			nodeMap.put(stringId, node);
 			nodeNameMap.put(stringId, name);
 			// TODO: Change network from string to stitch once we add compounds?
+			// if (ModelUtils.isCompound(net, node))
+			// 	useDATABASE = Databases.STITCH.getAPIName();
 			if (ModelUtils.isCompound(net, node))
-				useDATABASE = Databases.STITCH.getAPIName();
+				ModelUtils.setDatabase(net, Databases.STITCH.getAPIName());
 		}
-		ModelUtils.setDatabase(net, useDATABASE);
+		// ModelUtils.setDatabase(net, useDATABASE);
 
 		List<CyNode> nodes;
 		if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {

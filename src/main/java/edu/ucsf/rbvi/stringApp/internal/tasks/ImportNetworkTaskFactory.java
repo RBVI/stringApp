@@ -6,6 +6,7 @@ import java.util.Map;
 import org.cytoscape.work.AbstractTaskFactory;
 import org.cytoscape.work.TaskIterator;
 
+import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
@@ -55,10 +56,17 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 					                            species.getName(),
 					                            useDATABASE, netType));
 		} else if (stringNet.getNetwork() == null) {
-			//System.out.println("Calling LoadInteractions");
-			return new TaskIterator(new LoadInteractions(stringNet, speciesName, species,
-			                                             confidence, additionalNodes, stringIds,
-			                                             queryTermMap, netName, useDATABASE, netType));
+			if (useDATABASE.equals(Databases.STITCH.getAPIName())) {
+				System.out.println("Calling LoadInteractions2");
+				return new TaskIterator(new LoadInteractions2(stringNet, speciesName, species,
+																										  confidence, additionalNodes, stringIds,
+																										  queryTermMap, netName, useDATABASE, netType));
+			} else {
+				System.out.println("Calling LoadInteractions");
+				return new TaskIterator(new LoadInteractions(stringNet, speciesName, species,
+																										 confidence, additionalNodes, stringIds,
+																										 queryTermMap, netName, useDATABASE, netType));
+			}
 		}
 		//System.out.println("Calling LoadTermsTask");
 		return new TaskIterator(new LoadTermsTask(stringNet, speciesName, species, confidence,
