@@ -87,9 +87,9 @@ public class LoadInteractions2 extends AbstractTask {
 		// make sure the list of resolved IDs is unique
 		Set<String> uniqueIds = new HashSet<String>(stringIds);
 		if (useDATABASE.equals(Databases.STRING.getAPIName()))
-			monitor.setTitle("Loading data from STRING for " + uniqueIds.size() + " identifier(s).");
+			monitor.setTitle("Loading interacting proteins for " + uniqueIds.size() + " identifier(s).");
 		else if (useDATABASE.equals(Databases.STITCH.getAPIName()))
-			monitor.setTitle("Loading data from STITCH for " + uniqueIds.size() + " identifier(s).");
+			monitor.setTitle("Loading interacting compounds for " + uniqueIds.size() + " identifier(s).");
 
 		// System.out.println("Using database: "+useDATABASE);
 		StringManager manager = stringNet.getManager();
@@ -120,7 +120,7 @@ public class LoadInteractions2 extends AbstractTask {
 			if (useDATABASE.equals(Databases.STRING.getAPIName())) {
 				args.put("filter", String.valueOf(species.getTaxId()) + ".%");
 			} else {
-				args.put("filter", String.valueOf(species.getTaxId()) + ".%|CIDm%");
+				args.put("filter", "CIDm%");
 			}
 		}
 
@@ -139,7 +139,7 @@ public class LoadInteractions2 extends AbstractTask {
 		Map<String, CyNode> nodeMap = new HashMap<>();
 		CyNetwork network = JSONUtils.createNetworkFromJSON(stringNet, speciesName, results, 
 		                                                    queryTermMap, nodeMap, ids.trim(), 
-		                                                    netName, useDATABASE, netType.getAPIName());
+		                                                    netName, Databases.STITCH.getAPIName(), netType.getAPIName());
 
 		if (network == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"STRING returned no results");
@@ -159,47 +159,50 @@ public class LoadInteractions2 extends AbstractTask {
 		 * At this point, we have the interactions from the jensenlab servers -- specifically,
 		 * either inter-species interactions or compound-compound and compound-protein interactions.
 		 * The next step is to augment those with the intra-species protein-protein interactions.
+		 * Only do the next step if we have more than 1 protein in the network!
 		 */
 
 		// Find all of the protein node identifiers
 		List<String> proteins = ModelUtils.getProteinNodes(network);
-		ids = null;
-		for (String protein: proteins) {
-			if (ids == null)
-				ids = protein;
-			else
-				ids += "\n"+protein;
+		if (proteins.size() > 1) {
+			ids = null;
+			for (String protein: proteins) {
+				if (ids == null)
+					ids = protein;
+				else
+					ids += "\n"+protein;
+			}
+			
+			// Query string
+			args.clear();
+			// System.out.println("Identifiers: "+proteins.trim());
+			networkURL = manager.getStringNetworkURL();
+			args.put("identifiers",ids.trim());
+			args.put("required_score",String.valueOf(confidence*10));
+			args.put("network_type", netType.getAPIName());
+			// if (additionalNodes > 0) {
+			// 	args.put("additional_network_nodes", Integer.toString(additionalNodes));
+			// }
+			args.put("additional_network_nodes", "0");
+			args.put("caller_identity", StringManager.CallerIdentity);
+	
+			try {
+				results = HttpUtils.postJSON(networkURL, args, manager);
+			} catch (ConnectionException e) {
+				e.printStackTrace();
+				monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+				return;
+			}
+	
+			// System.out.println("String-db results: "+results.toString());
+	
+			// Add to network
+			List<CyEdge> newEdges = new ArrayList<>();
+			List<CyNode> newNodes = JSONUtils.augmentNetworkFromJSON(stringNet, network, newEdges, 
+							                                                 results, null, Databases.STRINGDB.getAPIName(), 
+																																	 netType.getAPIName());
 		}
-
-		// Query string
-		args.clear();
-		// System.out.println("Identifiers: "+proteins.trim());
-		networkURL = manager.getStringNetworkURL();
-		args.put("identifiers",ids.trim());
-		args.put("required_score",String.valueOf(confidence*10));
-		args.put("network_type", netType.getAPIName());
-		// if (additionalNodes > 0) {
-		// 	args.put("additional_network_nodes", Integer.toString(additionalNodes));
-		// }
-		args.put("additional_network_nodes", "0");
-		args.put("caller_identity", StringManager.CallerIdentity);
-
-		try {
-			results = HttpUtils.postJSON(networkURL, args, manager);
-		} catch (ConnectionException e) {
-			e.printStackTrace();
-			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
-			return;
-		}
-
-		// System.out.println("String-db results: "+results.toString());
-
-		// Add to network
-		List<CyEdge> newEdges = new ArrayList<>();
-		List<CyNode> newNodes = JSONUtils.augmentNetworkFromJSON(stringNet, network, newEdges, 
-						                                                 results, null, Databases.STRINGDB.getAPIName(), 
-																														 netType.getAPIName());
-
+		
 		// System.out.println("Results: "+results.toString());
 		int viewThreshold = ModelUtils.getViewThreshold(manager);
 		int networkSize = network.getNodeList().size() + network.getEdgeList().size();

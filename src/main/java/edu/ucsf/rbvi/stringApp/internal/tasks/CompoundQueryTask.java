@@ -152,9 +152,14 @@ public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
+		String useDatabase = Databases.STITCH.getAPIName();
+		if (queryTermMap.size() == 1 && queryTermMap.keySet().iterator().next().startsWith("CID")) {
+			useDatabase = Databases.STRING.getAPIName();
+		}
+		
 		LoadInteractions2 load = new LoadInteractions2(stringNetwork, sp.toString(), sp,
 				                                           confidence, limit.getValue(), stringIds, 
-																									 queryTermMap, newNetName, Databases.STITCH.getAPIName(), 
+																									 queryTermMap, newNetName, useDatabase, 
 																									 networkType.getSelectedValue());
 		manager.execute(new TaskIterator(load), true);
 		loadedNetwork = stringNetwork.getNetwork();
