@@ -45,6 +45,7 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.FetchStructureImagesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.FilterEnrichmentTableTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetClusterEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
+import edu.ucsf.rbvi.stringApp.internal.tasks.GetGenesetAnnotationTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetPublicationsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetSelectedSpeciesTaskFactory;
@@ -535,6 +536,16 @@ public class CyActivator extends AbstractCyActivator {
 				registerService(bc, getClusterEnrichment, NetworkTaskFactory.class, propsEnrichment);
 			}
 
+			GetGenesetAnnotationTaskFactory getGenesetAnnot = new GetGenesetAnnotationTaskFactory(manager, true);
+			{
+				Properties propsAnnotation = new Properties();
+				propsAnnotation.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
+				propsAnnotation.setProperty(TITLE, "Retrieve group-wise annotaions");
+				propsAnnotation.setProperty(MENU_GRAVITY, "3.0");
+				propsAnnotation.setProperty(IN_MENU_BAR, "true");
+				registerService(bc, getGenesetAnnot, NetworkTaskFactory.class, propsAnnotation);
+			}
+
 			{
 				ShowEnrichmentPanelAction sea = new ShowEnrichmentPanelAction("Show enrichment panel", manager);
 				registerService(bc, sea, CyAction.class);
@@ -639,6 +650,20 @@ public class CyActivator extends AbstractCyActivator {
 			registerService(bc, getCommandGroupEnrichment, NetworkTaskFactory.class, propsEnrichment);
 		}
 
+		GetGenesetAnnotationTaskFactory getCommandGroupAnnotaion = new GetGenesetAnnotationTaskFactory(manager, false);
+		{
+			Properties propsAnnotaion = new Properties();
+			propsAnnotaion.setProperty(COMMAND_NAMESPACE, "string");
+			propsAnnotaion.setProperty(COMMAND, "retrieve group-wise annotaion");
+			propsAnnotaion.setProperty(COMMAND_DESCRIPTION, 
+			                            "Retrieve annotations for the current String network and a pre-definde grouping of the nodes");
+			propsAnnotaion.setProperty(COMMAND_LONG_DESCRIPTION, 
+			                            "");
+			propsAnnotaion.setProperty(COMMAND_SUPPORTS_JSON, "true");
+			propsAnnotaion.setProperty(COMMAND_EXAMPLE_JSON, GetEnrichmentTaskFactory.EXAMPLE_JSON);
+			registerService(bc, getCommandGroupAnnotaion, NetworkTaskFactory.class, propsAnnotaion);
+		}
+		
 		GetPublicationsTaskFactory getCommandPublications = new GetPublicationsTaskFactory(manager, false);
 		{
 			Properties propsPubl = new Properties();
