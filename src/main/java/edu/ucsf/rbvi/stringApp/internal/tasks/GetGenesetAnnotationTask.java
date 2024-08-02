@@ -79,9 +79,9 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 
 	@Tunable(description = "Minimum group size", 
 			groups={"Advanced"}, params="displayState=collapsed",
-			exampleStringValue="5",
+			exampleStringValue="2",
 			gravity = 6.0)
-	public int minGroupSize = 5;	
+	public int minGroupSize = 2;	
 	
 	public GetGenesetAnnotationTask(StringManager manager, CyNetwork network, CyNetworkView netView) {
 		this.manager = manager;
