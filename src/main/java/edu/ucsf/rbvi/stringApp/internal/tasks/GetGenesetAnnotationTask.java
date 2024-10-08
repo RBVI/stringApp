@@ -57,9 +57,13 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 	final Map<String, Long> stringNodesMap;
 	final Map<String, CyNetwork> stringNetworkMap;
 	List<CyNode> analyzedNodes;
-	String annotation;
+	Map<String, String> annotations;
 	TaskMonitor monitor;
-		
+
+	public static String primary = "primary";
+	public static String secondary = "secondary";
+	public static String tertiary = "tertiary";
+	
 	@Tunable(description = "Column for groups", 
 	         longDescription="Specify the column that contains the node groups to be used for group-wise enrichment",
 	         exampleStringValue="",
@@ -79,9 +83,9 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 
 	@Tunable(description = "Minimum group size", 
 			groups={"Advanced"}, params="displayState=collapsed",
-			exampleStringValue="2",
+			exampleStringValue="3",
 			gravity = 6.0)
-	public int minGroupSize = 2;	
+	public int minGroupSize = 3;	
 	
 	public GetGenesetAnnotationTask(StringManager manager, CyNetwork network, CyNetworkView netView) {
 		this.manager = manager;
@@ -145,17 +149,22 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 			int valfreq = Collections.frequency(colValues, colval);
 			groups.add(new Group(colval.toString(), valfreq));
 		}
-		monitor.setStatusMessage("Network contains " + groups.size() + " groups.");
+		// monitor.setStatusMessage("Network contains " + groups.size() + " groups.");
 		Collections.sort(groups, Collections.reverseOrder());
 		// System.out.println(groups);
 
+		// create columns to save annotations in the node table
+		ModelUtils.createColumnIfNeeded(nodeTable, String.class, ModelUtils.GENESET_PRIMARY);
+		ModelUtils.createColumnIfNeeded(nodeTable, String.class, ModelUtils.GENESET_SECONDARY);
+		ModelUtils.createColumnIfNeeded(nodeTable, String.class, ModelUtils.GENESET_TERTIARY);
+		
 		// get annotations for each group
-		CyTable netTable = network.getDefaultNetworkTable();
 		int counter = 0;
 		for (Group group : groups) {
 			// System.out.println("Group: " + group);			
 			if (counter >= maxGroupNumber) 
 				break;
+			counter += 1;
 
 			// get set of nodes to retrieve enrichment for
 			String selected = getGroupNodes(network, colGroups, group.getName()).trim(); // also initializes the analyzedNodes
@@ -165,26 +174,43 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 			}
 			String groupName = colGroups.getName() + " " + group.getName();
 
-			System.out.println("Retrieving annotations for " + groupName + " with " + analyzedNodes.size() + " nodes.");
-			monitor.showMessage(Level.INFO, "Retrieving annotataions for group " + groupName);
+			// System.out.println("Retrieving annotations for " + groupName + " with " + analyzedNodes.size() + " nodes.");
+			monitor.showMessage(Level.INFO, "Retrieving annotataions for group " + groupName + " with " + analyzedNodes.size() + " nodes.");
 
 			// retrieve enrichment (new API)
-			String groupAnnotaion = getAnnotationJSON(selected, species, groupName);
-			System.out.println("Annotation: " + groupAnnotaion);
-			// TODO: add annotation to network
-			addAnnotationToNetwork();
+			getAnnotationJSON(selected, species, groupName);			
+			if (annotations != null && annotations.size() > 0) {
+				//System.out.println("Annotations: " + annotations.toString());
+				if (annotations.containsKey(primary) && annotations.get(primary) != null) {
+					addAnnotationToNetwork(annotations.get(primary));
+				} else if (annotations.containsKey(secondary) && annotations.get(secondary) != null) {
+					addAnnotationToNetwork(annotations.get(secondary));
+				} else if (annotations.containsKey(tertiary) && annotations.get(tertiary) != null) {
+					addAnnotationToNetwork(annotations.get(tertiary));
+				}
+			} else {
+				monitor.showMessage(Level.WARN, "Gene set annotation returned no results for this set of genes.");
+			}
 			
-			counter += 1;
+			for (CyNode node : analyzedNodes) {
+				if (annotations.containsKey(primary) && annotations.get(primary) != null) {
+					network.getRow(node).set(ModelUtils.GENESET_PRIMARY, annotations.get(primary));
+				}
+				if (annotations.containsKey(secondary) && annotations.get(secondary) != null) {
+					network.getRow(node).set(ModelUtils.GENESET_SECONDARY, annotations.get(secondary));
+				}
+				if (annotations.containsKey(tertiary) && annotations.get(tertiary) != null) {
+					network.getRow(node).set(ModelUtils.GENESET_TERTIARY, annotations.get(tertiary));
+				}
+			}
 		}
-		// save annotations in the network table?
-		// netTable.getRow(network.getSUID()).set(ModelUtils.NET_ENRICHMENT_TABLES, enrichmentGroups);
 	
 	}
 
-	private void addAnnotationToNetwork() {
+	private void addAnnotationToNetwork(String annotation) {
 		CyNetwork network = manager.getCurrentNetwork();
 		CyNetworkView view = manager.getCurrentNetworkView();
-		if (network == null || view == null)
+		if (network == null || view == null || annotation == null)
 			return;
 		
 		AnnotationManager annotManager = manager.getService(AnnotationManager.class);
@@ -210,10 +236,15 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 		double ySpan = Collections.max(yPos) - Collections.min(yPos);
 		// double scaling = view.getNodeViews().size()/(double)termNodes.size();
 		
-		// create annotaion
+		// create annotation
 		Map<String, String> args = new HashMap<>();
 		args.put(TextAnnotation.X, String.valueOf(Collections.min(xPos) - xSpan/8.0));
-		args.put(TextAnnotation.Y, String.valueOf(Collections.min(yPos) - ySpan/8.0));
+		if (analyzedNodes.size() > 30)
+			args.put(TextAnnotation.Y, String.valueOf(Collections.min(yPos) - ySpan/8.0));
+		else if (analyzedNodes.size() > 5)
+			args.put(TextAnnotation.Y, String.valueOf(Collections.min(yPos) - ySpan/5.0));
+		else 
+			args.put(TextAnnotation.Y, String.valueOf(Collections.min(yPos) - ySpan/2.0));
 		//args.put(TextAnnotation.Z, String.valueOf(-1));
 		args.put(TextAnnotation.TEXT, annotation);
 		args.put(TextAnnotation.FONTSIZE, String.valueOf(30));
@@ -239,7 +270,7 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 		}
     }
 
-	private String getAnnotationJSON(String selected, String species, String groupTableLabel) {
+	private void getAnnotationJSON(String selected, String species, String groupTableLabel) {
 		Map<String, String> args = new HashMap<String, String>();
 		String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/geneset_description";
 		args.put("identifiers", selected);
@@ -251,11 +282,11 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 		} catch (ConnectionException e) {
 			e.printStackTrace();
 			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
-			return null;
+			return;
 		}
 		if (jsonResults == null) {
 			monitor.showMessage(Level.ERROR, "Gene set annotation returned no results, possibly due to an error.");
-			return null;
+			return;
 		}
 		// System.out.println(jsonResults);
 		JSONArray annotationsArray = ModelUtils.getResultsFromJSON(jsonResults, JSONArray.class);
@@ -265,27 +296,23 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 		if (annotationsArray == null) {
 			String errorMsg = ModelUtils.getErrorMessageFromJSON(manager, jsonResults);
 			monitor.showMessage(Level.ERROR, "Gene set annotation returned no results, possibly due to an error. " + errorMsg);
-			return null;
+			return;
 		}
 
 		JSONObject annotationsObject = (JSONObject)annotationsArray.get(0);
-		String primary = (String)annotationsObject.get("primary_description");
-		String secondary = (String)annotationsObject.get("secondary_description");
-		String tertiary = (String)annotationsObject.get("tertiary_description");
+		String primaryAnnot = (String)annotationsObject.get("primary_description");
+		String secondaryAnnot = (String)annotationsObject.get("secondary_description");
+		String tertiaryAnnot = (String)annotationsObject.get("tertiary_description");
+		annotations = new HashMap<String, String>();
 		// String proteins = (String)annotationsObject.get("proteins");
-		if (primary != null && !primary.equals("-")) {
-			annotation = primary;
-			return primary;
-		} else if (secondary != null && !secondary.equals("-")) {			
-			annotation = secondary;
-			return secondary;
-		} else if (tertiary != null && !tertiary.equals("-")) {			
-			annotation = tertiary;
-			return tertiary;
-		} else {
-			monitor.showMessage(Level.WARN, "Gene set annotation returned no results for this set of genes.");
-			annotation = null;
-			return null;
+		if (primary != null) {
+			annotations.put(primary, primaryAnnot);
+		} 
+		if (secondary != null) {			
+			annotations.put(secondary, secondaryAnnot);
+		} 
+		if (tertiary != null) {			
+			annotations.put(tertiary, tertiaryAnnot);
 		}
 	}
 
@@ -369,17 +396,17 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 	public <R> R getResults(Class<? extends R> clzz) {
 		// TODO: [N] Test if this works for all cases
 		if (clzz.equals(String.class)) {
-			if (annotation == null)
+			if (annotations == null)
 				return (R) "No annotation";
 			else {
-				String result = annotation;
+				String result = annotations.toString();
 				return (R) result;
 			}
 		} else if (clzz.equals(JSONResult.class)) {
 			JSONResult res = () -> {
 				String result = "{";
-				if (annotation != null) {
-					result += "\"annotation\": " + annotation;
+				if (annotations != null) {
+					result += "\"annotation\": " + annotations.toString();
 				}
 				result += "}";
 				// System.out.println(result);

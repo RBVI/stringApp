@@ -183,6 +183,12 @@ public class ModelUtils {
 	public static String NODE_ENRICHMENT_BG = ENRICHMENT_NAMESPACE + NAMESPACE_SEPARATOR + "# background genes";
 	public static String NODE_ENRICHMENT_CAT = ENRICHMENT_NAMESPACE + NAMESPACE_SEPARATOR + "category";
 	
+	public static String GENESET_DESCRIPTION = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "geneset description";
+	public static String GENESET_PRIMARY = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "primary description";
+	public static String GENESET_SECONDARY = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "secondary description";
+	public static String GENESET_TERTIARY = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "tertiary description";
+
+	
 	// Other stuff
 	public static String COMPOUND = "STITCH compounds";
 	public static String EMPTYLINE = "--------";
