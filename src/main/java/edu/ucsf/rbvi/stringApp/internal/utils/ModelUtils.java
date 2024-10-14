@@ -15,9 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Scanner;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,32 +28,21 @@ import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
-import org.cytoscape.model.CyTableFactory;
-import org.cytoscape.model.CyTableManager;
 import org.cytoscape.model.CyTableUtil;
 import org.cytoscape.model.subnetwork.CyRootNetwork;
 import org.cytoscape.property.AbstractConfigDirPropsReader;
 import org.cytoscape.property.CyProperty;
 import org.cytoscape.property.CyProperty.SavePolicy;
 import org.cytoscape.property.SimpleCyProperty;
-import org.cytoscape.session.CySession;
-import org.cytoscape.session.CySessionManager;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
-import org.cytoscape.work.util.ListSingleSelection;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
-import edu.ucsf.rbvi.stringApp.internal.model.Databases;
-import edu.ucsf.rbvi.stringApp.internal.model.EntityIdentifier;
-import edu.ucsf.rbvi.stringApp.internal.model.EvidenceType;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
-import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.model.TextMiningResult;
 
 public class ModelUtils {
@@ -392,10 +379,10 @@ public class ModelUtils {
 			if (nSpecies == null || nSpecies.equals(""))
 				continue;
 			if (!species.containsKey(nSpecies)) {
-				species.put(nSpecies, new Integer(1));
+				species.put(nSpecies, Integer.valueOf(1));
 			} else {
 				int count = species.get(nSpecies).intValue() + 1;
-				species.put(nSpecies, new Integer(count));
+				species.put(nSpecies, Integer.valueOf(count));
 			}
 		}
 		String netSpecies = "";
