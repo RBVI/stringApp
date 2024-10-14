@@ -75,37 +75,45 @@ public class LoadSpeciesInteractions extends AbstractTask {
 	}
 
 	public void run(TaskMonitor monitor) {
-		if (useDATABASE.equals(Databases.STRING.getAPIName()))
-			if (species2 != null) {
-				monitor.setTitle("Loading interactions from STRING for " + species + " and " + species2);
-			} else
-				monitor.setTitle("Loading interactions from STRING for " + species);
-		else if (useDATABASE.equals(Databases.STITCH.getAPIName()))
-			monitor.setTitle("Loading interactions from STITCH for " + species);
 		StringManager manager = stringNet.getManager();
-		
-		monitor.setStatusMessage("Please be patient, this might take several minutes (up to half an hour depending on species and confidence cutoff).");
-
-		String conf = "0." + confidence;
-		if (confidence == 100)
-			conf = "1.0";
-
 		Map<String, String> args = new HashMap<>();
-		args.put("database", netType.getAPIName());
-		if (species.isCustom())
-			args.put("organism", species.toString());
-		else
-			args.put("organism", String.valueOf(species.getTaxId()));
-		if (species2 != null) {
-			args.put("organism2", String.valueOf(species2.getTaxId()));
-		}
-		args.put("score", conf);
-		args.put("caller_identity", StringManager.CallerIdentity);
+		String networkURL = manager.getNetworkURL();
 
+		if (useDATABASE.equals(Databases.STRINGDB.getAPIName()) && species.isCustom()) {
+			// TODO: implement whole species from STRING-db
+			monitor.setTitle("Loading interactions from STRING-DB for " + species);
+			monitor.showMessage(Level.ERROR, "This functionality is not available yet, but we are working on it!");
+			return;
+			// args.put("identifiers",ids.trim());
+			//args.put("required_score",String.valueOf(confidence*10));
+			//args.put("network_type", netType.getAPIName());
+			//args.put("caller_identity", StringManager.CallerIdentity);
+			//args.put("species", species.getName());
+			//networkURL = manager.getStringNetworkURL();
+		} else if (useDATABASE.equals(Databases.STRING.getAPIName())){
+			if (species2 != null)
+				monitor.setTitle("Loading interactions from STRING for " + species + " and " + species2);
+			else
+				monitor.setTitle("Loading interactions from STRING for " + species);
+
+			monitor.setStatusMessage("Please be patient, this might take several minutes (up to half an hour depending on species and confidence cutoff).");
+			
+			String conf = "0." + confidence;
+			if (confidence == 100)
+				conf = "1.0";
+			args.put("score", conf);	
+			args.put("database", netType.getAPIName());
+			args.put("organism", String.valueOf(species.getTaxId()));
+			if (species2 != null) {
+				args.put("organism2", String.valueOf(species2.getTaxId()));
+			}
+			args.put("caller_identity", StringManager.CallerIdentity);
+		}		
+		
 		// double time = System.currentTimeMillis();
 		JSONObject results;
 		try {
-			results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+			results = HttpUtils.postJSON(networkURL, args, manager);
 		} catch (ConnectionException e) {
 			this.errorMsg = e.getMessage();
 			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());

@@ -267,6 +267,7 @@ public class ViewUtils {
 											   	                                            BasicVisualLexicon.NODE_WIDTH);
 				dMapping.putMapValue("compound", 100.0);
 				dMapping.putMapValue("protein", 50.0);
+				dMapping.putMapValue("protein group", 70.0);
 				stringStyle.addVisualMappingFunction(dMapping);
 			}
 
@@ -277,6 +278,7 @@ public class ViewUtils {
 											   	                                            BasicVisualLexicon.NODE_HEIGHT);
 				dMapping.putMapValue("compound", 40.0);
 				dMapping.putMapValue("protein", 50.0);
+				dMapping.putMapValue("protein group", 70.0);
 				stringStyle.addVisualMappingFunction(dMapping);
 			}
 

@@ -40,6 +40,11 @@ public class ColumnNames {
 	public static String NODE_ENRICHMENT_BG = ENRICHMENT_NAMESPACE + ColumnNames.NAMESPACE_SEPARATOR + "# background genes";
 	public static String NODE_ENRICHMENT_CAT = ENRICHMENT_NAMESPACE + ColumnNames.NAMESPACE_SEPARATOR + "category";
 
+	public static String GENESET_DESCRIPTION = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "geneset description";
+	public static String GENESET_PRIMARY = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "primary description";
+	public static String GENESET_SECONDARY = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "secondary description";
+	public static String GENESET_TERTIARY = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "tertiary description";
+	
 	// Edge information
 	public static String SCORE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "score";
 	public static String SCORE_NO_NAMESPACE = "score";
