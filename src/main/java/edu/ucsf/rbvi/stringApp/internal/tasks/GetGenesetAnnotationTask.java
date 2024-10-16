@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.swing.JTable;
 
@@ -86,9 +87,9 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 
 	@Tunable(description = "Minimum group size", 
 			groups={"Advanced"}, params="displayState=collapsed",
-			exampleStringValue="3",
+			exampleStringValue="4",
 			gravity = 6.0)
-	public int minGroupSize = 3;	
+	public int minGroupSize = 4;	
 	
 	public GetGenesetAnnotationTask(StringManager manager, CyNetwork network, CyNetworkView netView) {
 		this.manager = manager;
@@ -213,7 +214,7 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 	private void addAnnotationToNetwork(String annotation) {
 		CyNetwork network = manager.getCurrentNetwork();
 		CyNetworkView view = manager.getCurrentNetworkView();
-		if (network == null || view == null || annotation == null)
+		if (network == null || view == null || annotation == null || annotation.equals("-"))
 			return;
 		
 		AnnotationManager annotManager = manager.getService(AnnotationManager.class);
@@ -239,15 +240,26 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 		double ySpan = Collections.max(yPos) - Collections.min(yPos);
 		// double scaling = view.getNodeViews().size()/(double)termNodes.size();
 		
+		
 		// create annotation
 		Map<String, String> args = new HashMap<>();
 		args.put(TextAnnotation.X, String.valueOf(Collections.min(xPos) - xSpan/8.0));
-		if (analyzedNodes.size() > 30)
+		if (analyzedNodes.size() > 30) {
 			args.put(TextAnnotation.Y, String.valueOf(Collections.min(yPos) - ySpan/8.0));
-		else if (analyzedNodes.size() > 5)
+			if (annotation.length() > 40) {
+				annotation = wrap(annotation, 40);
+			}
+		} else if (analyzedNodes.size() > 5) {
 			args.put(TextAnnotation.Y, String.valueOf(Collections.min(yPos) - ySpan/5.0));
-		else 
+			if (annotation.length() > 30) {
+				annotation = wrap(annotation, 30);
+			}
+		} else { 
 			args.put(TextAnnotation.Y, String.valueOf(Collections.min(yPos) - ySpan/2.0));
+			if (annotation.length() > 20) {
+				annotation = wrap(annotation, 20);
+			}
+		}
 		//args.put(TextAnnotation.Z, String.valueOf(-1));
 		args.put(TextAnnotation.TEXT, annotation);
 		args.put(TextAnnotation.FONTSIZE, String.valueOf(30));
@@ -259,6 +271,41 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 		textAnnotation.setName("stringApp_" + annotation);
 		annotManager.addAnnotation(textAnnotation);
 	}
+	
+	
+	private static final String LINEBREAK = "\n"; // or "\r\n";
+
+	// see: https://stackoverflow.com/questions/4055430/java-code-for-wrapping-text-lines-to-a-max-line-width
+	private String wrap(String string, int lineLength) {
+	    StringBuilder b = new StringBuilder();
+	    for (String line : string.split(Pattern.quote(LINEBREAK))) {
+	        b.append(wrapLine(line, lineLength));
+	    }
+	    return b.toString();
+	}
+
+	private String wrapLine(String line, int lineLength) {
+	    if (line.length() == 0) return LINEBREAK;
+	    if (line.length() <= lineLength) return line + LINEBREAK;
+	    String[] words = line.split(" ");
+	    StringBuilder allLines = new StringBuilder();
+	    StringBuilder trimmedLine = new StringBuilder();
+	    for (String word : words) {
+	        if (trimmedLine.length() + 1 + word.length() <= lineLength) {
+	            trimmedLine.append(word).append(" ");
+	        } else {
+	            allLines.append(trimmedLine).append(LINEBREAK);
+	            trimmedLine = new StringBuilder();
+	            trimmedLine.append(word).append(" ");
+	        }
+	    }
+	    if (trimmedLine.length() > 0) {
+	        allLines.append(trimmedLine);
+	    }
+	    // allLines.append(LINEBREAK);
+	    return allLines.toString();
+	}
+
 	
 	private void initGroupColumn() {
     	List<CyColumn> showList = ModelUtils.getGroupColumns(network);
