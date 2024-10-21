@@ -762,7 +762,7 @@ public class JSONUtils {
 			else if (col.startsWith(ColumnNames.COMPARTMENT_NAMESPACE))
 				ModelUtils.createColumnIfNeeded(network.getDefaultNodeTable(), Double.class, col);
 		}
-		
+		// fill out the columns with the new data
 		for (Object nodeData: obj) {
 			JSONObject nodeObj = (JSONObject)nodeData;
 			String id = (String)nodeObj.get(ColumnNames.ID);
@@ -771,7 +771,6 @@ public class JSONUtils {
 			for (Object extraObj: nodeObj.keySet()) {
 				String extraName = (String)extraObj;
 				// Skip over the data we already got from string-db
-				// TODO: pre-create columns beforehand to have them in the right order?
 				if (extraName.startsWith(ColumnNames.TARGET_NAMESPACE)) {
 					row.set(extraName, (String)nodeObj.get(extraObj));
 				} else if (extraName.startsWith(ColumnNames.TISSUE_NAMESPACE)) {
