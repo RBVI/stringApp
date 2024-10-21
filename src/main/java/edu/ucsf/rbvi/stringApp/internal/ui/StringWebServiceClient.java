@@ -21,7 +21,7 @@ public class StringWebServiceClient extends AbstractWebServiceGUIClient
 										+ "scored, and transferred across orthologs. The network includes both <br />"
 										+ "physical interactions and functional associations.</html>");
 		this.manager = manager;
-		super.gui = new GetTermsPanel(manager, Databases.STRING.getAPIName(), false);
+		super.gui = new GetTermsPanel(manager, Databases.STRINGDB.getAPIName(), false);
 	}
 
 	public TaskIterator createTaskIterator(Object query) {
