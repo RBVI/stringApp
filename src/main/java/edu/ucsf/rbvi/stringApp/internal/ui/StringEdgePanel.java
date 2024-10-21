@@ -515,7 +515,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 		CyNetworkView view = manager.getCurrentNetworkView();
 		for (CyEdge edge: currentNetwork.getEdgeList()) {
 			CyRow edgeRow = currentNetwork.getRow(edge);
-			double max = -1;
+			double max = 0.0;
 			Color clr = null;
 			for (String lbl: color.keySet()) {
 				if (!color.get(lbl))
