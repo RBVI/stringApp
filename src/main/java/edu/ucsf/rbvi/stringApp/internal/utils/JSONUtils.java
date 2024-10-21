@@ -279,10 +279,10 @@ public class JSONUtils {
 		List<CyNode> nodes;
 		if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
 			Map<String, List<Annotation>> annotationsMap = stringNetwork.getAnnotations();
-			nodes = getJSONFromStringDb(manager, species, net, nodeMap, nodeNameMap, queryTermMap, null, (JSONArray)results,
+			nodes = getJSONFromStringDb(manager, species, net, nodeMap, nodeNameMap, queryTermMap, newEdges, (JSONArray)results,
 					                        useDATABASE, netType, annotationsMap);
 		} else {
-			nodes = getJSON(manager, species, net, nodeMap, nodeNameMap, queryTermMap, null, (JSONObject)results,
+			nodes = getJSON(manager, species, net, nodeMap, nodeNameMap, queryTermMap, newEdges, (JSONObject)results,
 					            useDATABASE, netType);
 		}
 		
