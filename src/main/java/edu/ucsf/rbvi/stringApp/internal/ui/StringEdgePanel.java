@@ -280,6 +280,13 @@ public class StringEdgePanel extends AbstractStringPanel {
 		EasyGBC c = new EasyGBC();
 		panel.setLayout(new GridBagLayout());
 
+		{
+	  		JLabel link = new SwingLinkOSBrowser("STRING interaction page", getInteractionURL(edge));
+			link.setFont(textFont);
+			link.setBorder(BorderFactory.createEmptyBorder(10,10,10,30));
+			panel.add(link, c.anchor("west").down().expandVert());
+		}
+		
 		List<String> subScoreList = EvidenceType.getOrderedEvidenceTypes(ModelUtils.getNetworkType(currentNetwork));
 		Map<String, Double> subScoresMap = ModelUtils.getSubScores(currentNetwork, edge);
 		{
@@ -303,8 +310,8 @@ public class StringEdgePanel extends AbstractStringPanel {
 			scoreLabel.setMaximumSize(new Dimension(50,30));
 			labelPanel.add(scoreLabel, d.anchor("west").down().expandVert());
 			// add border, etc. 
-			labelPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 30));
-			panel.add(labelPanel, c.right().expandVert());
+			labelPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 30));
+			panel.add(labelPanel, c.down().noExpand());
 		}
 
 		{
@@ -335,14 +342,9 @@ public class StringEdgePanel extends AbstractStringPanel {
 			valueLabel.setMinimumSize(new Dimension(50,30));
 			valueLabel.setMaximumSize(new Dimension(50,30));
 			valuesPanel.add(valueLabel, d.anchor("west").down().expandBoth());
-			panel.add(valuesPanel, c.right().expandHoriz());
+			valuesPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 30));
+			panel.add(valuesPanel, c.right().expandBoth());
 			
-		}
-		
-		{
-	  		JLabel link = new SwingLinkOSBrowser("See STRING interaction page", getInteractionURL(edge));
-			link.setFont(textFont);
-			panel.add(link, c.right().expandBoth());
 		}
 		
 

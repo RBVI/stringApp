@@ -144,6 +144,12 @@ public class StringCytoPanel extends JPanel
 		nodePanel.selectedNodes(event.getSelectedNodes());
 		// Pass selected edges to edgeTab
 		edgePanel.selectedEdges(event.getSelectedEdges());
+		// small hack to switch to the Edge tab if only edges are selected 
+		// or to the Node tab if only nodes are selected
+		if (event.getSelectedNodes().size() > 0 && event.getSelectedEdges().size() == 0)
+			tabs.setSelectedIndex(0);
+		else if (event.getSelectedNodes().size() == 0 && event.getSelectedEdges().size() > 0)
+			tabs.setSelectedIndex(1);
 	}
 
 	@Override
