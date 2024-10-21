@@ -35,10 +35,10 @@ public class ColumnNames {
 
 	// Enrichment node information
 	public static String ENRICHMENT_NAMESPACE = "enrichment";
-	public static String NODE_ENRICHMENT_FDR = ENRICHMENT_NAMESPACE + ColumnNames.NAMESPACE_SEPARATOR + "FDR value";
-	public static String NODE_ENRICHMENT_GENES = ENRICHMENT_NAMESPACE + ColumnNames.NAMESPACE_SEPARATOR + "# genes";
-	public static String NODE_ENRICHMENT_BG = ENRICHMENT_NAMESPACE + ColumnNames.NAMESPACE_SEPARATOR + "# background genes";
-	public static String NODE_ENRICHMENT_CAT = ENRICHMENT_NAMESPACE + ColumnNames.NAMESPACE_SEPARATOR + "category";
+	public static String NODE_ENRICHMENT_FDR = ENRICHMENT_NAMESPACE + NAMESPACE_SEPARATOR + "FDR value";
+	public static String NODE_ENRICHMENT_GENES = ENRICHMENT_NAMESPACE + NAMESPACE_SEPARATOR + "# genes";
+	public static String NODE_ENRICHMENT_BG = ENRICHMENT_NAMESPACE + NAMESPACE_SEPARATOR + "# background genes";
+	public static String NODE_ENRICHMENT_CAT = ENRICHMENT_NAMESPACE + NAMESPACE_SEPARATOR + "category";
 
 	public static String GENESET_DESCRIPTION = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "geneset description";
 	public static String GENESET_PRIMARY = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "primary description";

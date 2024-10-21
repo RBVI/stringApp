@@ -844,38 +844,49 @@ public class JSONUtils {
 		// Update the scores information
 		CyRow edgeRow = network.getRow(edge);
 		if (edgeObj.containsKey("score"))
-			edgeRow.set("stringdb::score", ModelUtils.makeDouble(edgeObj.get("score")));
+			edgeRow.set(ColumnNames.SCORE, ModelUtils.makeDouble(edgeObj.get("score")));
 		if (edgeObj.containsKey("nscore")) {
-			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, EvidenceType.NEIGHBORHOOD.name());
-			edgeRow.set(EvidenceType.NEIGHBORHOOD.name(), ModelUtils.makeDouble(edgeObj.get("nscore")));
+			String edgeColName = getEdgeColumnName(EvidenceType.NEIGHBORHOOD);
+			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName);
+			edgeRow.set(edgeColName, ModelUtils.makeDouble(edgeObj.get("nscore")));
 		}
 		if (edgeObj.containsKey("fscore")) {
-			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, EvidenceType.GENEFUSIONS.name());
-			edgeRow.set(EvidenceType.GENEFUSIONS.name(), ModelUtils.makeDouble(edgeObj.get("fscore")));
+			String edgeColName = getEdgeColumnName(EvidenceType.GENEFUSIONS);
+			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName);
+			edgeRow.set(edgeColName, ModelUtils.makeDouble(edgeObj.get("fscore")));
 		}
 		if (edgeObj.containsKey("pscore")) {
-			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, EvidenceType.COOCCURRENCE.name());
-			edgeRow.set(EvidenceType.COOCCURRENCE.name(), ModelUtils.makeDouble(edgeObj.get("pscore")));
+			String edgeColName = getEdgeColumnName(EvidenceType.COOCCURRENCE);
+			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName);
+			edgeRow.set(edgeColName, ModelUtils.makeDouble(edgeObj.get("pscore")));
 		}
 		if (edgeObj.containsKey("ascore")) {
-			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, EvidenceType.COEXPRESSION.name());
-			edgeRow.set(EvidenceType.COEXPRESSION.name(), ModelUtils.makeDouble(edgeObj.get("ascore")));
+			String edgeColName = getEdgeColumnName(EvidenceType.COEXPRESSION);
+			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName);
+			edgeRow.set(edgeColName, ModelUtils.makeDouble(edgeObj.get("ascore")));
 		}
 		if (edgeObj.containsKey("escore")) {
-			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, EvidenceType.EXPERIMENTS.name());
-			edgeRow.set(EvidenceType.EXPERIMENTS.name(), ModelUtils.makeDouble(edgeObj.get("escore")));
+			String edgeColName = getEdgeColumnName(EvidenceType.EXPERIMENTS);
+			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName);
+			edgeRow.set(edgeColName, ModelUtils.makeDouble(edgeObj.get("escore")));
 		}
 		if (edgeObj.containsKey("dscore")) {
-			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, EvidenceType.DATABASES.name());
-			edgeRow.set(EvidenceType.DATABASES.name(), ModelUtils.makeDouble(edgeObj.get("dscore")));
+			String edgeColName = getEdgeColumnName(EvidenceType.DATABASES);
+			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName);
+			edgeRow.set(edgeColName, ModelUtils.makeDouble(edgeObj.get("dscore")));
 		}
 		if (edgeObj.containsKey("tscore")) {
-			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, EvidenceType.TEXTMINING.name());
-			edgeRow.set(EvidenceType.TEXTMINING.name(), ModelUtils.makeDouble(edgeObj.get("tscore")));
+			String edgeColName = getEdgeColumnName(EvidenceType.TEXTMINING);
+			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName);
+			edgeRow.set(edgeColName, ModelUtils.makeDouble(edgeObj.get("tscore")));
 		}
 
 	}
 
+	private static String getEdgeColumnName(EvidenceType evType) {
+		return ColumnNames.STRINGDB_NAMESPACE + ColumnNames.NAMESPACE_SEPARATOR + evType.toString();
+	}
+	
 	private static void createEdge(CyNetwork network, JSONObject edgeObj,
 			Map<String, CyNode> nodeMap, Map<String, String> nodeNameMap, List<CyEdge> newEdges,
 			String useDATABASE, String netType) {
