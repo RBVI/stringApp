@@ -739,10 +739,30 @@ public class JSONUtils {
 		JSONArray obj = getResultsFromJSON(results, JSONArray.class);
 		CyNetwork network = stringNet.getNetwork();
 		Map<String, CyRow> nodeMap = new HashMap<>();
+		// create a map of node id to rows for quicker filling out of the data
 		for (CyNode node: network.getNodeList()) {
 			CyRow row = network.getRow(node);
 			nodeMap.put(row.get(ColumnNames.ID, String.class), row);
 		}
+		// get all new columns, sort them and create them 
+		List<String> extraCols = new ArrayList<String>(); 
+		if (obj.size() > 0 && obj.get(0) != null) {
+			JSONObject nodeObj = (JSONObject)obj.get(0);
+			for (Object extraObj: nodeObj.keySet()) {
+				String extraName = (String)extraObj;
+				extraCols.add(extraName);
+			}
+		}
+		Collections.sort(extraCols);
+		for (String col : extraCols) {
+			if (col.startsWith(ColumnNames.TARGET_NAMESPACE))
+				ModelUtils.createColumnIfNeeded(network.getDefaultNodeTable(), String.class, col);
+			else if (col.startsWith(ColumnNames.TISSUE_NAMESPACE))
+				ModelUtils.createColumnIfNeeded(network.getDefaultNodeTable(), Double.class, col);
+			else if (col.startsWith(ColumnNames.COMPARTMENT_NAMESPACE))
+				ModelUtils.createColumnIfNeeded(network.getDefaultNodeTable(), Double.class, col);
+		}
+		
 		for (Object nodeData: obj) {
 			JSONObject nodeObj = (JSONObject)nodeData;
 			String id = (String)nodeObj.get(ColumnNames.ID);
@@ -753,13 +773,10 @@ public class JSONUtils {
 				// Skip over the data we already got from string-db
 				// TODO: pre-create columns beforehand to have them in the right order?
 				if (extraName.startsWith(ColumnNames.TARGET_NAMESPACE)) {
-					ModelUtils.createColumnIfNeeded(network.getDefaultNodeTable(), String.class, extraName);
 					row.set(extraName, (String)nodeObj.get(extraObj));
 				} else if (extraName.startsWith(ColumnNames.TISSUE_NAMESPACE)) {
-					ModelUtils.createColumnIfNeeded(network.getDefaultNodeTable(), Double.class, extraName);
 					row.set(extraName, (Double)nodeObj.get(extraObj));
 				} else if (extraName.startsWith(ColumnNames.COMPARTMENT_NAMESPACE)) {
-					ModelUtils.createColumnIfNeeded(network.getDefaultNodeTable(), Double.class, extraName);
 					row.set(extraName, (Double)nodeObj.get(extraObj));
 				}
 			}
