@@ -185,38 +185,51 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		if (conf != null)
 			score = conf;
 
+		String networkType = NetworkType.FUNCTIONAL.getAPIName();
 		NetworkType currentType = NetworkType.getType(ModelUtils.getNetworkType(network));
-		String database = NetworkType.FUNCTIONAL.getAPIName();
 		if (currentType != null)
-			database = currentType.getAPIName();
+			networkType = currentType.getAPIName();
 
+		String database = ModelUtils.getDatabase(network);
 		// int taxonId = Species.getSpeciesTaxId(species);
 		Species selSpecies = Species.getSpecies(selectedType);
 		String filterString = "";
 		String useDatabase = "";
 		Map<String, String> args = new HashMap<>();
-		if (selectedType.equals(ModelUtils.COMPOUND)) {
+		// if expand by compounds, go to jensenlab and ask for compounds
+		// TODO: [move] revise
+ 		if (selectedType.equals(ModelUtils.COMPOUND)) {
 			useDatabase = Databases.STITCH.getAPIName();
 			args.put("filter", "CIDm%");			
 			args.put("existing",existing.trim());
 			args.put("score", conf.toString());
-			args.put("database", database);
+			args.put("database", networkType);
 			args.put("alpha", selectivityAlpha.getValue().toString());
 			if (additionalNodes > 0)
 				args.put("additional", Integer.toString(additionalNodes));
-		// } else if (selSpecies.isCustom()) {
-		} else {
+		} else if (species.equals(selectedType) && !database.equals(Databases.STITCH.getAPIName())) {
+			// if expand by same species and the network is not a stitch network, go to string-db and ask for more proteins of this species
+			System.out.println("species: " + species);
+			System.out.println("selType: " + selectedType);
 			filterString = selSpecies.toString();
 			useDatabase = Databases.STRINGDB.getAPIName();
 			args.put("species",filterString);
 			args.put("existing_string_identifiers",existing.trim());
 			args.put("identifiers",existing.trim());
 			args.put("required_score",String.valueOf((int)(conf*10)));
-			args.put("network_type", database);
+			args.put("network_type", networkType);
 			args.put("custom_alpha", selectivityAlpha.getValue().toString());
 			if (additionalNodes > 0)
 				args.put("additional_network_nodes", Integer.toString(additionalNodes));
-		} /*else {
+		} else {
+			monitor.showMessage(TaskMonitor.Level.WARN, "This Expand functionality is not implemented yet");
+			return;
+		}
+  		/*else {
+			// if expand by other species, go to jensenlab and ask for more proteins of this species
+			// TODO: [move]if expanding a cross-species network, go to STRING for the number of additional nodes of that species, then query Jensenlab for potential cross-species interactions
+			// TODO: [move] test this more extensively
+			// TODO: [move] if this is a stitch network (i.e. species == null), go to Jensenlab assuming we want to expand the compounds by proteins.
 			useDatabase = Databases.STRING.getAPIName();
 			filterString = String.valueOf(selSpecies.getTaxId());
 			args.put("filter", filterString + ".%");
@@ -273,6 +286,10 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			// });
 			// return;
 		}
+
+		// TODO: [move] if we asked for a different species, we need to also get the intra-species interactions of the proteins from this species 
+		// new edges will most likely be added here as well (difficult to test currently since the intra-species interacions are sill in jensenlab database)
+		
 		monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
 
 		// Finally, update any node information if we're using from STRING
