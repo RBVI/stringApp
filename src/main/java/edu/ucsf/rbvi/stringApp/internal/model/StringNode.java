@@ -72,14 +72,14 @@ public class StringNode {
 	}
 
 	public boolean haveGeneCard() {
-		return (haveDisplayName() && getSpecies().equals("Homo sapiens"));
+		return (haveDisplayName() && getSpecies() != null && getSpecies().equals("Homo sapiens"));
 	}
 	
 	public String getGeneCardURL() {
 		String name = getDisplayName();
 		if (name == null) return null;
 		// GeneCards only supports human proteins
-		if (getSpecies().equals("Homo sapiens"))
+		if (getSpecies() != null && getSpecies().equals("Homo sapiens"))
 			return "http://www.genecards.org/cgi-bin/carddisp.pl?gene="+name;
 		return null;
 	}
@@ -116,7 +116,7 @@ public class StringNode {
 		// return haveData("pharos ", 4);
 		// pharos* columns were renamed to target*
 		// every human protein is in pharos as of now
-		return (haveDisplayName() && getSpecies().equals("Homo sapiens"));
+		return (haveDisplayName() && getSpecies() != null && getSpecies().equals("Homo sapiens"));
 	}
 
 	public String getPharosURL() {
