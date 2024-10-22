@@ -152,7 +152,7 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 			netName = query.substring(0, 15)+"...";
 		LoadInteractions liTask = new LoadInteractions(stringNetwork, species.getName(), species, 
 			                                             confidence, 0, stringIds, queryTermMap, netName, 
-			                                             Databases.STRING.getAPIName(), netType);
+			                                             Databases.STRINGDB.getAPIName(), netType);
 		AddTextMiningResultsTask atmTask = new AddTextMiningResultsTask(stringNetwork, tmResults);
 		insertTasksAfterCurrentTask(liTask, atmTask);
 	}

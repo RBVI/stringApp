@@ -744,7 +744,8 @@ public class JSONUtils {
 			CyRow row = network.getRow(node);
 			nodeMap.put(row.get(ColumnNames.ID, String.class), row);
 		}
-		// get all new columns, sort them and create them 
+		// get all new columns, sort them and create them
+		// TODO: [move] revise if the change the order of columns in the json
 		List<String> extraCols = new ArrayList<String>(); 
 		if (obj.size() > 0 && obj.get(0) != null) {
 			JSONObject nodeObj = (JSONObject)obj.get(0);
@@ -772,10 +773,13 @@ public class JSONUtils {
 				String extraName = (String)extraObj;
 				// Skip over the data we already got from string-db
 				if (extraName.startsWith(ColumnNames.TARGET_NAMESPACE)) {
+					ModelUtils.createColumnIfNeeded(network.getDefaultNodeTable(), String.class, extraName);
 					row.set(extraName, (String)nodeObj.get(extraObj));
 				} else if (extraName.startsWith(ColumnNames.TISSUE_NAMESPACE)) {
+					ModelUtils.createColumnIfNeeded(network.getDefaultNodeTable(), Double.class, extraName);
 					row.set(extraName, (Double)nodeObj.get(extraObj));
 				} else if (extraName.startsWith(ColumnNames.COMPARTMENT_NAMESPACE)) {
+					ModelUtils.createColumnIfNeeded(network.getDefaultNodeTable(), Double.class, extraName);
 					row.set(extraName, (Double)nodeObj.get(extraObj));
 				}
 			}
