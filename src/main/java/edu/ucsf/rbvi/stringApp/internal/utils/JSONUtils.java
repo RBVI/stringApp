@@ -362,9 +362,6 @@ public class JSONUtils {
 			}
 		}
 
-		if (results == null)
-			return null;
-
 		// Create the network
 		CyNetwork newNetwork = manager.createNetwork(defaultName, defaultNameRootNet);
 		ModelUtils.setDatabase(newNetwork, useDATABASE);
@@ -481,6 +478,9 @@ public class JSONUtils {
 			Map<String, CyNode> nodeMap, Map<String, String> nodeNameMap,
 			Map<String, String> queryTermMap, List<CyEdge> newEdges, JSONObject json,
 			String useDATABASE, String netType) {
+		
+		if (json == null)
+			return null;
 		
 		List<CyNode> newNodes = new ArrayList<>();
 		ModelUtils.createColumnIfNeeded(network.getDefaultNodeTable(), String.class, ColumnNames.CANONICAL);

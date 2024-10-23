@@ -140,7 +140,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		this.manager = manager;
 		this.net = net;
 		this.netName = "";
-		this.useDatabase = Databases.STRING.getAPIName();
+		this.useDatabase = Databases.STRINGDB.getAPIName();
 		species = new ListSingleSelection<Species>(Species.getGUISpecies());
 		species.setSelectedValue(Species.getHumanSpecies());
 		if (net != null) {
@@ -159,7 +159,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		this.manager = manager;
 		this.net = net;
 		this.netName = "";
-		this.useDatabase = Databases.STRING.getAPIName();
+		this.useDatabase = Databases.STRINGDB.getAPIName();
 		species = new ListSingleSelection<Species>(Species.getGUISpecies());
 		species.setSelectedValue(sp);
 		if (net != null) {
@@ -276,6 +276,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
+		// TODO: [move] distinguish between string and stitch network to decide if to go to string-db (LoadInteractions) or jensenlab first (LoadInteractions2)
 		LoadInteractions load = 
 				new LoadInteractions(stringNetwork, sp.toString(), sp, 
 						(int)(cutoff.getValue()*100), additionalNodes, stringIds, queryTermMap, netName, useDatabase, networkType.getSelectedValue());
