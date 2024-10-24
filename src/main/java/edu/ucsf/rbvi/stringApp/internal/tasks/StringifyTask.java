@@ -276,11 +276,16 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
-		// TODO: [move] distinguish between string and stitch network to decide if to go to string-db (LoadInteractions) or jensenlab first (LoadInteractions2)
-		LoadInteractions load = 
-				new LoadInteractions(stringNetwork, sp.toString(), sp, 
-						(int)(cutoff.getValue()*100), additionalNodes, stringIds, queryTermMap, netName, useDatabase, networkType.getSelectedValue());
-		manager.execute(new TaskIterator(load), true);
+		// TODO: [move] test if stringify still works for compound networks 
+		if (useDatabase.equals(Databases.STITCH.getAPIName())) {
+			System.out.println("Calling LoadInteractions2 on behalf of Stringify");
+			manager.execute(new TaskIterator(new LoadInteractions2(stringNetwork, sp.toString(), sp, (int)(cutoff.getValue()*100), additionalNodes, stringIds,
+					  queryTermMap, netName, useDatabase, networkType.getSelectedValue())), true);
+		} else {
+			System.out.println("Calling LoadInteractions on behalf of Stringify");
+			manager.execute(new TaskIterator(new LoadInteractions(stringNetwork, sp.toString(), sp, 
+							(int)(cutoff.getValue()*100), additionalNodes, stringIds, queryTermMap, netName, useDatabase, networkType.getSelectedValue())), true);
+		}		
 		loadedNetwork = stringNetwork.getNetwork();
 		if (loadedNetwork == null) {
 			throw new RuntimeException("Query '"+terms+"' returned no results");
