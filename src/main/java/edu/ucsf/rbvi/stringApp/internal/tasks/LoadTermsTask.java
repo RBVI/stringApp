@@ -168,7 +168,8 @@ public class LoadTermsTask extends AbstractTask {
 			// });
 			// return;
 		}
-
+		// TODO: [move] do we need to retrieve node attributes from STRING and from Jensenlab for the new nodes?
+		
 		// Set our confidence score
 		ModelUtils.setConfidence(network, ((double)confidence)/100.0);
 		ModelUtils.setNetworkType(network, netType.toString());

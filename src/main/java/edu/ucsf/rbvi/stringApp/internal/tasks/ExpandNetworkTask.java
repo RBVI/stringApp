@@ -197,7 +197,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		String useDatabase = "";
 		Map<String, String> args = new HashMap<>();
 		// if expand by compounds, go to jensenlab and ask for compounds
-		// TODO: [move] revise
+		// TODO: [move] revise once we have a testing server
  		if (selectedType.equals(ModelUtils.COMPOUND)) {
 			useDatabase = Databases.STITCH.getAPIName();
 			args.put("filter", "CIDm%");			
@@ -209,8 +209,6 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 				args.put("additional", Integer.toString(additionalNodes));
 		} else if (species.equals(selectedType) && !database.equals(Databases.STITCH.getAPIName())) {
 			// if expand by same species and the network is not a stitch network, go to string-db and ask for more proteins of this species
-			System.out.println("species: " + species);
-			System.out.println("selType: " + selectedType);
 			filterString = selSpecies.toString();
 			useDatabase = Databases.STRINGDB.getAPIName();
 			args.put("species",filterString);
@@ -314,6 +312,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			} catch (ConnectionException ce) {
 				monitor.showMessage(TaskMonitor.Level.ERROR, "Unable to get additional node annotations");
 			}
+			// TODO: [move] do we need to also retrieve the tissue/compartments scores for the new nodes? 
 		}
 
 		// If we have a view, re-apply the style and layout
