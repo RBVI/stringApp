@@ -128,14 +128,15 @@ public class LoadTermsTask extends AbstractTask {
 			}
 		}
 
-		monitor.setStatusMessage("Getting additional terms from "+manager.getNetworkURL());
-
 		JSONObject results;
 		try {
-			if (useDATABASE.equals(Databases.STRINGDB.getAPIName()))
+			if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
+				monitor.setStatusMessage("Getting additional terms from "+manager.getStringNetworkURL());
 				results = HttpUtils.postJSON(manager.getStringNetworkURL(), args, manager);
-			else
+			} else {
+				monitor.setStatusMessage("Getting additional terms from "+manager.getNetworkURL());
 				results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+			}
 		} catch (ConnectionException e) {
 			e.printStackTrace();
 			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
