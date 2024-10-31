@@ -63,4 +63,12 @@ public class TextUtils {
 		}
 		return sb.toString();
 	}
+
+	public static String trunc(String str) {
+		if (str.length() > 1000)
+			return str.substring(0,1000)+"...";
+		return str;
+	}
+
+
 }

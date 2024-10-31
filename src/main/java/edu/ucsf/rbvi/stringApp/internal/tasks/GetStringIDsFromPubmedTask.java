@@ -15,6 +15,7 @@ import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.TaskMonitor.Level;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
@@ -25,6 +26,7 @@ import edu.ucsf.rbvi.stringApp.internal.model.TextMiningResult;
 
 import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.TextUtils;
 
 public class GetStringIDsFromPubmedTask extends AbstractTask implements ObservableTask {
 	final StringNetwork stringNetwork;
@@ -134,17 +136,61 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 			return;
 		}
 		if (tmobject == null) {
-			monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results");
+			monitor.showMessage(TaskMonitor.Level.ERROR,"Jensenlab API returned no results for query '" + query + "'.");
 			return;
 		}
 
 		tmResults = JSONUtils.getIdsFromJSON(manager, species.getTaxId(), tmobject, query, false);
 
-		Map<String, String> queryTermMap = new HashMap<>();
-		List<String> stringIds = new ArrayList<>();
-		for (TextMiningResult tm: tmResults) {
-			stringIds.add(tm.getID());
+		if (tmResults == null || tmResults.size() == 0) {
+			monitor.showMessage(TaskMonitor.Level.ERROR,
+					"Jensenlab API returned no results for query '" + query + "'.");
+			//throw new RuntimeException("Jensenlab returned no results for this PubMed query '" + query + "'.");
+			return;
 		}
+		monitor.showMessage(TaskMonitor.Level.INFO,"Found "+tmResults.size()+" associated proteins.");
+
+		// TODO: [move] we need to call getAnnotations before loading interactions --> added below, still needs to be double checked, code copied from StringifyTask
+		List<String> stringIdsTM = new ArrayList<>();
+		for (TextMiningResult tm: tmResults) {
+			stringIdsTM.add(tm.getID());
+		}
+
+		String terms = ModelUtils.listToString(stringIdsTM);
+
+		// We want the query with newlines, so we need to convert
+		terms = terms.replace(",", "\n");
+		// Now, strip off any blank lines
+		terms = terms.replaceAll("(?m)^\\s*", "");
+		
+		// Get the annotations
+		String useDatabase =  Databases.STRINGDB.getAPIName();
+		Map<String, List<Annotation>> annotations;
+		try {
+			annotations = stringNetwork.getAnnotations(manager, species, terms, useDatabase, false);
+		} catch (ConnectionException e) {
+			e.printStackTrace();
+			monitor.showMessage(TaskMonitor.Level.ERROR,
+					"Cannot connect to " + useDatabase);
+			throw new RuntimeException("Cannot connect to " + useDatabase);
+		}
+
+		if (annotations == null || annotations.size() == 0) {
+			monitor.showMessage(TaskMonitor.Level.ERROR,
+					"Query '" + TextUtils.trunc(terms) + "' returned no results");
+			throw new RuntimeException("Query '"+TextUtils.trunc(terms)+"' returned no results");
+		}
+
+		boolean resolved = stringNetwork.resolveAnnotations();
+		if (!resolved) {
+			// Resolve the annotations by choosing the first stringID for each
+			for (String term : annotations.keySet()) {
+				stringNetwork.addResolvedStringID(term, annotations.get(term).get(0).getStringId());
+			}
+		}
+
+		Map<String, String> queryTermMap = new HashMap<>();
+		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
 
 		// OK, if we got any results, fetch the network
 		String netName = query;
@@ -152,7 +198,7 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 			netName = query.substring(0, 15)+"...";
 		LoadInteractions liTask = new LoadInteractions(stringNetwork, species.getName(), species, 
 			                                             confidence, 0, stringIds, queryTermMap, netName, 
-			                                             Databases.STRINGDB.getAPIName(), netType);
+			                                             useDatabase, netType);
 		AddTextMiningResultsTask atmTask = new AddTextMiningResultsTask(stringNetwork, tmResults);
 		insertTasksAfterCurrentTask(liTask, atmTask);
 	}

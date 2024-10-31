@@ -1,16 +1,13 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
 import java.awt.Dialog;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -22,16 +19,8 @@ import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.CyUserLog;
 import org.cytoscape.command.StringToModel;
 import org.cytoscape.model.CyColumn;
-import org.cytoscape.model.CyEdge;
-import org.cytoscape.model.CyIdentifiable;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
-import org.cytoscape.model.CyTable;
-import org.cytoscape.model.subnetwork.CyRootNetwork;
-import org.cytoscape.view.model.CyNetworkView;
-import org.cytoscape.view.model.CyNetworkViewManager;
-import org.cytoscape.view.model.View;
-import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.FinishStatus;
 import org.cytoscape.work.ObservableTask;
@@ -51,12 +40,11 @@ import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
-
 import edu.ucsf.rbvi.stringApp.internal.ui.GetTermsPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.SearchOptionsPanel;
-
 import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
+import edu.ucsf.rbvi.stringApp.internal.utils.TextUtils;
 
 public class StringifyTask extends AbstractTask implements ObservableTask, TaskObserver {
 	final StringManager manager;
@@ -262,8 +250,8 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 
 		if (annotations == null || annotations.size() == 0) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,
-					"Query '" + trunc(terms) + "' returned no results");
-			throw new RuntimeException("Query '"+trunc(terms)+"' returned no results");
+					"Query '" + TextUtils.trunc(terms) + "' returned no results");
+			throw new RuntimeException("Query '"+ TextUtils.trunc(terms)+"' returned no results");
 		}
 
 		boolean resolved = stringNetwork.resolveAnnotations();
@@ -293,12 +281,6 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 
 		CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork, includeNotMapped, colDisplayName);
 		copyTask.run(monitor);
-	}
-
-	private String trunc(String str) {
-		if (str.length() > 1000)
-			return str.substring(0,1000)+"...";
-		return str;
 	}
 
 	private List<CyColumn> getQueryColumns() {
