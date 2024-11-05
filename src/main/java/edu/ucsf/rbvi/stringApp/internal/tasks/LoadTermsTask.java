@@ -27,6 +27,7 @@ import org.cytoscape.work.Tunable;
 import org.cytoscape.work.TunableSetter;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
@@ -168,7 +169,48 @@ public class LoadTermsTask extends AbstractTask {
 			// });
 			// return;
 		}
-		// TODO: [move] do we need to retrieve node attributes from STRING and from Jensenlab for the new nodes?
+		// TODO: [move] we need to retrieve node attributes from STRING and from Jensenlab for the new nodes 
+		// (added below, to be tested)
+		if (useDATABASE.equals(Databases.STRINGDB.getAPIName()) && newNodes.size() > 0) {
+			args.clear();
+			// we need to get all ids, not just the query ids 
+			ids = null;
+			for (CyNode node: newNodes) {
+				if (ids == null)
+					ids = network.getRow(node).get(CyNetwork.NAME, String.class);
+				else
+					ids += "\n"+network.getRow(node).get(CyNetwork.NAME, String.class);
+			}
+			args.put("entities",ids.trim());
+			args.put("caller_identity", StringManager.CallerIdentity);
+			try {
+				results = HttpUtils.postJSON(manager.getNodeInfoURL(), args, manager);
+				JSONUtils.addExtraNodeData(stringNet, results);
+			} catch (ConnectionException e) {
+				// e.printStackTrace();
+				monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+			}
+		}
+		if (additionalNodes > 0 && useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
+			String terms = "";
+			Map<String, CyNode> nodeMap = new HashMap<>();
+			for (CyNode node : newNodes) {
+				terms += network.getRow(node).get(CyNetwork.NAME, String.class)+"\n";
+				nodeMap.put(network.getRow(node).get(CyNetwork.NAME, String.class), node);
+			}
+			try {
+				Map<String, List<Annotation>> annotations = stringNet.getAnnotations(stringNet.getManager(), species, terms, useDATABASE, true);
+				// TODO: [Custom] do we need to resolve or just take the first annotation or last one, which is currently the case...?
+				for (String s: annotations.keySet()) {
+					CyNode node = nodeMap.get(s);
+					for (Annotation a: annotations.get(s)) {
+						ModelUtils.updateNodeAttributes(network.getRow(node), a, false);
+					}
+				}
+			} catch (ConnectionException ce) {
+				monitor.showMessage(TaskMonitor.Level.ERROR, "Unable to get additional node annotations");
+			}
+		} 
 		
 		// Set our confidence score
 		ModelUtils.setConfidence(network, ((double)confidence)/100.0);
