@@ -177,9 +177,9 @@ public class LoadTermsTask extends AbstractTask {
 			ids = null;
 			for (CyNode node: newNodes) {
 				if (ids == null)
-					ids = network.getRow(node).get(CyNetwork.NAME, String.class);
+					ids = ModelUtils.getName(network, node);
 				else
-					ids += "\n"+network.getRow(node).get(CyNetwork.NAME, String.class);
+					ids += "\n"+ModelUtils.getName(network, node);
 			}
 			args.put("entities",ids.trim());
 			args.put("caller_identity", StringManager.CallerIdentity);
@@ -195,8 +195,8 @@ public class LoadTermsTask extends AbstractTask {
 			String terms = "";
 			Map<String, CyNode> nodeMap = new HashMap<>();
 			for (CyNode node : newNodes) {
-				terms += network.getRow(node).get(CyNetwork.NAME, String.class)+"\n";
-				nodeMap.put(network.getRow(node).get(CyNetwork.NAME, String.class), node);
+				terms += ModelUtils.getName(network, node)+"\n";
+				nodeMap.put(ModelUtils.getName(network, node), node);
 			}
 			try {
 				Map<String, List<Annotation>> annotations = stringNet.getAnnotations(stringNet.getManager(), species, terms, useDATABASE, true);

@@ -180,11 +180,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			return;
 		}
 
-		Double score = 0.4;
 		Double conf = ModelUtils.getConfidence(network);
-		if (conf != null)
-			score = conf;
-
 		String networkType = NetworkType.FUNCTIONAL.getAPIName();
 		NetworkType currentType = NetworkType.getType(ModelUtils.getNetworkType(network));
 		if (currentType != null)
@@ -214,7 +210,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			args.put("species",filterString);
 			args.put("existing_string_identifiers",existing.trim());
 			args.put("identifiers",existing.trim());
-			args.put("required_score",String.valueOf((int)(conf*10)));
+			args.put("required_score",String.valueOf((int)(conf*1000)));
 			args.put("network_type", networkType);
 			args.put("custom_alpha", selectivityAlpha.getValue().toString());
 			if (additionalNodes > 0)
@@ -312,7 +308,28 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			} catch (ConnectionException ce) {
 				monitor.showMessage(TaskMonitor.Level.ERROR, "Unable to get additional node annotations");
 			}
-			// TODO: [move] do we need to also retrieve the tissue/compartments scores for the new nodes? 
+		}
+		// TODO: [move] we need to also retrieve the tissue/compartments scores for the new nodes
+		// implemented, to be tested
+		if (useDatabase.equals(Databases.STRINGDB.getAPIName()) && newNodes.size() > 0) {
+			args.clear();
+			// we need to get all ids, not just the query ids 
+			String ids = null;
+			for (CyNode node: newNodes) {
+				if (ids == null)
+					ids = ModelUtils.getName(network, node);
+				else
+					ids += "\n"+ModelUtils.getName(network, node);
+			}
+			args.put("entities",ids.trim());
+			args.put("caller_identity", StringManager.CallerIdentity);
+			try {
+				results = HttpUtils.postJSON(manager.getNodeInfoURL(), args, manager);
+				JSONUtils.addExtraNodeData(stringNet, results);
+			} catch (ConnectionException e) {
+				// e.printStackTrace();
+				monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+			}
 		}
 
 		// If we have a view, re-apply the style and layout
