@@ -58,9 +58,6 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 		} else if (stringNet.getNetwork() == null) {
 			if (useDATABASE.equals(Databases.STITCH.getAPIName())) {
 				System.out.println("Calling LoadInteractions2");
-				if (queryTermMap.size() == 1 && queryTermMap.keySet().iterator().next().startsWith("CID")) {
-					useDATABASE = Databases.STRING.getAPIName();
-				}
 				return new TaskIterator(new LoadInteractions2(stringNet, speciesName, species,
 																										  confidence, additionalNodes, stringIds,
 																										  queryTermMap, netName, useDATABASE, netType));

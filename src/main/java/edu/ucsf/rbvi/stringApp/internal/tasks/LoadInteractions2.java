@@ -117,7 +117,7 @@ public class LoadInteractions2 extends AbstractTask {
 		args.put("caller_identity", StringManager.CallerIdentity);
 		if (additionalNodes > 0) {
 			args.put("additional", Integer.toString(additionalNodes));
-			if (useDATABASE.equals(Databases.STRING.getAPIName())) {
+			if (queryTermMap.size() == 1 && queryTermMap.keySet().iterator().next().startsWith("CID") || Species.isViral(species)) {
 				args.put("filter", String.valueOf(species.getTaxId()) + ".%");
 			} else {
 				args.put("filter", "CIDm%");
@@ -139,7 +139,7 @@ public class LoadInteractions2 extends AbstractTask {
 		Map<String, CyNode> nodeMap = new HashMap<>();
 		CyNetwork network = JSONUtils.createNetworkFromJSON(stringNet, speciesName, results, 
 		                                                    queryTermMap, nodeMap, ids.trim(), 
-		                                                    netName, Databases.STITCH.getAPIName(), netType.getAPIName());
+		                                                    netName, useDATABASE, netType.getAPIName());
 
 		if (network == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"STRING returned no results");
