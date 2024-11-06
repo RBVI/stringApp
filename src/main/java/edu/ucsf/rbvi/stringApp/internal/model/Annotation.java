@@ -80,7 +80,7 @@ public class Annotation {
 	
 	public static Map<String, List<Annotation>> getAnnotations(JSONObject json, String queryTerms, Species species, String useDATABASE) {
 		Map<String, List<Annotation>> map = new HashMap<>();
-		return getAnnotations(json, queryTerms, map, species, useDATABASE);
+		return parseAnnotations(json, queryTerms, map, species, useDATABASE);
 	}
 
 	public static boolean allResolved(List<Annotation> annotations) {
@@ -91,7 +91,7 @@ public class Annotation {
 		return true;
 	}
 
-	public static Map<String, List<Annotation>> getAnnotations(JSONObject json, String queryTerms,
+	public static Map<String, List<Annotation>> parseAnnotations(JSONObject json, String queryTerms,
 	                                                           Map<String, List<Annotation>> map, Species species, String useDATABASE) {
 		String[] terms = queryTerms.trim().split("\n");
 		JSONArray annotationArray = JSONUtils.getResultsFromJSON(json, JSONArray.class);

@@ -64,6 +64,11 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 				return new TaskIterator(new LoadInteractions2(stringNet, speciesName, species,
 																										  confidence, additionalNodes, stringIds,
 																										  queryTermMap, netName, useDATABASE, netType));
+			} else if (useDATABASE.equals(Databases.STRINGDB.getAPIName()) && Species.isViral(species)) {
+				useDATABASE = Databases.STRING.getAPIName();
+				return new TaskIterator(new LoadInteractions2(stringNet, speciesName, species,
+						  confidence, additionalNodes, stringIds,
+						  queryTermMap, netName, useDATABASE, netType));
 			} else {
 				System.out.println("Calling LoadInteractions");
 				return new TaskIterator(new LoadInteractions(stringNet, speciesName, species,

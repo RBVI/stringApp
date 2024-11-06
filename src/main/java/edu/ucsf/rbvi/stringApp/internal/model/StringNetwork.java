@@ -397,24 +397,11 @@ public class StringNetwork {
 			// System.out.println(results.toString());
 			if (results != null) {
 				// System.out.println("Got results");
-				annotations = Annotation.getAnnotations(results, encTerms, annotations, species, Databases.STRING.getAPIName());
+				annotations = Annotation.parseAnnotations(results, encTerms, annotations, species, Databases.STRING.getAPIName());
 				// System.out.println("Get annotations returns "+annotations.size());
 			}
 		} catch (ConnectionException ex) {
 			if (ex instanceof UnknownSpeciesException && manager.isVirusesEnabled() && annotations.size() == 0 && includeViruses) {
-				// also call the viruses API
-				// http://viruses.string-db.org/cgi/webservice_handler.pl?species=11320&identifiers=NS1_I34A1
-				// &caller_identity=string_app_v1_1_1&output=json&request=resolveList
-				//url = manager.getResolveURL(Databases.VIRUSES.getAPIName());
-				//args = new HashMap<>();
-				//args.put("species", speciesId);
-				//args.put("identifiers", encTerms);
-				//args.put("caller_identity", StringManager.CallerIdentity);
-				//args.put("output", "json");
-				//args.put("request", "resolveList");
-				//manager.info("URL:" + url + "?species=" + speciesId + "&caller_identity="
-				//		+ StringManager.CallerIdentity + "&identifiers=" + HttpUtils.truncate(encTerms));
-				
 				url = manager.getEntityQueryURL();
 				args = new HashMap<>();
 				args.put("limit", "5");
@@ -428,7 +415,7 @@ public class StringNetwork {
 				results = HttpUtils.postJSON(url, args, manager);
 				if (results != null) {
 					// System.out.println("Got results");
-					annotations = Annotation.getAnnotations(results, encTerms, annotations, species, Databases.JENSENLAB.getAPIName());
+					annotations = Annotation.parseAnnotations(results, encTerms, annotations, species, Databases.JENSENLAB.getAPIName());
 					// System.out.println("Get annotations returns "+annotations.size());
 				}
 			}

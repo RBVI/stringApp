@@ -114,6 +114,12 @@ public class Species implements Comparable<Species> {
 		return allSpecies;
 	}
 
+	public static boolean isViral(Species sp) {
+		if (virusSpecies.contains(sp))
+			return true;
+		return false;
+	}
+	
 	public static List<Species> getGUISpecies() {
 		return guiSpecies;
 	}

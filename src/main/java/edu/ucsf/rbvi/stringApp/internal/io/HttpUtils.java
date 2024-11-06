@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.cytoscape.io.util.StreamUtil;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -234,10 +235,19 @@ public class HttpUtils {
 	    //manager.error("JSON error response: " + builder.toString());
 
 		JSONParser parser = new JSONParser();
-		JSONObject jsonObject = (JSONObject)parser.parse(builder.toString());
-        String errorType = (String) jsonObject.get("Error");
-		String errorMessage = (String) jsonObject.get("ErrorMessage");
-		return new String[] {errorType, errorMessage};
+		Object parsedData = parser.parse(builder.toString());
+		JSONObject jsonObject = null;
+		if (parsedData.getClass().equals(JSONObject.class)) {
+			jsonObject = (JSONObject) parsedData;
+		} else if (parsedData.getClass().equals(JSONArray.class)) {
+			jsonObject = (JSONObject) ((JSONArray) parsedData).get(0);
+		} 
+		if (jsonObject != null) {
+	        String errorType = (String) jsonObject.get("Error");
+			String errorMessage = (String) jsonObject.get("ErrorMessage");
+			return new String[] {errorType, errorMessage};
+		}
+		return null;
 	}
 	
 	public static class UnknownSpeciesException extends ConnectionException {
