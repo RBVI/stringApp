@@ -51,6 +51,9 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 	public TaskIterator createTaskIterator() {
 		if (stringIds == null) {
 			//System.out.println("Calling LoadSpeciesInteractions");
+			// if viral species, makre sure to set the database to string 
+			if (Species.isViral(species)) 
+				useDATABASE = Databases.STRING.getAPIName();
 			return new TaskIterator(
 					new LoadSpeciesInteractions(stringNet, speciesName, species, confidence,
 					                            species.getName(),

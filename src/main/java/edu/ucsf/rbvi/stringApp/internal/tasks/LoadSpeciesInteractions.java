@@ -80,7 +80,8 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		String networkURL = manager.getNetworkURL();
 
 		if (useDATABASE.equals(Databases.STRINGDB.getAPIName()) && species.isCustom()) {
-			// TODO: implement whole species from STRING-db
+			// TODO: [move] implement whole species from STRING-db
+			// TODO: [move] once we move, there is no need to check if species is custom or?
 			monitor.setTitle("Loading interactions from STRING-DB for " + species);
 			monitor.showMessage(Level.ERROR, "This functionality is not available yet, but we are working on it!");
 			return;
@@ -108,7 +109,10 @@ public class LoadSpeciesInteractions extends AbstractTask {
 				args.put("organism2", String.valueOf(species2.getTaxId()));
 			}
 			args.put("caller_identity", StringManager.CallerIdentity);
-		}		
+		} else {
+			monitor.showMessage(Level.ERROR, "This functionality is not available yet, but we are working on it!");
+			return;
+		}
 		
 		// double time = System.currentTimeMillis();
 		JSONObject results;
