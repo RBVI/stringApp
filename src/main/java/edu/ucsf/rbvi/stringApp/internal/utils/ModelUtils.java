@@ -575,6 +575,17 @@ public class ModelUtils {
 		return str.toString();
 	}
 
+	public static String getExisting(CyNetwork network, String speciesName) {
+		StringBuilder str = new StringBuilder();
+		for (CyNode node : network.getNodeList()) {
+			String stringID = network.getRow(node).get(ColumnNames.STRINGID, String.class);
+			String nodeSpecies = network.getRow(node).get(ColumnNames.SPECIES, String.class);
+			if (stringID != null && stringID.length() > 0 && nodeSpecies != null && nodeSpecies.equals(speciesName))
+				str.append(stringID + "\n");
+		}
+		return str.toString();
+	}
+
 	public static String getSelected(CyNetwork network, View<CyNode> nodeView) {
 		StringBuilder selectedStr = new StringBuilder();
 		if (nodeView != null) {

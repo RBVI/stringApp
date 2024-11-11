@@ -1,11 +1,14 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.layout.CyLayoutAlgorithm;
@@ -77,38 +80,33 @@ public class LoadSpeciesInteractions extends AbstractTask {
 	public void run(TaskMonitor monitor) {
 		StringManager manager = stringNet.getManager();
 		Map<String, String> args = new HashMap<>();
-		String networkURL = manager.getNetworkURL();
+		String networkURL = "";
 
-		if (useDATABASE.equals(Databases.STRINGDB.getAPIName()) && species.isCustom()) {
-			// TODO: [move] implement whole species from STRING-db
-			// TODO: [move] once we move, there is no need to check if species is custom or?
-			monitor.setTitle("Loading interactions from STRING-DB for " + species);
-			monitor.showMessage(Level.ERROR, "This functionality is not available yet, but we are working on it!");
-			return;
-			// args.put("identifiers",ids.trim());
-			//args.put("required_score",String.valueOf(confidence*10));
-			//args.put("network_type", netType.getAPIName());
-			//args.put("caller_identity", StringManager.CallerIdentity);
-			//args.put("species", species.getName());
-			//networkURL = manager.getStringNetworkURL();
-		} else if (useDATABASE.equals(Databases.STRING.getAPIName())){
-			if (species2 != null)
-				monitor.setTitle("Loading interactions from STRING for " + species + " and " + species2);
-			else
-				monitor.setTitle("Loading interactions from STRING for " + species);
-
+		if (useDATABASE.equals(Databases.STRING.getAPIName()) && species2 != null){
+			monitor.setTitle("Loading interactions from Jensenlab for " + species + " and " + species2);
 			monitor.setStatusMessage("Please be patient, this might take several minutes (up to half an hour depending on species and confidence cutoff).");
 			
+			networkURL = manager.getNetworkURL();
 			String conf = "0." + confidence;
 			if (confidence == 100)
 				conf = "1.0";
 			args.put("score", conf);	
 			args.put("database", netType.getAPIName());
 			args.put("organism", String.valueOf(species.getTaxId()));
-			if (species2 != null) {
-				args.put("organism2", String.valueOf(species2.getTaxId()));
-			}
+			args.put("organism2", String.valueOf(species2.getTaxId()));
 			args.put("caller_identity", StringManager.CallerIdentity);
+		} else if (useDATABASE.equals(Databases.STRINGDB.getAPIName()) && species.isCustom()) {
+			// TODO: [move] implement whole species from STRING-db
+			// TODO: [move] once we move, we will just have one "else" case and we will just go to STRING-DB for the whole organism query
+			monitor.setTitle("Loading interactions from STRING-DB for " + species);
+			monitor.showMessage(Level.ERROR, "This functionality is not available yet, but we are working on it!");
+			return;
+			//networkURL = manager.getStringNetworkURL();
+			// args.put("identifiers",ids.trim());
+			//args.put("required_score",String.valueOf(confidence*10));
+			//args.put("network_type", netType.getAPIName());
+			//args.put("caller_identity", StringManager.CallerIdentity);
+			//args.put("species", species.getName());
 		} else {
 			monitor.showMessage(Level.ERROR, "This functionality is not available yet, but we are working on it!");
 			return;
@@ -138,8 +136,50 @@ public class LoadSpeciesInteractions extends AbstractTask {
 			this.errorMsg = "STRING returned no results";
 			monitor.showMessage(TaskMonitor.Level.ERROR, "STRING returned no results");
 			return;
+		} else {
+			monitor.setStatusMessage("Added " + network.getEdgeCount() + " edges");
 		}
 
+		if (species2 != null && !Species.isViral(species2)) {
+			// TODO: [move] here we fetch intra-species interactions for species2 and species1
+			networkURL = manager.getStringNetworkURL();
+			args = new HashMap<>();
+			args.put("required_score", String.valueOf((int)(confidence*10)));
+			args.put("network_type", netType.getAPIName());				
+			args.put("species", species2.toString());
+			args.put("identifiers", ModelUtils.getExisting(network, species2.toString()).trim());
+			JSONObject resultsSTRINGDB = null;
+			try {
+				monitor.setStatusMessage("Fetching data from: "+manager.getStringNetworkURL() + " for species " + species2.toString());
+				resultsSTRINGDB = HttpUtils.postJSON(manager.getStringNetworkURL(), args, manager);
+			} catch (ConnectionException e) {
+				monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+			}
+			if (resultsSTRINGDB != null) {
+				List<CyEdge> newEdges = new ArrayList<>();
+				JSONUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, resultsSTRINGDB, null, Databases.STRINGDB.getAPIName(), netType.getAPIName());
+				monitor.setStatusMessage("Adding " + newEdges.size() + " edges from STRING-DB");
+			}
+			if (!Species.isViral(species)) {
+				// TODO: [move] here we also fetch the intra-species interactions for species1 unless it is a virus
+				// overwrite identifiers and species to fetch interactions for the first species
+				args.put("species", species.toString());
+				args.put("identifiers", ModelUtils.getExisting(network, species.toString()).trim());
+				resultsSTRINGDB = null;
+				try {
+					monitor.setStatusMessage("Fetching data from: "+manager.getStringNetworkURL() + " for species " + species.toString());
+					resultsSTRINGDB = HttpUtils.postJSON(manager.getStringNetworkURL(), args, manager);
+				} catch (ConnectionException e) {
+					monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+				}
+				if (resultsSTRINGDB != null) {
+					List<CyEdge> newEdges = new ArrayList<>();
+					JSONUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, resultsSTRINGDB, null, Databases.STRINGDB.getAPIName(), netType.getAPIName());
+					monitor.setStatusMessage("Adding " + newEdges.size() + " edges from STRING-DB");
+				}	
+			}
+		}
+		
 		// Set our confidence score
 		ModelUtils.setConfidence(network, ((double) confidence) / 100.0);
 		ModelUtils.setNetworkType(network, netType.toString());

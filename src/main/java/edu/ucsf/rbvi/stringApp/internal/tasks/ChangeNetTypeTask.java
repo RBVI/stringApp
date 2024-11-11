@@ -157,17 +157,22 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			// Get current database & confidence
 			String database = ModelUtils.getDatabase(network);
 			// Get species
-			String species = ModelUtils.getNetSpecies(network);
-			if (species == null) {
-				species = ModelUtils.getMostCommonNetSpecies(network);
+			// String species = ModelUtils.getNetSpecies(network);
+			String species = null;
+			List<String> allSpecies = ModelUtils.getAllNetSpecies(network);
+			if (allSpecies.size() > 0) {
+				species = allSpecies.get(0);
+				// TODO: [move] maybe introduce a list attribute for network species instead of a string only attribute?
 				ModelUtils.setNetSpecies(network, species);
+			} else {
+				species = ModelUtils.getMostCommonNetSpecies(network);
 			}
 			Species selSpecies = Species.getSpecies(species);
 			
 			Map<String, String> argsSTRINGDB = new HashMap<>();
-			argsSTRINGDB.put("identifiers", existing.trim());
 			argsSTRINGDB.put("required_score", String.valueOf((int)(confidence.getValue()*1000)));
 			argsSTRINGDB.put("network_type", newType.getAPIName());				
+			argsSTRINGDB.put("identifiers", existing.trim());
 			argsSTRINGDB.put("species", selSpecies.toString());
 
 			Map<String, String> argsJensenlab = new HashMap<>();			
@@ -177,7 +182,7 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			
 			JSONObject resultsSTRINGDB = null;
 			JSONObject resultsJensenlab = null;
-			// TODO: [move] revise if needed and test further
+			// TODO: [move] test changing of network type for various types of networks and revise if needed
 			try {
 				if (database.equals(Databases.STITCH.getAPIName()) || (database.equals(Databases.STRING.getAPIName()) && !Species.isViral(selSpecies))) {
 					//System.out.println("Call both APIs");
@@ -208,15 +213,30 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 				// monitor.setStatusMessage("Removing "+removeEdges.size()+" edges");
 				network.removeEdges(removeEdges);
 	
-				// add new edges
+				// add new edges from Jensenlab
 				if (resultsJensenlab != null) {
 					JSONUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, resultsJensenlab, null, database, newType.getAPIName());
 					monitor.setStatusMessage("Adding edges from Jensenlab");
 				}
-				
+				// add new edges from STRING-DB for the first found species
 				if (resultsSTRINGDB != null) {
 					JSONUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, resultsSTRINGDB, null, Databases.STRINGDB.getAPIName(), newType.getAPIName());
 					monitor.setStatusMessage("Adding edges from STRING-DB");
+				}
+				// add new edges from STRING-DB for the remaining species if there is more than one species in the network
+				// TODO: [move] test if fetching edges for additional species works fine 
+				for (int i=1; i < allSpecies.size(); i++) {
+					argsSTRINGDB.put("species", allSpecies.get(i));
+					argsSTRINGDB.put("identifiers", ModelUtils.getExisting(network, allSpecies.get(i)).trim());
+					resultsSTRINGDB = null;
+					try {
+						resultsSTRINGDB = HttpUtils.postJSON(manager.getStringNetworkURL(), argsSTRINGDB, manager);
+					} catch (ConnectionException e) {
+						monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+					}
+					if (resultsSTRINGDB != null) {
+						JSONUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, resultsSTRINGDB, null, Databases.STRINGDB.getAPIName(), newType.getAPIName());
+					}
 				}
 				monitor.setStatusMessage((newEdges.size() - removeEdges.size()) + " edges added to the network");
 
