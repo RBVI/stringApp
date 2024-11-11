@@ -157,15 +157,14 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			// Get current database & confidence
 			String database = ModelUtils.getDatabase(network);
 			// Get species
-			// String species = ModelUtils.getNetSpecies(network);
-			String species = null;
+			String species = ModelUtils.getNetSpecies(network);
 			List<String> allSpecies = ModelUtils.getAllNetSpecies(network);
 			if (allSpecies.size() > 0) {
 				species = allSpecies.get(0);
 				// TODO: [move] maybe introduce a list attribute for network species instead of a string only attribute?
-				ModelUtils.setNetSpecies(network, species);
-			} else {
+			} else if (species == null) {
 				species = ModelUtils.getMostCommonNetSpecies(network);
+				ModelUtils.setNetSpecies(network, species);
 			}
 			Species selSpecies = Species.getSpecies(species);
 			
@@ -183,95 +182,112 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			JSONObject resultsSTRINGDB = null;
 			JSONObject resultsJensenlab = null;
 			// TODO: [move] test changing of network type for various types of networks and revise if needed
-			try {
-				if (database.equals(Databases.STITCH.getAPIName()) || (database.equals(Databases.STRING.getAPIName()) && !Species.isViral(selSpecies))) {
-					//System.out.println("Call both APIs");
+			if (database.equals(Databases.STITCH.getAPIName()) || (database.equals(Databases.STRING.getAPIName()) && !Species.isViral(selSpecies))) {
+				//System.out.println("Call both APIs");
+				try {
 					monitor.setStatusMessage("Fetching data from: "+manager.getStringNetworkURL());
 					resultsSTRINGDB = HttpUtils.postJSON(manager.getStringNetworkURL(), argsSTRINGDB, manager);
-					monitor.setStatusMessage("Fetching data from: "+manager.getNetworkURL());
-					resultsJensenlab = HttpUtils.postJSON(manager.getNetworkURL(), argsJensenlab, manager);	
-				} else if (Species.isViral(selSpecies)) {
-					//System.out.println("Call Jensenlab API only");
+				} catch (ConnectionException e) {
+					//e.printStackTrace();
+					monitor.showMessage(Level.WARN, "Network error: " + e.getMessage());
+					//return;
+				}
+				try {
+				monitor.setStatusMessage("Fetching data from: "+manager.getNetworkURL());
+				resultsJensenlab = HttpUtils.postJSON(manager.getNetworkURL(), argsJensenlab, manager);
+				} catch (ConnectionException e) {
+					//e.printStackTrace();
+					monitor.showMessage(Level.WARN, "Network error: " + e.getMessage());
+				}
+			} else if (Species.isViral(selSpecies)) {
+				//System.out.println("Call Jensenlab API only");
+				try {
 					monitor.setStatusMessage("Fetching data from: "+manager.getNetworkURL());
 					resultsJensenlab = HttpUtils.postJSON(manager.getNetworkURL(), argsJensenlab, manager);
-				} else if (database.equals(Databases.STRINGDB.getAPIName())) {
-					//System.out.println("Call STRING-DB API only");
-					monitor.setStatusMessage("Fetching data from: "+manager.getStringNetworkURL());
-					resultsSTRINGDB = HttpUtils.postJSON(manager.getStringNetworkURL(), argsSTRINGDB, manager);
-				} else {
-					//System.out.println("What do we have here?!");
+				} catch (ConnectionException e) {
+					// e.printStackTrace();
+					monitor.showMessage(Level.WARN, "Network error: " + e.getMessage());
 				}
-			} catch (ConnectionException e) {
-				e.printStackTrace();
-				monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
-				return;
+			} else if (database.equals(Databases.STRINGDB.getAPIName())) {
+				//System.out.println("Call STRING-DB API only");
+				try {
+				monitor.setStatusMessage("Fetching data from: "+manager.getStringNetworkURL());
+				resultsSTRINGDB = HttpUtils.postJSON(manager.getStringNetworkURL(), argsSTRINGDB, manager);
+				} catch (ConnectionException e) {
+					// e.printStackTrace();
+					monitor.showMessage(Level.WARN, "Network error: " + e.getMessage());
+				}
+			} else {
+				//System.out.println("What do we have here?!");
 			}
 	
-			if (resultsJensenlab != null || resultsSTRINGDB != null) {
-				// remove old edges
-				List<CyEdge> removeEdges = ModelUtils.getStringNetEdges(network);;
-				// monitor.setStatusMessage("Removing "+removeEdges.size()+" edges");
-				network.removeEdges(removeEdges);
-	
-				// add new edges from Jensenlab
-				if (resultsJensenlab != null) {
-					JSONUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, resultsJensenlab, null, database, newType.getAPIName());
-					monitor.setStatusMessage("Adding edges from Jensenlab");
+			if (resultsJensenlab == null && resultsSTRINGDB == null) {
+				return;
+			}
+			
+			// remove old edges
+			List<CyEdge> removeEdges = ModelUtils.getStringNetEdges(network);;
+			// monitor.setStatusMessage("Removing "+removeEdges.size()+" edges");
+			network.removeEdges(removeEdges);
+
+			// add new edges from Jensenlab
+			if (resultsJensenlab != null) {
+				JSONUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, resultsJensenlab, null, database, newType.getAPIName());
+				monitor.setStatusMessage("Adding edges from Jensenlab");
+			}
+			// add new edges from STRING-DB for the first found species
+			if (resultsSTRINGDB != null) {
+				JSONUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, resultsSTRINGDB, null, Databases.STRINGDB.getAPIName(), newType.getAPIName());
+				monitor.setStatusMessage("Adding edges from STRING-DB");
+			}
+			// add new edges from STRING-DB for the remaining species if there is more than one species in the network
+			// TODO: [move] test if fetching edges for additional species works fine 
+			for (int i=1; i < allSpecies.size(); i++) {
+				argsSTRINGDB.put("species", allSpecies.get(i));
+				argsSTRINGDB.put("identifiers", ModelUtils.getExisting(network, allSpecies.get(i)).trim());
+				resultsSTRINGDB = null;
+				try {
+					resultsSTRINGDB = HttpUtils.postJSON(manager.getStringNetworkURL(), argsSTRINGDB, manager);
+				} catch (ConnectionException e) {
+					monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
 				}
-				// add new edges from STRING-DB for the first found species
 				if (resultsSTRINGDB != null) {
 					JSONUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, resultsSTRINGDB, null, Databases.STRINGDB.getAPIName(), newType.getAPIName());
-					monitor.setStatusMessage("Adding edges from STRING-DB");
 				}
-				// add new edges from STRING-DB for the remaining species if there is more than one species in the network
-				// TODO: [move] test if fetching edges for additional species works fine 
-				for (int i=1; i < allSpecies.size(); i++) {
-					argsSTRINGDB.put("species", allSpecies.get(i));
-					argsSTRINGDB.put("identifiers", ModelUtils.getExisting(network, allSpecies.get(i)).trim());
-					resultsSTRINGDB = null;
-					try {
-						resultsSTRINGDB = HttpUtils.postJSON(manager.getStringNetworkURL(), argsSTRINGDB, manager);
-					} catch (ConnectionException e) {
-						monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
-					}
-					if (resultsSTRINGDB != null) {
-						JSONUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, resultsSTRINGDB, null, Databases.STRINGDB.getAPIName(), newType.getAPIName());
-					}
-				}
-				monitor.setStatusMessage((newEdges.size() - removeEdges.size()) + " edges added to the network");
+			}
+			monitor.setStatusMessage((newEdges.size() - removeEdges.size()) + " edges added to the network");
 
-				// change network attributes
-				ModelUtils.setConfidence(network, (double)Math.round(confidence.getValue()*1000)/1000);
-				ModelUtils.setNetworkType(network, networkType.getSelectedValue().toString());
-				
-				// change network name in the special case of changing from physical to functional or the other way around
-				if (!newType.equals(currentType)) {
-					monitor.setStatusMessage("Updating network name");
-					String currentName = manager.getNetworkName(network);
-					String newName = currentName;
-					if (newType.equals(NetworkType.FUNCTIONAL) && currentName.contains(ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL)) {
-						// remove (physical) from the name
-						String[] currentNameParts = currentName.split(ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL_REGEXP);
-						if (currentNameParts.length > 1)
-							newName = currentNameParts[0] + currentNameParts[currentNameParts.length-1];
-						else
-							newName = currentNameParts[0];
-					} else if (newType.equals(NetworkType.PHYSICAL)) {
-						// add (physical) to the name
-						if (currentName.startsWith(ModelUtils.DEFAULT_NAME_STRING)) {
-							if (currentName.split(ModelUtils.DEFAULT_NAME_STRING).length > 1)
-								newName = ModelUtils.DEFAULT_NAME_STRING + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL + currentName.split(ModelUtils.DEFAULT_NAME_STRING)[1];
-							else 
-								newName = ModelUtils.DEFAULT_NAME_STRING + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL;
-						} else if (currentName.startsWith(ModelUtils.DEFAULT_NAME_STITCH )) {
-							if (currentName.split(ModelUtils.DEFAULT_NAME_STITCH)[1].length() > 1)
-								newName = ModelUtils.DEFAULT_NAME_STITCH + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL + currentName.split(ModelUtils.DEFAULT_NAME_STITCH)[1];
-							else 
-								newName = ModelUtils.DEFAULT_NAME_STITCH + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL;
-						}
+			// change network attributes
+			ModelUtils.setConfidence(network, (double)Math.round(confidence.getValue()*1000)/1000);
+			ModelUtils.setNetworkType(network, networkType.getSelectedValue().toString());
+			
+			// change network name in the special case of changing from physical to functional or the other way around
+			if (!newType.equals(currentType)) {
+				monitor.setStatusMessage("Updating network name");
+				String currentName = manager.getNetworkName(network);
+				String newName = currentName;
+				if (newType.equals(NetworkType.FUNCTIONAL) && currentName.contains(ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL)) {
+					// remove (physical) from the name
+					String[] currentNameParts = currentName.split(ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL_REGEXP);
+					if (currentNameParts.length > 1)
+						newName = currentNameParts[0] + currentNameParts[currentNameParts.length-1];
+					else
+						newName = currentNameParts[0];
+				} else if (newType.equals(NetworkType.PHYSICAL)) {
+					// add (physical) to the name
+					if (currentName.startsWith(ModelUtils.DEFAULT_NAME_STRING)) {
+						if (currentName.split(ModelUtils.DEFAULT_NAME_STRING).length > 1)
+							newName = ModelUtils.DEFAULT_NAME_STRING + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL + currentName.split(ModelUtils.DEFAULT_NAME_STRING)[1];
+						else 
+							newName = ModelUtils.DEFAULT_NAME_STRING + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL;
+					} else if (currentName.startsWith(ModelUtils.DEFAULT_NAME_STITCH )) {
+						if (currentName.split(ModelUtils.DEFAULT_NAME_STITCH)[1].length() > 1)
+							newName = ModelUtils.DEFAULT_NAME_STITCH + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL + currentName.split(ModelUtils.DEFAULT_NAME_STITCH)[1];
+						else 
+							newName = ModelUtils.DEFAULT_NAME_STITCH + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL;
 					}
-					network.getRow(network).set(CyNetwork.NAME, manager.adaptNetworkName(newName));
 				}
+				network.getRow(network).set(CyNetwork.NAME, manager.adaptNetworkName(newName));
 			}
 
 			// If we have a view, re-apply the style and layout
