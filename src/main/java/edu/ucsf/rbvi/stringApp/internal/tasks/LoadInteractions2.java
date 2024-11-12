@@ -202,6 +202,17 @@ public class LoadInteractions2 extends AbstractTask {
 				List<CyEdge> newEdges = new ArrayList<>();
 				List<CyNode> newNodes = JSONUtils.augmentNetworkFromJSON(stringNet, network, newEdges, 
 								                                     results, null, Databases.STRINGDB.getAPIName(), netType.getAPIName());
+				// retrieve protein info from STRING-DB 
+				try {
+					Map<String, List<Annotation>> annotations = stringNet.getAnnotations(stringNet.getManager(), species, ids, Databases.STRINGDB.getAPIName(), true);
+					for (String s: annotations.keySet()) {
+						CyNode node = nodeMap.get(s);
+						ModelUtils.updateNodeAttributes(network.getRow(node), annotations.get(s).get(0), false);
+					}
+				} catch (ConnectionException ce) {
+					monitor.showMessage(TaskMonitor.Level.WARN, "Unable to get additional node annotations");
+				}
+
 			}
 		}
 		

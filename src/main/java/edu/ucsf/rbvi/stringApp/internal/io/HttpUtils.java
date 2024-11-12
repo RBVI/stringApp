@@ -1,6 +1,7 @@
 package edu.ucsf.rbvi.stringApp.internal.io;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -141,10 +142,13 @@ public class HttpUtils {
 			}
 
 	 	} catch(UnknownHostException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			throw new ConnectionException("Unknown host: " + e.getMessage());
 		} catch (UnknownSpeciesException e) {
 			throw new UnknownSpeciesException(e.getMessage()); 
+		} catch (FileNotFoundException e) {
+			// e.printStackTrace();
+			throw new ConnectionException("Unexpected error from server (file not found)");
 		} catch (Exception e) {
 			// e.printStackTrace();
 			manager.error("Unexpected error from server: \n <html>" + e.getMessage() + "</html>");
