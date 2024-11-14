@@ -575,6 +575,28 @@ public class ModelUtils {
 		return str.toString();
 	}
 
+	public static String getExistingProteins(CyNetwork network) {
+		StringBuilder str = new StringBuilder();
+		for (CyNode node : network.getNodeList()) {
+			String stringID = network.getRow(node).get(ColumnNames.STRINGID, String.class);
+			String nodeType = network.getRow(node).get(ColumnNames.TYPE, String.class);
+			if (stringID != null && stringID.length() > 0 && nodeType != null && nodeType.equals("protein"))
+				str.append(stringID + "\n");
+		}
+		return str.toString();
+	}
+
+	public static String getExistingCompounds(CyNetwork network) {
+		StringBuilder str = new StringBuilder();
+		for (CyNode node : network.getNodeList()) {
+			String stringID = network.getRow(node).get(ColumnNames.STRINGID, String.class);
+			String nodeType = network.getRow(node).get(ColumnNames.TYPE, String.class);
+			if (stringID != null && stringID.length() > 0 && nodeType != null && nodeType.equals("compound"))
+				str.append(stringID + "\n");
+		}
+		return str.toString();
+	}
+
 	public static String getExisting(CyNetwork network, String speciesName) {
 		StringBuilder str = new StringBuilder();
 		for (CyNode node : network.getNodeList()) {
@@ -586,17 +608,20 @@ public class ModelUtils {
 		return str.toString();
 	}
 
-	public static String getSelected(CyNetwork network, View<CyNode> nodeView) {
+	public static String getSelected(CyNetwork network, View<CyNode> nodeView, String nodeType) {
 		StringBuilder selectedStr = new StringBuilder();
 		if (nodeView != null) {
 			String stringID = network.getRow(nodeView.getModel()).get(ColumnNames.STRINGID, String.class);
-			selectedStr.append(stringID + "\n");
+			String stringType = network.getRow(nodeView.getModel()).get(ColumnNames.TYPE, String.class);
+			if (nodeType == null || (nodeType != null && stringType != null && stringType.equals(nodeType)))
+				selectedStr.append(stringID + "\n");
 		}
 
 		for (CyNode node : network.getNodeList()) {
 			if (network.getRow(node).get(CyNetwork.SELECTED, Boolean.class)) {
 				String stringID = network.getRow(node).get(ColumnNames.STRINGID, String.class);
-				if (stringID != null && stringID.length() > 0)
+				String stringType = network.getRow(node).get(ColumnNames.TYPE, String.class);
+				if (stringID != null && stringID.length() > 0 && (nodeType == null || (nodeType != null && stringType != null && stringType.equals(nodeType))))
 					selectedStr.append(stringID + "\n");
 			}
 		}

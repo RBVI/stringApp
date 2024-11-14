@@ -55,6 +55,9 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 	CyNetworkView netView;
 	View<CyNode> nodeView;
 	
+	final static String mixedTypeProteins = "proteins";
+	final static String mixedTypeCompounds = "compounds";
+	
 	@Tunable(description = "Network to expand", 
 			longDescription = StringToModel.CY_NETWORK_LONG_DESCRIPTION, 
 			exampleStringValue = StringToModel.CY_NETWORK_EXAMPLE_STRING, 
@@ -95,6 +98,18 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			params="slider=true", gravity=3.0)
 	public BoundedDouble selectivityAlpha = new BoundedDouble(0.0, 0.5, 1.0, false, false);
 
+	@Tunable(description="Is protein-compound network?", 
+			exampleStringValue = "false", 
+			gravity=4.0)
+	 public boolean mixedTypes = false;
+	
+	@Tunable (description="Type of interactors to expand network on/from", 
+			longDescription = "", 
+			exampleStringValue = "proteins",
+			dependsOn = "mixedTypes=true",
+			gravity=5.0)
+	public ListSingleSelection<String> nodeTypesSource = new ListSingleSelection<String>(Arrays.asList(mixedTypeProteins, mixedTypeCompounds));
+
 	// @Tunable (description="Layout new nodes?", gravity=4.0)
 	// public boolean relayout = true;
 
@@ -120,6 +135,12 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 				nodeTypes.setSelectedValue(netSpecies);
 			} else {
 				nodeTypes.setSelectedValue(ModelUtils.COMPOUND);
+			}
+			nodeTypesSource.setSelectedValue(mixedTypeProteins);
+			if (ModelUtils.getCompoundNodes(network).size() > 0 && ModelUtils.getProteinNodes(network).size() > 0) {
+				mixedTypes = true;
+			} else {
+				mixedTypes = false;
 			}
 		}
 	}
@@ -167,8 +188,18 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 
 
 		// Get all of the current nodes for our "existing" list
-		String existing = ModelUtils.getExisting(network);
-		String selected = ModelUtils.getSelected(network, nodeView);
+		String existing = ModelUtils.getExisting(network).trim();
+		String selected = ModelUtils.getSelected(network, nodeView, null).trim();
+		// if mixed network, replace the existing and selected by either only proteins or only compounds
+		if (mixedTypes) {
+			if (nodeTypesSource.getSelectedValue().equals(mixedTypeProteins)) {
+				existing = ModelUtils.getExistingProteins(network).trim();
+				selected = ModelUtils.getSelected(network, nodeView, mixedTypeProteins).trim();
+			} else {
+				existing = ModelUtils.getExistingCompounds(network).trim();
+				selected = ModelUtils.getSelected(network, nodeView, mixedTypeCompounds).trim();
+			}
+		}
 		String species = ModelUtils.getNetSpecies(network);
 		if (species == null) {
 			species = ModelUtils.getMostCommonNetSpecies(network);
@@ -193,32 +224,67 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		String useDatabase = "";
 		Map<String, String> args = new HashMap<>();
 		// if expand by compounds, go to jensenlab and ask for compounds
-		// TODO: [move] revise once we have a testing server
- 		if (selectedType.equals(ModelUtils.COMPOUND)) {
+		// TODO: [move] expand still needs some testing
+		// if expand by same species that is in STRING
+		if (selectedType.equals(species) && !Species.isViral(selSpecies)) {
+			// if the network is a stitch network and we expand on the compounds, go to Jensenlab
+			// TODO: [move] can we avoid repeating the code here and in the else statement?
+			if (database.equals(Databases.STITCH.getAPIName()) && nodeTypesSource.getSelectedValue().equals(mixedTypeCompounds)) {
+				useDatabase = Databases.STITCH.getAPIName();
+				filterString = String.valueOf(selSpecies.getTaxId());
+				args.put("filter", filterString + ".%");
+				args.put("existing",existing);
+				args.put("score", conf.toString());
+				args.put("database", networkType);
+				args.put("alpha", selectivityAlpha.getValue().toString());
+				if (additionalNodes > 0)
+					args.put("additional", Integer.toString(additionalNodes));				
+				if (selected != null && selected.length() > 0)
+					args.put("selected",selected);
+			} else {
+				// otherwise go to STRING-DB to expand by proteins from the same species
+				useDatabase = Databases.STRINGDB.getAPIName();
+				args.put("species",species);
+				args.put("existing_string_identifiers",existing.trim());
+				// TODO: [move] is that how we should use selected with string?
+				if (selected != null && selected.length() > 0)
+					args.put("identifiers",selected);
+				else 
+					args.put("identifiers",existing);
+				args.put("required_score",String.valueOf((int)(conf*1000)));
+				args.put("network_type", networkType);
+				args.put("custom_alpha", selectivityAlpha.getValue().toString());
+				if (additionalNodes > 0)
+					args.put("additional_network_nodes", Integer.toString(additionalNodes));				
+			}
+		} else if (selectedType.equals(ModelUtils.COMPOUND)) {
 			useDatabase = Databases.STITCH.getAPIName();
 			args.put("filter", "CIDm%");			
+			args.put("existing",existing);
+			args.put("score", conf.toString());
+			args.put("database", networkType);
+			args.put("alpha", selectivityAlpha.getValue().toString());
+			if (additionalNodes > 0)
+				args.put("additional", Integer.toString(additionalNodes));
+			if (selected != null && selected.length() > 0)
+				args.put("selected",selected);
+		} else {
+			useDatabase = Databases.STRING.getAPIName();
+			filterString = String.valueOf(selSpecies.getTaxId());
+			args.put("filter", filterString + ".%");
 			args.put("existing",existing.trim());
 			args.put("score", conf.toString());
 			args.put("database", networkType);
 			args.put("alpha", selectivityAlpha.getValue().toString());
 			if (additionalNodes > 0)
 				args.put("additional", Integer.toString(additionalNodes));
-		} else if (species.equals(selectedType) && !database.equals(Databases.STITCH.getAPIName())) {
-			// if expand by same species and the network is not a stitch network, go to string-db and ask for more proteins of this species
-			filterString = selSpecies.toString();
-			useDatabase = Databases.STRINGDB.getAPIName();
-			args.put("species",filterString);
-			args.put("existing_string_identifiers",existing.trim());
-			args.put("identifiers",existing.trim());
-			args.put("required_score",String.valueOf((int)(conf*1000)));
-			args.put("network_type", networkType);
-			args.put("custom_alpha", selectivityAlpha.getValue().toString());
-			if (additionalNodes > 0)
-				args.put("additional_network_nodes", Integer.toString(additionalNodes));
-		} else {
-			monitor.showMessage(TaskMonitor.Level.WARN, "This Expand functionality is not implemented yet");
-			return;
-		}
+			if (selected != null && selected.length() > 0)
+				args.put("selected",selected.trim());
+		}  
+		//else {
+		//	monitor.showMessage(TaskMonitor.Level.WARN, "This Expand functionality is not implemented yet");
+		//	return;
+		//}
   		/*else {
 			// if expand by other species, go to jensenlab and ask for more proteins of this species
 			// TODO: [move]if expanding a cross-species network, go to STRING for the number of additional nodes of that species, then query Jensenlab for potential cross-species interactions
@@ -235,19 +301,17 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 				args.put("additional", Integer.toString(additionalNodes));
 		}*/
 
-		if (selected != null && selected.length() > 0)
-			args.put("selected",selected.trim());
 		// String nodeType = nodeTypes.getSelectedValue().toLowerCase();
 
 		JSONObject results;
 		try {
-				if (useDatabase.equals(Databases.STRINGDB.getAPIName())) {
-					monitor.setStatusMessage("Getting additional nodes from: "+manager.getStringNetworkURL());
-					results = HttpUtils.postJSON(manager.getStringNetworkURL(), args, manager);
-				} else {
-					monitor.setStatusMessage("Getting additional nodes from: "+manager.getNetworkURL());
-					results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
-				}
+			if (useDatabase.equals(Databases.STRINGDB.getAPIName())) {
+				monitor.setStatusMessage("Getting additional nodes from: "+manager.getStringNetworkURL());
+				results = HttpUtils.postJSON(manager.getStringNetworkURL(), args, manager);
+			} else {
+				monitor.setStatusMessage("Getting additional nodes from: "+manager.getNetworkURL());
+				results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+			}
 		} catch (ConnectionException e) {
 			e.printStackTrace();
 			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
@@ -259,7 +323,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		// This may change...
 		StringNetwork stringNet = manager.getStringNetwork(network);
 		List<CyEdge> newEdges = new ArrayList<>();
-		List<CyNode> newNodes = JSONUtils.augmentNetworkFromJSON(stringNet, network, newEdges, results, null, useDatabase, currentType.getAPIName());
+		List<CyNode> newNodes = JSONUtils.augmentNetworkFromJSON(stringNet, network, newEdges, results, null, useDatabase, networkType);
 
 		if (newNodes.size() == 0 && newEdges.size() == 0) {
 			if (conf == 1.0) { 
@@ -281,8 +345,45 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			// return;
 		}
 
-		// TODO: [move] if we asked for a different species, we need to also get the intra-species interactions of the proteins from this species 
-		// new edges will most likely be added here as well (difficult to test currently since the intra-species interacions are sill in jensenlab database)
+		// if we got back more than one node, we need to get some extra interactions
+		// for example, if we asked for a different species, we need to also get the intra-species interactions of the proteins from this species
+		// we might need to add interactions from either STRING-DB or Jensenlab depending on the setup and where we went first
+		if (newNodes.size() > 1) {			
+			// TODO: [move] do we need to ask for edges for all species in the network? even if we expanded only by one?
+			if (!useDatabase.equals(Databases.STRINGDB.getAPIName()) && !Species.isViral(selSpecies) && !selectedType.equals(ModelUtils.COMPOUND)) {
+				//if ((useDatabase.equals(Databases.STRING.getAPIName()) && !Species.isViral(selSpecies)) || (useDatabase.equals(Databases.STITCH.getAPIName()) && selectedType.equals(species))) {
+				args.clear();
+				args.put("required_score",String.valueOf((int)(conf*1000)));
+				args.put("network_type", networkType);
+				args.put("species", selSpecies.toString());
+				args.put("identifiers", ModelUtils.getExisting(network, selSpecies.toString().trim()));
+				results = null;
+				try {
+					results = HttpUtils.postJSON(manager.getStringNetworkURL(), args, manager);
+				} catch (ConnectionException e) {
+					monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+				}
+				if (results != null) {
+					JSONUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, results, null, Databases.STRINGDB.getAPIName(), networkType);
+				}
+			} else {
+				// if ((useDatabase.equals(Databases.STRINGDB.getAPIName()) && (mixedTypes || !selectedType.equals(species))) || (useDatabase.equals(Databases.STITCH.getAPIName()))) {
+				// if we went to STRING but the network contains more than one species/node type, we need to also get interactions from Jensenlab 
+				args.clear();
+				args.put("existing", ModelUtils.getExisting(network).trim());
+				args.put("score", conf.toString());
+				args.put("database", networkType);
+				results = null;
+				try {
+					results = HttpUtils.postJSON(manager.getNetworkURL(), args, manager);
+				} catch (ConnectionException e) {
+					monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+				}
+				if (results != null) {
+					JSONUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, results, null, Databases.STRING.getAPIName(), networkType);
+				}
+			}
+		}
 		
 		monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
 
