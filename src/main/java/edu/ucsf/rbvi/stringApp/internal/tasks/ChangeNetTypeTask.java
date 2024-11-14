@@ -193,8 +193,8 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 					//return;
 				}
 				try {
-				monitor.setStatusMessage("Fetching data from: "+manager.getNetworkURL());
-				resultsJensenlab = HttpUtils.postJSON(manager.getNetworkURL(), argsJensenlab, manager);
+					monitor.setStatusMessage("Fetching data from: "+manager.getNetworkURL());
+					resultsJensenlab = HttpUtils.postJSON(manager.getNetworkURL(), argsJensenlab, manager);
 				} catch (ConnectionException e) {
 					//e.printStackTrace();
 					monitor.showMessage(Level.WARN, "Network error: " + e.getMessage());
@@ -243,6 +243,8 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			// add new edges from STRING-DB for the remaining species if there is more than one species in the network
 			// TODO: [move] test if fetching edges for additional species works fine 
 			for (int i=1; i < allSpecies.size(); i++) {
+				if (Species.isViral(Species.getSpecies(allSpecies.get(i))))
+					continue;
 				argsSTRINGDB.put("species", allSpecies.get(i));
 				argsSTRINGDB.put("identifiers", ModelUtils.getExisting(network, allSpecies.get(i)).trim());
 				resultsSTRINGDB = null;
