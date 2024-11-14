@@ -82,7 +82,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		Map<String, String> args = new HashMap<>();
 		String networkURL = "";
 
-		if (useDATABASE.equals(Databases.STRING.getAPIName()) && species2 != null){
+		if (useDATABASE.equals(Databases.STRING.getAPIName()) && (species2 != null || Species.isViral(species))){
 			monitor.setTitle("Loading interactions from Jensenlab for " + species + " and " + species2);
 			monitor.setStatusMessage("Please be patient, this might take several minutes (up to half an hour depending on species and confidence cutoff).");
 			
@@ -93,7 +93,8 @@ public class LoadSpeciesInteractions extends AbstractTask {
 			args.put("score", conf);	
 			args.put("database", netType.getAPIName());
 			args.put("organism", String.valueOf(species.getTaxId()));
-			args.put("organism2", String.valueOf(species2.getTaxId()));
+			if (species2 != null)
+				args.put("organism2", String.valueOf(species2.getTaxId()));
 			args.put("caller_identity", StringManager.CallerIdentity);
 		} else if (useDATABASE.equals(Databases.STRINGDB.getAPIName()) && species.isCustom()) {
 			// TODO: [move] implement whole species from STRING-db
