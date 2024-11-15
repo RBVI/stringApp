@@ -185,7 +185,7 @@ public class LoadInteractions extends AbstractTask {
 					}
 				}
 			} catch (ConnectionException ce) {
-				monitor.showMessage(TaskMonitor.Level.ERROR, "Unable to get additional node annotations");
+				monitor.showMessage(TaskMonitor.Level.WARN, "Unable to get additional node annotations");
 			}
 		} 
 		if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
@@ -209,9 +209,8 @@ public class LoadInteractions extends AbstractTask {
 				results = HttpUtils.postJSON(networkURL, args, manager);
 				JSONUtils.addExtraNodeData(stringNet, results);
 			} catch (ConnectionException e) {
-				e.printStackTrace();
-				monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
-				return;
+				//e.printStackTrace();
+				monitor.showMessage(Level.WARN, "Network error from Jensenlab API: " + e.getMessage());
 			}
 
 		}
