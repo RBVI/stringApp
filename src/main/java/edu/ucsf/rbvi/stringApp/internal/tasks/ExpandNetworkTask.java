@@ -325,6 +325,8 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		List<CyEdge> newEdges = new ArrayList<>();
 		List<CyNode> newNodes = JSONUtils.augmentNetworkFromJSON(stringNet, network, newEdges, results, null, useDatabase, networkType);
 
+		// TODO: [move] what do we do if the set of returned proteins/compounds is already the same as what exists in the network? 
+		// example: expand an 11 protein network by compounds and after that expand it again by compounds based on the proteins in the network 
 		if (newNodes.size() == 0 && newEdges.size() == 0) {
 			if (conf == 1.0) { 
 				monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results with a confidence larger than 1.0.<br> Consider changing the confidence threshold.");
@@ -387,9 +389,8 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		
 		monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
 
-		// Finally, update any node information if we're using from STRING
-		// Only do this when we asked for additional nodes
-		if (useDatabase.equals(Databases.STRINGDB.getAPIName()) && additionalNodes > 0) {
+		// Finally, update any node information if we got any new protein nodes from either STRING or Jensenlab (except viral ones) 
+		if (newNodes.size() > 0 && !Species.isViral(selSpecies) && (useDatabase.equals(Databases.STRINGDB.getAPIName()) || useDatabase.equals(Databases.STRING.getAPIName()))) {
 			Map<String, CyNode> nodeMap = new HashMap<>();
 			for (CyNode newNode: newNodes) {
 				nodeMap.put(ModelUtils.getName(network, newNode), newNode);
@@ -410,9 +411,9 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 				monitor.showMessage(TaskMonitor.Level.ERROR, "Unable to get additional node annotations");
 			}
 		}
-		// TODO: [move] we need to also retrieve the tissue/compartments scores for the new nodes
-		// implemented, to be tested
-		if (useDatabase.equals(Databases.STRINGDB.getAPIName()) && newNodes.size() > 0) {
+	
+		// we need to also retrieve the tissue/compartments scores for any new nodes coming from STRING
+		if (newNodes.size() > 0 && useDatabase.equals(Databases.STRINGDB.getAPIName())) {
 			args.clear();
 			// we need to get all ids, not just the query ids 
 			String ids = null;
