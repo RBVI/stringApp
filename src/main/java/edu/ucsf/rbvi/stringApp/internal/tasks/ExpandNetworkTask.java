@@ -98,17 +98,20 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			params="slider=true", gravity=3.0)
 	public BoundedDouble selectivityAlpha = new BoundedDouble(0.0, 0.5, 1.0, false, false);
 
+	/*
 	@Tunable(description="Is protein-compound network?", 
 			exampleStringValue = "false", 
 			gravity=4.0)
 	 public boolean mixedTypes = false;
+	 */
 	
 	@Tunable (description="Type of interactors to expand network on/from", 
 			longDescription = "", 
 			exampleStringValue = "proteins",
 			dependsOn = "mixedTypes=true",
 			gravity=5.0)
-	public ListSingleSelection<String> nodeTypesSource = new ListSingleSelection<String>(Arrays.asList(mixedTypeProteins, mixedTypeCompounds));
+	// public ListSingleSelection<String> nodeTypesSource = new ListSingleSelection<String>(Arrays.asList(mixedTypeProteins, mixedTypeCompounds));
+	public ListSingleSelection<String> nodeTypesSource = null;
 
 	// @Tunable (description="Layout new nodes?", gravity=4.0)
 	// public boolean relayout = true;
@@ -136,11 +139,13 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			} else {
 				nodeTypes.setSelectedValue(ModelUtils.COMPOUND);
 			}
-			nodeTypesSource.setSelectedValue(mixedTypeProteins);
 			if (ModelUtils.getCompoundNodes(network).size() > 0 && ModelUtils.getProteinNodes(network).size() > 0) {
-				mixedTypes = true;
+				nodeTypesSource = new ListSingleSelection<String>(Arrays.asList(mixedTypeProteins, mixedTypeCompounds));
+				nodeTypesSource.setSelectedValue(mixedTypeProteins);
+				// mixedTypes = true;
 			} else {
-				mixedTypes = false;
+				nodeTypesSource = null;
+				// mixedTypes = false;
 			}
 		}
 	}
@@ -191,7 +196,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		String existing = ModelUtils.getExisting(network).trim();
 		String selected = ModelUtils.getSelected(network, nodeView, null).trim();
 		// if mixed network, replace the existing and selected by either only proteins or only compounds
-		if (mixedTypes) {
+		if (nodeTypesSource != null) {
 			if (nodeTypesSource.getSelectedValue().equals(mixedTypeProteins)) {
 				existing = ModelUtils.getExistingProteins(network).trim();
 				selected = ModelUtils.getSelected(network, nodeView, mixedTypeProteins).trim();
