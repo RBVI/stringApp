@@ -198,11 +198,17 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		// if mixed network, replace the existing and selected by either only proteins or only compounds
 		if (nodeTypesSource != null) {
 			if (nodeTypesSource.getSelectedValue().equals(mixedTypeProteins)) {
-				existing = ModelUtils.getExistingProteins(network).trim();
+				// existing = ModelUtils.getExistingProteins(network).trim();
 				selected = ModelUtils.getSelected(network, nodeView, mixedTypeProteins).trim();
+				if (selected.length() == 0) {
+					selected = ModelUtils.getExistingProteins(network).trim();
+				}
 			} else {
-				existing = ModelUtils.getExistingCompounds(network).trim();
+				// existing = ModelUtils.getExistingCompounds(network).trim();
 				selected = ModelUtils.getSelected(network, nodeView, mixedTypeCompounds).trim();
+				if (selected.length() == 0) {
+					selected = ModelUtils.getExistingCompounds(network).trim();
+				}
 			}
 		}
 		String species = ModelUtils.getNetSpecies(network);
@@ -238,22 +244,22 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 				useDatabase = Databases.STITCH.getAPIName();
 				filterString = String.valueOf(selSpecies.getTaxId());
 				args.put("filter", filterString + ".%");
-				args.put("existing",existing);
+				args.put("existing", existing);
 				args.put("score", conf.toString());
 				args.put("database", networkType);
 				args.put("alpha", selectivityAlpha.getValue().toString());
 				if (additionalNodes > 0)
 					args.put("additional", Integer.toString(additionalNodes));				
 				if (selected != null && selected.length() > 0)
-					args.put("selected",selected);
+					args.put("selected", selected);
 			} else {
 				// otherwise go to STRING-DB to expand by proteins from the same species
 				useDatabase = Databases.STRINGDB.getAPIName();
-				args.put("species",species);
-				args.put("existing_string_identifiers",existing.trim());
+				args.put("species", species);
+				args.put("existing_string_identifiers", existing);
 				// TODO: [move] is that how we should use selected with string?
 				if (selected != null && selected.length() > 0)
-					args.put("identifiers",selected);
+					args.put("identifiers", selected);
 				else 
 					args.put("identifiers",existing);
 				args.put("required_score",String.valueOf((int)(conf*1000)));
@@ -265,26 +271,26 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		} else if (selectedType.equals(ModelUtils.COMPOUND)) {
 			useDatabase = Databases.STITCH.getAPIName();
 			args.put("filter", "CIDm%");			
-			args.put("existing",existing);
+			args.put("existing", existing);
 			args.put("score", conf.toString());
 			args.put("database", networkType);
 			args.put("alpha", selectivityAlpha.getValue().toString());
 			if (additionalNodes > 0)
 				args.put("additional", Integer.toString(additionalNodes));
 			if (selected != null && selected.length() > 0)
-				args.put("selected",selected);
+				args.put("selected", selected);
 		} else {
 			useDatabase = Databases.STRING.getAPIName();
 			filterString = String.valueOf(selSpecies.getTaxId());
 			args.put("filter", filterString + ".%");
-			args.put("existing",existing.trim());
+			args.put("existing", existing);
 			args.put("score", conf.toString());
 			args.put("database", networkType);
 			args.put("alpha", selectivityAlpha.getValue().toString());
 			if (additionalNodes > 0)
 				args.put("additional", Integer.toString(additionalNodes));
 			if (selected != null && selected.length() > 0)
-				args.put("selected",selected.trim());
+				args.put("selected", selected);
 		}  
 		//else {
 		//	monitor.showMessage(TaskMonitor.Level.WARN, "This Expand functionality is not implemented yet");
