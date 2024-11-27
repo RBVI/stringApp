@@ -94,6 +94,7 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 	JComboBox<Species> speciesCombo;
 	JComboBox<String> speciesPartnerCombo;
 	JCheckBox wholeOrgBox;
+	private int wholeOrgConf = 90;
 	JButton importButton;
 	JButton backButton;
 	SearchOptionsPanel optionsPanel;
@@ -300,10 +301,14 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 				if (wholeOrgBox.isSelected()) {
 					searchTerms.setText("");
 					searchTerms.setEditable(false);
+					optionsPanel.setConfidence(wholeOrgConf);
+					if (Species.isViral(Species.getSpecies(speciesCombo.getSelectedItem().toString())))
+						optionsPanel.setConfidence((int)(manager.getDefaultConfidence()*100));
 					optionsPanel.enableAdditionalNodes(false);
 					optionsPanel.enableLoadEnrichment(false);
 				} else {
 					searchTerms.setEditable(true);
+					optionsPanel.setConfidence((int)(manager.getDefaultConfidence()*100));
 					optionsPanel.enableAdditionalNodes(true);
 					optionsPanel.enableLoadEnrichment(true);
 				}

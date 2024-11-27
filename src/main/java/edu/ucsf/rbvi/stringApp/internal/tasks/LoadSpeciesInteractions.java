@@ -96,22 +96,21 @@ public class LoadSpeciesInteractions extends AbstractTask {
 			if (species2 != null)
 				args.put("organism2", String.valueOf(species2.getTaxId()));
 			args.put("caller_identity", StringManager.CallerIdentity);
-		} else if (useDATABASE.equals(Databases.STRINGDB.getAPIName()) && species.isCustom()) {
-			// TODO: [move] implement whole species from STRING-db
-			// TODO: [move] once we move, we will just have one "else" case and we will just go to STRING-DB for the whole organism query
-			monitor.setTitle("Loading interactions from STRING-DB for " + species);
-			monitor.showMessage(Level.ERROR, "This functionality is not available yet, but we are working on it!");
-			return;
-			//networkURL = manager.getStringNetworkURL();
-			// args.put("identifiers",ids.trim());
-			//args.put("required_score",String.valueOf(confidence*10));
-			//args.put("network_type", netType.getAPIName());
-			//args.put("caller_identity", StringManager.CallerIdentity);
-			//args.put("species", species.getName());
 		} else {
-			monitor.showMessage(Level.ERROR, "This functionality is not available yet, but we are working on it!");
-			return;
-		}
+			// TODO: [move] test with custom species
+			// if useDATABASE.equals(Databases.STRINGDB.getAPIName()) || species.isCustom() go to STRING-DB for the whole organism query
+			if (Species.isViral(species))
+				monitor.setTitle("Loading interactions from Jensenlab for " + species);
+			else
+				monitor.setTitle("Loading interactions from STRING-DB for " + species);
+			monitor.setStatusMessage("Please be patient, this might take several minutes (up to half an hour depending on species and confidence cutoff).");
+			networkURL = manager.getStringNetworkURL();
+			args.put("identifiers","__ALL_PROTEINS__");
+			args.put("required_score",String.valueOf(confidence*10));
+			args.put("network_type", netType.getAPIName());
+			args.put("species", species.getName());
+			args.put("caller_identity", StringManager.CallerIdentity);
+		} 
 		
 		// double time = System.currentTimeMillis();
 		JSONObject results;
