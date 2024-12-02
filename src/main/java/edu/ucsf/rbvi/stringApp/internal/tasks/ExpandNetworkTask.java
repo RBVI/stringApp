@@ -240,7 +240,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		if (selectedType.equals(species) && !Species.isViral(selSpecies)) {
 			// if the network is a stitch network and we expand on the compounds, go to Jensenlab
 			// TODO: [move] can we avoid repeating the code here and in the else statement?
-			if (database.equals(Databases.STITCH.getAPIName()) && nodeTypesSource.getSelectedValue().equals(mixedTypeCompounds)) {
+			if (database.equals(Databases.STITCH.getAPIName()) && (nodeTypesSource == null || (nodeTypesSource != null && nodeTypesSource.getSelectedValue().equals(mixedTypeCompounds)))) {
 				useDatabase = Databases.STITCH.getAPIName();
 				filterString = String.valueOf(selSpecies.getTaxId());
 				args.put("filter", filterString + ".%");
