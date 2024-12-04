@@ -124,8 +124,8 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 			@Override
 			public void run(TaskMonitor m) {
 				// m.setTitle(CROSS_SPECIES_NAME);
-				m.setTitle("Loading interactions from STRING for " + species1.toString() + " and " + species2.toString());
-				m.setStatusMessage("Please be patient, this might take several minutes (up to half an hour depending on species and confidence cutoff).");
+				m.setTitle("Loading interactions from Jensenlab for " + species1.toString() + " and " + species2.toString());
+				m.setStatusMessage("Please be patient, this might take several minutes. In case of server timeout, consider increasing the confidence cutoff.");
 				StringNetwork stringNetwork = new StringNetwork(manager);
 				int confidence = optionsPanel.getConfidence();
 				LoadSpeciesInteractions loadInteractions = 

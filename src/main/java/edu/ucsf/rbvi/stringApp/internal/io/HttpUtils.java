@@ -102,7 +102,8 @@ public class HttpUtils {
 
 		// Set up our connection
 		JSONObject jsonObject = new JSONObject();
-
+		
+		// System.out.println(queryMap);
 		String args = HttpUtils.getStringArguments(queryMap);
 		manager.info("URL: " + url + "?" + truncate(args));
 		// System.out.println("URL: " + url + "?" + truncate(args));
@@ -146,6 +147,8 @@ public class HttpUtils {
 			throw new ConnectionException("Unknown host: " + e.getMessage());
 		} catch (UnknownSpeciesException e) {
 			throw new UnknownSpeciesException(e.getMessage()); 
+		} catch (TimeoutException e) {
+			throw new TimeoutException(e.getMessage()); 
 		} catch (FileNotFoundException e) {
 			// e.printStackTrace();
 			throw new ConnectionException("Unexpected error from server (file not found)");
@@ -221,6 +224,8 @@ public class HttpUtils {
 			String[] errorMessage = readErrorStream(connection.getErrorStream(), manager);
 			if (errorMessage[0].equals("unknown organism"))
 				throw new UnknownSpeciesException(errorMessage[1]);
+		case 524: // Cloudflare-specific HTTP status code for a Timeout Occurred error
+			throw new TimeoutException("cloudflare server timeout");
 		}
 		
 		return connection;
@@ -257,6 +262,13 @@ public class HttpUtils {
 	public static class UnknownSpeciesException extends ConnectionException {
 		
 		public UnknownSpeciesException(String message) {
+			super(message);
+		}
+	}
+
+	public static class TimeoutException extends ConnectionException {
+		
+		public TimeoutException(String message) {
 			super(message);
 		}
 	}

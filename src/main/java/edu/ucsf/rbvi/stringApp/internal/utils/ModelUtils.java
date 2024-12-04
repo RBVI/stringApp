@@ -84,7 +84,7 @@ public class ModelUtils {
 	// Create network view size threshold
 	// See https://github.com/cytoscape/cytoscape-impl/blob/develop/core-task-impl/
 	// src/main/java/org/cytoscape/task/internal/loadnetwork/AbstractLoadNetworkTask.java
-	public static int DEF_VIEW_THRESHOLD = 3000;
+	public static int DEF_VIEW_THRESHOLD = 50000;
 	public static String VIEW_THRESHOLD = "viewThreshold";
 	
 	public static int MAX_NODES_STRUCTURE_DISPLAY = 300;

@@ -84,7 +84,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 
 		if (useDATABASE.equals(Databases.STRING.getAPIName()) && (species2 != null || Species.isViral(species))){
 			monitor.setTitle("Loading interactions from Jensenlab for " + species + " and " + species2);
-			monitor.setStatusMessage("Please be patient, this might take several minutes (up to half an hour depending on species and confidence cutoff).");
+			monitor.setStatusMessage("Please be patient, this might take several minutes. In case of server timeout, consider increasing the confidence cutoff.");
 			
 			networkURL = manager.getNetworkURL();
 			String conf = "0." + confidence;
@@ -103,7 +103,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 				monitor.setTitle("Loading interactions from Jensenlab for " + species);
 			else
 				monitor.setTitle("Loading interactions from STRING-DB for " + species);
-			monitor.setStatusMessage("Please be patient, this might take several minutes (up to half an hour depending on species and confidence cutoff).");
+			monitor.setStatusMessage("Please be patient, this might take several minutes. In case of server timeout, consider increasing the confidence cutoff.");
 			networkURL = manager.getStringNetworkURL();
 			args.put("identifiers","__ALL_PROTEINS__");
 			args.put("required_score",String.valueOf(confidence*10));
@@ -118,8 +118,14 @@ public class LoadSpeciesInteractions extends AbstractTask {
 			results = HttpUtils.postJSON(networkURL, args, manager);
 		} catch (ConnectionException e) {
 			this.errorMsg = e.getMessage();
-			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
-			return;
+			if (this.errorMsg.equals("cloudflare server timeout")) {
+				String customErrorMsg = "This query is too large and caused a server timeout. Try to rerun the same query or consider increasing the confidence cutoff.";
+				monitor.showMessage(Level.ERROR, customErrorMsg);
+				throw new RuntimeException(customErrorMsg);
+			} else { 
+				monitor.showMessage(Level.ERROR, "Network error: " + this.errorMsg);
+				throw new RuntimeException("Network error: " + this.errorMsg);
+			}
 		}
 		// System.out.println(
 		// "postJSON method " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
