@@ -23,6 +23,7 @@ import org.cytoscape.work.TunableSetter;
 import org.json.simple.JSONObject;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
+import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
@@ -146,6 +147,24 @@ public class LoadSpeciesInteractions extends AbstractTask {
 			monitor.setStatusMessage("Added " + network.getEdgeCount() + " edges");
 		}
 
+		String terms = "";
+		for (String term: nodeMap.keySet()) {
+			terms += term+"\n";
+		}
+		// annotate species nodes with infos from STRING-DB
+		if (!Species.isViral(species)) {
+			try {
+				Map<String, List<Annotation>> annotations = stringNet.getAnnotations(stringNet.getManager(), species, terms, useDATABASE, true);
+				// TODO: [Custom] do we need to resolve or just take the first annotation or last one, which is currently the case...?
+				for (String s: annotations.keySet()) {
+					CyNode node = nodeMap.get(s);
+					ModelUtils.updateNodeAttributes(network.getRow(node), annotations.get(s).get(0), false);
+				}
+			} catch (ConnectionException ce) {
+				monitor.showMessage(TaskMonitor.Level.WARN, "Unable to get additional node annotations");
+			}
+		}
+		
 		if (species2 != null && !Species.isViral(species2)) {
 			// TODO: [move] here we fetch intra-species interactions for species2 and species1
 			networkURL = manager.getStringNetworkURL();
@@ -183,6 +202,17 @@ public class LoadSpeciesInteractions extends AbstractTask {
 					JSONUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, resultsSTRINGDB, null, Databases.STRINGDB.getAPIName(), netType.getAPIName());
 					monitor.setStatusMessage("Adding " + newEdges.size() + " edges from STRING-DB");
 				}	
+			}
+			// annotate species2 nodes with infos from STRING-DB
+			try {
+				Map<String, List<Annotation>> annotations = stringNet.getAnnotations(stringNet.getManager(), species2, terms, useDATABASE, true);
+				// TODO: [Custom] do we need to resolve or just take the first annotation or last one, which is currently the case...?
+				for (String s: annotations.keySet()) {
+					CyNode node = nodeMap.get(s);
+					ModelUtils.updateNodeAttributes(network.getRow(node), annotations.get(s).get(0), false);
+				}
+			} catch (ConnectionException ce) {
+				monitor.showMessage(TaskMonitor.Level.WARN, "Unable to get additional node annotations");
 			}
 		}
 		

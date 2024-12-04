@@ -419,7 +419,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 					ModelUtils.updateNodeAttributes(network.getRow(node), annotations.get(s).get(0), false);
 				}
 			} catch (ConnectionException ce) {
-				monitor.showMessage(TaskMonitor.Level.ERROR, "Unable to get additional node annotations");
+				monitor.showMessage(TaskMonitor.Level.WARN, "Unable to get additional node annotations");
 			}
 		}
 	

@@ -625,7 +625,9 @@ public class JSONUtils {
 			} else if (key.equals("description")) {
 				row.set(ColumnNames.DESCRIPTION, (String) nodeObj.get("description"));
 			} else if (key.equals("canonical")) {
-				row.set(ColumnNames.CANONICAL, (String) nodeObj.get("canonical"));
+				// TODO: [move] consider keeping the unirpto ID returned from Jensenlab?
+				//row.set(ColumnNames.CANONICAL, (String) nodeObj.get("canonical"));
+				continue;
 			} else if (key.equals(ColumnNames.SEQUENCE)) {
 				row.set(ColumnNames.SEQUENCE, (String) nodeObj.get(ColumnNames.SEQUENCE));
 			} else if (key.equals("image")) {
