@@ -81,7 +81,7 @@ public class GetStringIDsFromDiseasesTask extends AbstractTask implements Observ
 			monitor.showMessage(TaskMonitor.Level.ERROR,"DISEASES returned no results for this disease query '" + query + "'.");
 			return;
 		}
-		monitor.showMessage(TaskMonitor.Level.INFO,"Found "+tmResults.size()+" associated proteins.");
+		monitor.showMessage(TaskMonitor.Level.INFO,"Found "+tmResults.size()+" associated entities.");
 
 		// TODO: [move] we need to call getAnnotations before loading interactions --> added below, still needs to be double checked, code copied from StringifyTask
 		List<String> stringIdsTM = new ArrayList<>();
@@ -124,6 +124,8 @@ public class GetStringIDsFromDiseasesTask extends AbstractTask implements Observ
 
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
+		if (stringIds.size() > 0)
+			monitor.showMessage(TaskMonitor.Level.INFO,"Out of the "+tmResults.size()+" associated entities, STRING identified "+stringIds.size()+" proteins.");
 
 		// OK, if we got any results, fetch the network
 		LoadInteractions liTask = new LoadInteractions(stringNetwork, species.getName(), species, 

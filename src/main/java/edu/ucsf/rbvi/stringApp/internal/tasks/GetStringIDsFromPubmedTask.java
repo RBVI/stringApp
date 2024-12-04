@@ -148,7 +148,7 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 			//throw new RuntimeException("Jensenlab returned no results for this PubMed query '" + query + "'.");
 			return;
 		}
-		monitor.showMessage(TaskMonitor.Level.INFO,"Found "+tmResults.size()+" associated proteins.");
+		monitor.showMessage(TaskMonitor.Level.INFO,"Found "+tmResults.size()+" associated entities.");
 
 		// TODO: [move] we need to call getAnnotations before loading interactions --> added below, still needs to be double checked, code copied from StringifyTask
 		List<String> stringIdsTM = new ArrayList<>();
@@ -191,7 +191,9 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
-
+		if (stringIds.size() > 0)
+			monitor.showMessage(TaskMonitor.Level.INFO,"Out of the "+tmResults.size()+" associated entities, STRING identified "+stringIds.size()+" proteins.");
+		
 		// OK, if we got any results, fetch the network
 		String netName = query;
 		if (query.length() > 18)
