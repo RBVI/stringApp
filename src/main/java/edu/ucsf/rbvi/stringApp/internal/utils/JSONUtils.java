@@ -1,19 +1,17 @@
 package edu.ucsf.rbvi.stringApp.internal.utils;
 
-import java.io.ByteArrayOutputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
-import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyEdge;
-import org.cytoscape.model.CyIdentifiable;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyRow;
@@ -26,13 +24,12 @@ import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.EntityIdentifier;
+import edu.ucsf.rbvi.stringApp.internal.model.EvidenceType;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.model.TextMiningResult;
-
-import edu.ucsf.rbvi.stringApp.internal.model.EvidenceType;
 
 public class JSONUtils {
 
@@ -638,6 +635,9 @@ public class JSONUtils {
 				if (manager.haveChemViz() || (nodeObj.containsKey("image") && nodeObj.get("image").equals("image:")))
 					row.set(ColumnNames.CV_STYLE, "chemviz:" + nodeObj.get(ColumnNames.SMILES));
 				row.set(key, nodeObj.get(ColumnNames.SMILES));
+			} else if (key.equals(ColumnNames.INTERACTORSCORE)) {
+				BigDecimal ineractorScore = new BigDecimal((Double)nodeObj.get(ColumnNames.INTERACTORSCORE)).setScale(6, RoundingMode.HALF_UP);
+				row.set(ColumnNames.INTERACTORSCORE, ineractorScore.doubleValue());
 			} else {
 				// It's not one of our "standard" attributes, create a column for it (if necessary)
 				// and then add it
