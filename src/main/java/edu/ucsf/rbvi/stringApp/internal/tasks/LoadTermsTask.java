@@ -79,7 +79,7 @@ public class LoadTermsTask extends AbstractTask {
 	}
 
 	public void run(TaskMonitor monitor) {
-		monitor.setTitle("Adding " + stringIds.size() + " terms to network");
+		monitor.setTitle("Adding additional nodes and edges to network");
 		StringManager manager = stringNet.getManager();
 		CyNetwork network = stringNet.getNetwork();
 
@@ -169,6 +169,27 @@ public class LoadTermsTask extends AbstractTask {
 			// });
 			// return;
 		}
+
+		// Fetch extra edges from STRING if we added a protein despite the network being a STITCH network
+		String existing = ModelUtils.getExistingProteins(network).trim();
+		if (!useDATABASE.equals(Databases.STRINGDB.getAPIName()) && !existing.equals("")) {
+			results = null;
+			args = new HashMap<>();
+			args.put("species",taxString);
+			args.put("network_type", netType.getAPIName());
+			args.put("required_score", String.valueOf(confidence*10));
+			args.put("identifiers", existing);
+			
+			try {
+				results = HttpUtils.postJSON(manager.getStringNetworkURL(), args, manager);
+			} catch (ConnectionException e) {
+				monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
+			}
+			if (results != null) {
+				JSONUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, results, null, Databases.STRINGDB.getAPIName(), netType.getAPIName());
+			}
+		}
+		
 		// TODO: [move] we need to retrieve node attributes from STRING and from Jensenlab for the new nodes 
 		// (added below, to be tested)
 		if (useDATABASE.equals(Databases.STRINGDB.getAPIName()) && newNodes.size() > 0) {
