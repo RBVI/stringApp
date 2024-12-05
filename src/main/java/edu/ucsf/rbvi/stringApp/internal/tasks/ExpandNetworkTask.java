@@ -239,7 +239,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		// if expand by same species that is in STRING
 		if (selectedType.equals(species) && !Species.isViral(selSpecies)) {
 			// if the network is a stitch network and we expand on the compounds, go to Jensenlab
-			// TODO: [move] can we avoid repeating the code here and in the else statement?
+			// TODO: [move improvement] can we avoid repeating the code here and in the else statement?
 			if (database.equals(Databases.STITCH.getAPIName()) && (nodeTypesSource == null || (nodeTypesSource != null && nodeTypesSource.getSelectedValue().equals(mixedTypeCompounds)))) {
 				useDatabase = Databases.STITCH.getAPIName();
 				filterString = String.valueOf(selSpecies.getTaxId());
@@ -298,9 +298,9 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		//}
   		/*else {
 			// if expand by other species, go to jensenlab and ask for more proteins of this species
-			// TODO: [move]if expanding a cross-species network, go to STRING for the number of additional nodes of that species, then query Jensenlab for potential cross-species interactions
-			// TODO: [move] test this more extensively
-			// TODO: [move] if this is a stitch network (i.e. species == null), go to Jensenlab assuming we want to expand the compounds by proteins.
+			// [move] if expanding a cross-species network, go to STRING for the number of additional nodes of that species, then query Jensenlab for potential cross-species interactions
+			// [move] test this more extensively
+			// [move] if this is a stitch network (i.e. species == null), go to Jensenlab assuming we want to expand the compounds by proteins.
 			useDatabase = Databases.STRING.getAPIName();
 			filterString = String.valueOf(selSpecies.getTaxId());
 			args.put("filter", filterString + ".%");
@@ -336,7 +336,6 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		List<CyEdge> newEdges = new ArrayList<>();
 		List<CyNode> newNodes = JSONUtils.augmentNetworkFromJSON(stringNet, network, newEdges, results, null, useDatabase, networkType);
 
-		// TODO: [move] what do we do if the set of returned proteins/compounds is already the same as what exists in the network? 
 		// example: expand an 11 protein network by compounds and after that expand it again by compounds based on the proteins in the network 
 		if (newNodes.size() == 0 && newEdges.size() == 0) {
 			if (conf == 1.0) { 

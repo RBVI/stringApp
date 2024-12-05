@@ -190,8 +190,7 @@ public class LoadTermsTask extends AbstractTask {
 			}
 		}
 		
-		// TODO: [move] we need to retrieve node attributes from STRING and from Jensenlab for the new nodes 
-		// (added below, to be tested)
+		// [move] we need to retrieve node attributes from STRING and from Jensenlab for the new nodes 
 		if (useDATABASE.equals(Databases.STRINGDB.getAPIName()) && newNodes.size() > 0) {
 			args.clear();
 			// we need to get all ids, not just the query ids 

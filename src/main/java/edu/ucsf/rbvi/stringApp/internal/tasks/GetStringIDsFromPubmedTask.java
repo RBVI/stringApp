@@ -150,7 +150,7 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 		}
 		monitor.showMessage(TaskMonitor.Level.INFO,"Found "+tmResults.size()+" associated entities.");
 
-		// TODO: [move] we need to call getAnnotations before loading interactions --> added below, still needs to be double checked, code copied from StringifyTask
+		// TODO: [move improvement] we need to call getAnnotations before loading interactions --> added below, still needs to be double checked, code copied from StringifyTask
 		List<String> stringIdsTM = new ArrayList<>();
 		for (TextMiningResult tm: tmResults) {
 			stringIdsTM.add(tm.getID());

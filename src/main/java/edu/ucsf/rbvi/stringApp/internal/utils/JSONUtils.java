@@ -622,7 +622,7 @@ public class JSONUtils {
 			} else if (key.equals("description")) {
 				row.set(ColumnNames.DESCRIPTION, (String) nodeObj.get("description"));
 			} else if (key.equals("canonical")) {
-				// TODO: [move] consider keeping the unirpto ID returned from Jensenlab?
+				// TODO: [move improvement] consider keeping the unirpto ID returned from Jensenlab?
 				//row.set(ColumnNames.CANONICAL, (String) nodeObj.get("canonical"));
 				continue;
 			} else if (key.equals(ColumnNames.SEQUENCE)) {
@@ -747,7 +747,7 @@ public class JSONUtils {
 			nodeMap.put(row.get(ColumnNames.ID, String.class), row);
 		}
 		// get all new columns, sort them and create them
-		// TODO: [move] revise if the change the order of columns in the json
+		// TODO: [move improvement] revise if the change the order of columns in the json
 		List<String> extraCols = new ArrayList<String>(); 
 		if (obj.size() > 0 && obj.get(0) != null) {
 			JSONObject nodeObj = (JSONObject)obj.get(0);

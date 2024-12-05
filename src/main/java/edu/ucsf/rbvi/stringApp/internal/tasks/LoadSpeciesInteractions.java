@@ -84,7 +84,10 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		String networkURL = "";
 
 		if (useDATABASE.equals(Databases.STRING.getAPIName()) && (species2 != null || Species.isViral(species))){
-			monitor.setTitle("Loading interactions from Jensenlab for " + species + " and " + species2);
+			if (Species.isViral(species))
+				monitor.setTitle("Loading interactions from Jensenlab for " + species);
+			else
+				monitor.setTitle("Loading interactions from Jensenlab for " + species + " and " + species2);
 			monitor.setStatusMessage("Please be patient, this might take several minutes. In case of server timeout, consider increasing the confidence cutoff.");
 			
 			networkURL = manager.getNetworkURL();
@@ -98,12 +101,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 				args.put("organism2", String.valueOf(species2.getTaxId()));
 			args.put("caller_identity", StringManager.CallerIdentity);
 		} else {
-			// TODO: [move] test with custom species
-			// if useDATABASE.equals(Databases.STRINGDB.getAPIName()) || species.isCustom() go to STRING-DB for the whole organism query
-			if (Species.isViral(species))
-				monitor.setTitle("Loading interactions from Jensenlab for " + species);
-			else
-				monitor.setTitle("Loading interactions from STRING-DB for " + species);
+			monitor.setTitle("Loading interactions from STRING-DB for " + species);
 			monitor.setStatusMessage("Please be patient, this might take several minutes. In case of server timeout, consider increasing the confidence cutoff.");
 			networkURL = manager.getStringNetworkURL();
 			args.put("identifiers","__ALL_PROTEINS__");
@@ -166,7 +164,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		}
 		
 		if (species2 != null && !Species.isViral(species2)) {
-			// TODO: [move] here we fetch intra-species interactions for species2 and species1
+			// [move] here we fetch intra-species interactions for species2 and species1
 			networkURL = manager.getStringNetworkURL();
 			args = new HashMap<>();
 			args.put("required_score", String.valueOf((int)(confidence*10)));
@@ -186,7 +184,7 @@ public class LoadSpeciesInteractions extends AbstractTask {
 				monitor.setStatusMessage("Adding " + newEdges.size() + " edges from STRING-DB");
 			}
 			if (!Species.isViral(species)) {
-				// TODO: [move] here we also fetch the intra-species interactions for species1 unless it is a virus
+				// [move] here we also fetch the intra-species interactions for species1 unless it is a virus
 				// overwrite identifiers and species to fetch interactions for the first species
 				args.put("species", species.toString());
 				args.put("identifiers", ModelUtils.getExisting(network, species.toString()).trim());

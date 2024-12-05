@@ -161,7 +161,7 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			List<String> allSpecies = ModelUtils.getAllNetSpecies(network);
 			if (allSpecies.size() > 0) {
 				species = allSpecies.get(0);
-				// TODO: [move] maybe introduce a list attribute for network species instead of a string only attribute?
+				// TODO: [move improvement] maybe introduce a list attribute for network species instead of a string only attribute?
 			} else if (species == null) {
 				species = ModelUtils.getMostCommonNetSpecies(network);
 				ModelUtils.setNetSpecies(network, species);
