@@ -361,7 +361,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		// for example, if we asked for a different species, we need to also get the intra-species interactions of the proteins from this species
 		// we might need to add interactions from either STRING-DB or Jensenlab depending on the setup and where we went first
 		if (newNodes.size() > 1) {			
-			// TODO: [move] do we need to ask for edges for all species in the network? even if we expanded only by one?
+			// [move] do we need to ask for edges for all species in the network? even if we expanded only by one? -> I think not!
 			if (!useDatabase.equals(Databases.STRINGDB.getAPIName()) && !Species.isViral(selSpecies) && !selectedType.equals(ModelUtils.COMPOUND)) {
 				//if ((useDatabase.equals(Databases.STRING.getAPIName()) && !Species.isViral(selSpecies)) || (useDatabase.equals(Databases.STITCH.getAPIName()) && selectedType.equals(species))) {
 				args.clear();

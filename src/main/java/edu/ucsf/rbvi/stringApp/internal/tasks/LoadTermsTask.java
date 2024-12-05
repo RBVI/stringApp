@@ -190,8 +190,8 @@ public class LoadTermsTask extends AbstractTask {
 			}
 		}
 		
-		// [move] we need to retrieve node attributes from STRING and from Jensenlab for the new nodes 
-		if (useDATABASE.equals(Databases.STRINGDB.getAPIName()) && newNodes.size() > 0) {
+		// [move] we need to retrieve node attributes from Jensenlab for the new nodes 
+		if (useDATABASE.equals(Databases.STRINGDB.getAPIName()) && newNodes.size() > 0 && !species.isCustom()) {
 			args.clear();
 			// we need to get all ids, not just the query ids 
 			ids = null;
@@ -211,24 +211,29 @@ public class LoadTermsTask extends AbstractTask {
 				monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
 			}
 		}
-		if (additionalNodes > 0 && useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
+		// [move] we need to retrieve node infos from STRING for the new nodes
+		if (newNodes.size() > 0) {
 			String terms = "";
 			Map<String, CyNode> nodeMap = new HashMap<>();
 			for (CyNode node : newNodes) {
+				if (ModelUtils.isCompound(network, node))
+					continue;
 				terms += ModelUtils.getName(network, node)+"\n";
 				nodeMap.put(ModelUtils.getName(network, node), node);
 			}
-			try {
-				Map<String, List<Annotation>> annotations = stringNet.getAnnotations(stringNet.getManager(), species, terms, useDATABASE, true);
-				// TODO: [Custom] do we need to resolve or just take the first annotation or last one, which is currently the case...?
-				for (String s: annotations.keySet()) {
-					CyNode node = nodeMap.get(s);
-					for (Annotation a: annotations.get(s)) {
-						ModelUtils.updateNodeAttributes(network.getRow(node), a, false);
+			if (!terms.equals("")) {
+				try {
+					Map<String, List<Annotation>> annotations = stringNet.getAnnotations(stringNet.getManager(), species, terms, useDATABASE, true);
+					// TODO: [Custom] do we need to resolve or just take the first annotation or last one, which is currently the case...?
+					for (String s: annotations.keySet()) {
+						CyNode node = nodeMap.get(s);
+						for (Annotation a: annotations.get(s)) {
+							ModelUtils.updateNodeAttributes(network.getRow(node), a, false);
+						}
 					}
+				} catch (ConnectionException ce) {
+					monitor.showMessage(TaskMonitor.Level.WARN, "Unable to get additional node annotations");
 				}
-			} catch (ConnectionException ce) {
-				monitor.showMessage(TaskMonitor.Level.WARN, "Unable to get additional node annotations");
 			}
 		} 
 		

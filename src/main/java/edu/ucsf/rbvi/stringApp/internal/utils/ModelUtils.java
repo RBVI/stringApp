@@ -661,6 +661,13 @@ public class ModelUtils {
 		table.createColumn(columnName, clazz, false);
 	}
 
+	public static void createColumnIfNeeded(CyTable table, Class<?> clazz, String columnName, Object defaultValue) {
+		if (table.getColumn(columnName) != null)
+			return;
+
+		table.createColumn(columnName, clazz, false, defaultValue);
+	}
+
 	public static void replaceColumnIfNeeded(CyTable table, Class<?> clazz, String columnName) {
 		if (table.getColumn(columnName) != null) 
 			table.deleteColumn(columnName);

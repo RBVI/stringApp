@@ -264,13 +264,12 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
-		// TODO: [move] test if stringify still works for compound networks 
 		if (useDatabase.equals(Databases.STITCH.getAPIName())) {
-			System.out.println("Calling LoadInteractions2 on behalf of Stringify");
+			//System.out.println("Calling LoadInteractions2 on behalf of Stringify");
 			manager.execute(new TaskIterator(new LoadInteractions2(stringNetwork, sp.toString(), sp, (int)(cutoff.getValue()*100), additionalNodes, stringIds,
 					  queryTermMap, netName, useDatabase, networkType.getSelectedValue())), true);
 		} else {
-			System.out.println("Calling LoadInteractions on behalf of Stringify");
+			//System.out.println("Calling LoadInteractions on behalf of Stringify");
 			manager.execute(new TaskIterator(new LoadInteractions(stringNetwork, sp.toString(), sp, 
 							(int)(cutoff.getValue()*100), additionalNodes, stringIds, queryTermMap, netName, useDatabase, networkType.getSelectedValue())), true);
 		}		

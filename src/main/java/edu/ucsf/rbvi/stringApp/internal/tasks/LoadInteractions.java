@@ -135,7 +135,7 @@ public class LoadInteractions extends AbstractTask {
 		try {
 			results = HttpUtils.postJSON(networkURL, args, manager);
 		} catch (ConnectionException e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
 			return;
 		}
@@ -188,7 +188,7 @@ public class LoadInteractions extends AbstractTask {
 				monitor.showMessage(TaskMonitor.Level.WARN, "Unable to get additional node annotations");
 			}
 		} 
-		if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
+		if (useDATABASE.equals(Databases.STRINGDB.getAPIName()) & !species.isCustom()) {
 			// OK, now get data from TISSUES, COMPARTMENTS, etc.
 			args.clear();
 			// we need to get all ids, not just the query ids 
@@ -204,7 +204,7 @@ public class LoadInteractions extends AbstractTask {
 			args.put("entities",ids.trim());
 			args.put("caller_identity", StringManager.CallerIdentity);
 			networkURL = manager.getNodeInfoURL();
-			System.out.println("Network URL: "+networkURL);
+			// System.out.println("Network URL: "+networkURL);
 			try {
 				results = HttpUtils.postJSON(networkURL, args, manager);
 				JSONUtils.addExtraNodeData(stringNet, results);

@@ -129,7 +129,7 @@ public class LoadInteractions2 extends AbstractTask {
 		try {
 			results = HttpUtils.postJSON(networkURL, args, manager);
 		} catch (ConnectionException e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
 			return;
 		}

@@ -869,37 +869,37 @@ public class JSONUtils {
 			edgeRow.set(ColumnNames.SCORE, ModelUtils.makeDouble(edgeObj.get("score")));
 		if (edgeObj.containsKey("nscore")) {
 			String edgeColName = getEdgeColumnName(EvidenceType.NEIGHBORHOOD);
-			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName);
+			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName, 0.0);
 			edgeRow.set(edgeColName, ModelUtils.makeDouble(edgeObj.get("nscore")));
 		}
 		if (edgeObj.containsKey("fscore")) {
 			String edgeColName = getEdgeColumnName(EvidenceType.GENEFUSIONS);
-			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName);
+			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName, 0.0);
 			edgeRow.set(edgeColName, ModelUtils.makeDouble(edgeObj.get("fscore")));
 		}
 		if (edgeObj.containsKey("pscore")) {
 			String edgeColName = getEdgeColumnName(EvidenceType.COOCCURRENCE);
-			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName);
+			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName, 0.0);
 			edgeRow.set(edgeColName, ModelUtils.makeDouble(edgeObj.get("pscore")));
 		}
 		if (edgeObj.containsKey("ascore")) {
 			String edgeColName = getEdgeColumnName(EvidenceType.COEXPRESSION);
-			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName);
+			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName, 0.0);
 			edgeRow.set(edgeColName, ModelUtils.makeDouble(edgeObj.get("ascore")));
 		}
 		if (edgeObj.containsKey("escore")) {
 			String edgeColName = getEdgeColumnName(EvidenceType.EXPERIMENTS);
-			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName);
+			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName, 0.0);
 			edgeRow.set(edgeColName, ModelUtils.makeDouble(edgeObj.get("escore")));
 		}
 		if (edgeObj.containsKey("dscore")) {
 			String edgeColName = getEdgeColumnName(EvidenceType.DATABASES);
-			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName);
+			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName, 0.0);
 			edgeRow.set(edgeColName, ModelUtils.makeDouble(edgeObj.get("dscore")));
 		}
 		if (edgeObj.containsKey("tscore")) {
 			String edgeColName = getEdgeColumnName(EvidenceType.TEXTMINING);
-			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName);
+			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName, 0.0);
 			edgeRow.set(edgeColName, ModelUtils.makeDouble(edgeObj.get("tscore")));
 		}
 
@@ -964,7 +964,7 @@ public class JSONUtils {
 		for (Object key : scores.keySet()) {
 			String score = (String) key;
 			// String scoreFormatted = formatForColumnNamespace(score);
-			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, score);
+			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, score, 0.0);
 			Double v = (Double) scores.get(key);
 			network.getRow(edge).set(score, v);
 			// scoreProduct *= (1 - v);

@@ -60,7 +60,7 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 					                            useDATABASE, netType));
 		} else if (stringNet.getNetwork() == null) {
 			if (useDATABASE.equals(Databases.STITCH.getAPIName())) {
-				System.out.println("Calling LoadInteractions2");
+				//System.out.println("Calling LoadInteractions2");
 				return new TaskIterator(new LoadInteractions2(stringNet, speciesName, species,
 																										  confidence, additionalNodes, stringIds,
 																										  queryTermMap, netName, useDATABASE, netType));
@@ -70,7 +70,7 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 						  confidence, additionalNodes, stringIds,
 						  queryTermMap, netName, useDATABASE, netType));
 			} else {
-				System.out.println("Calling LoadInteractions");
+				//System.out.println("Calling LoadInteractions");
 				return new TaskIterator(new LoadInteractions(stringNet, speciesName, species,
 																										 confidence, additionalNodes, stringIds,
 																										 queryTermMap, netName, useDATABASE, netType));
