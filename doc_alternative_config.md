@@ -1,8 +1,13 @@
 # stringApp Documentation
 
-stringApp version 2.0.2
+stringApp version 2.1.1
 
-Last update: 2023-08-03
+Last update: 2024-10-30
+
+
+## Access to STRING v11.5 discontinued
+
+As of today, 30 Oct 2024, stringApp will no longer have access to STRING v11.5. If you really need to work with STRING v11.5 networks, you can do that via the [web interface](https://version-11-5.string-db.org/), download the data and import it in Cytoscape as _Network from file_. 
 
 ## Setting up an alternative STRING version
 
