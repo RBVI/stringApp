@@ -122,6 +122,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String SpeciesURI = Species.class.getResource("/species_v12.0.tsv").toString();
 	public static String PairsURI = Species.class.getResource("/pairs_v12.0.tsv").toString();
 	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
+	// TODO: [move] CHANGE BEFORE RELEASING
 	public static String URI = "https://api12.jensenlab.org/";
 	public static String DATAVERSION = "12";
 	public static String OLD_DATAVERSION = "11.5";

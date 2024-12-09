@@ -621,7 +621,8 @@ public class ModelUtils {
 			if (network.getRow(node).get(CyNetwork.SELECTED, Boolean.class)) {
 				String stringID = network.getRow(node).get(ColumnNames.STRINGID, String.class);
 				String stringType = network.getRow(node).get(ColumnNames.TYPE, String.class);
-				if (stringID != null && stringID.length() > 0 && (nodeType == null || (nodeType != null && stringType != null && stringType.equals(nodeType))))
+				if (stringID != null && stringID.length() > 0 && (nodeType == null
+						|| (nodeType != null && stringType != null && stringType.equals(nodeType))))
 					selectedStr.append(stringID + "\n");
 			}
 		}

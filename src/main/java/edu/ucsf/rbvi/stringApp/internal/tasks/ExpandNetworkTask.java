@@ -199,13 +199,13 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		if (nodeTypesSource != null) {
 			if (nodeTypesSource.getSelectedValue().equals(mixedTypeProteins)) {
 				// existing = ModelUtils.getExistingProteins(network).trim();
-				selected = ModelUtils.getSelected(network, nodeView, mixedTypeProteins).trim();
+				selected = ModelUtils.getSelected(network, nodeView, "protein").trim();
 				if (selected.length() == 0) {
 					selected = ModelUtils.getExistingProteins(network).trim();
 				}
 			} else {
 				// existing = ModelUtils.getExistingCompounds(network).trim();
-				selected = ModelUtils.getSelected(network, nodeView, mixedTypeCompounds).trim();
+				selected = ModelUtils.getSelected(network, nodeView, "compound").trim();
 				if (selected.length() == 0) {
 					selected = ModelUtils.getExistingCompounds(network).trim();
 				}
@@ -400,7 +400,8 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
 
 		// Finally, update any node information if we got any new protein nodes from either STRING or Jensenlab (except viral ones) 
-		if (newNodes.size() > 0 && !Species.isViral(selSpecies) && (useDatabase.equals(Databases.STRINGDB.getAPIName()) || useDatabase.equals(Databases.STRING.getAPIName()))) {
+		//if (newNodes.size() > 0 && !Species.isViral(selSpecies) && (useDatabase.equals(Databases.STRINGDB.getAPIName()) || useDatabase.equals(Databases.STRING.getAPIName()))) { --> this was not working properly
+		if (newNodes.size() > 0 && !Species.isViral(selSpecies) && !selectedType.equals(ModelUtils.COMPOUND)) {
 			Map<String, CyNode> nodeMap = new HashMap<>();
 			for (CyNode newNode: newNodes) {
 				nodeMap.put(ModelUtils.getName(network, newNode), newNode);
