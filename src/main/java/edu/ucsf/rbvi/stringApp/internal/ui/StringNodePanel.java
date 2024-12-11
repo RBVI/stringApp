@@ -115,6 +115,9 @@ public class StringNodePanel extends AbstractStringPanel {
 			showStructure.setEnabled(false);
 		else
 			showStructure.setEnabled(true);
+		
+		updateCompartmentsPanel();
+		updateTissuesPanel();
 		updating = false;
 	}
 
