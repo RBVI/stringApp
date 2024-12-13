@@ -115,6 +115,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String CONFIGURI = "https://jensenlab.org/assets/stringapp/";
 	
 	public static String STRINGResolveURI = "https://string-db.org/api/";
+	// TODO: [N] remove these URLs from here and from github config file as we don't use them anymore
 	public static String STITCHResolveURI = "http://stitch.embl.de/api/";
 	public static String VIRUSESResolveURI = "http://viruses.string-db.org/cgi/webservice_handler.pl";
 	//public static String STRINGNetworkURI = "https://string-db.org/api/json/network";
@@ -122,8 +123,7 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String SpeciesURI = Species.class.getResource("/species_v12.0.tsv").toString();
 	public static String PairsURI = Species.class.getResource("/pairs_v12.0.tsv").toString();
 	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
-	// TODO: [move] CHANGE BEFORE RELEASING
-	public static String URI = "https://api12.jensenlab.org/";
+	public static String URI = "https://api.jensenlab.org/";
 	public static String DATAVERSION = "12";
 	public static String OLD_DATAVERSION = "11.5";
 	public static String alternativeAPIProperty = "alternativeAPI";

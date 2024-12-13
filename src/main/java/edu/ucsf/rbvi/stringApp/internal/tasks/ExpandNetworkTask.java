@@ -257,7 +257,6 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 				useDatabase = Databases.STRINGDB.getAPIName();
 				args.put("species", species);
 				args.put("existing_string_identifiers", existing);
-				// TODO: [move] is that how we should use selected with string?
 				if (selected != null && selected.length() > 0)
 					args.put("identifiers", selected);
 				else 
