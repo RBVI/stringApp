@@ -221,6 +221,8 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		ModelUtils.setNetSpecies(network, species.toString());
 		ModelUtils.setDataVersion(network, manager.getDataVersion());
 		ModelUtils.setNetURI(network, manager.getNetworkURL());
+		if (species2 != null)
+			ModelUtils.setIsNetworkMultiSpecies(network, true);
 		stringNet.setNetwork(network);
 
 		int viewThreshold = ModelUtils.getViewThreshold(manager);

@@ -197,6 +197,17 @@ public class ModelUtils {
 		return network.getRow(network).get(ColumnNames.NETWORK_TYPE, String.class);
 	}
 
+	public static void setIsNetworkMultiSpecies(CyNetwork network, boolean isMultiSpecies) {
+		createColumnIfNeeded(network.getDefaultNetworkTable(), Boolean.class, ColumnNames.NET_MULTI_SPECIES, false);
+		network.getRow(network).set(ColumnNames.NET_MULTI_SPECIES, isMultiSpecies);
+	}
+
+	public static boolean getIsNetworkMultiSpecies(CyNetwork network) {
+		if (network.getDefaultNetworkTable().getColumn(ColumnNames.NET_MULTI_SPECIES) == null)
+			return false;
+		return network.getRow(network).get(ColumnNames.NET_MULTI_SPECIES, Boolean.class);
+	}
+
 	public static void setNetworkHasImages(CyNetwork network, boolean hasImages) {
 		createColumnIfNeeded(network.getDefaultNetworkTable(), Boolean.class, ColumnNames.NET_HAS_IMAGES);
 		network.getRow(network).set(ColumnNames.NET_HAS_IMAGES, hasImages);
@@ -608,7 +619,25 @@ public class ModelUtils {
 		return str.toString();
 	}
 
-	public static String getSelected(CyNetwork network, View<CyNode> nodeView, String nodeType) {
+	public static String getSelectedBySpecies(CyNetwork network, View<CyNode> nodeView, String speciesName) {
+		StringBuilder str = new StringBuilder();
+		if (nodeView != null) {
+			String stringID = network.getRow(nodeView.getModel()).get(ColumnNames.STRINGID, String.class);
+			String nodeSpecies = network.getRow(nodeView.getModel()).get(ColumnNames.SPECIES, String.class);
+			if (stringID != null && stringID.length() > 0 && nodeSpecies != null && nodeSpecies.equals(speciesName))
+				str.append(stringID + "\n");			
+		}
+		
+		for (CyNode node : network.getNodeList()) {
+			String stringID = network.getRow(node).get(ColumnNames.STRINGID, String.class);
+			String nodeSpecies = network.getRow(node).get(ColumnNames.SPECIES, String.class);
+			if (stringID != null && stringID.length() > 0 && nodeSpecies != null && nodeSpecies.equals(speciesName))
+				str.append(stringID + "\n");
+		}
+		return str.toString();
+	}
+
+	public static String getSelectedByType(CyNetwork network, View<CyNode> nodeView, String nodeType) {
 		StringBuilder selectedStr = new StringBuilder();
 		if (nodeView != null) {
 			String stringID = network.getRow(nodeView.getModel()).get(ColumnNames.STRINGID, String.class);

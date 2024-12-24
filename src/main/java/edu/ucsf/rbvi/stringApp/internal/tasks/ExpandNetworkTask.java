@@ -139,13 +139,25 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			} else {
 				nodeTypes.setSelectedValue(ModelUtils.COMPOUND);
 			}
-			if (ModelUtils.getCompoundNodes(network).size() > 0 && ModelUtils.getProteinNodes(network).size() > 0) {
-				nodeTypesSource = new ListSingleSelection<String>(Arrays.asList(mixedTypeProteins, mixedTypeCompounds));
-				nodeTypesSource.setSelectedValue(mixedTypeProteins);
-				// mixedTypes = true;
+			// figure out what type of nodes we have, e.g. proteins, compounds or multiple species
+			Boolean multiSpecies = ModelUtils.getIsNetworkMultiSpecies(network);
+			List<String> sources = new ArrayList<String>();
+			if (ModelUtils.getProteinNodes(network).size() > 0) {
+				if (multiSpecies != null & multiSpecies) {
+					sources.addAll(ModelUtils.getAllNetSpecies(network));
+				} else {
+					sources.add(mixedTypeProteins);
+				}
+			} 
+			if (ModelUtils.getCompoundNodes(network).size() > 0) {
+				sources.add(mixedTypeCompounds);
+			} 
+			// if more than 1 type of nodes, initialize the nodeTypesSource tunable
+			if (sources.size() > 1) {
+				nodeTypesSource = new ListSingleSelection<String>(sources);
+				nodeTypesSource.setSelectedValue(sources.get(0));
 			} else {
 				nodeTypesSource = null;
-				// mixedTypes = false;
 			}
 		}
 	}
@@ -191,31 +203,41 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			}
 		}
 
-
-		// Get all of the current nodes for our "existing" list
-		String existing = ModelUtils.getExisting(network).trim();
-		String selected = ModelUtils.getSelected(network, nodeView, null).trim();
-		// if mixed network, replace the existing and selected by either only proteins or only compounds
-		if (nodeTypesSource != null) {
-			if (nodeTypesSource.getSelectedValue().equals(mixedTypeProteins)) {
-				// existing = ModelUtils.getExistingProteins(network).trim();
-				selected = ModelUtils.getSelected(network, nodeView, "protein").trim();
-				if (selected.length() == 0) {
-					selected = ModelUtils.getExistingProteins(network).trim();
-				}
-			} else {
-				// existing = ModelUtils.getExistingCompounds(network).trim();
-				selected = ModelUtils.getSelected(network, nodeView, "compound").trim();
-				if (selected.length() == 0) {
-					selected = ModelUtils.getExistingCompounds(network).trim();
-				}
-			}
-		}
+		//List<String> allSpecies = ModelUtils.getAllNetSpecies(network);
 		String species = ModelUtils.getNetSpecies(network);
 		if (species == null) {
 			species = ModelUtils.getMostCommonNetSpecies(network);
 			ModelUtils.setNetSpecies(network, species);
 		}
+
+		// Get all of the current nodes for our "existing" list
+		String existing = ModelUtils.getExisting(network).trim();
+		String selected = ModelUtils.getSelectedByType(network, nodeView, null).trim();
+		// if mixed network, replace the existing and selected by either only proteins or only compounds
+		if (nodeTypesSource != null) {
+			if (nodeTypesSource.getSelectedValue().equals(mixedTypeProteins)) {
+				// existing = ModelUtils.getExistingProteins(network).trim();
+				selected = ModelUtils.getSelectedByType(network, nodeView, "protein").trim();
+				if (selected.length() == 0) {
+					selected = ModelUtils.getExistingProteins(network).trim();
+				}
+			} else if (nodeTypesSource.getSelectedValue().equals(mixedTypeCompounds)) {
+				// existing = ModelUtils.getExistingCompounds(network).trim();
+				selected = ModelUtils.getSelectedByType(network, nodeView, "compound").trim();
+				if (selected.length() == 0) {
+					selected = ModelUtils.getExistingCompounds(network).trim();
+				}
+			} else {
+				species = nodeTypesSource.getSelectedValue();
+				selected = ModelUtils.getSelectedBySpecies(network, nodeView, species).trim();
+				if (selected.length() == 0) {
+					selected = ModelUtils.getExisting(network, species).trim();
+				}				
+			}
+		}
+		//System.out.println("species: " + species);
+		//System.out.println("existing: " + existing);
+		//System.out.println("selected: " + selected);
 		String selectedType = nodeTypes.getSelectedValue();
 		if (selectedType == null || selectedType.equals(ModelUtils.EMPTYLINE)) {
 			monitor.showMessage(TaskMonitor.Level.WARN, "No node type to expand by");
@@ -268,6 +290,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 					args.put("additional_network_nodes", Integer.toString(additionalNodes));				
 			}
 		} else if (selectedType.equals(ModelUtils.COMPOUND)) {
+			// expand a protein network by compounds from Jensenlab API
 			useDatabase = Databases.STITCH.getAPIName();
 			args.put("filter", "CIDm%");			
 			args.put("existing", existing);
@@ -279,6 +302,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			if (selected != null && selected.length() > 0)
 				args.put("selected", selected);
 		} else {
+			// in all other cases, go to 
 			useDatabase = Databases.STRING.getAPIName();
 			filterString = String.valueOf(selSpecies.getTaxId());
 			args.put("filter", filterString + ".%");
@@ -356,6 +380,11 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			// return;
 		}
 
+		// set network to multi-species if we expanded by another species
+		if (!selectedType.equals(ModelUtils.COMPOUND) && selSpecies != null && !selectedType.equals(species)) {
+			ModelUtils.setIsNetworkMultiSpecies(network, true);
+		}
+		
 		// if we got back more than one node, we need to get some extra interactions
 		// for example, if we asked for a different species, we need to also get the intra-species interactions of the proteins from this species
 		// we might need to add interactions from either STRING-DB or Jensenlab depending on the setup and where we went first

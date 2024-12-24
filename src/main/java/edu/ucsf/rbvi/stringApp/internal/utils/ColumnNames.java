@@ -58,6 +58,7 @@ public class ColumnNames {
 	public static String NET_SPECIES = "species";
 	public static String NET_DATAVERSION = "data version";
 	public static String NET_HAS_IMAGES = "has images";
+	public static String NET_MULTI_SPECIES = "multi-species";
 	public static String NET_URI = "uri";
 
 	public static String NET_ANALYZED_NODES = "analyzedNodes.SUID";
