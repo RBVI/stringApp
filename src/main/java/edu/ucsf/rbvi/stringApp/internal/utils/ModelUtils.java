@@ -629,10 +629,12 @@ public class ModelUtils {
 		}
 		
 		for (CyNode node : network.getNodeList()) {
-			String stringID = network.getRow(node).get(ColumnNames.STRINGID, String.class);
-			String nodeSpecies = network.getRow(node).get(ColumnNames.SPECIES, String.class);
-			if (stringID != null && stringID.length() > 0 && nodeSpecies != null && nodeSpecies.equals(speciesName))
-				str.append(stringID + "\n");
+			if (network.getRow(node).get(CyNetwork.SELECTED, Boolean.class)) {
+				String stringID = network.getRow(node).get(ColumnNames.STRINGID, String.class);
+				String nodeSpecies = network.getRow(node).get(ColumnNames.SPECIES, String.class);
+				if (stringID != null && stringID.length() > 0 && nodeSpecies != null && nodeSpecies.equals(speciesName))
+					str.append(stringID + "\n");
+			}		
 		}
 		return str.toString();
 	}

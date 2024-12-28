@@ -105,7 +105,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 	 public boolean mixedTypes = false;
 	 */
 	
-	@Tunable (description="Type of interactors to expand network on/from", 
+	@Tunable (description="Type of interactors to expand network from", 
 			longDescription = "", 
 			exampleStringValue = "proteins",
 			dependsOn = "mixedTypes=true",
@@ -148,11 +148,13 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 				} else {
 					sources.add(mixedTypeProteins);
 				}
-			} 
+			}
+			Collections.sort(sources);
 			if (ModelUtils.getCompoundNodes(network).size() > 0) {
 				sources.add(mixedTypeCompounds);
 			} 
 			// if more than 1 type of nodes, initialize the nodeTypesSource tunable
+			// TODO: [move improve] check what nodes are selected and make this menu based on that
 			if (sources.size() > 1) {
 				nodeTypesSource = new ListSingleSelection<String>(sources);
 				nodeTypesSource.setSelectedValue(sources.get(0));

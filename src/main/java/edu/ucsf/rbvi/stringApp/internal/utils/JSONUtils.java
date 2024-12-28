@@ -234,7 +234,7 @@ public class JSONUtils {
 
 		StringManager manager = stringNetwork.getManager();
 
-		System.out.println("Database = "+useDATABASE);
+		// System.out.println("Database = "+useDATABASE);
 
 		Object results = getResultsFromJSON(object, JSONObject.class);
 		if (results == null)
