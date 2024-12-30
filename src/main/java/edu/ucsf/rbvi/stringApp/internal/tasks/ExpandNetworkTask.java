@@ -154,7 +154,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 				sources.add(mixedTypeCompounds);
 			} 
 			// if more than 1 type of nodes, initialize the nodeTypesSource tunable
-			// TODO: [move improve] check what nodes are selected and make this menu based on that
+			// TODO: [move improvement] check what nodes are selected and make this menu based on that
 			if (sources.size() > 1) {
 				nodeTypesSource = new ListSingleSelection<String>(sources);
 				nodeTypesSource.setSelectedValue(sources.get(0));
@@ -258,12 +258,10 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		String filterString = "";
 		String useDatabase = "";
 		Map<String, String> args = new HashMap<>();
-		// if expand by compounds, go to jensenlab and ask for compounds
-		// TODO: [move] expand still needs some testing
 		// if expand by same species that is in STRING
 		if (selectedType.equals(species) && !Species.isViral(selSpecies)) {
-			// if the network is a stitch network and we expand on the compounds, go to Jensenlab
 			// TODO: [move improvement] can we avoid repeating the code here and in the else statement?
+			// if the network is a stitch network and we expand on the compounds, go to Jensenlab
 			if (database.equals(Databases.STITCH.getAPIName()) && (nodeTypesSource == null || (nodeTypesSource != null && nodeTypesSource.getSelectedValue().equals(mixedTypeCompounds)))) {
 				useDatabase = Databases.STITCH.getAPIName();
 				filterString = String.valueOf(selSpecies.getTaxId());
@@ -292,7 +290,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 					args.put("additional_network_nodes", Integer.toString(additionalNodes));				
 			}
 		} else if (selectedType.equals(ModelUtils.COMPOUND)) {
-			// expand a protein network by compounds from Jensenlab API
+			// if expand by compounds, go to jensenlab and ask for compounds
 			useDatabase = Databases.STITCH.getAPIName();
 			args.put("filter", "CIDm%");			
 			args.put("existing", existing);
@@ -317,27 +315,6 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			if (selected != null && selected.length() > 0)
 				args.put("selected", selected);
 		}  
-		//else {
-		//	monitor.showMessage(TaskMonitor.Level.WARN, "This Expand functionality is not implemented yet");
-		//	return;
-		//}
-  		/*else {
-			// if expand by other species, go to jensenlab and ask for more proteins of this species
-			// [move] if expanding a cross-species network, go to STRING for the number of additional nodes of that species, then query Jensenlab for potential cross-species interactions
-			// [move] test this more extensively
-			// [move] if this is a stitch network (i.e. species == null), go to Jensenlab assuming we want to expand the compounds by proteins.
-			useDatabase = Databases.STRING.getAPIName();
-			filterString = String.valueOf(selSpecies.getTaxId());
-			args.put("filter", filterString + ".%");
-			args.put("existing",existing.trim());
-			args.put("score", conf.toString());
-			args.put("database", database);
-			args.put("alpha", selectivityAlpha.getValue().toString());
-			if (additionalNodes > 0)
-				args.put("additional", Integer.toString(additionalNodes));
-		}*/
-
-		// String nodeType = nodeTypes.getSelectedValue().toLowerCase();
 
 		JSONObject results;
 		try {

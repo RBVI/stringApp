@@ -181,7 +181,6 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			
 			JSONObject resultsSTRINGDB = null;
 			JSONObject resultsJensenlab = null;
-			// TODO: [move] test changing of network type for various types of networks and revise if needed
 			if (database.equals(Databases.STITCH.getAPIName()) || (database.equals(Databases.STRING.getAPIName()) && !Species.isViral(selSpecies))) {
 				//System.out.println("Call both APIs");
 				try {
@@ -231,6 +230,7 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			network.removeEdges(removeEdges);
 
 			// add new edges from Jensenlab
+			// TODO: [bug] Expand network and change confidence return different set of edges for cross-species networks
 			if (resultsJensenlab != null) {
 				JSONUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, resultsJensenlab, null, database, newType.getAPIName());
 				monitor.setStatusMessage("Adding edges from Jensenlab");
@@ -241,7 +241,6 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 				monitor.setStatusMessage("Adding edges from STRING-DB");
 			}
 			// add new edges from STRING-DB for the remaining species if there is more than one species in the network
-			// TODO: [move] test if fetching edges for additional species works fine 
 			for (int i=1; i < allSpecies.size(); i++) {
 				if (Species.isViral(Species.getSpecies(allSpecies.get(i))))
 					continue;
