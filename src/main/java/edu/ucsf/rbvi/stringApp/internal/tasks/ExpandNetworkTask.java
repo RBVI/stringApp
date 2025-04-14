@@ -287,7 +287,8 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 				args.put("network_type", networkType);
 				args.put("custom_alpha", selectivityAlpha.getValue().toString());
 				if (additionalNodes > 0)
-					args.put("additional_network_nodes", Integer.toString(additionalNodes));				
+					args.put("additional_network_nodes", Integer.toString(additionalNodes));
+				args.put("caller_identity", StringManager.CallerIdentity);
 			}
 		} else if (selectedType.equals(ModelUtils.COMPOUND)) {
 			// if expand by compounds, go to jensenlab and ask for compounds
@@ -376,6 +377,7 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 				args.put("network_type", networkType);
 				args.put("species", selSpecies.toString());
 				args.put("identifiers", ModelUtils.getExisting(network, selSpecies.toString().trim()));
+				args.put("caller_identity", StringManager.CallerIdentity);
 				results = null;
 				try {
 					results = HttpUtils.postJSON(manager.getStringNetworkURL(), args, manager);

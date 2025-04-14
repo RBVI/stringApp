@@ -173,6 +173,7 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			argsSTRINGDB.put("network_type", newType.getAPIName());				
 			argsSTRINGDB.put("identifiers", existing.trim());
 			argsSTRINGDB.put("species", selSpecies.toString());
+			argsSTRINGDB.put("caller_identity", StringManager.CallerIdentity);
 
 			Map<String, String> argsJensenlab = new HashMap<>();			
 			argsJensenlab.put("existing", existing.trim());
@@ -246,6 +247,8 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 					continue;
 				argsSTRINGDB.put("species", allSpecies.get(i));
 				argsSTRINGDB.put("identifiers", ModelUtils.getExisting(network, allSpecies.get(i)).trim());
+				argsSTRINGDB.put("caller_identity", StringManager.CallerIdentity);
+				
 				resultsSTRINGDB = null;
 				try {
 					resultsSTRINGDB = HttpUtils.postJSON(manager.getStringNetworkURL(), argsSTRINGDB, manager);
