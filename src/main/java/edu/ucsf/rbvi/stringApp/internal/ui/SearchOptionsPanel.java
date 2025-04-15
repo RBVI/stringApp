@@ -77,6 +77,7 @@ public class SearchOptionsPanel extends JPanel {
 	JCheckBox useSmartDelimiters;
 	JCheckBox loadEnrichment;
 	JRadioButton physicalNetwork;
+	JRadioButton regulatoryNetwork;
 	JRadioButton functionalNetwork;
 	JCheckBox createNetView;
 	JPanel advancedOptions;
@@ -353,16 +354,25 @@ public class SearchOptionsPanel extends JPanel {
 		functionalNetwork = new JRadioButton(NetworkType.FUNCTIONAL.toString(), true);
 		netTypePanel.add(functionalNetwork, c);
 
-		c.right().expandHoriz().insets(0,5,0,5);
+		c.right().noExpand().insets(0,5,0,5);
 		physicalNetwork = new JRadioButton(NetworkType.PHYSICAL.toString(), false);
 		netTypePanel.add(physicalNetwork, c);
 		
+		c.right().expandHoriz().insets(0,5,0,5);
+		regulatoryNetwork = new JRadioButton(NetworkType.REGULATORY.toString(), false);
+		netTypePanel.add(regulatoryNetwork, c);
+
 		ButtonGroup group = new ButtonGroup();
 		group.add(physicalNetwork);
+		group.add(regulatoryNetwork);
 		group.add(functionalNetwork);
 		
 		if (networkType.equals(NetworkType.PHYSICAL)) 
 			physicalNetwork.setSelected(true);
+		else if (networkType.equals(NetworkType.REGULATORY)) 
+			regulatoryNetwork.setSelected(true);
+		else 
+			functionalNetwork.setSelected(true);
 		
 		return netTypePanel;
 	}
@@ -370,15 +380,19 @@ public class SearchOptionsPanel extends JPanel {
 	public NetworkType getNetworkType() {
 		if (physicalNetwork.isSelected())
 			return NetworkType.PHYSICAL;
+		else if (regulatoryNetwork.isSelected())
+			return NetworkType.REGULATORY;
 		else 
 			return NetworkType.FUNCTIONAL;
 	}
 
 	public void setNetworkType(NetworkType type) {
-		if (type.equals(NetworkType.FUNCTIONAL)) 
-			functionalNetwork.setSelected(true);
-		else 
+		if (type.equals(NetworkType.PHYSICAL)) 
 			physicalNetwork.setSelected(true);
+		else if (type.equals(NetworkType.REGULATORY)) 
+			regulatoryNetwork.setSelected(true);
+		else 
+			functionalNetwork.setSelected(true);
 	}
 	
 	JPanel createConfidenceSlider() {

@@ -21,8 +21,10 @@ import org.cytoscape.view.model.VisualLexicon;
 import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.presentation.RenderingEngineManager;
 import org.cytoscape.view.presentation.customgraphics.CyCustomGraphics;
+import org.cytoscape.view.presentation.property.ArrowShapeVisualProperty;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
+import org.cytoscape.view.presentation.property.values.ArrowShape;
 import org.cytoscape.view.presentation.property.values.NodeShape;
 import org.cytoscape.view.vizmap.VisualMappingFunction;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
@@ -186,7 +188,7 @@ public class ViewUtils {
 			ContinuousMapping<Double,Double> cMapping = 
 				(ContinuousMapping) continuousFactory.createVisualMappingFunction(ColumnNames.SCORE, Double.class, 
 				                                                                  BasicVisualLexicon.EDGE_WIDTH);
-			cMapping.addPoint(0.2, new BoundaryRangeValues<Double>(0.8,0.8,0.8));
+			cMapping.addPoint(0.1, new BoundaryRangeValues<Double>(0.8,0.8,0.8));
 			cMapping.addPoint(0.5, new BoundaryRangeValues<Double>(2.0,2.0,2.0));
 			cMapping.addPoint(1.0, new BoundaryRangeValues<Double>(4.0,4.0,4.0));
 			stringStyle.addVisualMappingFunction(cMapping);
@@ -196,10 +198,21 @@ public class ViewUtils {
 			ContinuousMapping<Double,Integer> cMapping = 
 				(ContinuousMapping) continuousFactory.createVisualMappingFunction(ColumnNames.SCORE, Double.class, 
 				                                                                  BasicVisualLexicon.EDGE_TRANSPARENCY);
-			cMapping.addPoint(0.2, new BoundaryRangeValues<Integer>(34,34,34));
+			cMapping.addPoint(0.1, new BoundaryRangeValues<Integer>(34,34,34));
 			cMapping.addPoint(0.5, new BoundaryRangeValues<Integer>(85,85,85));
 			cMapping.addPoint(1.0, new BoundaryRangeValues<Integer>(170,170,170));
 			stringStyle.addVisualMappingFunction(cMapping);
+		}
+
+		// Set an arrow head for regulatory edges
+		{
+			DiscreteMapping<String,ArrowShape> dMapping = 
+				(DiscreteMapping) discreteFactory.createVisualMappingFunction(CyEdge.INTERACTION, String.class, 
+											   	                                            BasicVisualLexicon.EDGE_TARGET_ARROW_SHAPE);
+			dMapping.putMapValue("pp", ArrowShapeVisualProperty.NONE);
+			dMapping.putMapValue("ppp", ArrowShapeVisualProperty.NONE);
+			dMapping.putMapValue("rpp", ArrowShapeVisualProperty.DELTA_SHORT_1);
+			stringStyle.addVisualMappingFunction(dMapping);
 		}
 
 

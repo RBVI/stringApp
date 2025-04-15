@@ -52,6 +52,8 @@ public class ModelUtils {
 	public static String DEFAULT_NAME_STITCH = "STITCH network";
 	public static String DEFAULT_NAME_ADDON_PHYSICAL = "(physical)";
 	public static String DEFAULT_NAME_ADDON_PHYSICAL_REGEXP = " \\(physical\\)";
+	public static String DEFAULT_NAME_ADDON_REGULATORY = "(regulatory)";
+	public static String DEFAULT_NAME_ADDON_REGULATORY_REGEXP = " \\(regulatory\\)";
 	
 	public static List<String> ignoreKeys = new ArrayList<String>(Arrays.asList("image", "canonical", "@id", "description"));
 	public static List<String> namespacedNodeAttributes = new ArrayList<String>(Arrays.asList("canonical name", "full name", "chemViz Passthrough", 
@@ -295,7 +297,8 @@ public class ModelUtils {
      }
   }
 
-
+  	// TODO: [REG] Add regulatory?
+  	// regulatory interaction will be shortened as "rpp"
 	public static String inferNetworkType(CyNetwork network) {
 		int count_pp = 0;
 		int count_ppp = 0; 
@@ -325,7 +328,8 @@ public class ModelUtils {
 			String interactionType = network.getRow(edge).get(CyEdge.INTERACTION, String.class);
 			if (interactionType == null || (!interactionType.equals("pp")
 					&& !interactionType.equals("pc") && !interactionType.equals("cc")
-					&& !interactionType.equals("ppp") && !interactionType.equals("ppc"))) {
+					&& !interactionType.equals("ppp") && !interactionType.equals("ppc")
+					&& !interactionType.equals("rpp") && !interactionType.equals("rpc"))) {
 				continue;
 			}
 			stringNetEdges.add(edge);

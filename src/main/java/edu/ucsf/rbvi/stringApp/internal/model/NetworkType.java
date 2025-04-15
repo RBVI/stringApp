@@ -2,7 +2,8 @@ package edu.ucsf.rbvi.stringApp.internal.model;
 
 public enum NetworkType {
 	FUNCTIONAL("full STRING network", "functional"),
-	PHYSICAL("physical subnetwork", "physical");
+	PHYSICAL("physical subnetwork", "physical"),
+	REGULATORY("regulatory subnetwork", "regulatory");
 	
 	String name;
 	String apiName;
@@ -20,6 +21,8 @@ public enum NetworkType {
 			return null;
 		else if (type.equals(PHYSICAL.name))
 			return NetworkType.PHYSICAL;
+		else if (type.equals(REGULATORY.name))
+			return NetworkType.REGULATORY;
 		else
 			return NetworkType.FUNCTIONAL;
 	}

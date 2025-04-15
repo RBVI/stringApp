@@ -135,6 +135,8 @@ public class StringEdgePanel extends AbstractStringPanel {
 			String netType = ModelUtils.getNetworkType(currentNetwork);	
 			if (netType.equals(NetworkType.PHYSICAL.toString()))
 				scoreLabel += " (" +  NetworkType.PHYSICAL.getAPIName() + ")";
+			else if (netType.equals(NetworkType.REGULATORY.toString()))
+				scoreLabel += " (" +  NetworkType.REGULATORY.getAPIName() + ")";
 			else if (netType.equals(NetworkType.FUNCTIONAL.toString()))
 				scoreLabel += " (" +  NetworkType.FUNCTIONAL.getAPIName() + ")";
 		}
@@ -368,11 +370,13 @@ public class StringEdgePanel extends AbstractStringPanel {
 		String sourceNode = ModelUtils.getName(currentNetwork, edge.getSource());
 		String targetNode = ModelUtils.getName(currentNetwork, edge.getTarget());
 		String netType = "interaction";
-		if (ModelUtils.getString(currentNetwork, currentNetwork, ColumnNames.NETWORK_TYPE) != null
-				&& ModelUtils.getString(currentNetwork, currentNetwork, ColumnNames.NETWORK_TYPE)
-						.equals(NetworkType.PHYSICAL.toString()))
-			netType = "interaction-physical";
-
+		String currentNetType = ModelUtils.getString(currentNetwork, currentNetwork, ColumnNames.NETWORK_TYPE);
+		if (currentNetType != null) {
+			if (currentNetType.equals(NetworkType.PHYSICAL.toString()))
+					netType = "interaction-physical";
+			else if (currentNetType.equals(NetworkType.REGULATORY.toString()))
+				netType = "interaction-regulatory";
+		}
 		if (sourceNode == null || targetNode == null || netType == null) 
 			return "";
 

@@ -336,6 +336,8 @@ public class JSONUtils {
 		// add physical to name if the network is physical
 		if (netType.equals(NetworkType.PHYSICAL.getAPIName()))
 			defaultName += " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL;
+		else if (netType.equals(NetworkType.REGULATORY.getAPIName()))
+			defaultName += " " + ModelUtils.DEFAULT_NAME_ADDON_REGULATORY;
 
 		// add user suggested name
 		if (netName != null && netName != "") {
@@ -829,28 +831,60 @@ public class JSONUtils {
 			targetNode = nodeMap.get(target);
 		}
 
-		String physical = "";
+		String subtype = "";
 		if (netType.equals(NetworkType.PHYSICAL.getAPIName()))
-			physical = "p";
+			subtype = "p";
+		else if (netType.equals(NetworkType.REGULATORY.getAPIName()))
+			subtype = "r";
 
-		String interaction = physical+"pp";
+		String interaction = subtype+"pp";
 
 		CyEdge edge;
-		if (!network.containsEdge(sourceNode, targetNode)) {
-			edge = network.addEdge(sourceNode, targetNode, false);
+		List<CyEdge> edges = network.getConnectingEdgeList(sourceNode, targetNode,
+				CyEdge.Type.ANY);
+		if (edges == null)
+			return; // Shouldn't happen!
+		
+		if (edges.size() == 0 || 
+				(edges.size() == 1 && netType.equals(NetworkType.REGULATORY.getAPIName()) && !edges.get(0).getSource().equals(sourceNode))) {
+			if (netType.equals(NetworkType.REGULATORY.getAPIName()))
+				edge = network.addEdge(sourceNode, targetNode, true);
+			else 
+				edge = network.addEdge(sourceNode, targetNode, false);
 			network.getRow(edge).set(CyNetwork.NAME,
 					source + " (" + interaction + ") " + target);
 			network.getRow(edge).set(CyEdge.INTERACTION, interaction);
-
+			
 			if (newEdges != null)
 				newEdges.add(edge);
 		} else {
-			List<CyEdge> edges = network.getConnectingEdgeList(sourceNode, targetNode,
-					CyEdge.Type.ANY);
-			if (edges == null)
-				return; // Shouldn't happen!
 			edge = edges.get(0);
 		}
+		
+		// TODO: [REG] FInd out if the containsEdge method really has a bug, until then the workaround above seems to work  
+//		if (!network.containsEdge(sourceNode, targetNode)) {
+//			System.out.println("create edge");
+//			if (netType.equals(NetworkType.REGULATORY.getAPIName()))
+//				edge = network.addEdge(sourceNode, targetNode, true);
+//			else 
+//				edge = network.addEdge(sourceNode, targetNode, false);
+//			network.getRow(edge).set(CyNetwork.NAME,
+//					source + " (" + interaction + ") " + target);
+//			network.getRow(edge).set(CyEdge.INTERACTION, interaction);
+//			
+//			System.out.println("directed: " + edge.isDirected());
+//			
+//			if (newEdges != null)
+//				newEdges.add(edge);
+//		} else {
+//			System.out.println("found edge");
+//			List<CyEdge> edges = network.getConnectingEdgeList(sourceNode, targetNode,
+//					CyEdge.Type.ANY);
+//			if (edges == null)
+//				return; // Shouldn't happen!
+//			edge = edges.get(0);
+//			System.out.println("directed: " + edge.isDirected());
+//		}
 
 		// OK, now add the scores.  Here are the scores currently:
 		//
@@ -918,23 +952,26 @@ public class JSONUtils {
 		CyNode targetNode = nodeMap.get(target);
 
 		CyEdge edge;
-		String physical = "";
+		String subtype = "";
 		if (netType.equals(NetworkType.PHYSICAL.getAPIName()))
-			physical = "p";
+			subtype = "p";
+		else if (netType.equals(NetworkType.REGULATORY.getAPIName()))
+			subtype = "r";
 
-		String interaction = physical+"pp";
+		String interaction = subtype+"pp";
 
+		// TODO: [REG] Do we need to change this for regulatory interactions as well?
 		// Don't create an edge if we already have one between these nodes
 		if (!network.containsEdge(sourceNode, targetNode)) {
 			if (useDATABASE.equals(Databases.STITCH.getAPIName())) {
 				boolean sourceType = ModelUtils.isCompound(network, sourceNode);
 				boolean targetType = ModelUtils.isCompound(network, targetNode);
 				if (sourceType == false && targetType == false)
-					interaction = physical + "pp";
+					interaction = subtype + "pp";
 				else if (sourceType == true && targetType == true)
 					interaction = "cc";
 				else
-					interaction = physical + "pc";
+					interaction = subtype + "pc";
 			}
 
 			edge = network.addEdge(sourceNode, targetNode, false);

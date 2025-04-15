@@ -33,6 +33,8 @@ public enum EvidenceType {
 	public static List<String> getOrderedEvidenceTypes(String netType) {
 		if (netType != null && netType.equals(NetworkType.PHYSICAL.toString()))
 			return new ArrayList<String>(Arrays.asList(DATABASES.name, TEXTMINING.name, EXPERIMENTS.name));
+		else if (netType != null && netType.equals(NetworkType.REGULATORY.toString()))
+			return new ArrayList<String>(Arrays.asList(DATABASES.name, TEXTMINING.name, EXPERIMENTS.name));
 		else // assume it is functional
 			return new ArrayList<String>(Arrays.asList(DATABASES.name, TEXTMINING.name, EXPERIMENTS.name, COEXPRESSION.name,
 					NEIGHBORHOOD.name, COOCCURRENCE.name, GENEFUSIONS.name));

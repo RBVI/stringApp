@@ -266,12 +266,13 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			ModelUtils.setNetworkType(network, networkType.getSelectedValue().toString());
 			
 			// change network name in the special case of changing from physical to functional or the other way around
+			// TODO: [REG] handle naming
 			if (!newType.equals(currentType)) {
 				monitor.setStatusMessage("Updating network name");
 				String currentName = manager.getNetworkName(network);
 				String newName = currentName;
 				if (newType.equals(NetworkType.FUNCTIONAL) && currentName.contains(ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL)) {
-					// remove (physical) from the name
+					// remove (physical) or (regulatory) from the name
 					String[] currentNameParts = currentName.split(ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL_REGEXP);
 					if (currentNameParts.length > 1)
 						newName = currentNameParts[0] + currentNameParts[currentNameParts.length-1];
@@ -289,6 +290,19 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 							newName = ModelUtils.DEFAULT_NAME_STITCH + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL + currentName.split(ModelUtils.DEFAULT_NAME_STITCH)[1];
 						else 
 							newName = ModelUtils.DEFAULT_NAME_STITCH + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL;
+					}
+				} else if (newType.equals(NetworkType.REGULATORY)) {
+					// add (regulatory) to the name
+					if (currentName.startsWith(ModelUtils.DEFAULT_NAME_STRING)) {
+						if (currentName.split(ModelUtils.DEFAULT_NAME_STRING).length > 1)
+							newName = ModelUtils.DEFAULT_NAME_STRING + " " + ModelUtils.DEFAULT_NAME_ADDON_REGULATORY + currentName.split(ModelUtils.DEFAULT_NAME_STRING)[1];
+						else 
+							newName = ModelUtils.DEFAULT_NAME_STRING + " " + ModelUtils.DEFAULT_NAME_ADDON_REGULATORY;
+					} else if (currentName.startsWith(ModelUtils.DEFAULT_NAME_STITCH )) {
+						if (currentName.split(ModelUtils.DEFAULT_NAME_STITCH)[1].length() > 1)
+							newName = ModelUtils.DEFAULT_NAME_STITCH + " " + ModelUtils.DEFAULT_NAME_ADDON_REGULATORY + currentName.split(ModelUtils.DEFAULT_NAME_STITCH)[1];
+						else 
+							newName = ModelUtils.DEFAULT_NAME_STITCH + " " + ModelUtils.DEFAULT_NAME_ADDON_REGULATORY;
 					}
 				}
 				network.getRow(network).set(CyNetwork.NAME, manager.adaptNetworkName(newName));
