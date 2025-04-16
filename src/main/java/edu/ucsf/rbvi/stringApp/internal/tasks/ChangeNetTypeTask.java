@@ -227,19 +227,25 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			
 			// remove old edges
 			List<CyEdge> removeEdges = ModelUtils.getStringNetEdges(network);;
-			// monitor.setStatusMessage("Removing "+removeEdges.size()+" edges");
+			monitor.setStatusMessage("Removing "+removeEdges.size()+" edges from the network");
+			// System.out.println("Removing "+removeEdges.size()+" edges");;
 			network.removeEdges(removeEdges);
 
+			int countNewEdges = 0;
 			// add new edges from Jensenlab
 			// TODO: [bug] Expand network and change confidence return different set of edges for cross-species networks
 			if (resultsJensenlab != null) {
 				JSONUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, resultsJensenlab, null, database, newType.getAPIName());
-				monitor.setStatusMessage("Adding edges from Jensenlab");
+				monitor.setStatusMessage("Adding " + newEdges.size() + " edges from Jensenlab");
+				countNewEdges = newEdges.size();
+				//System.out.println("Adding edges from Jensenlab: " + newEdges.size());
 			}
 			// add new edges from STRING-DB for the first found species
 			if (resultsSTRINGDB != null) {
 				JSONUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, resultsSTRINGDB, null, Databases.STRINGDB.getAPIName(), newType.getAPIName());
-				monitor.setStatusMessage("Adding edges from STRING-DB");
+				monitor.setStatusMessage("Adding " + (newEdges.size()-countNewEdges) + " edges from STRING-DB");
+				countNewEdges = newEdges.size();
+				//System.out.println("Adding edges from STRING-DB: " + newEdges.size());
 			}
 			// add new edges from STRING-DB for the remaining species if there is more than one species in the network
 			for (int i=1; i < allSpecies.size(); i++) {
@@ -257,9 +263,14 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 				}
 				if (resultsSTRINGDB != null) {
 					JSONUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, resultsSTRINGDB, null, Databases.STRINGDB.getAPIName(), newType.getAPIName());
+					monitor.setStatusMessage("Adding " + (newEdges.size()-countNewEdges) + " edges from STRING-DB");
+					countNewEdges = newEdges.size();
+					// System.out.println("Adding more edges from STRING_DB: " + newEdges.size());
 				}
 			}
-			monitor.setStatusMessage((newEdges.size() - removeEdges.size()) + " edges added to the network");
+			List<CyEdge> edges = new ArrayList<CyEdge>(newEdges);
+			edges.removeAll(removeEdges);
+			monitor.setStatusMessage(edges.size() + " edges added to the network");
 
 			// change network attributes
 			ModelUtils.setConfidence(network, (double)Math.round(confidence.getValue()*1000)/1000);
