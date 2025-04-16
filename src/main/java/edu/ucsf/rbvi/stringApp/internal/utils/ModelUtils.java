@@ -297,11 +297,10 @@ public class ModelUtils {
      }
   }
 
-  	// TODO: [REG] Add regulatory?
-  	// regulatory interaction will be shortened as "rpp"
 	public static String inferNetworkType(CyNetwork network) {
 		int count_pp = 0;
-		int count_ppp = 0; 
+		int count_ppp = 0;
+		int count_rpp = 0;
 		int count_others = 0;
 		for (CyEdge edge : network.getEdgeList()) {
 			String type = network.getRow(edge).get(CyEdge.INTERACTION, String.class);
@@ -309,13 +308,17 @@ public class ModelUtils {
 				continue;
 			else if (type.equals("ppp") || type.equals("ppc"))
 				count_ppp += 1;
+			else if (type.equals("rpp") || type.equals("rpc"))
+				count_rpp += 1;
 			else if (type.equals("pp") || type.equals("pc") || type.equals("cc"))
 				count_pp += 1;
 			else
 				count_others += 1;
 		}
-		if (count_ppp > (count_pp + count_others))
+		if (count_ppp > (count_pp + count_rpp + count_others))
 			return NetworkType.PHYSICAL.toString();
+		else if (count_rpp > (count_pp + count_ppp + count_others))
+			return NetworkType.REGULATORY.toString();
 		else 
 			return NetworkType.FUNCTIONAL.toString();
 	}

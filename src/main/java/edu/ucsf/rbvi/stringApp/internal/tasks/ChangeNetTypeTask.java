@@ -266,46 +266,52 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			ModelUtils.setNetworkType(network, networkType.getSelectedValue().toString());
 			
 			// change network name in the special case of changing from physical to functional or the other way around
-			// TODO: [REG] handle naming
 			if (!newType.equals(currentType)) {
 				monitor.setStatusMessage("Updating network name");
 				String currentName = manager.getNetworkName(network);
 				String newName = currentName;
-				if (newType.equals(NetworkType.FUNCTIONAL) && currentName.contains(ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL)) {
+				if (newType.equals(NetworkType.FUNCTIONAL)) {
 					// remove (physical) or (regulatory) from the name
-					String[] currentNameParts = currentName.split(ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL_REGEXP);
-					if (currentNameParts.length > 1)
-						newName = currentNameParts[0] + currentNameParts[currentNameParts.length-1];
-					else
-						newName = currentNameParts[0];
+					String[] currentNamePartsPhys = currentName.split(ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL_REGEXP);
+					String[] currentNamePartsReg = currentName.split(ModelUtils.DEFAULT_NAME_ADDON_REGULATORY_REGEXP);					
+					if (currentNamePartsPhys.length > 1) {
+						newName = currentNamePartsPhys[0] + currentNamePartsPhys[currentNamePartsPhys.length-1];
+					} else if (currentNamePartsReg.length > 1)
+						newName = currentNamePartsReg[0] + currentNamePartsReg[currentNamePartsReg.length-1];
 				} else if (newType.equals(NetworkType.PHYSICAL)) {
-					// add (physical) to the name
-					if (currentName.startsWith(ModelUtils.DEFAULT_NAME_STRING)) {
+					String[] currentNamePartsReg = currentName.split(ModelUtils.DEFAULT_NAME_ADDON_REGULATORY_REGEXP);
+					if (currentNamePartsReg.length > 1) {
+						// substitute (regulatory) with (physical)
+						newName = currentNamePartsReg[0] + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL + currentNamePartsReg[currentNamePartsReg.length-1];
+					} else if (currentName.startsWith(ModelUtils.DEFAULT_NAME_STRING)) {
+						// add (physical) to the name
+						newName = ModelUtils.DEFAULT_NAME_STRING + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL;						
 						if (currentName.split(ModelUtils.DEFAULT_NAME_STRING).length > 1)
-							newName = ModelUtils.DEFAULT_NAME_STRING + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL + currentName.split(ModelUtils.DEFAULT_NAME_STRING)[1];
-						else 
-							newName = ModelUtils.DEFAULT_NAME_STRING + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL;
+							newName = newName + currentName.split(ModelUtils.DEFAULT_NAME_STRING)[1];
 					} else if (currentName.startsWith(ModelUtils.DEFAULT_NAME_STITCH )) {
+						// add (physical) to the name
+						newName = ModelUtils.DEFAULT_NAME_STITCH + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL;
 						if (currentName.split(ModelUtils.DEFAULT_NAME_STITCH)[1].length() > 1)
-							newName = ModelUtils.DEFAULT_NAME_STITCH + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL + currentName.split(ModelUtils.DEFAULT_NAME_STITCH)[1];
-						else 
-							newName = ModelUtils.DEFAULT_NAME_STITCH + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL;
+							newName = newName + currentName.split(ModelUtils.DEFAULT_NAME_STITCH)[1];
 					}
 				} else if (newType.equals(NetworkType.REGULATORY)) {
-					// add (regulatory) to the name
-					if (currentName.startsWith(ModelUtils.DEFAULT_NAME_STRING)) {
+					String[] currentNamePartsPhys = currentName.split(ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL_REGEXP);
+					if (currentNamePartsPhys.length > 1) {
+						// substitute (physical) with (regulatory)
+						newName = currentNamePartsPhys[0] + " " + ModelUtils.DEFAULT_NAME_ADDON_REGULATORY + currentNamePartsPhys[currentNamePartsPhys.length-1];
+					} else if (currentName.startsWith(ModelUtils.DEFAULT_NAME_STRING)) {
+						// add (regulatory) to the name
+						newName = ModelUtils.DEFAULT_NAME_STRING + " " + ModelUtils.DEFAULT_NAME_ADDON_REGULATORY;
 						if (currentName.split(ModelUtils.DEFAULT_NAME_STRING).length > 1)
-							newName = ModelUtils.DEFAULT_NAME_STRING + " " + ModelUtils.DEFAULT_NAME_ADDON_REGULATORY + currentName.split(ModelUtils.DEFAULT_NAME_STRING)[1];
-						else 
-							newName = ModelUtils.DEFAULT_NAME_STRING + " " + ModelUtils.DEFAULT_NAME_ADDON_REGULATORY;
+							newName = newName + currentName.split(ModelUtils.DEFAULT_NAME_STRING)[1];
 					} else if (currentName.startsWith(ModelUtils.DEFAULT_NAME_STITCH )) {
+						// add (regulatory) to the name
+						newName = ModelUtils.DEFAULT_NAME_STITCH + " " + ModelUtils.DEFAULT_NAME_ADDON_REGULATORY;
 						if (currentName.split(ModelUtils.DEFAULT_NAME_STITCH)[1].length() > 1)
-							newName = ModelUtils.DEFAULT_NAME_STITCH + " " + ModelUtils.DEFAULT_NAME_ADDON_REGULATORY + currentName.split(ModelUtils.DEFAULT_NAME_STITCH)[1];
-						else 
-							newName = ModelUtils.DEFAULT_NAME_STITCH + " " + ModelUtils.DEFAULT_NAME_ADDON_REGULATORY;
+							newName = newName + currentName.split(ModelUtils.DEFAULT_NAME_STITCH)[1];
 					}
 				}
-				network.getRow(network).set(CyNetwork.NAME, manager.adaptNetworkName(newName));
+				network.getRow(network).set(CyNetwork.NAME, manager.adaptNetworkName(newName, network));
 			}
 
 			// If we have a view, re-apply the style and layout

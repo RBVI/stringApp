@@ -484,6 +484,42 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		return name;
 	}
 	
+	public String adaptNetworkName(String name, CyNetwork newNetwork) {
+		CyNetworkManager netMgr = registrar.getService(CyNetworkManager.class);
+		Set<CyNetwork> nets = netMgr.getNetworkSet();
+		Set<CyNetwork> allNets = new HashSet<CyNetwork>(nets);
+		for (CyNetwork net : nets) {
+			allNets.add(((CySubNetwork)net).getRootNetwork());
+		}
+		// See if this name is already taken by a network or a network collection (root network)
+		int index = -1;
+		boolean match = false;
+		for (CyNetwork net: allNets) {			
+			String netName = net.getRow(net).get(CyNetwork.NAME, String.class);
+			if (netName.equals(name)) {
+				if (((CySubNetwork)newNetwork).getRootNetwork().equals(net))
+					match = false;
+				else 
+					match = true;
+			} else if (netName.startsWith(name)) {
+				String subname = netName.substring(name.length());
+				if (subname.startsWith(" - ")) {
+					try {
+						int v = Integer.parseInt(subname.substring(3));
+						if (v >= index)
+							index = v+1;
+					} catch (NumberFormatException e) {}
+				}
+			}
+		}
+		if (match && index < 0) {
+			name = name + " - 1";
+		} else if (index > 0) {
+			name = name + " - " + index;
+		}
+		return name;
+	}
+	
 	public CyNetwork createNetwork(String name, String rootNetName) {
 		CyNetwork network = registrar.getService(CyNetworkFactory.class).createNetwork();		
 		network.getRow(network).set(CyNetwork.NAME, adaptNetworkName(name));
