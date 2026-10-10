@@ -32,7 +32,7 @@ stringApp is an OSGi bundle built with Maven (Java 11 source level, Cytoscape AP
 mvn clean package
 ```
 
-The bundle is written to `target/stringApp-<version>.jar` and can be installed in Cytoscape via _Apps -> App Manager -> Install from File_. Released jars are kept in `dist/`.
+The bundle is written to `target/stringApp-<version>.jar` and can be installed in Cytoscape via _Apps -> App Manager -> Install from File_. Releases are distributed through the [Cytoscape App Store](https://apps.cytoscape.org/apps/stringapp).
 
 ### Code layout
 
