@@ -64,7 +64,6 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 	private NetworkType networkType = NetworkType.FUNCTIONAL;
 	private int additionalNodes = 100;
 
-	private boolean ignore = false;
 
 	public DiseaseQueryPanel(final StringManager manager) {
 		super(new GridBagLayout());

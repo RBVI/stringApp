@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-import org.cytoscape.application.CyUserLog;
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
@@ -22,7 +20,6 @@ public class AddNamespacesTask extends AbstractTask {
 
 	final StringManager manager;
 	private Set<CyNetwork> networks;
-	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
 	private TaskMonitor monitor;
 
 

@@ -77,7 +77,6 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 	SearchOptionsPanel optionsPanel;
 	NumberFormat formatter = new DecimalFormat("#0.00");
 	NumberFormat intFormatter = new DecimalFormat("#0");
-	private boolean ignore = false;
 	private String useDATABASE = Databases.STRINGDB.getAPIName();
 	private String netSpecies = null;
 	private boolean queryAddNodes = false;

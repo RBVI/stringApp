@@ -42,7 +42,6 @@ import org.cytoscape.view.presentation.customgraphics.CyCustomGraphics;
 public class EmptyCustomGraphics implements CyCustomGraphics<CustomGraphicLayer> {
 	
 	// Human readable name of this null object.
-	private static final String NAME = "[ Remove Graphics ]";
 
 	private Long id = null;
 	private int width = 0;

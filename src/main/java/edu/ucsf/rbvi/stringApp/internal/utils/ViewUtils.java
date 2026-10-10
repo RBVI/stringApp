@@ -385,34 +385,6 @@ public class ViewUtils {
 		return dMapping;
 	}
 	
-	private static <K, V> boolean sameVisualMappingFunction(CyNetwork network,
-			VisualMappingFunction<K, V> vmf, DiscreteMapping<String, Color> stringMapping) {
-		if(!(vmf instanceof DiscreteMapping<?, ?>)) {
-			return false;
-		}
-		
-		if(!vmf.getMappingColumnName().equals(stringMapping.getMappingColumnName())) {
-			return false;
-		}
-		
-		if(!vmf.getMappingColumnType().equals(stringMapping.getMappingColumnType())) {
-			return false;
-		}
-		
-		for(CyNode node : network.getNodeList()) {
-			V vmfMappedValue = vmf.getMappedValue(network.getRow(node));
-			Color stringMappedValue = stringMapping.getMappedValue(network.getRow(node));
-			
-			if(vmfMappedValue == null && stringMappedValue != null) {
-				return false;
-			} else if(vmfMappedValue != null && !vmfMappedValue.equals(stringMappedValue)) {
-				return false;
-			}
-		}
-		
-		return true;
-	}
-
 	private static void updateColorMapHost(StringManager manager, VisualStyle style, CyNetworkView view, List<String> originalSpiecesList) {
 		VisualMappingFunctionFactory discreteFactory = manager
 				.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");

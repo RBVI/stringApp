@@ -53,7 +53,6 @@ public class PubMedQueryPanel extends JPanel {
 	NumberFormat formatter = new DecimalFormat("#0.00");
 	NumberFormat intFormatter = new DecimalFormat("#0");
 
-	private boolean ignore = false;
 	private String species;
 
 	private int confidence = 40;

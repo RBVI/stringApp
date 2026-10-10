@@ -409,27 +409,6 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		return str.toString();
 	}
 
-	// not needed at the moment, unless we decide otherwise, see also similar methods in ModelUtils
-	private void deleteEnrichmentTables(String groupTableName) {
-		CyTableManager tableManager = manager.getService(CyTableManager.class); 
-		Set<CyTable> currTables = tableManager.getAllTables(true);
-		for (CyTable current : currTables) {
-			if (current.getTitle().equals(groupTableName)
-					&& current.getColumn(EnrichmentTerm.colNetworkSUID) != null
-					&& current.getAllRows().size() > 0) {
-				CyRow tempRow = current.getAllRows().get(0);
-				if (tempRow.get(EnrichmentTerm.colNetworkSUID, Long.class) != null && tempRow
-						.get(EnrichmentTerm.colNetworkSUID, Long.class).equals(network.getSUID())) {
-					if (publOnly && !current.getTitle().contains(TermCategory.PMID.getTable())) {
-						continue;
-					}
-					tableManager.deleteTable(current.getSUID());
-					manager.flushEvents();
-				}
-			}
-		}
-	}
-	
 	private class Group implements Comparable {
 		private String name;
 		private int size;

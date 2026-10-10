@@ -14,8 +14,6 @@ import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import org.apache.log4j.Logger;
-import org.cytoscape.application.CyUserLog;
 import org.cytoscape.application.swing.search.AbstractNetworkSearchTaskFactory;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskIterator;
@@ -44,7 +42,6 @@ public class DiseaseSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 
 	private StringNetwork stringNetwork = null;
 	private SearchOptionsPanel optionsPanel = null;
-	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
 
 	private static final Icon icon = new TextIcon(DISEASE_LAYERS, getIconFont(32.0f), STRING_COLORS, 36, 36);
 

@@ -27,9 +27,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
-import org.apache.log4j.Logger;
-
-import org.cytoscape.application.CyUserLog;
 import org.cytoscape.work.FinishStatus;
 import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.Task;
@@ -53,7 +50,6 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 	StringNetwork stringNetwork = null;
 	StringNetwork initialStringNetwork = null;
 	final StringManager manager;
-	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
 
 
 	JTextArea searchTerms;
@@ -65,7 +61,6 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 	NumberFormat formatter = new DecimalFormat("#0.00");
 	NumberFormat intFormatter = new DecimalFormat("#0");
   JComboBoxDecorator speciesPartnerDecorator = null;
-	private boolean ignore = false;
 	private String useDATABASE = Databases.STRING.getAPIName();
 	private String netSpecies = null;
 	private boolean queryAddNodes = false;

@@ -28,9 +28,6 @@ import javax.swing.WindowConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.apache.log4j.Logger;
-
-import org.cytoscape.application.CyUserLog;
 import org.cytoscape.application.swing.search.AbstractNetworkSearchTaskFactory;
 import org.cytoscape.application.swing.search.NetworkSearchTaskFactory;
 import org.cytoscape.util.swing.LookAndFeelUtil;
@@ -61,7 +58,6 @@ public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	private StringNetwork stringNetwork = null;
 	private SearchOptionsPanel optionsPanel = null;
 	private JTextField queryComponent = null;
-	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
 
 	private static final Icon icon = new TextIcon(PUBMED_LAYERS, getIconFont(32.0f), STRING_COLORS, 36, 36);
 

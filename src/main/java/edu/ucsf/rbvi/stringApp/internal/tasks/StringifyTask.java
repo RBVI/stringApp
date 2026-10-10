@@ -14,9 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import org.apache.log4j.Logger;
 import org.cytoscape.application.CyApplicationManager;
-import org.cytoscape.application.CyUserLog;
 import org.cytoscape.command.StringToModel;
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
@@ -55,7 +53,6 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	private CyNetwork loadedNetwork = null;
 	private int additionalNodes = 0;
 	private SearchOptionsPanel optionsPanel = null;
-	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
 	private TaskMonitor monitor;
 
 	@Tunable(description="Network to set as a STRING network", 

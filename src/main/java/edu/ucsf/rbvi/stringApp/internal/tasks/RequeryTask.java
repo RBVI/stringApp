@@ -1,7 +1,5 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
-import org.apache.log4j.Logger;
-import org.cytoscape.application.CyUserLog;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ProvidesTitle;
@@ -18,7 +16,6 @@ public class RequeryTask extends AbstractTask {
 
 	final StringManager manager;
 	final CyNetwork network;
-	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
 	private TaskMonitor monitor;
 
 

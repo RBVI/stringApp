@@ -41,7 +41,6 @@ import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 
-import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
 import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.StringResults;
@@ -438,35 +437,6 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 	}
 
 	
-	private void layoutAll() {
-		CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");
-		Object context = alg.createLayoutContext();
-		TunableSetter setter = manager.getService(TunableSetter.class);
-		Map<String, Object> layoutArgs = new HashMap<>();
-		layoutArgs.put("defaultNodeMass", 10.0);
-		setter.applyTunables(context, layoutArgs);
-		Set<View<CyNode>> nodeViews = new HashSet<>(netView.getNodeViews());
-		insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, "score"));
-	}
-	
-
-	private void layoutSelectedOnly(List<CyNode> nodesToLayout) {
-		Set<View<CyNode>> nodeViews = new HashSet<>();
-		for (View<CyNode> nodeView : netView.getNodeViews()) {
-			if (nodesToLayout.contains(nodeView.getModel())) {
-				nodeViews.add(nodeView);
-			}
-		}
-		// get layout and set attributes
-		CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");
-		Object context = alg.createLayoutContext();
-		TunableSetter setter = manager.getService(TunableSetter.class);
-		Map<String, Object> layoutArgs = new HashMap<>();
-		layoutArgs.put("defaultNodeMass", 5.0);
-		layoutArgs.put("selectedOnly", true);
-		setter.applyTunables(context, layoutArgs);
-		insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, "score"));
-	}
 
 	private void shiftAndLayoutGridSelectedOnly(List<CyNode> nodesToLayout) {
 		final VisualProperty<Double> xLoc = BasicVisualLexicon.NODE_X_LOCATION;
@@ -502,34 +472,6 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 	}
 
 
-	private void layoutSelectedCircular(List<CyNode> nodesToLayout) {
-		final VisualProperty<Double> xLoc = BasicVisualLexicon.NODE_X_LOCATION;
-		final VisualProperty<Double> yLoc = BasicVisualLexicon.NODE_Y_LOCATION;
-		Set<Double> xPos = new HashSet<Double>();
-		Set<Double> yPos = new HashSet<Double>();
-		Set<View<CyNode>> nodeViews = new HashSet<>();
-		for (View<CyNode> nodeView : netView.getNodeViews()) {
-			if (nodesToLayout.contains(nodeView.getModel())) {
-				nodeViews.add(nodeView);
-			} else {
-				xPos.add(nodeView.getVisualProperty(xLoc));
-				yPos.add(nodeView.getVisualProperty(yLoc));
-			}
-		}
-		double xSpan = Math.abs(Collections.max(xPos)) + Math.abs(Collections.min(xPos));
-		double ySpan = Math.abs(Collections.max(yPos)) + Math.abs(Collections.min(yPos));
-		int spacing = (int)Math.max(xSpan, ySpan)/4;
-		// get layout and set attributes
-		CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("circular");
-		Object context = alg.createLayoutContext();
-		TunableSetter setter = manager.getService(TunableSetter.class);
-		Map<String, Object> layoutArgs = new HashMap<>();
-		layoutArgs.put("defaultNodeMass", 10.0);
-		layoutArgs.put("selectedOnly", true);
-		layoutArgs.put("spacing", spacing);
-		setter.applyTunables(context, layoutArgs);
-		insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, ColumnNames.SCORE));
-	}
 		
 	@ProvidesTitle
 	public String getTitle() {

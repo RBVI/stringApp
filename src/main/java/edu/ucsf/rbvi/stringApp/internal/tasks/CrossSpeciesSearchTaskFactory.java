@@ -27,9 +27,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import org.apache.log4j.Logger;
-
-import org.cytoscape.application.CyUserLog;
 import org.cytoscape.application.swing.search.AbstractNetworkSearchTaskFactory;
 import org.cytoscape.application.swing.search.NetworkSearchTaskFactory;
 import org.cytoscape.util.swing.LookAndFeelUtil;
@@ -60,7 +57,6 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 	private StringNetwork stringNetwork = null;
 	private SearchOptionsPanel optionsPanel = null;
 	private MySearchComponent queryComponent = null;
-	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
 	private Font smallFont;
 	private JButton sp1Button;
 	private JButton sp2Button;
