@@ -36,6 +36,12 @@ import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
+/**
+ * Task that loads the whole interaction network for one species (or, for cross-species
+ * queries, two species) from STRING or STRING-DB, optionally fetching intra-species
+ * edges for each species from STRING-DB, annotating nodes, setting STRING network
+ * metadata, and styling/laying out the resulting network.
+ */
 public class LoadSpeciesInteractions extends AbstractTask {
 
 	final StringNetwork stringNet;

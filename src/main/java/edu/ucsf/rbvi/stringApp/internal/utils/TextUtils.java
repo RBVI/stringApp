@@ -1,5 +1,11 @@
 package edu.ucsf.rbvi.stringApp.internal.utils;
 
+/**
+ * Static text-processing helpers used to normalize user-entered query term lists:
+ * detecting the delimiter the user used (newlines, tabs, commas, semicolons, or spaces)
+ * and splitting into one term per line while respecting quoted substrings, plus a
+ * simple string truncation utility.
+ */
 public class TextUtils {
 	public static String smartDelimit(String terms) {
 		// If we already have newlines, just return

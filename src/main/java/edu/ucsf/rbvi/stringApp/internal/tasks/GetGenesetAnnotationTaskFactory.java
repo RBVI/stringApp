@@ -15,6 +15,13 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.EnrichmentUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task factory for the "Retrieve gene set annotation" command/menu item. It is only
+ * enabled for STRING networks that have a grouping column and species information.
+ * It creates a {@link GetGenesetAnnotationTask} (or {@link GetGenesetAnnotationTaskSwing}
+ * when a GUI is available), first offering a {@link RequeryTask} if the network's
+ * data version is out of date.
+ */
 public class GetGenesetAnnotationTaskFactory extends AbstractNetworkTaskFactory
 		implements NetworkViewTaskFactory {
 	final StringManager manager;

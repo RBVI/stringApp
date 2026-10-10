@@ -11,6 +11,12 @@ import org.cytoscape.work.TaskIterator;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task factory backing the "Change confidence" command/menu item, which creates a
+ * {@link ChangeConfidenceTask} to adjust the confidence score cutoff of an existing STRING
+ * network. If the target network is from an older data version it instead offers a
+ * {@link RequeryTask} to rebuild the network before the confidence can be changed.
+ */
 public class ChangeConfidenceTaskFactory extends AbstractNetworkTaskFactory implements TaskFactory {
 	final StringManager manager;
 

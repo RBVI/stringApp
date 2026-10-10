@@ -11,6 +11,11 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
+/**
+ * Renders a single STRING protein node as a glass-ball-style sphere with a radial
+ * gradient fill, an optional overlaid structure image, and selection/flat-design
+ * styling, drawn into the node's bounds with {@link Graphics2D}.
+ */
 public class DrawSphere {
 	BufferedImage image;
 	Color color;

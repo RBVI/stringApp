@@ -40,11 +40,17 @@ import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 
-/* 
- * ColorRenderer.java (compiles with releases 1.2, 1.3, and 1.4) is used by 
+/*
+ * ColorRenderer.java (compiles with releases 1.2, 1.3, and 1.4) is used by
  * TableDialogEditDemo.java.
  */
 
+/**
+ * A {@link TableCellRenderer} that paints a table cell's background with the
+ * {@link Color} value of the cell and shows the RGB value as a tooltip. Used
+ * as the renderer for {@code Color}-valued columns (e.g. chart colors) in
+ * the enrichment tables shown by {@link EnrichmentCytoPanel}.
+ */
 public class ColorRenderer extends JLabel implements TableCellRenderer {
 	Border unselectedBorder = null;
 	Border selectedBorder = null;

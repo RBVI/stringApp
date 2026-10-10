@@ -39,6 +39,12 @@ import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
+/**
+ * Task that augments an existing STRING/STITCH network with additional terms/nodes
+ * and their interactions, queried from the appropriate network-retrieval API, then
+ * fetches extra node data/annotations for the new nodes and, if a view exists, updates
+ * its style and optionally re-lays it out.
+ */
 public class LoadTermsTask extends AbstractTask {
 	final StringNetwork stringNet;
 	final String speciesName;

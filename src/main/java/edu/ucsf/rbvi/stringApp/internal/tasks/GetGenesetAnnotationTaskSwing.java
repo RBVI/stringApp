@@ -8,6 +8,10 @@ import org.cytoscape.view.model.CyNetworkView;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
+/**
+ * Swing variant of {@link GetGenesetAnnotationTask} that reports errors to the user
+ * through a Swing {@code JOptionPane} dialog instead of silently discarding them.
+ */
 public class GetGenesetAnnotationTaskSwing extends GetGenesetAnnotationTask {
 
 	public GetGenesetAnnotationTaskSwing(StringManager manager, CyNetwork network, CyNetworkView netView) {

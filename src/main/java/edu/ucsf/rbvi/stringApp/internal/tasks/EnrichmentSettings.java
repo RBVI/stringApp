@@ -25,6 +25,13 @@ import org.cytoscape.work.util.ListSingleSelection;
 import edu.ucsf.rbvi.stringApp.internal.model.ChartType;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
+/**
+ * Tunable bundle (used via {@code @ContainsTunables} in {@link EnrichmentSettingsTask}) exposing
+ * the per-network/per-group enrichment display settings: chart type, number of terms to chart,
+ * Brewer color palette, and the Jaccard overlap cutoff. As an {@link ActionListener} it also
+ * drives the color palette chooser dialog, and as a {@link RequestsUIHelper} it captures the
+ * parent component needed to show that dialog.
+ */
 public class EnrichmentSettings implements ActionListener, RequestsUIHelper {
 	private StringManager manager;
 	private CyNetwork network;

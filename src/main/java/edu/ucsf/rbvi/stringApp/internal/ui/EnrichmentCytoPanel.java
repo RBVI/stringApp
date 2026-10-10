@@ -92,6 +92,18 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.TextIcon;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
+/**
+ * Cytoscape south {@link CytoPanelComponent2} ("STRING Enrichment") that
+ * displays functional-enrichment results for the current network as one or
+ * more sortable, filterable tables (one per {@link TermCategory}), each
+ * backed by an {@link EnrichmentTableModel} over a network-specific
+ * enrichment {@link CyTable}. Supports drawing/resetting pie charts on nodes
+ * via {@link ViewUtils}, exporting tables with
+ * {@link ExportEnrichmentTableTask}, filtering with
+ * {@link FilterEnrichmentTableTask}, building an EnrichmentMap network with
+ * {@link EnrichmentMapAdvancedTask}, and adding selected terms to the
+ * network as nodes or text annotations.
+ */
 public class EnrichmentCytoPanel extends JPanel
 		implements CytoPanelComponent2, ListSelectionListener, ActionListener,
 		TableModelListener, SelectedNodesAndEdgesListener, SetCurrentNetworkListener {

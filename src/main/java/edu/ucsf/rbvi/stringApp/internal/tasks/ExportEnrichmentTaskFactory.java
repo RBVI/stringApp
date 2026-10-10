@@ -13,6 +13,12 @@ import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.utils.EnrichmentUtils;
 
+/**
+ * Network task factory backing the command to export a network's STRING functional enrichment
+ * results. It is ready only when the network has at least one enrichment table, and creates an
+ * {@link ExportEnrichmentTableTask} for the "all categories" enrichment table, wired to the
+ * south {@link EnrichmentCytoPanel} if one is open so the filtered-terms-only option works.
+ */
 public class ExportEnrichmentTaskFactory extends AbstractNetworkTaskFactory {
 	// implements ExportTableTaskFactory {
 

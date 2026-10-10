@@ -51,11 +51,17 @@ import org.cytoscape.util.swing.CyColorPaletteChooserFactory;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
-/* 
- * ColorEditor.java (compiles with releases 1.3 and 1.4) is used by 
+/*
+ * ColorEditor.java (compiles with releases 1.3 and 1.4) is used by
  * TableDialogEditDemo.java.
  */
 
+/**
+ * A {@link TableCellEditor} that lets the user edit a {@link Color}-valued
+ * table cell by clicking a button which opens Cytoscape's
+ * {@link CyColorPaletteChooser} dialog. Used as the editor for chart-color
+ * columns in the enrichment tables shown by {@link EnrichmentCytoPanel}.
+ */
 public class ColorEditor extends AbstractCellEditor
                          implements TableCellEditor,
 			            ActionListener {

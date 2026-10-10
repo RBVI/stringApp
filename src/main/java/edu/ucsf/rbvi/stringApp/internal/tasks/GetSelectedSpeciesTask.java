@@ -17,6 +17,11 @@ import org.cytoscape.work.util.ListSingleSelection;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
+/**
+ * Task backing the "list species" command that waits for the {@link Species} list to
+ * finish loading and then returns the requested category (all, core, periphery,
+ * mapped, or viral) as a {@code List}, plain-text summary, or {@code JSONResult}.
+ */
 public class GetSelectedSpeciesTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 

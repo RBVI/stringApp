@@ -83,6 +83,18 @@ import edu.ucsf.rbvi.stringApp.internal.utils.EnrichmentUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * The central, app-wide manager for stringApp. It wraps the {@link CyServiceRegistrar}
+ * to give the rest of the app convenient access to core Cytoscape services (task
+ * managers, event helper, network/table managers, logging), holds the app's
+ * configuration (server URIs, default settings, version information) loaded at startup,
+ * and tracks the {@link StringNetwork} wrapper for each STRING-derived network currently
+ * known to Cytoscape. As a {@link NetworkAddedListener}, {@link SessionLoadedListener},
+ * {@link NetworkAboutToBeDestroyedListener} and {@link SetCurrentNetworkListener}, it
+ * keeps that bookkeeping, the search task factories, and the various result panels
+ * (enrichment, publications, results) in sync as networks are created, destroyed,
+ * switched, or restored from a session.
+ */
 public class StringManager implements NetworkAddedListener, SessionLoadedListener, NetworkAboutToBeDestroyedListener, SetCurrentNetworkListener {
 	final CyServiceRegistrar registrar;
 	final CyEventHelper cyEventHelper;

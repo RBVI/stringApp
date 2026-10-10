@@ -11,6 +11,12 @@ import org.cytoscape.work.TaskIterator;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Network and network-view task factory backing the "Query for additional nodes" command, which
+ * lets the user add more STRING/STITCH terms to an existing STRING network. If the network's
+ * data version is out of date it offers to requery via {@link RequeryTask}; otherwise it creates
+ * an {@link AddTermsTask} that opens the terms-query dialog for the given network (and view).
+ */
 public class AddTermsTaskFactory extends AbstractNetworkTaskFactory
 		implements NetworkViewTaskFactory {
 	final StringManager manager;

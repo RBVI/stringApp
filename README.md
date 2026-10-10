@@ -13,7 +13,7 @@ For each query, the user can choose to retrieve a *full STRING network* of funct
 
 In addition, *stringApp* can retrieve functional enrichment for Gene Ontology terms, KEGG & Reactome Pathways, and protein domains at a user-specified significance threshold and show the results in a new table in the Table Panel. The app provides several different types of charts to show the enriched terms. Note that you need to install the [enhancedGraphics](http://apps.cytoscape.org/apps/enhancedgraphics) app for the charts to show. 
 
-Since version 1.6, *stringApp* is also integrated with the [clusterMaker](http://apps.cytoscape.org/apps/clustermaker2) and [EnrichmentMap](http://apps.cytoscape.org/apps/enrichmentmap) apps. With the former, users can quickly cluster a STRING network using MCL clustering, while with the latter it is possible to create an enrichment map from the STRING erncihemtn results.  
+Since version 1.6, *stringApp* is also integrated with the [clusterMaker](http://apps.cytoscape.org/apps/clustermaker2) and [EnrichmentMap](http://apps.cytoscape.org/apps/enrichmentmap) apps. With the former, users can quickly cluster a STRING network using MCL clustering, while with the latter it is possible to create an enrichment map from the STRING enrichment results.  
 
 *stringApp* supports automation from both commands and CyREST.
 
@@ -21,3 +21,35 @@ See also:
 - [stringApp tutorials](https://jensenlab.org/training/stringapp/)
 - [stringApp automation documentation](doc_automation.md)
 - Cite [stringApp 2018 paper](https://pubmed.ncbi.nlm.nih.gov/30450911/) or [stringApp 2022 paper](https://pubmed.ncbi.nlm.nih.gov/36512705/)
+
+## Developer notes
+
+### Building
+
+stringApp is an OSGi bundle built with Maven (Java 11 source level, Cytoscape API 3.10):
+
+```
+mvn clean package
+```
+
+The bundle is written to `target/stringApp-<version>.jar` and can be installed in Cytoscape via _Apps -> App Manager -> Install from File_. Released jars are kept in `dist/`.
+
+### Code layout
+
+All code lives under `src/main/java/edu/ucsf/rbvi/stringApp/internal/`:
+
+- `CyActivator` is the bundle activator. It creates the `StringManager` and registers every task factory, menu item, command and custom graphics factory with Cytoscape.
+- `model/` holds the app state. `StringManager` is the central service hub (configuration, server URLs, settings, panels, the set of STRING networks) and `StringNetwork` holds per-network state such as resolved query terms and enrichment settings. `Species`, `Annotation`, `EnrichmentTerm` and the `Databases`/`NetworkType` enums describe the data returned by STRING.
+- `tasks/` contains the Cytoscape tasks and task factories behind every menu item and `string` command: network queries (protein, compound, PubMed, disease, cross-species), expanding and changing networks, enrichment and publication retrieval, and view toggles.
+- `ui/` contains the Swing panels and dialogs: the query panels shown in the network search bar, the STRING Results panel (node and edge tabs), the enrichment and publication table panels and their renderers.
+- `view/` draws the STRING-style "pill" node graphics as Cytoscape custom graphics.
+- `utils/` contains shared helpers for parsing STRING and Jensenlab API responses (`JSONUtils`), building networks and columns (`ModelUtils`), styles and views (`ViewUtils`) and enrichment tables (`EnrichmentUtils`).
+- `io/` contains `HttpUtils`, the low-level HTTP client used for all API calls.
+
+### Species data
+
+The species lists bundled in `src/main/resources/species_v*.tsv` and `pairs_v*.tsv` are generated from the files in `data/species` by `scripts/make_files.py` (run it from inside `data/species`).
+
+### Configuration
+
+Server URLs are loaded at startup from a JSON config file (see `StringManager.CONFIGURI`). User preferences are stored in Cytoscape's `stringApp.props`. See [doc_alternative_config.md](doc_alternative_config.md) for pointing stringApp at another STRING version.

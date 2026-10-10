@@ -14,6 +14,12 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.EnrichmentUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task factory for the "Retrieve functional enrichment" command/menu item, enabled
+ * for STRING/STITCH networks with known species. Depending on whether a GUI is
+ * available it creates a {@link GetEnrichmentTaskSwing} or a {@link GetEnrichmentTask},
+ * first offering a {@link RequeryTask} if the network data version is out of date.
+ */
 public class GetEnrichmentTaskFactory extends AbstractNetworkTaskFactory
 		implements NetworkViewTaskFactory {
 	final StringManager manager;

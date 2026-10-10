@@ -25,6 +25,12 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.StringResults;
 
+/**
+ * Command task ("query additional nodes") that resolves a comma-separated list of
+ * protein names/identifiers for a given species against STRING, then runs a
+ * {@link LoadTermsTask} to add the matched proteins and their interactions as
+ * additional nodes/edges to an existing STRING network.
+ */
 public class ProteinQueryAdditionalTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 

@@ -28,6 +28,12 @@ import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.TextUtils;
 
+/**
+ * Task that searches PubMed (via NCBI eutils) for a query, sends the resulting PMIDs
+ * to the Jensenlab text-mining API to find associated proteins, resolves them to
+ * STRING identifiers, and schedules a {@link LoadInteractions} task (followed by
+ * {@code AddTextMiningResultsTask}) to build the resulting network.
+ */
 public class GetStringIDsFromPubmedTask extends AbstractTask implements ObservableTask {
 	final StringNetwork stringNetwork;
 	final StringManager manager;

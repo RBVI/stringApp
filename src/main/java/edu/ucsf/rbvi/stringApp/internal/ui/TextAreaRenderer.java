@@ -5,6 +5,12 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.TableCellRenderer;
 
+/**
+ * A {@link TableCellRenderer} that renders a String cell as word-wrapped,
+ * multi-line text in a {@link JTextArea} and grows the table row height to
+ * fit it. Used for the wide description/annotation columns in tables such
+ * as the term-resolution table shown by {@link GetTermsPanel}.
+ */
 public class TextAreaRenderer extends JTextArea implements TableCellRenderer {
 	static int PADDING = 10;
 	public TextAreaRenderer() {

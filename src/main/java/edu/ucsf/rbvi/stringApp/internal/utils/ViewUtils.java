@@ -39,6 +39,12 @@ import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.ChartType;
 
+/**
+ * Static helper methods for applying stringApp's visual styles to a network view:
+ * building and updating the STRING/STITCH visual styles and organism color mappings,
+ * and constructing the chart-based custom graphics (pie/circos charts) used to display
+ * enrichment results on nodes.
+ */
 public class ViewUtils {
 	public static String STYLE_NAME_SIMPLE = "STRING";
 	public static String STYLE_NAME = "STRING style";

@@ -13,6 +13,11 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
+/**
+ * Renders a single STRING compound (STITCH) node as a rounded "pill" shape with a
+ * gradient fill, an optional overlaid structure image, and selection/flat-design
+ * styling, drawn into the node's bounds with {@link Graphics2D}.
+ */
 public class DrawPill {
 	BufferedImage image;
 	Color color;

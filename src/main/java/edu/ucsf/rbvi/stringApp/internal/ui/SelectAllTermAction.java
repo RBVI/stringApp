@@ -5,6 +5,11 @@ import java.awt.event.ActionEvent;
 
 import java.util.Map;
 
+/**
+ * A Swing action, used on a button in {@link GetTermsPanel}'s ambiguous-term
+ * resolution table, that selects all annotation choices for a single query
+ * term across its {@link ResolveTableModel}.
+ */
 class SelectAllTermAction extends AbstractAction {
 	final String term;
 	final Map<String, ResolveTableModel> tableModelMap;

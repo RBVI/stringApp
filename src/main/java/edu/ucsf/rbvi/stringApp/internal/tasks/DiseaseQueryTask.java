@@ -19,6 +19,13 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.StringResults;
 
+/**
+ * Task backing the "STRING Disease Query" command, which resolves a disease name against the
+ * DISEASES database (via {@link GetDiseaseTermsTask}) for a given species and then builds a new
+ * STRING network of the top associated proteins and their interactors (via
+ * {@link GetStringIDsFromDiseasesTask}), at the given confidence cutoff and network type.
+ * Implements {@link ObservableTask} so the resulting network can be returned to callers.
+ */
 public class DiseaseQueryTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 

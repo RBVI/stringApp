@@ -8,6 +8,12 @@ import org.cytoscape.work.json.JSONResult;
 
 import edu.ucsf.rbvi.stringApp.internal.model.CyNetworkJSONResult;
 
+/**
+ * Converts a loaded network into whichever result type the Commands API caller asked
+ * for (a {@link CyNetwork}, its SUID as a {@link Long}, a {@link JSONResult}, or a
+ * human-readable {@link String} summary), used by task factories to support multiple
+ * return formats.
+ */
 public class StringResults {
 	@SuppressWarnings("unchecked")
 	public static <R> R getResults(Class<? extends R> clzz, CyNetwork loadedNetwork) {

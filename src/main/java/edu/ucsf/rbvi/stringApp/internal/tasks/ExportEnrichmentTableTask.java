@@ -15,6 +15,13 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
 
 
+/**
+ * Task backing the "Export STRING Enrichment table" command, created by
+ * {@link ExportEnrichmentTaskFactory} and {@link ExportPublicationsTaskFactory}. It saves a
+ * STRING enrichment (or publications) {@link CyTable} to a user-chosen file, optionally
+ * restricting the export to the terms currently passing the {@link EnrichmentCytoPanel}'s
+ * filter, by delegating to Cytoscape's {@link ExportTableTaskFactory}.
+ */
 public class ExportEnrichmentTableTask extends AbstractTask {
 
 	private StringManager manager;

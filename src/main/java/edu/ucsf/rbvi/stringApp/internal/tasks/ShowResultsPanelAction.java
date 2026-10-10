@@ -11,6 +11,12 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 @SuppressWarnings("serial")
+/**
+ * Checkbox menu action, under Apps &gt; STRING, that shows or hides the STRING
+ * results {@link org.cytoscape.application.swing.CytoPanel} by running the
+ * {@link ShowResultsPanelTaskFactory}'s task iterator; it is enabled only for
+ * STRING networks and reflects whether the panel is currently registered.
+ */
 public class ShowResultsPanelAction extends AbstractCyAction {
 
 	final StringManager manager;

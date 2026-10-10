@@ -30,6 +30,12 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.model.TextMiningResult;
 
+/**
+ * Static helper methods for parsing the JSON responses returned by the STRING server
+ * into stringApp's model objects, such as {@link EntityIdentifier}, {@link Annotation},
+ * {@link EnrichmentTerm} and {@link TextMiningResult} lists, as well as extracting the
+ * generic result payload and API version from a response.
+ */
 public class JSONUtils {
 
 	public static List<EntityIdentifier> getEntityIdsFromJSON(StringManager manager,

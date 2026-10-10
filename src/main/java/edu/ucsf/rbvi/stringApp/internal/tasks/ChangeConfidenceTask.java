@@ -35,6 +35,13 @@ import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
+/**
+ * Task created by {@link ChangeConfidenceTaskFactory} that changes the confidence score cutoff
+ * of an existing STRING network. Raising the cutoff simply trims edges whose score falls below
+ * the new threshold; lowering it re-queries the STRING/STITCH API for the current node set at
+ * the new confidence and adds any additional edges returned, then updates the network's stored
+ * confidence attribute and, if a view is present, refreshes the edge style.
+ */
 public class ChangeConfidenceTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 	CyNetworkView netView;

@@ -8,8 +8,13 @@ import org.cytoscape.io.webservice.swing.AbstractWebServiceGUIClient;
 import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
+/**
+ * Cytoscape web-service client that registers the "STRING: cross-species
+ * query" entry in the Import Network From Web Service dialog, using
+ * {@link CrossSpeciesPanel} as its GUI.
+ */
 // TODO: [Optional] Improve non-gui mode
-public class CrossSpeciesWebServiceClient extends AbstractWebServiceGUIClient 
+public class CrossSpeciesWebServiceClient extends AbstractWebServiceGUIClient
                                     implements NetworkImportWebServiceClient, SearchWebServiceClient {
 	StringManager manager;
 

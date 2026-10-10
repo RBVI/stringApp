@@ -8,6 +8,13 @@ import org.cytoscape.work.TaskIterator;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task factory, usable both as a network-view task factory and a no-argument
+ * {@link TaskFactory} (for command-line use), that creates a
+ * {@link ShowEnhancedLabelsTask} to toggle STRING-style enhanced node labels.
+ * The view-based form is ready only for STRING network views when enhanced
+ * graphics are available.
+ */
 public class ShowEnhancedLabelsTaskFactory extends AbstractNetworkViewTaskFactory implements TaskFactory {
 
 	final StringManager manager;

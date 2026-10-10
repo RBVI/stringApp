@@ -12,6 +12,11 @@ import org.cytoscape.work.json.JSONResult;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
 
+/**
+ * Task that tells the {@link EnrichmentCytoPanel} to redraw its enrichment
+ * charts, invoked on the Swing event thread after the panel's underlying
+ * enrichment term list has changed.
+ */
 public class ShowChartsTask extends AbstractTask implements ObservableTask {
 
 	private StringManager manager;

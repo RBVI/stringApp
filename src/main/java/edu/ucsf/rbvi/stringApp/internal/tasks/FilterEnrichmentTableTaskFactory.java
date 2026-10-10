@@ -11,6 +11,12 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task factory backing the "Filter STRING Enrichment table" command, which creates a
+ * {@link FilterEnrichmentTableTask} to apply category and redundancy filters to the enrichment
+ * table currently shown in the south {@link EnrichmentCytoPanel}. It is ready only when the
+ * current network is a STRING network and the Enrichment panel is open.
+ */
 public class FilterEnrichmentTableTaskFactory extends AbstractTaskFactory {
 	final StringManager manager;
 	boolean show = false;

@@ -10,6 +10,13 @@ import java.net.URI;
 import javax.swing.JLabel;
 
 
+/**
+ * A {@link JLabel} styled and behaving like a hyperlink: it renders its text
+ * underlined, shows a hand cursor on hover, and opens the associated URI in
+ * the system's default browser via {@link java.awt.Desktop}, rather than
+ * through a Cytoscape service. Equivalent to {@link SwingLinkCyBrowser} for
+ * contexts where no {@code OpenBrowser} service is available.
+ */
 public class SwingLinkOSBrowser extends JLabel {
 	private static final long serialVersionUID = 8273875024682878518L;
 	private String text;

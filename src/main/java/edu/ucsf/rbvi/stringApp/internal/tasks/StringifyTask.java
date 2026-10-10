@@ -44,6 +44,16 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.TextUtils;
 
+/**
+ * Task backing the "stringify" command/menu action, which converts an
+ * existing network's nodes into a STRING (or, if the compound-query option is
+ * set, STITCH) network. It queries STRING/STITCH using identifiers from a
+ * chosen node table column, resolves ambiguous terms (showing a resolution
+ * dialog when needed), imports the resulting network via
+ * {@link ImportNetworkTaskFactory}, and then copies over node attributes,
+ * positions, display names and (optionally) edges and unmapped nodes from the
+ * original network into the new STRING network.
+ */
 public class StringifyTask extends AbstractTask implements ObservableTask, TaskObserver {
 	final StringManager manager;
 	private StringNetwork stringNetwork;

@@ -18,6 +18,12 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.StringResults;
 
+/**
+ * Task backing the "Cross-species query" command, which looks up two species by name or taxon
+ * ID and builds a new network of interactions between (and within) them at the given confidence
+ * cutoff and network type via {@link LoadSpeciesInteractions}. Implements {@link ObservableTask}
+ * so the resulting network can be returned to callers (e.g. Commands/scripting).
+ */
 public class CrossSpeciesQueryTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 

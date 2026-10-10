@@ -9,6 +9,12 @@ import org.cytoscape.work.TaskIterator;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task factory backing the "Fetch structure images" command, which creates a
+ * {@link FetchStructureImagesTask} to download and cache compound/protein structure images for
+ * a STRING network. It is ready only for STRING networks that don't already have images fetched
+ * (or, for the no-argument variant, always ready once the app's URIs are configured).
+ */
 public class FetchStructureImagesTaskFactory extends AbstractNetworkTaskFactory implements TaskFactory {
 	final StringManager manager;
 

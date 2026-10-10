@@ -9,6 +9,11 @@ import org.cytoscape.work.TaskMonitor;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task created by {@link FetchStructureImagesTaskFactory} that fetches (if not already cached)
+ * the structure images for the nodes of a STRING network via {@link ModelUtils#fetchImages} and
+ * then enables image display in the app's controls.
+ */
 public class FetchStructureImagesTask extends AbstractTask {
 	final CyNetwork network;
 	final StringManager manager; 

@@ -24,6 +24,13 @@ import org.json.simple.parser.JSONParser;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
+/**
+ * Static helper methods for making HTTP GET/POST requests to the STRING server and
+ * parsing the JSON responses, using Cytoscape's {@link StreamUtil} for the underlying
+ * connections. Handles redirects, timeouts and error responses, and defines the
+ * {@link UnknownSpeciesException} and {@link TimeoutException} subtypes of
+ * {@link ConnectionException} used to signal specific STRING server failures.
+ */
 public class HttpUtils {
 	@SuppressWarnings("unchecked")
 	public static JSONObject getJSON(String url, Map<String, String> queryMap,

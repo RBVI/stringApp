@@ -45,6 +45,12 @@ import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.TextMiningResult;
 
+/**
+ * Large collection of static helper methods for reading and writing Cytoscape network,
+ * node, and edge model data on behalf of stringApp: creating and populating table
+ * columns, getting/setting typed node and network attributes, naming networks, and other
+ * low-level model bookkeeping shared across the app's tasks and UI.
+ */
 public class ModelUtils {
 
 	// Network names

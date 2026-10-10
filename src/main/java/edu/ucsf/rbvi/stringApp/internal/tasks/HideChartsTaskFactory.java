@@ -11,6 +11,12 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task factory for hiding the STRING enrichment charts panel. It is ready only when
+ * the current network is a STRING network and the enrichment {@link EnrichmentCytoPanel}
+ * is present in the south Cytoscape panel, in which case it creates a
+ * {@link HideChartsTask} to remove the charts.
+ */
 public class HideChartsTaskFactory extends AbstractTaskFactory {
 	final StringManager manager;
 	final CytoPanel cytoPanel;

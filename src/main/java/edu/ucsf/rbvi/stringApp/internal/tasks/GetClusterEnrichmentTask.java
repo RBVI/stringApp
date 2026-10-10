@@ -42,6 +42,14 @@ import edu.ucsf.rbvi.stringApp.internal.utils.EnrichmentUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task that performs functional (or publication) enrichment separately for each group
+ * of nodes defined by a user-selected node table column (e.g. an MCL cluster column),
+ * optionally against a selected background network. For each group it queries the
+ * STRING enrichment JSON API, stores the results in a new {@code CyTable} per group,
+ * and records the created tables and analyzed nodes on the network table so the
+ * enrichment or publication panel can display them.
+ */
 public class GetClusterEnrichmentTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 	final CyNetwork network;

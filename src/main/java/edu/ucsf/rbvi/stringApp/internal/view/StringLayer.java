@@ -20,6 +20,12 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * A {@link Cy2DGraphicLayer} that draws a single node's STRING-style appearance,
+ * delegating to {@link DrawPill} for compound nodes or {@link DrawSphere} for protein
+ * nodes depending on the node type, using the node's fill color, the network's
+ * background, its selection state, and any decoded structure image.
+ */
 public class StringLayer implements Cy2DGraphicLayer {
 	StringManager manager;
 	Rectangle2D bounds;

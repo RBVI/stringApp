@@ -11,6 +11,12 @@ import org.cytoscape.work.TaskIterator;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task factory backing the "Change confidence or type" command/menu item, which creates a
+ * {@link ChangeNetTypeTask} to change the network type (functional vs. physical) and/or
+ * confidence cutoff of an existing STRING network. If the network is from an older data version
+ * it instead offers a {@link RequeryTask} to rebuild the network first.
+ */
 public class ChangeNetTypeTaskFactory extends AbstractNetworkTaskFactory implements TaskFactory {
 	final StringManager manager;
 

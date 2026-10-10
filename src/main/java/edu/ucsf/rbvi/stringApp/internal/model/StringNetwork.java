@@ -26,6 +26,14 @@ import edu.ucsf.rbvi.stringApp.internal.utils.EnrichmentUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 
+/**
+ * Wraps a single Cytoscape {@link CyNetwork} that was created from (or converted to) a
+ * STRING/STITCH network, pairing it with the {@link StringManager} and the per-network
+ * state stringApp needs to track: resolved identifier and annotation lookups, and the
+ * enrichment table display settings (top terms, overlap cutoff, color palette, category
+ * filter, chart type, overlap removal), both for the network as a whole and
+ * per-node-group when the network has pre-defined groupings.
+ */
 public class StringNetwork {
 	final StringManager manager;
 	CyNetwork network;

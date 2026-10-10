@@ -16,6 +16,13 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.EnrichmentUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task factory for the group-wise (cluster) functional enrichment command/menu item.
+ * It is only enabled for STRING networks that have a grouping column (e.g. from MCL
+ * clustering) and species information. Depending on whether a GUI is available it
+ * creates either a {@link GetClusterEnrichmentTaskSwing} or a {@link GetClusterEnrichmentTask},
+ * or a {@link RequeryTask} first if the network is from an older data version.
+ */
 public class GetClusterEnrichmentTaskFactory extends AbstractNetworkTaskFactory
 		implements NetworkViewTaskFactory {
 	final StringManager manager;

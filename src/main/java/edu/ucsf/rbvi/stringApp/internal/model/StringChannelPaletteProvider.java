@@ -10,6 +10,11 @@ import org.cytoscape.util.color.Palette;
 import org.cytoscape.util.color.PaletteProvider;
 import org.cytoscape.util.color.PaletteType;
 
+/**
+ * Supplies Cytoscape's visual mapping machinery with the "STRING" qualitative color
+ * palette used for evidence channel colors, exposing a single built-in
+ * {@code StringChannelPalette} through the {@link PaletteProvider} interface.
+ */
 public class StringChannelPaletteProvider implements PaletteProvider {
 	Palette[] palettes = null;
 	public StringChannelPaletteProvider() {

@@ -45,8 +45,16 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.LoadSpeciesInteractions;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 
+/**
+ * Swing panel for the "STRING: cross-species query" dialog, backing
+ * {@link CrossSpeciesWebServiceClient}. Lets the user pick two species and
+ * cross-species confidence/network-type options (via an embedded
+ * {@link SearchOptionsPanel}), then launches a {@link LoadSpeciesInteractions}
+ * task (optionally followed by enrichment retrieval) to import the
+ * resulting {@link StringNetwork}.
+ */
 // TODO: [Optional] Improve non-gui mode
-public class CrossSpeciesPanel extends JPanel implements TaskObserver { 
+public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 	StringNetwork stringNetwork = null;
 	StringNetwork initialStringNetwork = null;
 	final StringManager manager;

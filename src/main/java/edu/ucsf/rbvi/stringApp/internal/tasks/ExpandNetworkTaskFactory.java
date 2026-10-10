@@ -15,6 +15,13 @@ import org.cytoscape.work.TaskIterator;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Network, network-view, and node-view task factory backing the "Expand network" command/menu
+ * item, which creates an {@link ExpandNetworkTask} to add more interactors (proteins or
+ * compounds) to an existing STRING network from its current (or selected) nodes. If the target
+ * network is from an older data version it instead offers a {@link RequeryTask} to rebuild the
+ * network first.
+ */
 public class ExpandNetworkTaskFactory extends AbstractNetworkTaskFactory implements NetworkViewTaskFactory, NodeViewTaskFactory, TaskFactory {
 	final StringManager manager;
 

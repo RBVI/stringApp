@@ -1,5 +1,10 @@
 package edu.ucsf.rbvi.stringApp.internal.utils;
 
+/**
+ * Central collection of constants for the names of the node, edge, and network table
+ * columns (and their namespaces) that stringApp reads and writes, such as STRING
+ * identifiers, species, confidence scores, enrichment statistics, and structure sources.
+ */
 public class ColumnNames {
 	// Namespaces
 	public static String STRINGDB_NAMESPACE = "stringdb";

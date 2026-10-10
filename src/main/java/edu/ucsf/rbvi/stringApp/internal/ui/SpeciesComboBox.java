@@ -8,7 +8,14 @@ import javax.swing.JComboBox;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
-public class SpeciesComboBox extends JComboBox<Species> { 
+/**
+ * A {@link JComboBox} pre-populated with the list of STRING model species
+ * (adding the given default species if it isn't already in that list) and
+ * decorated via {@link JComboBoxDecorator} so the user can type to search.
+ * Used as the species selector in panels such as {@link GetTermsPanel} and
+ * {@link SearchOptionsPanel}.
+ */
+public class SpeciesComboBox extends JComboBox<Species> {
 	final StringManager manager;
 
 	public SpeciesComboBox(final StringManager manager, String defaultSpecies) {

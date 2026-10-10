@@ -40,6 +40,14 @@ import edu.ucsf.rbvi.stringApp.internal.utils.EnrichmentUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task that retrieves functional enrichment (or, in publication-only mode, enriched
+ * publications) and PPI enrichment for the selected or all nodes of a STRING network,
+ * optionally against a background network. Results are fetched from the STRING
+ * enrichment and ppi_enrichment JSON APIs, stored in a new enrichment {@code CyTable},
+ * and summary statistics are written back into the network table so the enrichment
+ * or publication panel can display them.
+ */
 public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 	final CyNetwork network;

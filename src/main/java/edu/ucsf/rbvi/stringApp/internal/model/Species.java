@@ -11,6 +11,14 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 
+/**
+ * Represents a single species known to STRING, including its taxonomy ID, type
+ * (core/periphery/mapped/viral/custom), names, alias, and interaction partner species.
+ * Maintains static, lazily-populated lookup tables and category lists (all, core,
+ * periphery, mapped, viral, model, GUI-visible) that are loaded from the STRING species
+ * and pairs files via {@link #readSpecies} and {@link #readPairs}, and used throughout
+ * stringApp to resolve and categorize species by name or taxonomy ID.
+ */
 public class Species implements Comparable<Species> {
 	private static List<Species> allSpecies;
 	private static List<Species> guiSpecies;

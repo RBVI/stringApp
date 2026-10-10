@@ -37,8 +37,16 @@ import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 
+/**
+ * Reusable Swing panel of shared search/import options (species selector,
+ * functional-vs-physical network type, confidence cutoff, maximum
+ * additional nodes/interactors, smart delimiters, and "load enrichment
+ * data") embedded in the various STRING/STITCH query panels, including
+ * {@link GetTermsPanel}, {@link CrossSpeciesPanel}, {@link DiseaseQueryPanel}
+ * and {@link PubMedQueryPanel}.
+ */
 // TODO: [Optional] Improve non-gui mode
-public class SearchOptionsPanel extends JPanel { 
+public class SearchOptionsPanel extends JPanel {
 	StringNetwork stringNetwork = null;
 	StringNetwork initialStringNetwork = null;
 	final StringManager manager;

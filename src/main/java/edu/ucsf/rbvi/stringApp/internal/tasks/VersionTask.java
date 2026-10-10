@@ -8,6 +8,11 @@ import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.json.JSONResult;
 
+/**
+ * Simple task that does no work other than reporting the stringApp version it
+ * was constructed with, as a plain string or as JSON, via
+ * {@link ObservableTask#getResults}.
+ */
 public class VersionTask extends AbstractTask implements ObservableTask {
 
 	final String version;

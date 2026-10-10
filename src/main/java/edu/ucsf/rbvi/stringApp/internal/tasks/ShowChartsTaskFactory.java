@@ -11,6 +11,12 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task factory that creates a {@link ShowChartsTask} to (re)draw the enrichment
+ * charts in the south {@link EnrichmentCytoPanel}. It is only ready when the
+ * current network is a STRING network and the enrichment panel is currently
+ * registered.
+ */
 public class ShowChartsTaskFactory extends AbstractTaskFactory {
 	final StringManager manager;
 	final CytoPanel cytoPanel;

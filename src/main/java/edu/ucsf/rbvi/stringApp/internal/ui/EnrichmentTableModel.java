@@ -15,6 +15,14 @@ import org.cytoscape.model.CyTable;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 
+/**
+ * Table model that adapts a Cytoscape {@link CyTable} of STRING/STITCH
+ * enrichment or publication results to Swing's {@link javax.swing.JTable},
+ * typing each column based on {@link EnrichmentTerm} column constants. Backs
+ * the tables shown in {@link EnrichmentCytoPanel} and
+ * {@link PublicationsCytoPanel}, and supports filtering rows by category,
+ * node selection, and (optionally) Jaccard-based redundancy removal.
+ */
 public class EnrichmentTableModel extends AbstractTableModel {
 	private String[] columnNames;
 	private CyTable cyTable;

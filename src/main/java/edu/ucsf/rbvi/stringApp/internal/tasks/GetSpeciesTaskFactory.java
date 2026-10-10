@@ -5,6 +5,11 @@ import org.cytoscape.work.TaskIterator;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
+/**
+ * Task factory for the "list species" command, creating a {@link GetSpeciesTask} that
+ * returns the full set of species known to the current STRING/STITCH installation.
+ * Ready as soon as the manager has resolved its database URIs.
+ */
 public class GetSpeciesTaskFactory extends AbstractTaskFactory {
 	final StringManager manager;
 

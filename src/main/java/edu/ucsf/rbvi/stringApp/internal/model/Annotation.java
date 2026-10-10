@@ -12,6 +12,13 @@ import org.json.simple.JSONObject;
 
 import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 
+/**
+ * Holds the annotation information STRING/STITCH/JensenLab returns for a single queried
+ * term, such as its preferred name, STRING identifier, taxonomy, description, UniProt
+ * accession, sequence, color, image and associated structures. Also provides static
+ * helper methods to parse a batch of these annotations out of a JSON response and match
+ * them back up with the original query terms.
+ */
 public class Annotation {
 	String annotation;
 	int taxId;

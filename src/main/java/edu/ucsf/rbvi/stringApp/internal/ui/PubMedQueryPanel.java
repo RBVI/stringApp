@@ -39,8 +39,16 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetStringIDsFromPubmedTask;
 
 
+/**
+ * Swing panel for the "STRING: PubMed query" import dialog, backing
+ * {@link TextMiningWebServiceClient}. Lets the user enter a free-text PubMed
+ * query, pick a species and search options via an embedded
+ * {@link SearchOptionsPanel}, and launches
+ * {@link GetStringIDsFromPubmedTask} to build a text-mined
+ * {@link StringNetwork}, optionally followed by enrichment retrieval.
+ */
 // TODO: [Optional] Improve non-gui mode
-public class PubMedQueryPanel extends JPanel { 
+public class PubMedQueryPanel extends JPanel {
 	StringNetwork stringNetwork = null;
 	StringNetwork initialStringNetwork = null;
 	final StringManager manager;

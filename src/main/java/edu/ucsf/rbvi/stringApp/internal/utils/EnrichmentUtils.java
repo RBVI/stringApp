@@ -24,6 +24,11 @@ import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
+/**
+ * Static helper methods for working with functional enrichment results: determining
+ * which species in a network are eligible for enrichment, and creating/managing the
+ * Cytoscape tables used to store and filter {@link EnrichmentTerm} data for a network.
+ */
 public class EnrichmentUtils {
 
 

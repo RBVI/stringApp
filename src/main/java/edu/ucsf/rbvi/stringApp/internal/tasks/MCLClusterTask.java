@@ -14,6 +14,12 @@ import org.cytoscape.work.Tunable;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
+/**
+ * Task backing the "Cluster network using MCL" command. It installs the clusterMaker2
+ * app if it is not already present, then runs that app's {@code cluster mcl} command
+ * on the current network using the "stringdb::score" edge attribute and the
+ * user-supplied inflation parameter.
+ */
 public class MCLClusterTask extends AbstractTask implements TaskObserver {
 
 	private final StringManager manager;

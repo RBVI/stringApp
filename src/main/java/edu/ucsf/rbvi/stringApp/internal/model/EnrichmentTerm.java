@@ -3,6 +3,14 @@ package edu.ucsf.rbvi.stringApp.internal.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a single functional enrichment term (e.g. a GO term, KEGG pathway, or
+ * publication) returned by a STRING enrichment query, including its name, description,
+ * category, p-values, background gene count, and the matching genes/nodes. Also defines
+ * the {@link TermCategory} enum used to classify terms, the Swing/node table column
+ * names and indices used to display enrichment results, and natural ordering by FDR
+ * p-value.
+ */
 public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	String name;
 	String description;

@@ -20,6 +20,13 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task that converts a (typically merged) network into a recognized STRING network.
+ * It derives a confidence cutoff from the minimum edge score present in the network,
+ * then stamps the network with STRING metadata (database, network type, species,
+ * data version, and source URI) and registers it with the {@link StringManager} as
+ * a {@link StringNetwork}.
+ */
 public class SetConfidenceTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 	private CyNetwork net;

@@ -35,6 +35,15 @@ import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
+/**
+ * Task created by {@link ChangeNetTypeTaskFactory} that changes an existing STRING network's
+ * type (functional associations vs. physical interactions) and/or its confidence score cutoff.
+ * When only the confidence is raised it trims low-scoring edges locally; otherwise it re-queries
+ * STRING-DB and/or Jensenlab for the current node set (across all species present) at the new
+ * type/confidence, replaces the network's edges with the results, updates the stored network
+ * type and confidence attributes, adjusts the network name's physical/functional suffix, and
+ * refreshes the edge style on any associated view.
+ */
 public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 	CyNetworkView netView;

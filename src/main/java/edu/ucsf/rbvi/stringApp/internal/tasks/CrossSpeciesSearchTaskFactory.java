@@ -43,6 +43,13 @@ import edu.ucsf.rbvi.stringApp.internal.ui.JComboBoxDecorator;
 import edu.ucsf.rbvi.stringApp.internal.ui.SearchOptionsPanel;
 import edu.ucsf.rbvi.stringApp.internal.utils.TextIcon;
 
+/**
+ * Network search task factory that adds the "STRING: cross-species query" entry to Cytoscape's
+ * network search bar. It supplies the search UI (a species-1/species-2 picker) and options
+ * panel (confidence cutoff and network type), and its task iterator creates a
+ * {@link LoadSpeciesInteractions} task to build a network of interactions between the two
+ * chosen species via Jensenlab.
+ */
 public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	StringManager manager;
 	static String CROSS_SPECIES_ID = "edu.ucsf.rbvi.x-species";

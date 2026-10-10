@@ -14,6 +14,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 
+/**
+ * A generic Swing {@link JPanel} that wraps another panel behind a clickable,
+ * labeled header with an expand/collapse arrow, so the wrapped content can be
+ * shown or hidden by the user. Used in stringApp dialogs to tuck away
+ * secondary content (e.g. advanced options) until the user asks for it.
+ */
 public class CollapsablePanel extends JPanel {
 	private static String RIGHT_ARROW = "\uF0DA";
 	private static String DOWN_ARROW = "\uF0D7";

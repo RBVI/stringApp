@@ -7,6 +7,11 @@ import org.cytoscape.view.presentation.customgraphics.CyCustomGraphicsFactory;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
+/**
+ * Cytoscape {@link CyCustomGraphicsFactory} that creates {@link StringCustomGraphics}
+ * instances from a serialized input string, registering stringApp's custom node
+ * graphics under the "string" prefix.
+ */
 public class StringCustomGraphicsFactory implements CyCustomGraphicsFactory<StringLayer> {
 	StringManager manager;
 

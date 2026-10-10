@@ -19,6 +19,12 @@ import org.cytoscape.view.presentation.customgraphics.CyCustomGraphics;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * A {@link CyCustomGraphics} implementation that decodes a base64-encoded structure
+ * image from its input string and exposes it as a single {@link StringLayer} to be
+ * drawn on a node, used to display STRING/STITCH structure images as custom node
+ * graphics.
+ */
 public class StringCustomGraphics implements CyCustomGraphics<StringLayer> {
 	StringManager manager;
 	String input;

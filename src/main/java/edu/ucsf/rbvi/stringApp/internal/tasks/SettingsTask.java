@@ -40,6 +40,16 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringChannelPaletteProvider;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 
+/**
+ * Task backing the stringApp settings dialog, exposing tunables for default
+ * species, network type, confidence cutoff, interactor/protein limits, view
+ * options (images, enhanced labels, flat node design vs. glass ball effect),
+ * the edge channel color palette, and enrichment-related defaults. On run it
+ * applies any changed view settings to the current network view (via the
+ * corresponding show/hide task factories), persists the updated defaults
+ * through {@link StringManager}, and updates the current network's enrichment
+ * settings if one is open.
+ */
 public class SettingsTask extends AbstractTask implements ObservableTask, ActionListener, RequestsUIHelper {
 
 	private StringManager manager;

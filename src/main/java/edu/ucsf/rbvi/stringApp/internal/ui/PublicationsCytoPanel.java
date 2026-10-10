@@ -61,6 +61,14 @@ import edu.ucsf.rbvi.stringApp.internal.utils.EnrichmentUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.TextIcon;
 
+/**
+ * Cytoscape south {@link CytoPanelComponent2} ("STRING Publications") that
+ * displays the PubMed-enrichment results table for the current network,
+ * backed by an {@link EnrichmentTableModel} built from the network's PMID
+ * enrichment {@link CyTable}. Lets the user select analyzed nodes, export
+ * the table via {@link ExportEnrichmentTableTask}, and click publication IDs
+ * to open them in PubMed through the {@link OpenBrowser} service.
+ */
 public class PublicationsCytoPanel extends JPanel
 		implements CytoPanelComponent2, ListSelectionListener, ActionListener, RowsSetListener, SetCurrentNetworkListener {
 	// TableModelListener

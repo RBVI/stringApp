@@ -26,6 +26,13 @@ import edu.ucsf.rbvi.stringApp.internal.ui.DiseaseQueryPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.SearchOptionsPanel;
 import edu.ucsf.rbvi.stringApp.internal.utils.TextIcon;
 
+/**
+ * Network search task factory that adds the "STRING: disease query" entry to Cytoscape's network
+ * search bar, letting the user search the DISEASES database for a disease term and build a
+ * STRING network of the top associated human proteins. Its task iterator opens a
+ * {@link DiseaseQueryPanel} dialog to resolve ambiguous disease terms and import the network;
+ * the confidence cutoff and other options come from a {@link SearchOptionsPanel}.
+ */
 public class DiseaseSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	StringManager manager;
 	static String DISEASE_ID = "edu.ucsf.rbvi.disease";

@@ -26,6 +26,14 @@ import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task that builds an EnrichmentMap network from a filtered STRING enrichment table, by
+ * delegating to the EnrichmentMap app's "build-table" command with the Jaccard similarity
+ * cutoff and p-value/q-value/term/gene columns of the enrichment table. Optionally copies
+ * selected numeric node-table columns into a temporary expression table so they are imported
+ * into EnrichmentMap as node attribute values, and as a {@link TaskObserver} triggers an
+ * EnrichmentMap chart command once the build finishes.
+ */
 public class EnrichmentMapAdvancedTask extends AbstractTask implements TaskObserver{
 
 	private final StringManager manager;

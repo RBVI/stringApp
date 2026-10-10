@@ -27,6 +27,12 @@ import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.TextUtils;
 
+/**
+ * Task that queries the DISEASES text-mining database for proteins associated with a
+ * disease term, resolves the matched entities to STRING identifiers, and schedules a
+ * {@link LoadInteractions} task (followed by {@code AddTextMiningResultsTask}) to
+ * build the resulting network.
+ */
 public class GetStringIDsFromDiseasesTask extends AbstractTask implements ObservableTask {
 	final StringNetwork stringNetwork;
 	final StringManager manager;

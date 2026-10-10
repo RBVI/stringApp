@@ -7,8 +7,13 @@ import org.cytoscape.io.webservice.swing.AbstractWebServiceGUIClient;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
+/**
+ * Cytoscape web-service client that registers the "STRING: disease query"
+ * entry in the Import Network From Web Service dialog, using
+ * {@link DiseaseQueryPanel} as its GUI.
+ */
 // TODO: [Optional] Improve non-gui mode
-public class DiseaseNetworkWebServiceClient extends AbstractWebServiceGUIClient 
+public class DiseaseNetworkWebServiceClient extends AbstractWebServiceGUIClient
                                             implements NetworkImportWebServiceClient, SearchWebServiceClient {
 	StringManager manager;
 

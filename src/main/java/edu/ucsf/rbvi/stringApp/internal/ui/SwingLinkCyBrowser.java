@@ -10,6 +10,13 @@ import javax.swing.JLabel;
 
 import org.cytoscape.util.swing.OpenBrowser;
 
+/**
+ * A {@link JLabel} styled and behaving like a hyperlink: it renders its text
+ * underlined, shows a hand cursor on hover, and opens the associated URI
+ * through Cytoscape's {@link OpenBrowser} service when clicked. Used, for
+ * example, as the clickable PubMed ID renderer in
+ * {@link PublicationsCytoPanel}.
+ */
 public class SwingLinkCyBrowser extends JLabel {
   private static final long serialVersionUID = 8273875024682878518L;
   private String text;

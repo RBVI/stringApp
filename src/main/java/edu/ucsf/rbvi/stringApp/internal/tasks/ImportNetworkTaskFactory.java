@@ -11,6 +11,14 @@ import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 
+/**
+ * Task factory that picks the right network-building task for a STRING/STITCH query
+ * result: {@link LoadSpeciesInteractions} when no specific identifiers were given
+ * (whole-species or viral queries), {@link LoadInteractions2} or {@link LoadInteractions}
+ * to create a brand-new network from a list of resolved identifiers (depending on the
+ * database and whether the species is viral), or {@link LoadTermsTask} to augment an
+ * existing {@link StringNetwork} with additional terms.
+ */
 public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 	final StringNetwork stringNet;
 	final String speciesName;

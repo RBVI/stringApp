@@ -2,6 +2,11 @@ package edu.ucsf.rbvi.stringApp.internal.model;
 
 
 
+/**
+ * Enumerates the external databases/APIs stringApp can query (STRING, Viruses, STITCH,
+ * String-db, JensenLab), pairing each one's display name with the name used to identify
+ * it in API calls.
+ */
 public enum Databases {
 	STRING("String", "string"),
 	// AGOTOOL("aGOtool", "agotool")

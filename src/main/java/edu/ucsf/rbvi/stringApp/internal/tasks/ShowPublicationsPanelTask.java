@@ -15,6 +15,14 @@ import org.cytoscape.work.TaskMonitor;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.ui.PublicationsCytoPanel;
 
+/**
+ * Task that registers or unregisters the {@link PublicationsCytoPanel} as a
+ * {@code CytoPanelComponent} in the south {@code CytoPanel}: if the panel is
+ * already present it is unregistered and cleared from the
+ * {@link StringManager}, otherwise a new panel is created, registered, and
+ * docked. Also provides a static helper to check whether the panel is
+ * currently registered.
+ */
 public class ShowPublicationsPanelTask extends AbstractTask {
 	final StringManager manager;
 	final boolean show;

@@ -5,6 +5,13 @@ import org.cytoscape.work.TaskIterator;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
+/**
+ * Task factory that dispatches to the appropriate STRING/STITCH query task based on
+ * a query type string ("protein", "additional", "disease", "pubmed", "compound", or
+ * "cross-species"), creating a {@link ProteinQueryTask}, {@link ProteinQueryAdditionalTask},
+ * {@code DiseaseQueryTask}, {@link PubmedQueryTask}, {@code CompoundQueryTask}, or
+ * {@code CrossSpeciesQueryTask} respectively. Backs the various "Query" menu commands.
+ */
 public class GetNetworkTaskFactory extends AbstractTaskFactory {
 	final StringManager manager;
 	final String type;

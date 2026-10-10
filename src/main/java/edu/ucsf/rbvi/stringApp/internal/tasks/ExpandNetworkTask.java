@@ -46,6 +46,14 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.StringResults;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
+/**
+ * Task created by {@link ExpandNetworkTaskFactory} that expands an existing STRING network by
+ * adding more interactors (proteins of the network's or another species, or STITCH compounds)
+ * around either the whole network or a selected subset of nodes. It queries STRING-DB and/or
+ * Jensenlab for the additional interactors at the given selectivity/confidence, adds the new
+ * nodes and edges to the network, and refreshes the view's edge style if one is present.
+ * Implements {@link ObservableTask} so the result can be returned to callers.
+ */
 public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 	CyNetworkView netView;

@@ -7,8 +7,13 @@ import org.cytoscape.io.webservice.swing.AbstractWebServiceGUIClient;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
+/**
+ * Cytoscape web-service client that registers the "STRING: PubMed query"
+ * entry in the Import Network From Web Service dialog, using
+ * {@link PubMedQueryPanel} as its GUI.
+ */
 // TODO: [Optional] Improve non-gui mode
-public class TextMiningWebServiceClient extends AbstractWebServiceGUIClient 
+public class TextMiningWebServiceClient extends AbstractWebServiceGUIClient
                                         implements NetworkImportWebServiceClient, SearchWebServiceClient {
 	StringManager manager;
 

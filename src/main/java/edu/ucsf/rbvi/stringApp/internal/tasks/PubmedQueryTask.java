@@ -19,6 +19,11 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.StringResults;
 
+/**
+ * Command task ("query PubMed") that runs a {@link GetStringIDsFromPubmedTask} to
+ * build a STRING network from the proteins associated with the results of a PubMed
+ * search query for a given species.
+ */
 public class PubmedQueryTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 

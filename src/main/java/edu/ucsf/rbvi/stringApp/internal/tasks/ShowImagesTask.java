@@ -17,6 +17,13 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
+/**
+ * Task that toggles display of structure/compound images for a network view
+ * (or, in the no-view command form, for the current network's ding view),
+ * updating the chemViz passthrough mapping for STITCH networks, refreshing
+ * the view, and persisting the show-image preference on the
+ * {@link StringManager}.
+ */
 public class ShowImagesTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 	CyNetworkView netView;

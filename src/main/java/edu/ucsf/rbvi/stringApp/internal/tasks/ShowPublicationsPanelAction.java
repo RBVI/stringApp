@@ -11,6 +11,13 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 @SuppressWarnings("serial")
+/**
+ * Checkbox menu action, under Apps &gt; STRING Enrichment, that shows or hides
+ * the publications {@link org.cytoscape.application.swing.CytoPanel} by
+ * running the {@link ShowPublicationsPanelTaskFactory}'s task iterator; it is
+ * enabled only for STRING networks and reflects whether the panel is
+ * currently registered.
+ */
 public class ShowPublicationsPanelAction extends AbstractCyAction {
 
 	final StringManager manager;

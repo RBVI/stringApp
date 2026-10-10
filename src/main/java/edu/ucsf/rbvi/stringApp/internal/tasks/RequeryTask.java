@@ -12,6 +12,11 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task that re-runs a STRING network query to refresh an out-of-date network: it
+ * reads the network's stored species, confidence, and network type and delegates to
+ * a {@code StringifyTask} to re-fetch and rebuild the network with current data.
+ */
 public class RequeryTask extends AbstractTask {
 
 	final StringManager manager;

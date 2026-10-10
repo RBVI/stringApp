@@ -34,6 +34,13 @@ import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
+/**
+ * Task that creates a new network from a list of resolved STRING/STITCH/STRING-DB
+ * identifiers by querying the appropriate network-retrieval API, then sets STRING
+ * network metadata (confidence, network type, database, species, data version), adds
+ * node annotations and extra node data when applicable, and styles and lays out the
+ * resulting {@code CyNetwork}/{@code CyNetworkView}.
+ */
 public class LoadInteractions extends AbstractTask {
 	final StringNetwork stringNet;
 	final String speciesName;

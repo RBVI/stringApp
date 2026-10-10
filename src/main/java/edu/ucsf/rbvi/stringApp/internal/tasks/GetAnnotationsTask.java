@@ -13,6 +13,12 @@ import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 
+/**
+ * Queries the STRING/STITCH annotation service for a given set of terms and species,
+ * storing the resulting map of term to {@link Annotation} list for later retrieval.
+ * Used to resolve free-text annotation terms (e.g. disease or compound names) against
+ * a {@link StringNetwork} before they are used elsewhere in the app.
+ */
 public class GetAnnotationsTask extends AbstractTask implements ObservableTask {
 	final StringNetwork stringNetwork;
 	final Species species;

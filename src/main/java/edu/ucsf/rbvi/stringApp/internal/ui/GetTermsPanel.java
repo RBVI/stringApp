@@ -58,8 +58,20 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.ImportNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.TextUtils;
 
+/**
+ * Swing panel for the "STRING: protein query" / "STITCH: protein/compound
+ * query" import dialogs, backing {@link StringWebServiceClient} and
+ * {@link StitchWebServiceClient} (and reused for adding interaction partner
+ * nodes). Lets the user enter protein/compound names or identifiers, select
+ * a species, and set search options via an embedded
+ * {@link SearchOptionsPanel}; resolves ambiguous terms to STRING identifiers
+ * (with help from {@link ResolveTableModel} and the Select/Clear term
+ * actions), then launches {@link GetAnnotationsTask} and an
+ * {@link ImportNetworkTaskFactory} task iterator to build the
+ * {@link StringNetwork}, optionally followed by enrichment retrieval.
+ */
 // TODO: [Optional] Improve non-gui mode
-public class GetTermsPanel extends JPanel implements TaskObserver { 
+public class GetTermsPanel extends JPanel implements TaskObserver {
 	StringNetwork stringNetwork = null;
 	StringNetwork initialStringNetwork = null;
 	final StringManager manager;

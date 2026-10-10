@@ -12,6 +12,10 @@ import org.cytoscape.work.json.JSONResult;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
 
+/**
+ * Task that resets (hides) the enrichment charts shown in the {@link EnrichmentCytoPanel},
+ * invoked on the Swing event thread.
+ */
 public class HideChartsTask extends AbstractTask implements ObservableTask {
 
 	private StringManager manager;

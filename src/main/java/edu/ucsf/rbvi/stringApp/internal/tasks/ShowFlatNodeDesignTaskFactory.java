@@ -8,6 +8,12 @@ import org.cytoscape.work.TaskIterator;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task factory, usable both as a network-view task factory and a no-argument
+ * {@link TaskFactory} (for command-line use), that creates a
+ * {@link ShowFlatNodeDesignTask} to toggle STRING's flat node design. The
+ * view-based form is ready only for STRING network views.
+ */
 public class ShowFlatNodeDesignTaskFactory extends AbstractNetworkViewTaskFactory implements TaskFactory {
 
 	final StringManager manager;

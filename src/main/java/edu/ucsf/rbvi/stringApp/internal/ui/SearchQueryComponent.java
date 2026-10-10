@@ -29,6 +29,13 @@ import javax.swing.event.DocumentListener;
 import org.cytoscape.application.swing.search.NetworkSearchTaskFactory;
 import org.cytoscape.util.swing.LookAndFeelUtil;
 
+/**
+ * Custom search box used as the stringApp's
+ * {@link NetworkSearchTaskFactory} query component in Cytoscape's network
+ * search bar. Displays as a single-line {@link JTextField} with placeholder
+ * text, but clicking it pops up a multi-line {@link JTextArea} so the user
+ * can enter one search term per line, submitting with Ctrl/Cmd+Enter.
+ */
 public class SearchQueryComponent extends JTextField {
 	private static final long serialVersionUID = 1L;
 	private JTextArea queryTextArea = null;

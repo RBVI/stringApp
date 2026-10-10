@@ -8,6 +8,11 @@ import org.cytoscape.view.model.CyNetworkView;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
+/**
+ * Swing variant of {@link GetClusterEnrichmentTask} that reports background-mismatch
+ * errors to the user through a Swing {@code JOptionPane} dialog instead of silently
+ * discarding them.
+ */
 public class GetClusterEnrichmentTaskSwing extends GetClusterEnrichmentTask {
 
 	public GetClusterEnrichmentTaskSwing(StringManager manager, CyNetwork network, CyNetworkView netView,

@@ -13,6 +13,13 @@ import org.cytoscape.work.Tunable;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
+/**
+ * Task that toggles STRING's flat node design for a network view (or, in the
+ * no-view command form, for the current network's ding view), disabling the
+ * glass ball effect when flat design is turned on, updating the visual style
+ * used by every open STRING network view, and persisting the preference on
+ * the {@link StringManager}.
+ */
 public class ShowFlatNodeDesignTask extends AbstractTask {
 	final StringManager manager;
 	CyNetworkView netView;

@@ -10,6 +10,13 @@ import org.cytoscape.work.TaskIterator;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
+/**
+ * Task factory that creates an {@link AddNamespacesTask} to migrate STRING networks created
+ * with an older data version to the current namespaced column naming scheme (e.g. prefixing
+ * node/edge columns with the STRINGDB, tissue, or compartment namespace). It can be used both
+ * for a specific set of networks and, via the no-argument variant, for networks discovered
+ * elsewhere in the app.
+ */
 public class AddNamespacesTaskFactory extends AbstractTaskFactory implements TaskFactory {
 	final StringManager manager;
 

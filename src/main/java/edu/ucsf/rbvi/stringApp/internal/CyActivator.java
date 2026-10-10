@@ -73,6 +73,15 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.view.StringCustomGraphicsFactory;
 import edu.ucsf.rbvi.stringApp.internal.view.StringLayer;
 
+/**
+ * The OSGi bundle activator for stringApp. On bundle start, it builds the shared
+ * {@link StringManager}, determines the stringApp version, and registers all of the
+ * app's services with Cytoscape's service registry: network/task factories for STRING,
+ * STITCH, enrichment, publications and structure-image queries, their menu items under
+ * Apps.STRING, their corresponding Commands API entries, the custom graphics factory used
+ * to render STRING-style node glyphs, and the network/session listeners that keep the
+ * manager in sync with the current Cytoscape session.
+ */
 // TODO: [Optional] Improve non-gui mode
 public class CyActivator extends AbstractCyActivator {
 	String JSON_EXAMPLE = "{\"SUID\":1234}";

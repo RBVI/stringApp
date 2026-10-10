@@ -7,6 +7,11 @@ import org.cytoscape.work.TaskIterator;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task factory that creates a {@link SetLabelAttributeTask} letting the user choose
+ * which node table attribute is used in the enhanced ("STRING style") node label.
+ * It is only ready for STRING networks while enhanced labels are enabled.
+ */
 public class SetLabelAttributeTaskFactory extends AbstractNetworkTaskFactory {
 
 	final StringManager manager;

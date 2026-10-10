@@ -11,6 +11,13 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 @SuppressWarnings("serial")
+/**
+ * Checkbox menu action, under Apps &gt; STRING, that toggles display of STRING
+ * structure images on the current network view by running the
+ * {@link ShowImagesTaskFactory}'s task iterator; it is enabled only for
+ * STRING networks and reflects the current show-image state in its checked
+ * state.
+ */
 public class ShowImagesPanelAction extends AbstractCyAction {
 
 

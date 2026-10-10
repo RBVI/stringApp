@@ -16,6 +16,12 @@ import org.cytoscape.work.util.ListSingleSelection;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
 
+/**
+ * Task that lets the user pick, from a tunable list of the node table's string
+ * columns, which attribute supplies the text of the enhanced label style
+ * (the {@code ELABEL_STYLE} node table column), then rewrites that style string
+ * for every row of the network's node table to reference the chosen attribute.
+ */
 public class SetLabelAttributeTask extends AbstractTask {
 
 	final StringManager manager;

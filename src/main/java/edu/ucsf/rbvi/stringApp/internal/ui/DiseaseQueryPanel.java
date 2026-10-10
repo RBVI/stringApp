@@ -42,8 +42,17 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.GetEnrichmentTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetStringIDsFromDiseasesTask;
 
+/**
+ * Swing panel for the "STRING: disease query" dialog, backing
+ * {@link DiseaseNetworkWebServiceClient}. Lets the user enter a disease name,
+ * resolves it to one or more DISEASES database terms via
+ * {@link GetDiseaseTermsTask} (showing a resolution table when the term is
+ * ambiguous), and then imports a {@link StringNetwork} of associated human
+ * proteins via {@link GetStringIDsFromDiseasesTask}, optionally followed by
+ * enrichment retrieval.
+ */
 // TODO: [Optional] Improve non-gui mode
-public class DiseaseQueryPanel extends JPanel implements TaskObserver { 
+public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 	StringNetwork stringNetwork = null;
 	StringNetwork initialStringNetwork = null;
 	final StringManager manager;

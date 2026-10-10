@@ -5,6 +5,11 @@ import java.awt.event.ActionEvent;
 
 import java.util.Map;
 
+/**
+ * A Swing action, used on a button in {@link GetTermsPanel}'s ambiguous-term
+ * resolution table, that deselects all annotation choices for every query
+ * term by clearing each term's {@link ResolveTableModel}.
+ */
 class ClearEverythingAction extends AbstractAction {
 	final Map<String, ResolveTableModel> tableModelMap;
 	

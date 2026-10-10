@@ -11,6 +11,12 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 @SuppressWarnings("serial")
+/**
+ * Checkbox menu action, under Apps &gt; STRING Enrichment, that shows or hides the
+ * enrichment {@link CytoPanel} by running the
+ * {@link ShowEnrichmentPanelTaskFactory}'s task iterator; it is enabled only
+ * for STRING networks and reflects whether the panel is currently registered.
+ */
 public class ShowEnrichmentPanelAction extends AbstractCyAction {
 
 	final StringManager manager;

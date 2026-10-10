@@ -13,6 +13,13 @@ import org.cytoscape.work.Tunable;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
+/**
+ * Task that toggles STRING's glass ball node effect for a network view (or, in
+ * the no-view command form, for the current network's ding view), disabling
+ * flat node design when the glass ball effect is turned on, updating the
+ * visual style used by every open STRING network view, and persisting the
+ * preference on the {@link StringManager}.
+ */
 public class ShowGlassBallEffectTask extends AbstractTask {
 	final StringManager manager;
 	CyNetworkView netView;

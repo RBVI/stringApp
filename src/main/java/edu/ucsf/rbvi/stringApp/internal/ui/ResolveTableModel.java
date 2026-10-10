@@ -7,6 +7,13 @@ import javax.swing.table.AbstractTableModel;
 
 import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
 
+/**
+ * Table model backing the ambiguous-term resolution table shown by
+ * {@link GetTermsPanel} when a query term matches more than one STRING
+ * annotation. Each row holds one candidate {@link Annotation} with a
+ * selection checkbox, and toggling it notifies the owning panel so it can
+ * track which STRING identifier has been chosen for the term.
+ */
 class ResolveTableModel extends AbstractTableModel {
 	private GetTermsPanel wsClient;
 	private List<Annotation> annotations;

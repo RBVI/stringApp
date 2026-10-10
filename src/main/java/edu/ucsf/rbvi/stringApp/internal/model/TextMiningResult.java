@@ -1,5 +1,10 @@
 package edu.ucsf.rbvi.stringApp.internal.model;
 
+/**
+ * Immutable record of a single text-mining (PubMed) hit, pairing an identifier and name
+ * with foreground/background counts, a score, and whether it represents a disease term.
+ * Sorts naturally by ascending score.
+ */
 public class TextMiningResult implements Comparable<TextMiningResult> {
 	final private String id;
 	final private String name;

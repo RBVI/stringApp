@@ -17,6 +17,12 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
 import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 
+/**
+ * Queries the STRING entity search service for disease terms matching a free-text
+ * search string for a given species (taxon), restricting results to the disease
+ * entity type. The matched {@link EntityIdentifier} list is made available to callers
+ * for use in building disease-based queries.
+ */
 public class GetDiseaseTermsTask extends AbstractTask implements ObservableTask {
 	final StringManager stringManager;
 	final int taxon;

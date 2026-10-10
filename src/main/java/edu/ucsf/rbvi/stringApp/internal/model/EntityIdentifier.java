@@ -1,5 +1,10 @@
 package edu.ucsf.rbvi.stringApp.internal.model;
 
+/**
+ * Immutable record of a single identifier match returned by a STRING identifier
+ * resolution query, pairing the originally matched name, the resolved primary name, its
+ * STRING entity type, and its identifier string. Sorts naturally by primary name.
+ */
 public class EntityIdentifier implements Comparable<EntityIdentifier> {
 	final private String matchedName;
 	final private String primaryName;

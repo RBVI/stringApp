@@ -40,6 +40,15 @@ import edu.ucsf.rbvi.stringApp.internal.ui.SearchQueryComponent;
 import edu.ucsf.rbvi.stringApp.internal.utils.TextIcon;
 import edu.ucsf.rbvi.stringApp.internal.utils.TextUtils;
 
+/**
+ * Network search task factory that backs the "STRING: protein query" entry in
+ * Cytoscape's network search bar, letting the user search STRING for
+ * protein-protein interactions by protein name. It builds a
+ * {@link GetAnnotationsTask} to resolve the query terms, then as a
+ * {@link TaskObserver} either imports the resulting network (via
+ * {@link ImportNetworkTaskFactory}), triggers an enrichment query if
+ * requested, or shows a dialog to resolve ambiguous terms.
+ */
 public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory implements TaskObserver {
 	StringManager manager;
 	static String STRING_ID = "edu.ucsf.rbvi.string";

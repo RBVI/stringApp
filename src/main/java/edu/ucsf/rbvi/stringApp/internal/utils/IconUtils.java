@@ -5,6 +5,11 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.io.IOException;
 
+/**
+ * Non-instantiable holder of the glyph codes, color arrays, and layered-icon
+ * definitions for stringApp's custom icon font, used to render the STRING,
+ * EnrichmentMap, and search-type icons in menus and dialogs.
+ */
 public abstract class IconUtils {
 	
 	// stringApp Icon

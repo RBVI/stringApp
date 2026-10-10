@@ -17,6 +17,12 @@ import javax.swing.AbstractButton;
 import javax.swing.Icon;
 import javax.swing.UIManager;
 
+/**
+ * A Swing {@link Icon} that renders one or more layers of text, each with its own font
+ * and color, stacked on top of each other at a fixed size; used to draw stringApp's
+ * glyph-font based icons on buttons and menus, with support for disabling individual
+ * layers.
+ */
 public class TextIcon implements Icon {
 
 	private final Color TRANSPARENT_COLOR = new Color(255, 255, 255, 0);

@@ -7,6 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Enumerates the STRING evidence channels (databases, text mining, experiments,
+ * coexpression, neighborhood, co-occurrence, gene fusions, similarity), each paired with
+ * a default display color, and provides helpers to get the ordered list of channels for
+ * a given network type and a name-to-color map for all channels.
+ */
 public enum EvidenceType {
 
 	DATABASES("databases", Color.CYAN),

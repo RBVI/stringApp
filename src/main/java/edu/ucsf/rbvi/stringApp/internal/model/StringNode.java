@@ -17,6 +17,11 @@ import org.cytoscape.model.CyNode;
 import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Wraps a single {@link CyNode} belonging to a {@link StringNetwork}, providing typed
+ * accessors to the STRING-specific node table columns such as its display name, species,
+ * STRING identifier, structure image URL, and UniProt accession.
+ */
 public class StringNode {
 	final StringNetwork stringNetwork;
 	final CyNode stringNode;

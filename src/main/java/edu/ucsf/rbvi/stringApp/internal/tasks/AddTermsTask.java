@@ -15,6 +15,11 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.ui.GetTermsPanel;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task created by {@link AddTermsTaskFactory} to let the user query for additional nodes to add
+ * to an existing STRING network. It displays the {@link GetTermsPanel} dialog, pre-populated
+ * with the network's database and species, so the user can search for and add more terms.
+ */
 public class AddTermsTask extends AbstractTask {
 	final StringManager manager;
 	final CyNetwork network;

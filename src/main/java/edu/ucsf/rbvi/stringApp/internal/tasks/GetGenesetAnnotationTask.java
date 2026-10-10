@@ -43,6 +43,12 @@ import edu.ucsf.rbvi.stringApp.internal.utils.EnrichmentUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task that retrieves gene set (geneset_description) annotations from STRING for
+ * each group of nodes defined by a user-selected node table column, writes the
+ * primary/secondary/tertiary descriptions into node table columns, and adds a text
+ * annotation describing each group to the current network view.
+ */
 public class GetGenesetAnnotationTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 	final CyNetwork network;

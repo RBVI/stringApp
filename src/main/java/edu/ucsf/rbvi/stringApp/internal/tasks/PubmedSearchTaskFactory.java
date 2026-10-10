@@ -43,6 +43,12 @@ import edu.ucsf.rbvi.stringApp.internal.ui.PubMedQueryPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.SearchOptionsPanel;
 import edu.ucsf.rbvi.stringApp.internal.utils.TextIcon;
 
+/**
+ * Network-search task factory ("STRING: PubMed query") that integrates a PubMed-query
+ * search box and species/options panel into Cytoscape's network search bar. On search
+ * it opens a {@code PubMedQueryPanel} dialog to resolve ambiguous terms and import the
+ * resulting STRING network.
+ */
 public class PubmedSearchTaskFactory extends AbstractNetworkSearchTaskFactory {
 	StringManager manager;
 	static String PUBMED_ID = "edu.ucsf.rbvi.pubmed";

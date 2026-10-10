@@ -8,6 +8,13 @@ import org.cytoscape.work.TaskIterator;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task factory, usable both as a network task factory and a no-argument
+ * {@link TaskFactory} (for command-line use), that creates a
+ * {@link StringifyTask} to convert an existing network's nodes into a STRING
+ * network by mapping a chosen node column to STRING/STITCH identifiers. It is
+ * ready for any network that is not already recognized as a STRING network.
+ */
 public class StringifyTaskFactory extends AbstractNetworkTaskFactory implements TaskFactory {
 	final StringManager manager;
 

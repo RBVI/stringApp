@@ -23,6 +23,13 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentTableModel;
 
+/**
+ * Task created by {@link FilterEnrichmentTableTaskFactory} that filters the STRING enrichment
+ * table shown in the {@link EnrichmentCytoPanel} by term category and, optionally, removes
+ * redundant terms whose genes overlap above a Jaccard similarity cutoff. It stores the chosen
+ * filter settings on the network/group, re-filters the panel's {@link EnrichmentTableModel}, and
+ * (via {@link ObservableTask}) returns the SUID of the resulting filtered {@link CyTable}.
+ */
 public class FilterEnrichmentTableTask extends AbstractTask implements ObservableTask {
 
 	private StringManager manager;

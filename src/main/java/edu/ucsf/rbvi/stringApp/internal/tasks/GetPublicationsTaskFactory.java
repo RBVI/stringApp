@@ -12,6 +12,12 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.EnrichmentUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task factory for the "Retrieve enriched publications" command/menu item, enabled
+ * for STRING/STITCH networks with known species. It creates a {@link GetEnrichmentTask}
+ * (or {@link GetEnrichmentTaskSwing} when a GUI is available) in publication-only
+ * mode, so the publications panel can be populated instead of the enrichment panel.
+ */
 public class GetPublicationsTaskFactory extends AbstractNetworkTaskFactory
 		implements NetworkViewTaskFactory {
 	final StringManager manager;

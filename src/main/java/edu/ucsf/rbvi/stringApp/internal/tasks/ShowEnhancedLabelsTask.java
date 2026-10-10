@@ -13,6 +13,12 @@ import org.cytoscape.work.Tunable;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
+/**
+ * Task that toggles STRING-style enhanced node labels for a network view (or,
+ * in the no-view command form, for the current network's ding view), updating
+ * the visual style used by every open STRING network view accordingly and
+ * persisting the enhanced-labels preference on the {@link StringManager}.
+ */
 public class ShowEnhancedLabelsTask extends AbstractTask {
 	final StringManager manager;
 	CyNetworkView netView;

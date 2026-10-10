@@ -11,6 +11,13 @@ import org.cytoscape.work.Tunable;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
+/**
+ * Task backing the "Network-specific settings for STRING Enrichment table" command. It presents
+ * the {@link EnrichmentSettings} tunables (chart type, top-terms count, palette, overlap
+ * cutoff) for a given term-category group, stores them on the current network (and, if
+ * requested, as the new application-wide defaults), and then re-runs
+ * {@link ShowChartsTaskFactory} to refresh the enrichment charts with the new settings.
+ */
 public class EnrichmentSettingsTask extends AbstractTask {
 
 	private StringManager manager;

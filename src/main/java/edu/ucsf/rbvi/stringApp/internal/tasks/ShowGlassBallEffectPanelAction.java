@@ -11,6 +11,13 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 @SuppressWarnings("serial")
+/**
+ * Checkbox menu action, under Apps &gt; STRING, that toggles STRING's glass ball
+ * node effect on the current network view by running the
+ * {@link ShowGlassBallEffectTaskFactory}'s task iterator; it is enabled only
+ * for STRING networks and reflects the current glass-ball-effect state in its
+ * checked state.
+ */
 public class ShowGlassBallEffectPanelAction extends AbstractCyAction {
 
 

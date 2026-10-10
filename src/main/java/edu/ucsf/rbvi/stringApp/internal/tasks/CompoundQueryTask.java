@@ -24,6 +24,13 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.utils.StringResults;
 
+/**
+ * Task backing the "STITCH Compound/Protein Query" command, which queries STITCH for a mix of
+ * compound and protein names/identifiers (optionally restricted to a species and confidence
+ * cutoff) and builds a new STRING/STITCH network of the matched terms plus their top
+ * interactors via {@link LoadInteractions2}. Implements {@link ObservableTask} so the resulting
+ * network can be returned to callers (e.g. Commands/scripting).
+ */
 public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 	final StringManager manager;
 

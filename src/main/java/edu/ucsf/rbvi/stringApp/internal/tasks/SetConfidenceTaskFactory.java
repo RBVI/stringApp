@@ -7,6 +7,12 @@ import org.cytoscape.work.TaskIterator;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task factory that creates a {@link SetConfidenceTask} for marking a merged
+ * network (one produced by combining multiple STRING/STITCH results) as a STRING
+ * network. It is only ready for networks that are already merged STRING networks
+ * but not yet recognized as such.
+ */
 public class SetConfidenceTaskFactory extends AbstractNetworkTaskFactory {
 	final StringManager manager;
 

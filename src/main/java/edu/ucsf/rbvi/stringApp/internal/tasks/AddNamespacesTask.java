@@ -16,6 +16,12 @@ import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ColumnNames;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
+/**
+ * Task that upgrades older STRING networks to the current namespaced column naming convention.
+ * For each network it rewrites the old data version and clears the stored network URI, then
+ * copies values from legacy node and edge table columns (e.g. tissue and compartment columns)
+ * into new columns prefixed with the appropriate namespace (STRINGDB, tissue, or compartment).
+ */
 public class AddNamespacesTask extends AbstractTask {
 
 	final StringManager manager;
