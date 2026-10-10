@@ -130,38 +130,6 @@ public class CyActivator extends AbstractCyActivator {
 			
 		}
 
-		/*
-		{
-			// Register our web service client
-			StringWebServiceClient client = new StringWebServiceClient(manager);
-			registerAllServices(bc, client, new Properties());
-		}
-		
-		{
-			// Register our text mining web service client
-			TextMiningWebServiceClient client = new TextMiningWebServiceClient(manager);
-			registerAllServices(bc, client, new Properties());
-		}
-		
-		{
-			// Register our disease network web service client
-			CrossSpeciesWebServiceClient client = new CrossSpeciesWebServiceClient(manager);
-			registerAllServices(bc, client, new Properties());
-		}
-		
-		{
-			// Register our disease network web service client
-			DiseaseNetworkWebServiceClient client = new DiseaseNetworkWebServiceClient(manager);
-			registerAllServices(bc, client, new Properties());
-		}
-		
-		{
-			// Register our stitch network web service client
-			StitchWebServiceClient client = new StitchWebServiceClient(manager);
-			registerAllServices(bc, client, new Properties());
-		}
-		*/
-
 		{
 			GetNetworkTaskFactory getNetwork = new GetNetworkTaskFactory(manager, "protein");
 			Properties props = new Properties();
@@ -816,35 +784,6 @@ public class CyActivator extends AbstractCyActivator {
 			Properties stringProps = new Properties();
 			registerService(bc, stringLookFactory, CyCustomGraphicsFactory.class, stringProps);
 		}
-
-		/*
-		    // Register our Network search factories
-    {
-      StringSearchTaskFactory stringSearch = new StringSearchTaskFactory(manager);
-      Properties propsSearch = new Properties();
-      registerService(bc, stringSearch, NetworkSearchTaskFactory.class, propsSearch);
-    }
-    {
-      StitchSearchTaskFactory stringSearch = new StitchSearchTaskFactory(manager);
-      Properties propsSearch = new Properties();
-      registerService(bc, stringSearch, NetworkSearchTaskFactory.class, propsSearch);
-    }
-    {
-      PubmedSearchTaskFactory stringSearch = new PubmedSearchTaskFactory(manager);
-      Properties propsSearch = new Properties();
-      registerService(bc, stringSearch, NetworkSearchTaskFactory.class, propsSearch);
-    }
-    {
-      CrossSpeciesSearchTaskFactory stringSearch = new CrossSpeciesSearchTaskFactory(manager);
-      Properties propsSearch = new Properties();
-      registerService(bc, stringSearch, NetworkSearchTaskFactory.class, propsSearch);
-    }
-    {
-      DiseaseSearchTaskFactory stringSearch = new DiseaseSearchTaskFactory(manager);
-      Properties propsSearch = new Properties();
-      registerService(bc, stringSearch, NetworkSearchTaskFactory.class, propsSearch);
-    }
-		*/
 
 		manager.info("stringApp " + version + " initialized.");
 		System.out.println("stringApp " + version + " initialized.");
