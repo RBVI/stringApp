@@ -1,6 +1,5 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;

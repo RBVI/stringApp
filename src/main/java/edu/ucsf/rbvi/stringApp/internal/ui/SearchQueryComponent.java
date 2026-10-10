@@ -13,10 +13,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.InputMap;

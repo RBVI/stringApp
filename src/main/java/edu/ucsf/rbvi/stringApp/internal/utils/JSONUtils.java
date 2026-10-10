@@ -2,7 +2,6 @@ package edu.ucsf.rbvi.stringApp.internal.utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;

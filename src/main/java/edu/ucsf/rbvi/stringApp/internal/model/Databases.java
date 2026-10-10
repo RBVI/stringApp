@@ -1,9 +1,6 @@
 package edu.ucsf.rbvi.stringApp.internal.model;
 
-import java.util.Properties;
 
-import org.cytoscape.application.CyUserLog;
-import org.apache.log4j.Logger;
 
 public enum Databases {
 	STRING("String", "string"),

@@ -7,11 +7,9 @@ import javax.swing.SwingUtilities;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.TaskMonitor;
-import org.cytoscape.work.Tunable;
 import org.cytoscape.work.json.JSONResult;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
-import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
 
 public class ShowChartsTask extends AbstractTask implements ObservableTask {

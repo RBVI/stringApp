@@ -1,7 +1,6 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
 import java.awt.Component;
-import java.util.List;
 import java.util.Properties;
 
 import org.cytoscape.application.swing.CySwingApplication;
@@ -10,13 +9,10 @@ import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelComponent2;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.application.swing.CytoPanelState;
-import org.cytoscape.model.CyNode;
-import org.cytoscape.model.events.RowsSetListener;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
-import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.PublicationsCytoPanel;
 
 public class ShowPublicationsPanelTask extends AbstractTask {

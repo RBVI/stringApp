@@ -3,7 +3,6 @@ package edu.ucsf.rbvi.stringApp.internal.ui;
 import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
 
-import java.util.List;
 import java.util.Map;
 
 class SelectAllTermAction extends AbstractAction {

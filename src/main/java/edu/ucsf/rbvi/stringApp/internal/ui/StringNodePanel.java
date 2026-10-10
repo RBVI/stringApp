@@ -1,10 +1,8 @@
 package edu.ucsf.rbvi.stringApp.internal.ui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -23,32 +21,17 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JSlider;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 import javax.swing.border.Border;
 
-
-import org.cytoscape.application.events.SetCurrentNetworkEvent;
-import org.cytoscape.application.events.SetCurrentNetworkListener;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTableUtil;
-import org.cytoscape.model.events.SelectedNodesAndEdgesEvent;
-import org.cytoscape.model.events.SelectedNodesAndEdgesListener;
-import org.cytoscape.task.NetworkTaskFactory;
-import org.cytoscape.util.swing.IconManager;
-import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;

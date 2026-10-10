@@ -14,10 +14,8 @@ import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.EntityIdentifier;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
-import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 
 import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
-import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class GetDiseaseTermsTask extends AbstractTask implements ObservableTask {
 	final StringManager stringManager;

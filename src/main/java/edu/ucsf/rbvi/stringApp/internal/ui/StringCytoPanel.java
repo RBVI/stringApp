@@ -13,7 +13,6 @@ import javax.swing.Icon;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.events.SetCurrentNetworkEvent;
 import org.cytoscape.application.events.SetCurrentNetworkListener;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -25,8 +24,6 @@ import org.cytoscape.application.swing.CytoPanelState;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.events.SelectedNodesAndEdgesEvent;
 import org.cytoscape.model.events.SelectedNodesAndEdgesListener;
-import org.cytoscape.util.swing.IconManager;
-import org.cytoscape.util.swing.OpenBrowser;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;

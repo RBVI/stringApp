@@ -10,14 +10,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.SwingUtilities;
 
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.util.color.BrewerType;
 import org.cytoscape.util.color.Palette;
 import org.cytoscape.util.color.PaletteProvider;
 import org.cytoscape.util.color.PaletteProviderManager;
-import org.cytoscape.util.color.PaletteType;
 import org.cytoscape.util.swing.CyColorPaletteChooser;
 import org.cytoscape.util.swing.CyColorPaletteChooserFactory;
 import org.cytoscape.view.model.CyNetworkView;
@@ -36,7 +34,6 @@ import org.cytoscape.work.util.BoundedDouble;
 import org.cytoscape.work.util.BoundedInteger;
 import org.cytoscape.work.util.ListSingleSelection;
 
-import edu.ucsf.rbvi.stringApp.internal.model.ChartType;
 import edu.ucsf.rbvi.stringApp.internal.model.NetworkType;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringChannelPaletteProvider;

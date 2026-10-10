@@ -18,10 +18,8 @@ import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.json.JSONResult;
-import org.cytoscape.work.util.BoundedDouble;
 import org.cytoscape.work.util.ListMultipleSelection;
 
-import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentTableModel;

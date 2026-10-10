@@ -6,7 +6,6 @@ import java.util.List;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.codec.binary.Base64;

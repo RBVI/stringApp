@@ -37,7 +37,6 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.table.TableCellEditor;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JTable;
 import java.awt.Color;
 import java.awt.Component;

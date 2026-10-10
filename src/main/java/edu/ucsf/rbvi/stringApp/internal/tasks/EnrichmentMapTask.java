@@ -2,7 +2,6 @@ package edu.ucsf.rbvi.stringApp.internal.tasks;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.SwingUtilities;
 
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyTable;

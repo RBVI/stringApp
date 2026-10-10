@@ -1,13 +1,8 @@
 package edu.ucsf.rbvi.stringApp.internal.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
 import java.awt.Image;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
@@ -16,14 +11,11 @@ import javax.swing.JTextArea;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
-import org.cytoscape.util.swing.BasicCollapsiblePanel;
 import org.cytoscape.util.swing.OpenBrowser;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNode;
-import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.OpenCyBrowser;
 
 /**

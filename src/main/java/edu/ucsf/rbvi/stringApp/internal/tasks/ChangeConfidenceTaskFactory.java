@@ -5,9 +5,6 @@ import javax.swing.JOptionPane;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.task.AbstractNetworkTaskFactory;
-import org.cytoscape.task.NetworkTaskFactory;
-import org.cytoscape.task.NetworkViewTaskFactory;
-import org.cytoscape.work.AbstractTaskFactory;
 import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 

@@ -5,16 +5,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import javax.swing.SwingUtilities;
 
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.util.color.BrewerType;
 import org.cytoscape.util.color.Palette;
 import org.cytoscape.util.color.PaletteProvider;
 import org.cytoscape.util.color.PaletteProviderManager;
-import org.cytoscape.util.color.PaletteType;
 import org.cytoscape.util.swing.CyColorPaletteChooser;
 import org.cytoscape.util.swing.CyColorPaletteChooserFactory;
 import org.cytoscape.work.Tunable;

@@ -1,7 +1,6 @@
 package edu.ucsf.rbvi.stringApp.internal.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class EnrichmentTerm implements Comparable<EnrichmentTerm> {

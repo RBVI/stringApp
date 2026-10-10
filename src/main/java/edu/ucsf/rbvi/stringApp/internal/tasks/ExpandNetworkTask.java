@@ -10,9 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-
 import org.cytoscape.command.StringToModel;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;

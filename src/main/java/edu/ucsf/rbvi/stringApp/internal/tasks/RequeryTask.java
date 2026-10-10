@@ -1,8 +1,5 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-
 import org.apache.log4j.Logger;
 import org.cytoscape.application.CyUserLog;
 import org.cytoscape.model.CyNetwork;

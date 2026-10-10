@@ -6,7 +6,6 @@ import java.util.Map;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.FinishStatus;
-import org.cytoscape.work.FinishStatus.Type;
 import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;

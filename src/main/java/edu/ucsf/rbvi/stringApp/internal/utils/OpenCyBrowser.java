@@ -3,8 +3,6 @@ package edu.ucsf.rbvi.stringApp.internal.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cytoscape.command.AvailableCommands;
-
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 
 public class OpenCyBrowser {

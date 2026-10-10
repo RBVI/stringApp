@@ -64,8 +64,6 @@ import org.cytoscape.model.CyTable;
 import org.cytoscape.model.CyTableFactory;
 import org.cytoscape.model.CyTableManager;
 import org.cytoscape.model.SavePolicy;
-import org.cytoscape.model.events.RowsSetEvent;
-import org.cytoscape.model.events.RowsSetListener;
 import org.cytoscape.model.events.SelectedNodesAndEdgesEvent;
 import org.cytoscape.model.events.SelectedNodesAndEdgesListener;
 import org.cytoscape.util.swing.CyColorPaletteChooserFactory;

@@ -11,7 +11,6 @@ import org.cytoscape.work.TaskMonitor.Level;
 import edu.ucsf.rbvi.stringApp.internal.model.Annotation;
 import edu.ucsf.rbvi.stringApp.internal.model.ConnectionException;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
-import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
 
 public class GetAnnotationsTask extends AbstractTask implements ObservableTask {

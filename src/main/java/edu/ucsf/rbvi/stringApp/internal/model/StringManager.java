@@ -57,7 +57,6 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.AddNamespacesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.SetConfidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnhancedLabelsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowEnrichmentPanelTaskFactory;
-import edu.ucsf.rbvi.stringApp.internal.tasks.ShowFlatNodeDesignPanelAction;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowGlassBallEffectTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowFlatNodeDesignTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.ShowImagesTaskFactory;

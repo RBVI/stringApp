@@ -1,6 +1,5 @@
 package edu.ucsf.rbvi.stringApp.internal.model;
 
-import java.awt.Color;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;

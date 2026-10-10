@@ -3,8 +3,6 @@ package edu.ucsf.rbvi.stringApp.internal.tasks;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.SwingUtilities;
-
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelName;

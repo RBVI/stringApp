@@ -5,45 +5,27 @@ import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.CROSS_SPECIES_LAY
 import static edu.ucsf.rbvi.stringApp.internal.utils.IconUtils.getIconFont;
 
 import java.awt.Color;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.WindowConstants;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import org.apache.log4j.Logger;
 
@@ -52,22 +34,15 @@ import org.cytoscape.application.swing.search.AbstractNetworkSearchTaskFactory;
 import org.cytoscape.application.swing.search.NetworkSearchTaskFactory;
 import org.cytoscape.util.swing.LookAndFeelUtil;
 import org.cytoscape.work.AbstractTask;
-import org.cytoscape.work.FinishStatus;
-import org.cytoscape.work.ObservableTask;
-import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.TaskObserver;
 
-import edu.ucsf.rbvi.stringApp.internal.model.Databases;
 import edu.ucsf.rbvi.stringApp.internal.model.Species;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 import edu.ucsf.rbvi.stringApp.internal.model.StringNetwork;
-import edu.ucsf.rbvi.stringApp.internal.tasks.GetAnnotationsTask;
-import edu.ucsf.rbvi.stringApp.internal.tasks.ImportNetworkTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.ui.EasyGBC;
 import edu.ucsf.rbvi.stringApp.internal.ui.JComboBoxDecorator;
-import edu.ucsf.rbvi.stringApp.internal.ui.PubMedQueryPanel;
 import edu.ucsf.rbvi.stringApp.internal.ui.SearchOptionsPanel;
 import edu.ucsf.rbvi.stringApp.internal.utils.TextIcon;
 

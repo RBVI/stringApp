@@ -1,12 +1,5 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import java.util.Arrays;
-import java.util.List;
-import javax.swing.SwingUtilities;
-
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ContainsTunables;
@@ -15,7 +8,6 @@ import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 
-import edu.ucsf.rbvi.stringApp.internal.model.ChartType;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
 

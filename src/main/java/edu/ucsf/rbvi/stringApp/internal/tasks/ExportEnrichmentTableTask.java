@@ -1,10 +1,6 @@
 package edu.ucsf.rbvi.stringApp.internal.tasks;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyTable;
@@ -14,13 +10,10 @@ import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
-import org.cytoscape.work.util.ListMultipleSelection;
 
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
-import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
 import edu.ucsf.rbvi.stringApp.internal.ui.EnrichmentCytoPanel;
 
-import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
 public class ExportEnrichmentTableTask extends AbstractTask {
 
