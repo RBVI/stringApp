@@ -135,17 +135,17 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 				nodeTypes.setSelectedValue(ModelUtils.COMPOUND);
 			}
 			// figure out what type of nodes we have, e.g. proteins, compounds or multiple species
-			Boolean multiSpecies = ModelUtils.getIsNetworkMultiSpecies(network);
+			Boolean multiSpecies = ModelUtils.getIsNetworkMultiSpecies(this.network);
 			List<String> sources = new ArrayList<String>();
-			if (ModelUtils.getProteinNodes(network).size() > 0) {
+			if (ModelUtils.getProteinNodes(this.network).size() > 0) {
 				if (multiSpecies != null & multiSpecies) {
-					sources.addAll(ModelUtils.getAllNetSpecies(network));
+					sources.addAll(ModelUtils.getAllNetSpecies(this.network));
 				} else {
 					sources.add(mixedTypeProteins);
 				}
 			}
 			Collections.sort(sources);
-			if (ModelUtils.getCompoundNodes(network).size() > 0) {
+			if (ModelUtils.getCompoundNodes(this.network).size() > 0) {
 				sources.add(mixedTypeCompounds);
 			} 
 			// if more than 1 type of nodes, initialize the nodeTypesSource tunable
