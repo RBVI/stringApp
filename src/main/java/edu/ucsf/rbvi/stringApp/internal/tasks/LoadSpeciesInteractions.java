@@ -87,6 +87,11 @@ public class LoadSpeciesInteractions extends AbstractTask {
 		String networkURL = "";
 
 		if (useDATABASE.equals(Databases.STRING.getAPIName()) && (species2 != null || Species.isViral(species))){
+			if (!netType.isJensenlabSupported()) {
+				this.errorMsg = NetworkType.JENSENLAB_UNSUPPORTED_MESSAGE;
+				monitor.showMessage(Level.ERROR, this.errorMsg);
+				return;
+			}
 			if (Species.isViral(species))
 				monitor.setTitle("Loading interactions from Jensenlab for " + species);
 			else

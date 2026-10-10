@@ -58,7 +58,7 @@ public class PubmedQueryTask extends AbstractTask implements ObservableTask {
 
 	@Tunable(description = "Type of edges to retrieve",
 	         longDescription="By default, the query will retrieve functional associations from STRING, but "
-	         		+ "it can be set to physical interactions using this option. ",
+	         		+ "it can be set to physical interactions or directed regulatory interactions using this option. ",
 	         exampleStringValue="full STRING network")
 	public ListSingleSelection<NetworkType> networkType;
 

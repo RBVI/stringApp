@@ -120,6 +120,7 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 	@Override
 	public JComponent getOptionsComponent() {
 		optionsPanel = new SearchOptionsPanel(manager);
+		optionsPanel.showRegulatoryNetwork(false); // STITCH has no regulatory networks
 		return optionsPanel;
 	}
 

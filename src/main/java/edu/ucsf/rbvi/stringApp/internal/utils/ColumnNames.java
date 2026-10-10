@@ -55,6 +55,8 @@ public class ColumnNames {
 	public static String SCORE = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "score";
 	public static String SCORE_NO_NAMESPACE = "score";
 	public static String INTERSPECIES = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "interspecies";
+	// Sign of a regulatory edge: "positive", "negative" or "unknown"
+	public static String REGULATION_SIGN = STRINGDB_NAMESPACE + NAMESPACE_SEPARATOR + "regulation sign";
 	
 	// Network information
 	public static String CONFIDENCE = "confidence score";

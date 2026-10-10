@@ -72,7 +72,7 @@ public class CrossSpeciesQueryTask extends AbstractTask implements ObservableTas
 		// Set Human as the default
 		species1 = Species.getHumanSpecies().toString();
 		species2 = null;
-		networkType = new ListSingleSelection<>(NetworkType.values());
+		networkType = new ListSingleSelection<>(NetworkType.FUNCTIONAL, NetworkType.PHYSICAL); // no regulatory networks in Jensenlab
 		networkType.setSelectedValue(NetworkType.FUNCTIONAL);
 	}
 

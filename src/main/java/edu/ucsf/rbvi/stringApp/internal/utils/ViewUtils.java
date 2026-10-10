@@ -22,7 +22,9 @@ import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.presentation.RenderingEngineManager;
 import org.cytoscape.view.presentation.customgraphics.CyCustomGraphics;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
+import org.cytoscape.view.presentation.property.ArrowShapeVisualProperty;
 import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
+import org.cytoscape.view.presentation.property.values.ArrowShape;
 import org.cytoscape.view.presentation.property.values.NodeShape;
 import org.cytoscape.view.vizmap.VisualMappingFunction;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
@@ -66,6 +68,7 @@ public class ViewUtils {
 		if (network.getDefaultNodeTable().getColumn(ColumnNames.TYPE) != null)
 			useStitch = true;
 		VisualStyle stringStyle = createStyle(manager, network, useStitch);
+		addRegulationArrowMapping(manager, stringStyle);
 
 		if (manager.showStringColors())
 			updateColorMap(manager, stringStyle, network);
@@ -103,6 +106,8 @@ public class ViewUtils {
 	public static void updateEdgeStyle(StringManager manager, CyNetworkView view, List<CyEdge> edges) {
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
 		VisualStyle style = vmm.getVisualStyle(view);
+		// Styles created before regulatory networks existed don't have the arrow mapping yet
+		addRegulationArrowMapping(manager, style);
 		for (CyEdge edge: edges) {
 			if (view.getEdgeView(edge) != null)
 			style.apply(view.getModel().getRow(edge), view.getEdgeView(edge));
@@ -264,6 +269,25 @@ public class ViewUtils {
 
 		vmm.addVisualStyle(stringStyle);
 		return stringStyle;
+	}
+
+	/**
+	 * Draw the target arrow of regulatory edges based on the sign of the regulation: an
+	 * arrow for positive, a T-bar for negative and an open arrow when the sign is unknown.
+	 * Edges without a sign (functional and physical networks) keep the default (no arrow).
+	 */
+	public static void addRegulationArrowMapping(StringManager manager, VisualStyle style) {
+		if (style == null || style.getVisualMappingFunction(BasicVisualLexicon.EDGE_TARGET_ARROW_SHAPE) != null)
+			return;
+		VisualMappingFunctionFactory discreteFactory = 
+				manager.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
+		DiscreteMapping<String,ArrowShape> dMapping = 
+				(DiscreteMapping) discreteFactory.createVisualMappingFunction(ColumnNames.REGULATION_SIGN, String.class, 
+				                                                              BasicVisualLexicon.EDGE_TARGET_ARROW_SHAPE);
+		dMapping.putMapValue("positive", ArrowShapeVisualProperty.DELTA);
+		dMapping.putMapValue("negative", ArrowShapeVisualProperty.T);
+		dMapping.putMapValue("unknown", ArrowShapeVisualProperty.ARROW);
+		style.addVisualMappingFunction(dMapping);
 	}
 
 	public static void updateChemVizPassthrough(StringManager manager, CyNetworkView view, boolean show) {

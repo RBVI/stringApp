@@ -58,6 +58,12 @@ public class ModelUtils {
 	public static String DEFAULT_NAME_STITCH = "STITCH network";
 	public static String DEFAULT_NAME_ADDON_PHYSICAL = "(physical)";
 	public static String DEFAULT_NAME_ADDON_PHYSICAL_REGEXP = " \\(physical\\)";
+	public static String DEFAULT_NAME_ADDON_REGULATORY = "(regulatory)";
+	public static String DEFAULT_NAME_ADDON_REGULATORY_REGEXP = " \\(regulatory\\)";
+
+	// Interaction types of STRING edges: functional, physical and regulatory
+	// protein-protein, plus functional and physical protein-compound and compound-compound
+	public static List<String> STRING_INTERACTION_TYPES = Arrays.asList("pp", "ppp", "rpp", "pc", "ppc", "cc");
 	
 	public static List<String> ignoreKeys = new ArrayList<String>(Arrays.asList("image", "canonical", "@id", "description"));
 	public static List<String> namespacedNodeAttributes = new ArrayList<String>(Arrays.asList("canonical name", "full name", "chemViz Passthrough", 
@@ -298,6 +304,7 @@ public class ModelUtils {
 	public static String inferNetworkType(CyNetwork network) {
 		int count_pp = 0;
 		int count_ppp = 0; 
+		int count_rpp = 0;
 		int count_others = 0;
 		for (CyEdge edge : network.getEdgeList()) {
 			String type = network.getRow(edge).get(CyEdge.INTERACTION, String.class);
@@ -305,12 +312,16 @@ public class ModelUtils {
 				continue;
 			else if (type.equals("ppp") || type.equals("ppc"))
 				count_ppp += 1;
+			else if (type.equals("rpp"))
+				count_rpp += 1;
 			else if (type.equals("pp") || type.equals("pc") || type.equals("cc"))
 				count_pp += 1;
 			else
 				count_others += 1;
 		}
-		if (count_ppp > (count_pp + count_others))
+		if (count_rpp > (count_pp + count_ppp + count_others))
+			return NetworkType.REGULATORY.toString();
+		else if (count_ppp > (count_pp + count_others))
 			return NetworkType.PHYSICAL.toString();
 		else 
 			return NetworkType.FUNCTIONAL.toString();
@@ -322,9 +333,7 @@ public class ModelUtils {
 		for (CyEdge edge: network.getEdgeList()) {
 			// check interaction type and save all edges that are string edges
 			String interactionType = network.getRow(edge).get(CyEdge.INTERACTION, String.class);
-			if (interactionType == null || (!interactionType.equals("pp")
-					&& !interactionType.equals("pc") && !interactionType.equals("cc")
-					&& !interactionType.equals("ppp") && !interactionType.equals("ppc"))) {
+			if (interactionType == null || !STRING_INTERACTION_TYPES.contains(interactionType)) {
 				continue;
 			}
 			stringNetEdges.add(edge);

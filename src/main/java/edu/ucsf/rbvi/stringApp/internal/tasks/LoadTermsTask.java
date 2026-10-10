@@ -118,6 +118,10 @@ public class LoadTermsTask extends AbstractTask {
 			if (additionalNodes > 0)
 				args.put("additional_network_nodes", Integer.toString(additionalNodes));
 		} else {
+			if (!netType.isJensenlabSupported()) {
+				monitor.showMessage(Level.ERROR, NetworkType.JENSENLAB_UNSUPPORTED_MESSAGE);
+				return;
+			}
 			args.put("entities",ids.trim());
 			args.put("database", netType.getAPIName());
 			args.put("score", conf);

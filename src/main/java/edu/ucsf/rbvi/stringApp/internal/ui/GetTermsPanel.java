@@ -107,6 +107,8 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		optionsPanel.setAdditionalNodes(manager.getDefaultAdditionalProteins());
 		if (!useDATABASE.equals(Databases.STITCH.getAPIName()))
 			optionsPanel.setUseSmartDelimiters(true);
+		else
+			optionsPanel.showRegulatoryNetwork(false); // STITCH has no regulatory networks
 		init();
 	}
 
@@ -140,6 +142,8 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 			panel.setAdditionalNodes(manager.getDefaultAdditionalProteins());
 			if (!useDATABASE.equals(Databases.STITCH.getAPIName()))
 				panel.setUseSmartDelimiters(true);
+			else
+				panel.showRegulatoryNetwork(false); // STITCH has no regulatory networks
 		}
 		if (panel.getSpeciesText() != null) {
 			this.netSpecies = panel.getSpeciesText();

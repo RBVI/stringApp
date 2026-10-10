@@ -304,6 +304,11 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 				args.put("selected", selected);
 		}  
 
+		if (!useDatabase.equals(Databases.STRINGDB.getAPIName()) && !NetworkType.isJensenlabSupported(networkType)) {
+			monitor.showMessage(Level.ERROR, NetworkType.JENSENLAB_UNSUPPORTED_MESSAGE);
+			return;
+		}
+
 		JSONObject results;
 		try {
 			if (useDatabase.equals(Databases.STRINGDB.getAPIName())) {

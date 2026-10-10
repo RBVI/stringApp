@@ -331,9 +331,11 @@ public class JSONUtils {
 			defaultName = ModelUtils.DEFAULT_NAME_STRING;
 			defaultNameRootNet = ModelUtils.DEFAULT_NAME_STRING;
 		}
-		// add physical to name if the network is physical
+		// add physical or regulatory to name if the network is not functional
 		if (netType.equals(NetworkType.PHYSICAL.getAPIName()))
 			defaultName += " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL;
+		else if (netType.equals(NetworkType.REGULATORY.getAPIName()))
+			defaultName += " " + ModelUtils.DEFAULT_NAME_ADDON_REGULATORY;
 
 		// add user suggested name
 		if (netName != null && netName != "") {
@@ -762,17 +764,31 @@ public class JSONUtils {
 		}
 	}
 
+	// Functional and physical networks:
 	// {"pscore":0,"preferredName_B":"OPC11257","preferredName_A":"OPC10681","dscore":0,"tscore":0,"score":0.92,"escore":0.92,"ncbiTaxonId":"110668318",
 	// "stringId_B":"110668318.OPC11257","ascore":0,"stringId_A":"110668318.OPC10681","nscore":0,"fscore":0},
+	// Regulatory networks (one row per direction):
+	// {"source_string_id":"9606.ENSP00000258149","target_string_id":"9606.ENSP00000384849","source_preferred_name":"MDM2",
+	// "target_preferred_name":"CDKN1A","ncbiTaxonId":"9606","experimental_score":0.68,"database_score":0.0,
+	// "textmining_score":0.549,"sign":"neg","combined_score":0.849},
 	private static void createEdgeFromStringDb(CyNetwork network, JSONObject edgeObj,
 			Map<String, CyNode> nodeMap, Map<String, String> nodeNameMap, 
 			Map<String, String> queryTermMap, List<CyNode> newNodes, List<CyEdge> newEdges,
 			String useDATABASE, String netType, Map<String, List<Annotation>> annotationsMap) {
 
-		String source = (String) edgeObj.get("stringId_A");
-		String target = (String) edgeObj.get("stringId_B");
-		String sourceName = (String) edgeObj.get("preferredName_A");
-		String targetName = (String) edgeObj.get("preferredName_B");
+		boolean regulatory = netType.equals(NetworkType.REGULATORY.getAPIName());
+		String source, target, sourceName, targetName;
+		if (regulatory) {
+			source = (String) edgeObj.get("source_string_id");
+			target = (String) edgeObj.get("target_string_id");
+			sourceName = (String) edgeObj.get("source_preferred_name");
+			targetName = (String) edgeObj.get("target_preferred_name");
+		} else {
+			source = (String) edgeObj.get("stringId_A");
+			target = (String) edgeObj.get("stringId_B");
+			sourceName = (String) edgeObj.get("preferredName_A");
+			targetName = (String) edgeObj.get("preferredName_B");
+		}
 		String taxIdName = (String) edgeObj.get("ncbiTaxonId");
 		String speciesName = Species.getSpeciesName(taxIdName);
 		CyNode sourceNode;
@@ -801,6 +817,11 @@ public class JSONUtils {
 				newNodes.add(targetNode);
 		} else {
 			targetNode = nodeMap.get(target);
+		}
+
+		if (regulatory) {
+			createRegulatoryEdge(network, edgeObj, source, sourceNode, target, targetNode, newEdges);
+			return;
 		}
 
 		String physical = "";
@@ -877,6 +898,60 @@ public class JSONUtils {
 			edgeRow.set(edgeColName, ModelUtils.makeDouble(edgeObj.get("tscore")));
 		}
 
+	}
+
+	/**
+	 * Add (or update) the directed edge for one row of a STRING-DB regulatory network.  Each
+	 * direction is its own edge, so A regulates B and B regulates A become two edges.
+	 */
+	private static void createRegulatoryEdge(CyNetwork network, JSONObject edgeObj,
+			String source, CyNode sourceNode, String target, CyNode targetNode, List<CyEdge> newEdges) {
+		String interaction = "rpp";
+
+		CyEdge edge = null;
+		for (CyEdge e: network.getConnectingEdgeList(sourceNode, targetNode, CyEdge.Type.DIRECTED)) {
+			if (e.getSource().equals(sourceNode) &&
+			    interaction.equals(network.getRow(e).get(CyEdge.INTERACTION, String.class))) {
+				edge = e;
+				break;
+			}
+		}
+		if (edge == null) {
+			edge = network.addEdge(sourceNode, targetNode, true);
+			network.getRow(edge).set(CyNetwork.NAME, source + " (" + interaction + ") " + target);
+			network.getRow(edge).set(CyEdge.INTERACTION, interaction);
+			if (newEdges != null)
+				newEdges.add(edge);
+		}
+
+		CyRow edgeRow = network.getRow(edge);
+		if (edgeObj.containsKey("combined_score"))
+			edgeRow.set(ColumnNames.SCORE, ModelUtils.makeDouble(edgeObj.get("combined_score")));
+		if (edgeObj.containsKey("experimental_score")) {
+			String edgeColName = getEdgeColumnName(EvidenceType.EXPERIMENTS);
+			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName, 0.0);
+			edgeRow.set(edgeColName, ModelUtils.makeDouble(edgeObj.get("experimental_score")));
+		}
+		if (edgeObj.containsKey("database_score")) {
+			String edgeColName = getEdgeColumnName(EvidenceType.DATABASES);
+			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName, 0.0);
+			edgeRow.set(edgeColName, ModelUtils.makeDouble(edgeObj.get("database_score")));
+		}
+		if (edgeObj.containsKey("textmining_score")) {
+			String edgeColName = getEdgeColumnName(EvidenceType.TEXTMINING);
+			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, edgeColName, 0.0);
+			edgeRow.set(edgeColName, ModelUtils.makeDouble(edgeObj.get("textmining_score")));
+		}
+		ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), String.class, ColumnNames.REGULATION_SIGN);
+		edgeRow.set(ColumnNames.REGULATION_SIGN, getRegulationSign((String) edgeObj.get("sign")));
+	}
+
+	private static String getRegulationSign(String apiSign) {
+		if ("pos".equals(apiSign))
+			return "positive";
+		else if ("neg".equals(apiSign))
+			return "negative";
+		return "unknown";
 	}
 
 	private static String getEdgeColumnName(EvidenceType evType) {

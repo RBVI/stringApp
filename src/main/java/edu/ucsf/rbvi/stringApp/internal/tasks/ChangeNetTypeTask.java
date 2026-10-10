@@ -37,7 +37,8 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ViewUtils;
 
 /**
  * Task created by {@link ChangeNetTypeTaskFactory} that changes an existing STRING network's
- * type (functional associations vs. physical interactions) and/or its confidence score cutoff.
+ * type (functional associations, physical interactions or directed regulatory interactions)
+ * and/or its confidence score cutoff.
  * When only the confidence is raised it trims low-scoring edges locally; otherwise it re-queries
  * STRING-DB and/or Jensenlab for the current node set (across all species present) at the new
  * type/confidence, replaces the network's edges with the results, updates the stored network
@@ -57,7 +58,7 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 	public BoundedFloat confidence = new BoundedFloat(0.0f, currentConfidence, 1.0f, false, false);
 
 	@Tunable(description = "Network type",
-	         longDescription="Type of the STRING interactions (edges) to be included in the network, either functional associations or physical interactions.",
+	         longDescription="Type of the STRING interactions (edges) to be included in the network, either functional associations, physical interactions or directed regulatory interactions.",
 	         exampleStringValue="full STRING network",
 	         gravity=2.0, required=true)
 	public ListSingleSelection<NetworkType> networkType;
@@ -190,6 +191,10 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			
 			JSONObject resultsSTRINGDB = null;
 			JSONObject resultsJensenlab = null;
+			if (Species.isViral(selSpecies) && !newType.isJensenlabSupported()) {
+				monitor.showMessage(Level.ERROR, NetworkType.JENSENLAB_UNSUPPORTED_MESSAGE);
+				return;
+			}
 			if (database.equals(Databases.STITCH.getAPIName()) || (database.equals(Databases.STRING.getAPIName()) && !Species.isViral(selSpecies))) {
 				try {
 					monitor.setStatusMessage("Fetching data from: "+manager.getStringNetworkURL());
@@ -197,11 +202,14 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 				} catch (ConnectionException e) {
 					monitor.showMessage(Level.WARN, "Network error: " + e.getMessage());
 				}
-				try {
-					monitor.setStatusMessage("Fetching data from: "+manager.getNetworkURL());
-					resultsJensenlab = HttpUtils.postJSON(manager.getNetworkURL(), argsJensenlab, manager);
-				} catch (ConnectionException e) {
-					monitor.showMessage(Level.WARN, "Network error: " + e.getMessage());
+				// Jensenlab has no regulatory networks, so we only get protein-protein edges from STRING-DB
+				if (newType.isJensenlabSupported()) {
+					try {
+						monitor.setStatusMessage("Fetching data from: "+manager.getNetworkURL());
+						resultsJensenlab = HttpUtils.postJSON(manager.getNetworkURL(), argsJensenlab, manager);
+					} catch (ConnectionException e) {
+						monitor.showMessage(Level.WARN, "Network error: " + e.getMessage());
+					}
 				}
 			} else if (Species.isViral(selSpecies)) {
 				try {
@@ -263,32 +271,10 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			ModelUtils.setConfidence(network, (double)Math.round(confidence.getValue()*1000)/1000);
 			ModelUtils.setNetworkType(network, networkType.getSelectedValue().toString());
 			
-			// change network name in the special case of changing from physical to functional or the other way around
+			// change network name when the type changes, e.g. "STRING network (physical) - query"
 			if (!newType.equals(currentType)) {
 				monitor.setStatusMessage("Updating network name");
-				String currentName = manager.getNetworkName(network);
-				String newName = currentName;
-				if (newType.equals(NetworkType.FUNCTIONAL) && currentName.contains(ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL)) {
-					// remove (physical) from the name
-					String[] currentNameParts = currentName.split(ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL_REGEXP);
-					if (currentNameParts.length > 1)
-						newName = currentNameParts[0] + currentNameParts[currentNameParts.length-1];
-					else
-						newName = currentNameParts[0];
-				} else if (newType.equals(NetworkType.PHYSICAL)) {
-					// add (physical) to the name
-					if (currentName.startsWith(ModelUtils.DEFAULT_NAME_STRING)) {
-						if (currentName.split(ModelUtils.DEFAULT_NAME_STRING).length > 1)
-							newName = ModelUtils.DEFAULT_NAME_STRING + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL + currentName.split(ModelUtils.DEFAULT_NAME_STRING)[1];
-						else 
-							newName = ModelUtils.DEFAULT_NAME_STRING + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL;
-					} else if (currentName.startsWith(ModelUtils.DEFAULT_NAME_STITCH )) {
-						if (currentName.split(ModelUtils.DEFAULT_NAME_STITCH)[1].length() > 1)
-							newName = ModelUtils.DEFAULT_NAME_STITCH + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL + currentName.split(ModelUtils.DEFAULT_NAME_STITCH)[1];
-						else 
-							newName = ModelUtils.DEFAULT_NAME_STITCH + " " + ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL;
-					}
-				}
+				String newName = getNetworkNameForType(manager.getNetworkName(network), newType);
 				network.getRow(network).set(CyNetwork.NAME, manager.adaptNetworkName(newName));
 			}
 
@@ -325,5 +311,26 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 	@Override
 	public List<Class<?>> getResultClasses() {
 		return Arrays.asList(JSONResult.class, String.class);
+	}
+
+	/**
+	 * Remove any "(physical)" or "(regulatory)" addon from the network name and add the one
+	 * for the new type right after the "STRING network" or "STITCH network" prefix.
+	 */
+	static String getNetworkNameForType(String currentName, NetworkType newType) {
+		String newName = currentName.replaceAll(ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL_REGEXP, "")
+		                            .replaceAll(ModelUtils.DEFAULT_NAME_ADDON_REGULATORY_REGEXP, "");
+		String addon = null;
+		if (newType.equals(NetworkType.PHYSICAL))
+			addon = ModelUtils.DEFAULT_NAME_ADDON_PHYSICAL;
+		else if (newType.equals(NetworkType.REGULATORY))
+			addon = ModelUtils.DEFAULT_NAME_ADDON_REGULATORY;
+		if (addon == null)
+			return newName;
+		for (String prefix: new String[] {ModelUtils.DEFAULT_NAME_STRING, ModelUtils.DEFAULT_NAME_STITCH}) {
+			if (newName.startsWith(prefix))
+				return prefix + " " + addon + newName.substring(prefix.length());
+		}
+		return newName;
 	}
 }

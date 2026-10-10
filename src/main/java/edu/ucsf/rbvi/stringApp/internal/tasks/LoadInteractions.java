@@ -116,6 +116,10 @@ public class LoadInteractions extends AbstractTask {
 			args.put("caller_identity", StringManager.CallerIdentity);
 			args.put("species", species.getName());
 		} else {
+			if (!netType.isJensenlabSupported()) {
+				monitor.showMessage(Level.ERROR, NetworkType.JENSENLAB_UNSUPPORTED_MESSAGE);
+				return;
+			}
 			String conf = "0."+confidence;
 			if (confidence == 100) 
 				conf = "1.0";

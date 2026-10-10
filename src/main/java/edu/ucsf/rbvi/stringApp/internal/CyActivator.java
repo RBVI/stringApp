@@ -377,7 +377,7 @@ public class CyActivator extends AbstractCyActivator {
 			props2.setProperty(COMMAND_DESCRIPTION, 
 			                            "Change edge type of the network");
 			props2.setProperty(COMMAND_LONG_DESCRIPTION,
-					"Changes the type of edges of the network between functional associations and physical interactions.");
+					"Changes the type of edges of the network between functional associations, physical interactions and directed regulatory interactions.");
 			props2.setProperty(COMMAND_SUPPORTS_JSON, "true");
 			props2.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 			registerService(bc, changeNetType, TaskFactory.class, props2);

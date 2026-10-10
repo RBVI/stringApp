@@ -61,6 +61,7 @@ public class SearchOptionsPanel extends JPanel {
 	JCheckBox loadEnrichment;
 	JRadioButton physicalNetwork;
 	JRadioButton functionalNetwork;
+	JRadioButton regulatoryNetwork;
 	JCheckBox createNetView;
 	JPanel advancedOptions;
 	NumberFormat formatter = new DecimalFormat("#0.00");
@@ -292,16 +293,23 @@ public class SearchOptionsPanel extends JPanel {
 		functionalNetwork = new JRadioButton(NetworkType.FUNCTIONAL.toString(), true);
 		netTypePanel.add(functionalNetwork, c);
 
-		c.right().expandHoriz().insets(0,5,0,5);
+		c.right().noExpand().insets(0,5,0,5);
 		physicalNetwork = new JRadioButton(NetworkType.PHYSICAL.toString(), false);
 		netTypePanel.add(physicalNetwork, c);
+
+		c.right().expandHoriz().insets(0,5,0,5);
+		regulatoryNetwork = new JRadioButton(NetworkType.REGULATORY.toString(), false);
+		regulatoryNetwork.setToolTipText("Directed regulatory interactions from STRING (proteins of a single species only)");
+		netTypePanel.add(regulatoryNetwork, c);
+		// Cross-species queries are served by Jensenlab, which has no regulatory networks
+		regulatoryNetwork.setVisible(!isCrossSpecies);
 		
 		ButtonGroup group = new ButtonGroup();
 		group.add(physicalNetwork);
 		group.add(functionalNetwork);
+		group.add(regulatoryNetwork);
 		
-		if (networkType.equals(NetworkType.PHYSICAL)) 
-			physicalNetwork.setSelected(true);
+		setNetworkType(networkType);
 		
 		return netTypePanel;
 	}
@@ -309,15 +317,29 @@ public class SearchOptionsPanel extends JPanel {
 	public NetworkType getNetworkType() {
 		if (physicalNetwork.isSelected())
 			return NetworkType.PHYSICAL;
+		else if (regulatoryNetwork.isSelected() && regulatoryNetwork.isVisible())
+			return NetworkType.REGULATORY;
 		else 
 			return NetworkType.FUNCTIONAL;
 	}
 
 	public void setNetworkType(NetworkType type) {
-		if (type.equals(NetworkType.FUNCTIONAL)) 
-			functionalNetwork.setSelected(true);
-		else 
+		if (type.equals(NetworkType.PHYSICAL)) 
 			physicalNetwork.setSelected(true);
+		else if (type.equals(NetworkType.REGULATORY) && regulatoryNetwork.isVisible())
+			regulatoryNetwork.setSelected(true);
+		else 
+			functionalNetwork.setSelected(true);
+	}
+
+	/**
+	 * Show or hide the regulatory network option.  It is hidden for queries that are served by
+	 * the Jensenlab API (e.g. STITCH compound queries), which does not provide regulatory networks.
+	 */
+	public void showRegulatoryNetwork(boolean show) {
+		regulatoryNetwork.setVisible(show);
+		if (!show && regulatoryNetwork.isSelected())
+			functionalNetwork.setSelected(true);
 	}
 	
 	JPanel createConfidenceSlider() {

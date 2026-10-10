@@ -90,7 +90,7 @@ public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 		speciesList = Species.getSpecies();
 		// Set Human as the default
 		species = Species.getHumanSpecies().toString();
-		networkType = new ListSingleSelection<>(NetworkType.values());
+		networkType = new ListSingleSelection<>(NetworkType.FUNCTIONAL, NetworkType.PHYSICAL); // no regulatory networks in Jensenlab
 		networkType.setSelectedValue(NetworkType.FUNCTIONAL);
 	}
 

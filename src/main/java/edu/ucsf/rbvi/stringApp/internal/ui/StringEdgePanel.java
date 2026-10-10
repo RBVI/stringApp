@@ -134,6 +134,8 @@ public class StringEdgePanel extends AbstractStringPanel {
 				scoreLabel += " (" +  NetworkType.PHYSICAL.getAPIName() + ")";
 			else if (netType.equals(NetworkType.FUNCTIONAL.toString()))
 				scoreLabel += " (" +  NetworkType.FUNCTIONAL.getAPIName() + ")";
+			else if (netType.equals(NetworkType.REGULATORY.toString()))
+				scoreLabel += " (" +  NetworkType.REGULATORY.getAPIName() + ")";
 		}
 		return scoreLabel;
 	}

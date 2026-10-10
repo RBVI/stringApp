@@ -143,6 +143,10 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 				args.put("network_type", currentType);				
 				args.put("species", selSpecies.toString());
 			} else {
+				if (!NetworkType.isJensenlabSupported(currentType)) {
+					monitor.showMessage(Level.ERROR, NetworkType.JENSENLAB_UNSUPPORTED_MESSAGE);
+					return;
+				}
 				args.put("existing", existing.trim());
 				args.put("score", confidence.getValue().toString());
 				args.put("maxscore", Float.toString(currentConfidence));

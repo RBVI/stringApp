@@ -125,7 +125,7 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 	public BoundedDouble cutoff = new BoundedDouble(0.0, 1.0, 1.0, false, false);
 
 	@Tunable(description = "Network type",
-	         longDescription="Type of the STRING interactions (edges) to be included in the network, either functional associations or physical interactions.",
+	         longDescription="Type of the STRING interactions (edges) to be included in the network, either functional associations, physical interactions or directed regulatory interactions.",
 	         exampleStringValue="full STRING network",
 	         context="nogui")
 	public ListSingleSelection<NetworkType> networkType = new ListSingleSelection<>(NetworkType.values());
@@ -233,6 +233,8 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		// Are we command or GUI based?
 		if (tableColumn != null) {
 			optionsPanel = new SearchOptionsPanel(manager);
+			if (compoundQuery)
+				optionsPanel.showRegulatoryNetwork(false); // STITCH has no regulatory networks
 			optionsPanel.setConfidence((int)(cutoff.getValue()*100));
 			optionsPanel.setNetworkType(networkType.getSelectedValue());
 			optionsPanel.setAdditionalNodes(additionalNodes);

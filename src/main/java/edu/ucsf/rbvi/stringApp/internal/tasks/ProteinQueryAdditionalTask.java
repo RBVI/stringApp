@@ -76,7 +76,7 @@ public class ProteinQueryAdditionalTask extends AbstractTask implements Observab
 	public boolean includesViruses = true;
 
 	@Tunable(description = "Type of edges to retrieve",
-	         longDescription="Choose to load functional associations or physical interactions from STRING.",
+	         longDescription="Choose to load functional associations, physical interactions or directed regulatory interactions from STRING.",
 	         exampleStringValue="full STRING network")
 	public ListSingleSelection<NetworkType> networkType;
 

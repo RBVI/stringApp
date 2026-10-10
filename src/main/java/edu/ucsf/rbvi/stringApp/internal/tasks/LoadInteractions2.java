@@ -101,6 +101,10 @@ public class LoadInteractions2 extends AbstractTask {
 
 		Map<String, String> args = new HashMap<>();
 		String networkURL = manager.getNetworkURL();
+		if (!netType.isJensenlabSupported()) {
+			monitor.showMessage(Level.ERROR, NetworkType.JENSENLAB_UNSUPPORTED_MESSAGE);
+			return;
+		}
 
 		// FIXME: we need to be a bit careful with the "additional nodes" here since we don't really know how to get
 		// additional protein nodes at this point if we've queried with a compound
