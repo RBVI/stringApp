@@ -457,11 +457,24 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 	
 	public String adaptNetworkName(String name) {
+		return adaptNetworkName(name, null);
+	}
+
+	/**
+	 * Make the name unique among all networks and network collections, ignoring the network
+	 * being renamed and its own collection (so renaming "STRING network (physical) - x" to
+	 * "STRING network - x" doesn't clash with its collection "STRING network - x").
+	 */
+	public String adaptNetworkName(String name, CyNetwork renamedNetwork) {
 		CyNetworkManager netMgr = registrar.getService(CyNetworkManager.class);
 		Set<CyNetwork> nets = netMgr.getNetworkSet();
 		Set<CyNetwork> allNets = new HashSet<CyNetwork>(nets);
 		for (CyNetwork net : nets) {
 			allNets.add(((CySubNetwork)net).getRootNetwork());
+		}
+		if (renamedNetwork != null) {
+			allNets.remove(renamedNetwork);
+			allNets.remove(((CySubNetwork)renamedNetwork).getRootNetwork());
 		}
 		// See if this name is already taken by a network or a network collection (root network)
 		int index = -1;

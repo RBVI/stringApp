@@ -275,7 +275,7 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			if (!newType.equals(currentType)) {
 				monitor.setStatusMessage("Updating network name");
 				String newName = getNetworkNameForType(manager.getNetworkName(network), newType);
-				network.getRow(network).set(CyNetwork.NAME, manager.adaptNetworkName(newName));
+				network.getRow(network).set(CyNetwork.NAME, manager.adaptNetworkName(newName, network));
 			}
 
 			// If we have a view, re-apply the style and layout
