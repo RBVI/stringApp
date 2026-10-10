@@ -66,11 +66,8 @@ public class ModelUtils {
 	public static int SECOND_SEGMENT_LENGTH = 3;
 	public static int FIRST_SEGMENT_LENGTH = MAX_SHORT_NAME_LENGTH - SECOND_SEGMENT_LENGTH - 2;
 	
-	//public static Pattern cidmPattern = Pattern.compile("\\(CIDm\\)0*");
 	public static Pattern cidmPattern = Pattern.compile("CIDm0*");
 	
-	// public static String DISEASEINFO =
-	// "http://diseases.jensenlab.org/Entity?type1=9606&type2=-26";
 
 	public static List<String> namespacedEdgeAttributes = new ArrayList<String>(Arrays.asList("score", "interspecies", "experiments", "cooccurrence",
 			"coexpression", "textmining", "databases", "neighborhood"));
@@ -149,7 +146,6 @@ public class ModelUtils {
 	public static List<String> getTissueList(CyNetwork network) {
 		List<String> tissues = new ArrayList<>();
 		if (network == null) {
-			// System.out.println("network is null");
 			return tissues;
 		}
 		Collection<CyColumn> columns = network.getDefaultNodeTable().getColumns(ColumnNames.TISSUE_NAMESPACE);
@@ -284,9 +280,6 @@ public class ModelUtils {
           row.set(ColumnNames.TM_FOREGROUND, result.getForeground());
         if (result.getBackground() > 0)
           row.set(ColumnNames.TM_BACKGROUND, result.getBackground());
-        /*
-         * if (result.getLinkout() != null) row.set(TM_LINKOUT, result.getLinkout());
-         */
         if (haveDisease)
           row.set(ColumnNames.DISEASE_SCORE, result.getScore());
         else
@@ -459,7 +452,6 @@ public class ModelUtils {
 	}
 
 	public static void fetchImages(CyNetwork network, List<CyNode> nodes) {
-		// long startTime = System.nanoTime();
 
 		// TODO: Do we need to catch possible exceptions here?
 		int numThreads = Runtime.getRuntime().availableProcessors(); // Number of available CPU cores
@@ -471,8 +463,6 @@ public class ModelUtils {
 		}
 				
 		executorService.shutdown();
-		// long currentTime = System.nanoTime();
-		// System.out.println("fetched images in " + (currentTime - startTime)/6000000000.0 + " sec");
 		setNetworkHasImages(network, true);
 	}
 
@@ -534,10 +524,6 @@ public class ModelUtils {
 		if (nodeTable.getColumn(ColumnNames.ID) == null)
 			return false;
 		// Enough to check for id in the node columns and score in the edge columns
-		//if (nodeTable.getColumn(SPECIES) == null)
-		//	return false;
-		//if (nodeTable.getColumn(CANONICAL) == null)
-		//	return false;
 		CyTable edgeTable = network.getDefaultEdgeTable();
 		if (edgeTable.getColumn(ColumnNames.SCORE) == null && edgeTable.getColumn(ColumnNames.SCORE_NO_NAMESPACE) == null)
 			return false;
@@ -735,7 +721,6 @@ public class ModelUtils {
 	}
 
 	public static String getString(CyNetwork network, CyIdentifiable ident, String column) {
-		// System.out.println("network = "+network+", ident = "+ident+" column = "+column);
 		try {
 			if (network.getRow(ident, CyNetwork.DEFAULT_ATTRS) != null)
 				return network.getRow(ident, CyNetwork.DEFAULT_ATTRS).get(column, String.class);
@@ -822,7 +807,6 @@ public class ModelUtils {
 				shortNames.put(shortName, nameNodes);
 			}
 		}
-		// System.out.println(shortNames);
 		for (String nameKey : shortNames.keySet()) {
 			List<CyNode> nodesWithName = shortNames.get(nameKey);
 			// if only one node with this short name, just use it
@@ -832,7 +816,6 @@ public class ModelUtils {
 				row.set(ColumnNames.FULLNAME, row.get(ColumnNames.DISPLAY, String.class));
 				row.set(ColumnNames.DISPLAY, shortName);
 			} else {
-			// else try to find another combination 
 			// TODO: work in progress
 				HashMap<String, CyNode> fullNames = new HashMap<String, CyNode>();
 				for (CyNode node : nodesWithName) {
@@ -995,8 +978,6 @@ public class ModelUtils {
 	public static void copyRow(CyTable fromTable, CyTable toTable, CyIdentifiable from, CyIdentifiable to, List<String> columnsCreated) {
 		for (CyColumn col: fromTable.getColumns()) {
 			// TODO: Is it OK to not check for this?
-			//if (!columnsCreated.contains(col.getName()))
-			//	continue;
 			if (col.getName().equals(CyNetwork.SUID)) 
 				continue;
 			if (col.getName().equals(CyNetwork.SELECTED)) 
@@ -1009,10 +990,6 @@ public class ModelUtils {
 				continue;
 			}
 			// TODO: Is it OK to overwrite interaction type? 
-			//if (from.getClass().equals(CyEdge.class) && col.getName().equals(CyRootNetwork.SHARED_INTERACTION)) 
-			//	continue;
-			//if (from.getClass().equals(CyEdge.class) && col.getName().equals(CyEdge.INTERACTION)) 
-			//	continue;
 			Object v = fromTable.getRow(from.getSUID()).getRaw(col.getName());
 			toTable.getRow(to.getSUID()).set(col.getName(), v);
 		}
@@ -1060,7 +1037,6 @@ public class ModelUtils {
 				// No, create it.
 				if (col.getType().equals(List.class)) {
 					// There is no easy way to handle this, unfortunately...
-					// toTable.createListColumn(fqn, col.getListElementType(), col.isImmutable(), (List<?>)col.getDefaultValue());
 					if (col.getListElementType().equals(String.class))
 						toTable.createListColumn(fqn, String.class, col.isImmutable(), 
 						                         (List<String>)col.getDefaultValue());
@@ -1157,7 +1133,6 @@ public class ModelUtils {
 
 	public static void copyNodeAttributes(CyNetwork from, CyNetwork to, 
 	                                      Map<CyNode, CyNode> nodeMap, String column) {
-		// System.out.println("copyNodeAttributes");
 		List<String> columnsCreated = copyColumns(from.getDefaultNodeTable(), to.getDefaultNodeTable());
 		for (CyNode node: from.getNodeList()) {
 			if (!nodeMap.containsKey(node))

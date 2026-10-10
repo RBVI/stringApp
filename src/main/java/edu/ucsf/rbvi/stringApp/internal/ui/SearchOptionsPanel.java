@@ -107,7 +107,6 @@ public class SearchOptionsPanel extends JPanel {
 		this.isPubMed = isPubMed;
 		this.isCrossSpecies = isCrossSpecies;
 		this.showSpecies = showSpecies;
-		// System.out.println("SearchOptionsPanel("+isPubMed+","+isDisease+","+showSpecies+")");
 		if (isDisease || isPubMed) 
 				additionalNodes = manager.getDefaultMaxProteins();
 		else if (isCrossSpecies)
@@ -117,7 +116,6 @@ public class SearchOptionsPanel extends JPanel {
 		confidence = (int)(manager.getDefaultConfidence()*100);
 		this.networkType = manager.getDefaultNetworkType();
 		initOptions();
-    // setMinimumSize(new Dimension(500,50));
     if (isCrossSpecies)
       setPreferredSize(new Dimension(700,150));
     else if (isDisease)
@@ -138,7 +136,6 @@ public class SearchOptionsPanel extends JPanel {
 	}
 
 	private void initOptions() {
-		// setPreferredSize(new Dimension(700,200));
 		EasyGBC c = new EasyGBC();
 		if (showSpecies) {
 			List<Species> speciesList = getSpeciesList();
@@ -165,8 +162,6 @@ public class SearchOptionsPanel extends JPanel {
 		add(advancedOptions, c.down().expandBoth().insets(5,5,0,5));
 
 		// Add Query/Cancel buttons
-		// JPanel buttonPanel =  createControlButtons(true);
-		// add(buttonPanel, c.down().expandHoriz().insets(0,5,5,5));
 	}
 
 	public void showSpeciesBox(boolean visible) {
@@ -205,9 +200,6 @@ public class SearchOptionsPanel extends JPanel {
 		advancedPanel.add(loadEnrichment, c);
 		
 		// if we add an option to create or not a network view
-		//c.right().expandHoriz().insets(0,10,0,5);
-		//createNetView = new JCheckBox("Create network view", true);
-		//advancedPanel.add(createNetView, c);
 		
 		return advancedPanel;
 	}
@@ -227,7 +219,6 @@ public class SearchOptionsPanel extends JPanel {
 	}
 
 	public void setLoadEnrichment(boolean selected) {
-		// System.out.println("Setting loadEnrichment to "+selected);
 		loadEnrichment.setSelected(selected);
 	}
 
@@ -242,7 +233,6 @@ public class SearchOptionsPanel extends JPanel {
 	}
 
 	public void setCreateNetView(boolean selected) {
-		// System.out.println("Setting loadEnrichment to "+selected);
 		createNetView.setSelected(selected);
 	}
 
@@ -251,7 +241,6 @@ public class SearchOptionsPanel extends JPanel {
 	}
 
 	JPanel createSpeciesComboBox(List<Species> speciesList) {
-    // System.out.println("createSpeciesComboBox");
 		JPanel speciesPanel = new JPanel(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
 		JLabel speciesLabel = new JLabel("Species:");
@@ -303,39 +292,6 @@ public class SearchOptionsPanel extends JPanel {
 			speciesCombo.setSelectedItem(species);
 	}
 
-  /*
-	JPanel createControlButtons(boolean optionsPanel) {
-		JPanel buttonPanel = new JPanel();
-		BoxLayout layout = new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS);
-		buttonPanel.setLayout(layout);
-		JButton cancelButton = new JButton(new AbstractAction("Cancel") {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          cancel();
-        }
-      });
-
-		buttonPanel.add(Box.createRigidArea(new Dimension(10,0)));
-		buttonPanel.add(cancelButton);
-		buttonPanel.add(Box.createHorizontalGlue());
-
-		JButton closeButton = new JButton(new AbstractAction("Close") {
-   	   @Override
-   	   public void actionPerformed(ActionEvent e) {
-					defaultSpecies = getSpecies().getName();
-					confidence = getConfidence();
-					additionalNodes = getAdditionalNodes();
-					networkType = getNetworkType();
-
-					// What do we do here?
-					((Window)getRootPane().getParent()).setVisible(false);
-			 }
-		});
-		buttonPanel.add(closeButton);
-
-		return buttonPanel;
-	}
-  */
 
 	JPanel createNetworkTypeRadioGroup() {
 
@@ -419,7 +375,6 @@ public class SearchOptionsPanel extends JPanel {
 					ignore = false;
 				}
 			});
-			// c.anchor("southwest").expandHoriz().insets(0,5,0,5);
 			c.right().expandHoriz().insets(0,5,0,5);
 			confidencePanel.add(confidenceSlider, c);
 		}
@@ -515,7 +470,6 @@ public class SearchOptionsPanel extends JPanel {
 					ignore = false;
 				}
 			});
-			// c.anchor("southwest").expandHoriz().insets(0,5,0,5);
 			c.right().expandHoriz().insets(0,5,0,5);
 			additionalNodesPanel.add(additionalNodesSlider, c);
 		}

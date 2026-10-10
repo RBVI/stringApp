@@ -69,7 +69,6 @@ public class StringCytoPanel extends JPanel
 
 
 	public void showCytoPanel() {
-		// System.out.println("show panel");
 		CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
 		CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.EAST);
 		if (!registered) {

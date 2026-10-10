@@ -58,7 +58,6 @@ public class ShowChartsTaskFactory extends AbstractTaskFactory {
 
 		panel = (EnrichmentCytoPanel) cytoPanel.getComponentAt(
 					cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment"));
-		// System.out.println("panel = "+panel);
 
 		if (panel == null) return false;
 

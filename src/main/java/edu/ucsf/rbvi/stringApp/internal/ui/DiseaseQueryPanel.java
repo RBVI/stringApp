@@ -82,7 +82,6 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 
 	JTextField searchTerms;
 	JPanel mainSearchPanel;
-	// JComboBox<Species> speciesCombo;
 	JButton importButton;
 	JButton backButton;
 	SearchOptionsPanel optionsPanel;
@@ -92,7 +91,6 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 	EntityIdentifier diseaseEntity = null;
 	List<EntityIdentifier> entityList;
 	String species = "Homo sapiens";
-	// Species species;
 
 	private int confidence = 40;
 	private NetworkType networkType = NetworkType.FUNCTIONAL;
@@ -222,7 +220,6 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 		buttonPanel.add(Box.createRigidArea(new Dimension(10,0)));
 		buttonPanel.add(cancelButton);
 		buttonPanel.add(Box.createHorizontalGlue());
-		// buttonPanel.add(Box.createRigidArea(new Dimension(10,0)));
 		buttonPanel.add(backButton);
 		buttonPanel.add(Box.createRigidArea(new Dimension(10,0)));
 		buttonPanel.add(importButton);
@@ -306,7 +303,6 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 			valueMap.put("cutoff", 0.05);
 			TaskIterator newIterator = 
 							setter.createTaskIterator(tf.createTaskIterator(manager.getCurrentNetwork()), valueMap);
-			// System.out.println("stringNetwork network = "+stringNetwork.getNetwork());
 			manager.execute(newIterator);
 		}
 	}
@@ -330,7 +326,6 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 				stringNetwork = new StringNetwork(manager);
 
 			int taxon = Species.getSpecies(species).getTaxId();
-			// int taxon = species.getTaxId(); // Only supported for human right now;
 			String terms = searchTerms.getText();
 			if (terms == null || terms.length() == 0) {
 				JOptionPane.showMessageDialog(null, "No terms were entered -- nothing to search for",
@@ -401,7 +396,6 @@ public class DiseaseQueryPanel extends JPanel implements TaskObserver {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-			// int taxon = species.getTaxId();
 			int taxon = Species.getSpecies(species).getTaxId();
 
 			diseaseEntity = model.getSelectedEntity();

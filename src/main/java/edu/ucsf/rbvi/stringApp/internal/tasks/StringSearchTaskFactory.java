@@ -151,7 +151,6 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 	}
 
 	public Species getSpecies() {
-		// System.out.println("GetSpecies: "+optionsPanel.getSpecies().toString());
 		if (optionsPanel.getSpecies() != null)
 			return optionsPanel.getSpecies();
 		return Species.getHumanSpecies();
@@ -185,7 +184,6 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
       valueMap.put("cutoff", 0.05);
       TaskIterator newIterator =
               setter.createTaskIterator(tf.createTaskIterator(manager.getCurrentNetwork()), valueMap);
-      // System.out.println("stringNetwork network = "+stringNetwork.getNetwork());
       manager.execute(newIterator);
     }
 	}
@@ -241,8 +239,6 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 					JDialog d = new JDialog();
 					d.setTitle("Resolve Ambiguous Terms");
 					d.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-					// GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, Databases.STRING.getAPIName(), 
-					//                                         getSpecies(), false, getConfidence(), getAdditionalNodes());
 					GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, 
 					                                        Databases.STRING.getAPIName(), false, optionsPanel);
 					panel.createResolutionPanel();
@@ -258,10 +254,7 @@ public class StringSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 	void importNetwork(Species species, int confidence, int additionalNodes) {
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
-		// System.out.println("Importing "+stringIds);
 		String useDATABASE = Databases.STRINGDB.getAPIName();
-		// if (species.isCustom())
-		// 	useDATABASE = Databases.STRINGDB.getAPIName();
 		TaskFactory factory = new ImportNetworkTaskFactory(stringNetwork, getSpeciesName(), 
 		                                                   species, confidence, additionalNodes, stringIds,
 		                                                   queryTermMap, "", useDATABASE,

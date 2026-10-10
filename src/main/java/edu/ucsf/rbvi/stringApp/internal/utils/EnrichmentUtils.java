@@ -236,14 +236,9 @@ public class EnrichmentUtils {
 		if (enrichmentTable.getColumn(EnrichmentTerm.colGenes) == null) {
 			enrichmentTable.createListColumn(EnrichmentTerm.colGenes, String.class, false);
 		}
-		// if (table.getColumn(EnrichmentTerm.colShowChart) == null) {
-		//	table.createColumn(EnrichmentTerm.colShowChart, Boolean.class, false);
-		// }
 		if (enrichmentTable.getColumn(EnrichmentTerm.colChartColor) == null) {
 			enrichmentTable.createColumn(EnrichmentTerm.colChartColor, String.class, false);
 		}
-		// table.createColumn(EnrichmentTerm.colPvalue, Double.class, false);
-		// table.createColumn(EnrichmentTerm.colBonferroni, Double.class, false);
 	}
 	
 	public static double getMaxFdrLogValue(List<EnrichmentTerm> terms) {
@@ -363,10 +358,6 @@ public class EnrichmentUtils {
 						descr = eElement.getElementsByTagName("description").item(0)
 								.getTextContent();
 					}
-					// else {
-					// System.out.println("Term without description: " + name);
-					// System.out.println(enrGenes);
-					// }
 					if (!name.equals("") && fdr > -1 && fdr <= cutoff) {
 						EnrichmentTerm enrTerm = new EnrichmentTerm(name, 0, descr, enrichmentCategory, pvalue, bonf, fdr, genesbg);
 						enrTerm.setGenes(enrGenes);
@@ -379,7 +370,6 @@ public class EnrichmentUtils {
 			ex.printStackTrace();
 			return null;
 		}
-		// monitor.setStatusMessage("Number of terms: " + enrichmentTerms.size());
 		return enrichmentTerms;
 	}
 
@@ -438,7 +428,6 @@ public class EnrichmentUtils {
 		CyTableManager tableManager = manager.getService(CyTableManager.class);
 
 		CyTable settingsTable = tableFactory.createTable(ColumnNames.NET_ENRICHMENT_SETTINGS_TABLE, ColumnNames.NET_ENRICHMENT_GROUP, String.class, false, true);
-		// settingsTable.setSavePolicy(SavePolicy.SESSION_FILE);
 		tableManager.addTable(settingsTable);
 		ModelUtils.createColumnIfNeeded(settingsTable, String.class, ColumnNames.NET_ENRICHMENT_SETTINGS);
 		ModelUtils.createListColumnIfNeeded(settingsTable, Long.class, ColumnNames.NET_ANALYZED_NODES);

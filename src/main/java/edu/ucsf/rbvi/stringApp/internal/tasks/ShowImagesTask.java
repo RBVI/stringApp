@@ -60,7 +60,6 @@ public class ShowImagesTask extends AbstractTask implements ObservableTask {
 
 		if (netView == null) {
 			// Command version
-			// System.out.println("command version show:" + show);
 			manager.setShowImage(show);
 			CyNetwork network = manager.getCurrentNetwork();
 			Collection<CyNetworkView> views = 
@@ -75,21 +74,17 @@ public class ShowImagesTask extends AbstractTask implements ObservableTask {
 			return;
 		}
 
-		// System.out.println("not command version");
 		if (manager.showImage()) {
 			manager.setShowImage(false);
-			// System.out.println("hide images");
 			if (ModelUtils.isStitchNetwork(netView.getModel()))
 				ViewUtils.updateChemVizPassthrough(manager, netView, false);
 		} else {
 			manager.setShowImage(true);
-			// System.out.println("show images");
 			if (ModelUtils.isStitchNetwork(netView.getModel()))
 				ViewUtils.updateChemVizPassthrough(manager, netView, true);
 		}
 
 		netView.updateView();
-		// factory.reregister();
 		manager.updateControls();
 	}
 

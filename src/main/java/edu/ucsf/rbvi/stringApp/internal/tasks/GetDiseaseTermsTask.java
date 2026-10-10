@@ -43,7 +43,6 @@ public class GetDiseaseTermsTask extends AbstractTask implements ObservableTask 
 		args.put("types", "-26");
 		args.put("format", "json");
 		args.put("query", term);
-		// String response = "[[{"type":-26,"id":"DOID:1307","matched":"dementia","primary":"dementia"},{"type":-26,"id":"DOID:11870","matched":"Dementia in Pick's disease ","primary":"Pick's disease"},{"type":-26,"id":"DOID:12217","matched":"Dementia with Lewy bodies","primary":"Lewy body dementia"}],false]"
 		//
 		// Get the results
 		JSONObject results = null;
@@ -57,7 +56,6 @@ public class GetDiseaseTermsTask extends AbstractTask implements ObservableTask 
 			// Probably a timeout, but it shouldn't happen
 			return;
 		}
-		// Object results = HttpUtils.testJSON(url, args, stringManager, response);
 		if (results == null) {
 			this.errorMsg = "String returned no results";
 			monitor.showMessage(TaskMonitor.Level.ERROR,this.errorMsg);

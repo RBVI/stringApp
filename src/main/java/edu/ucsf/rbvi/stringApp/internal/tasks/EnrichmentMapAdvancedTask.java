@@ -186,19 +186,7 @@ public class EnrichmentMapAdvancedTask extends AbstractTask implements TaskObser
 		insertTasksAfterCurrentTask(manager.getCommandTaskIterator("enrichmentmap", "chart", args, null));
 		
 		// remove node coloring
-		//CyNetworkManager netManager = (CyNetworkManager) manager.getService(CyNetworkManager.class);
-		//for (CyNetwork net : netManager.getNetworkSet()) {
-		//	String netName = ModelUtils.getName(net, net);
-		//	 if (netName.startsWith("Enrichment Map")) {
-		//		 System.out.println(netName);
-		//	}
-		//}
 
-		//Map<String, Object> args = new HashMap<>();
-		//args = new HashMap<>();
-		//args.put("network", mapName);
-		//args.put("data", "NONE");
-		// insertTasksAfterCurrentTask(manager.getCommandTaskIterator("enrichmentmap", "chart", args, null));
 	}
 
 	

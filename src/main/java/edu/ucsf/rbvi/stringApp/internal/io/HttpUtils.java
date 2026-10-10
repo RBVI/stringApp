@@ -50,7 +50,6 @@ public class HttpUtils {
 			}
 		} catch(MalformedURLException e) {
 			manager.info("URL malformed");
-//			return new JSONObject();
 			throw new ConnectionException("URL malformed");
 		}
 
@@ -103,11 +102,8 @@ public class HttpUtils {
 		// Set up our connection
 		JSONObject jsonObject = new JSONObject();
 		
-		// System.out.println(queryMap);
 		String args = HttpUtils.getStringArguments(queryMap);
 		manager.info("URL: " + url + "?" + truncate(args));
-		// System.out.println("URL: " + url + "?" + truncate(args));
-		// System.out.println("URL: " + url + "?" + args);
 		
 		URLConnection connection = null;
 		try {
@@ -127,33 +123,20 @@ public class HttpUtils {
 				reader.reset();
 				String[] errorMessage = readErrorStream(connection.getInputStream(), manager);
 				
-				//StringBuilder errorString = new StringBuilder();
-				//String line;
-				//try {
-				//	while ((line = reader.readLine()) != null) {
-				//		System.out.println("parsed error message: " + line);
-				//		errorString.append(line);
-				//}
-				//} catch (Exception ioe) {
-					// ignore
-				//}
 				manager.error("Exception reading JSON from STRING server: \n"+ parseFailure.getMessage()+"\n Text: "+errorMessage[1]);
 				System.out.println("Exception reading JSON from STRING server: \n"+ parseFailure.getMessage()+"\n Text: "+errorMessage[1]);
 				throw new ConnectionException("Exception reading JSON from STRING server: \n"+ parseFailure.getMessage()+"\n Text: "+errorMessage[1]);
 			}
 
 	 	} catch(UnknownHostException e) {
-			//e.printStackTrace();
 			throw new ConnectionException("Unknown host: " + e.getMessage());
 		} catch (UnknownSpeciesException e) {
 			throw new UnknownSpeciesException(e.getMessage()); 
 		} catch (TimeoutException e) {
 			throw new TimeoutException(e.getMessage()); 
 		} catch (FileNotFoundException e) {
-			// e.printStackTrace();
 			throw new ConnectionException("Unexpected error from server (file not found)");
 		} catch (Exception e) {
-			// e.printStackTrace();
 			manager.error("Unexpected error from server: \n <html>" + e.getMessage() + "</html>");
 			System.out.println("Unexpected error from server: \n <html>" + e.getMessage() + "</html>");
 			throw new ConnectionException("Unexpected error from server: \n <html>" + e.getMessage() + "</html>");
@@ -240,8 +223,6 @@ public class HttpUtils {
 	        }
 	        in.close();
 	    }
-	    //System.out.println("JSON error response: " + builder.toString());
-	    //manager.error("JSON error response: " + builder.toString());
 
 		JSONParser parser = new JSONParser();
 		Object parsedData = parser.parse(builder.toString());

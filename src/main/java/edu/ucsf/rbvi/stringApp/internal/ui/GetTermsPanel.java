@@ -86,8 +86,6 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 	final StringManager manager;
 	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
 
-	// Map<String, List<String>> resolvedIdMap = null;
-	// Map<String, List<Annotation>> annotations = null;
 
 	JTextArea searchTerms;
 	JPanel mainSearchPanel;
@@ -110,7 +108,6 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 
 	public GetTermsPanel(final StringManager manager, final String useDATABASE, boolean queryAddNodes) {
 		super(new GridBagLayout());
-		// System.out.println("Simple terms panel");
 		this.manager = manager;
 		this.useDATABASE = useDATABASE;
 		this.queryAddNodes = queryAddNodes;
@@ -128,21 +125,9 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		this(manager, stringNetwork, useDATABASE, queryAddNodes, null);
 		if (aNetSpecies != null) {
 			this.netSpecies = aNetSpecies;
-			// optionsPanel.setSpeciesText(aNetSpecies);
 		}
 	}
 
-	/*
-	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, 
-	                     String useDATABASE, String aNetSpecies, boolean queryAddNodes,
-											 int confidence, int additionalNodes) {
-		optionsPanel = new SearchOptionsPanel(manager, false, false, false);
-		optionsPanel.setConfidence(confidence);
-		optionsPanel.setAdditionalNodes(additionalNodes);
-		optionsPanel.setSpecies(aNetSpecies);
-		this(manager, stringNetwork, useDATABASE, queryAddNodes, optionsPanel);
-	}
-	*/
 
 	public GetTermsPanel(final StringManager manager, StringNetwork stringNetwork, 
 	                     String useDATABASE, boolean queryAddNodes, SearchOptionsPanel panel) {
@@ -153,7 +138,6 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 	                     String useDATABASE, boolean queryAddNodes, SearchOptionsPanel panel,
 	                     String netName, Task additionalTask) {
 		super(new GridBagLayout());
-		// System.out.println("Terms panel");
 		this.manager = manager;
 		this.stringNetwork = stringNetwork;
 		this.initialStringNetwork = stringNetwork;
@@ -202,9 +186,6 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		mainSearchPanel = createSearchPanel();
 		add(mainSearchPanel, c.down().expandBoth().insets(5,5,0,5));
 
-		// optionsPanel = new SearchOptionsPanel(manager, false, false, false);
-		// if (!useDATABASE.equals(Databases.STITCH.getAPIName()))
-		// 	optionsPanel.setUseSmartDelimiters(true);
 		optionsPanel.setMinimumSize(new Dimension(400, 150));
 		optionsPanel.showSpeciesBox(false); // We don't want to show two of these
 		add(optionsPanel, c.down().expandHoriz().insets(5,5,0,5));
@@ -351,7 +332,6 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		buttonPanel.add(Box.createRigidArea(new Dimension(10,0)));
 		buttonPanel.add(cancelButton);
 		buttonPanel.add(Box.createHorizontalGlue());
-		// buttonPanel.add(Box.createRigidArea(new Dimension(10,0)));
 		buttonPanel.add(backButton);
 		buttonPanel.add(Box.createRigidArea(new Dimension(10,0)));
 		buttonPanel.add(importButton);
@@ -362,16 +342,12 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = null;
 		if (wholeOrg) {
-			// stringIds = ModelUtils.readOrganimsIDs(queryTermMap);
 			stringIds = null;
-			// stringIds = stringNetwork.combineIds(queryTermMap);
 		} else {
 			stringIds = stringNetwork.combineIds(queryTermMap);
 		}
 
 		// We need to see if we're using a custom species, and if so, we need to use a different database
-		// if (species.isCustom())
-		// 	useDATABASE = Databases.STRINGDB.getAPIName();
 		TaskFactory factory = null;
 		if (!queryAddNodes) {
 			factory = new ImportNetworkTaskFactory(stringNetwork, speciesCombo.getSelectedItem().toString(), 
@@ -441,7 +417,6 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 			selectPanelTerm.add(selectAllTermButton);
 			selectPanelTerm.add(clearAllTermButton);
 
-			// Object[] terms = stringNetwork.getAnnotations().keySet().toArray();
 			Object[] terms = getTermList();
 			final JList termList = new JList(terms);
 			termList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -559,7 +534,6 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 			valueMap.put("cutoff", 0.05);
 			TaskIterator newIterator = 
 							setter.createTaskIterator(tf.createTaskIterator(manager.getCurrentNetwork()), valueMap);
-			// System.out.println("stringNetwork network = "+stringNetwork.getNetwork());
 			manager.execute(newIterator);
 		}
 		optionsPanel.showSpeciesBox(true); // Turn this back on
@@ -627,7 +601,6 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 				return;
 			}
 
-			// System.out.println("taskFinished");
 			GetAnnotationsTask annTask = (GetAnnotationsTask)task;
 
 			final Species species = annTask.getSpecies();
@@ -659,7 +632,6 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 					additionalNodes = 10;
 					logger.warn("STRING: Only one protein or compound was selected -- additional interactions set to 10");
 				}
-				//	additionalNodes = 10;
 
 				final int addNodes = additionalNodes;
 
@@ -693,22 +665,11 @@ public class GetTermsPanel extends JPanel implements TaskObserver {
 			int additionalNodes = optionsPanel.getAdditionalNodes();
 
 			if (stringNetwork.getResolvedTerms() == 1 && additionalNodes == 0 && !queryAddNodes) {
-				/*
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						JOptionPane.showMessageDialog(null, 
-												"This will return only one node (Hint: increase maximum interactors slider?)",
-									       "Hint", JOptionPane.WARNING_MESSAGE); 
-					}
-				});
-				*/
 				additionalNodes = 10;
 				logger.warn("STRING: Only one protein or compound was selected -- additional interactions set to 10");
 
 			}
 
-			// if (stringNetwork.getResolvedTerms() == 1)
-			// 	additionalNodes = 10;
 
 			if (wholeOrgBox.isSelected()) {
 				SwingUtilities.invokeLater(new Runnable() {

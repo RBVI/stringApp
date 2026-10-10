@@ -55,7 +55,6 @@ public class ShowResultsPanelTask extends AbstractTask {
 			}
 		}
 
-		// factory.reregister();
 	}
 
 	public static boolean isPanelRegistered(StringManager sman) {

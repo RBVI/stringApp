@@ -82,7 +82,6 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 		if (!ModelUtils.isCurrentDataVersion(network)) {
 			monitor.showMessage(Level.ERROR,
 					"Task cannot be performed. Network appears to be an old STRING network.");
-			// showError("Task cannot be performed. Network appears to be an old STRING network.");
 			return;			
 		}
 
@@ -170,7 +169,6 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 						                                                     results, null, database, currentType);
 
 				// TODO: newEdges appears empty when this status message is printed
-				//monitor.setStatusMessage("Adding "+newEdges.size()+" edges");
 				monitor.setStatusMessage("Adding new edges");
 	
 				ModelUtils.setConfidence(network, (double)Math.round(confidence.getValue()*1000)/1000);
@@ -179,17 +177,10 @@ public class ChangeConfidenceTask extends AbstractTask implements ObservableTask
 
 		// If we have a view, re-apply the style and layout
 		if (netView != null) {
-			// monitor.setStatusMessage("Laying out network");
 			ViewUtils.updateEdgeStyle(manager, netView, newEdges);
 			netView.updateView();
 
 			// At some point, we want to change this to only restyle the edges
-			/* ViewUtils.reapplyStyle(manager, netView);
-			CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");
-			Object context = alg.createLayoutContext();
-			Set<View<CyNode>> nodeViews = new HashSet<>(netView.getNodeViews());
-			insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, "score"));
-			*/
 		}
 		// reset filters in the results panel
 		manager.reinitResultsPanel(network);

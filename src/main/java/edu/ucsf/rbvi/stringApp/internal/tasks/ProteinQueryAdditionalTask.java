@@ -141,7 +141,6 @@ public class ProteinQueryAdditionalTask extends AbstractTask implements Observab
 		if (annotations == null || annotations.size() == 0) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,
 					"Query '" + query + "' returned no results");
-			// throw new RuntimeException("Query '"+query+"' returned no results");
 			return;
 		}
 
@@ -164,7 +163,6 @@ public class ProteinQueryAdditionalTask extends AbstractTask implements Observab
 			monitor.showMessage(TaskMonitor.Level.ERROR,
 					"Query '" + query + "' returned no results");
 			return;
-			// throw new RuntimeException("Query '"+query+"' returned no results");
 		}
 	}
 

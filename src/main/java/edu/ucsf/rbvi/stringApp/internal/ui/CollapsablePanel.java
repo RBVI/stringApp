@@ -61,16 +61,13 @@ public class CollapsablePanel extends JPanel {
 			this.add(expandButton, c.anchor("west").noExpand());
 			label = new JLabel(text);
 			label.setFont(font);
-			// label.setForeground(Color.BLUE);
 			this.add(label, c.right().expandHoriz());
 			this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-			// this.setBorder(BorderFactory.createEtchedBorder());
 			this.setBackground(Color.LIGHT_GRAY);
 			setPreferredSize(new Dimension(200, 20));
 		}
 
 		public void setText(String text) {
-			// System.out.println("Setting label text to: "+text);
 			label.setText("<html>"+text+"</html>");
 		}
 
@@ -90,7 +87,6 @@ public class CollapsablePanel extends JPanel {
 
 	public CollapsablePanel(Font iconFont, String text, JPanel panel, boolean collapsed, int fontSize) {
 		super();
-		// setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setLayout(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
 
@@ -98,7 +94,6 @@ public class CollapsablePanel extends JPanel {
 
 		setBackground(new Color(200, 200, 220));
 		contentPanel_ = panel;
-		// panel.setBorder(BorderFactory.createEtchedBorder());
 
 		add(headerPanel_, c.anchor("northwest").down().expandHoriz());
 		add(contentPanel_, c.anchor("west").down().expandBoth());

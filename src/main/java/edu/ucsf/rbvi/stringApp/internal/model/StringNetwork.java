@@ -26,15 +26,12 @@ import edu.ucsf.rbvi.stringApp.internal.utils.EnrichmentUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.JSONUtils;
 import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 
-// import org.jcolorbrewer.ColorBrewer;
 
 public class StringNetwork {
 	final StringManager manager;
 	CyNetwork network;
 	Map<String, List<String>> resolvedIdMap = null;
 	Map<String, List<Annotation>> annotations = null;
-	// Map<String, List<Annotation>> annotationsFull = null;
-	// Map<String, String> settings = null;
 	Map<String, Map<String, String>> settingsGroups = null;
 
 	// Default enrichment table options for this network
@@ -57,7 +54,6 @@ public class StringNetwork {
 		this.manager = manager;
 		resolvedIdMap = null;
 		annotations = null;
-		// annotationsFull = null;
 		// TODO: [N] Is it ok to set the group to null here?
 		topTerms = manager.getTopTerms(null, null);
 		overlapCutoff = manager.getOverlapCutoff(null, null);
@@ -65,14 +61,12 @@ public class StringNetwork {
 		categoryFilter = manager.getCategoryFilter(null, null);
 		removeOverlap = manager.getRemoveOverlap(null, null);
 		chartType = manager.getChartType(null, null);
-		// settings = new HashMap<>();
 		settingsGroups = new HashMap<>();
 	}
 
 	public void reset() {
 		resolvedIdMap = null;
 		annotations = null;
-		// annotationsFull = null;
 	}
 
 	public StringManager getManager() { return manager; }
@@ -121,11 +115,9 @@ public class StringNetwork {
 					CyTable settignsTable = EnrichmentUtils.getEnrichmentSettingsTable(manager, network);
 					netTable.getRow(network.getSUID()).set(ColumnNames.NET_ENRICHMENT_SETTINGS_TABLE_SUID, settignsTable.getSUID());
 					// Copy analyzed nodes and enrichment settings to new settings table for this network
-					// ModelUtils.createListColumnIfNeeded(settignsTable, Long.class, ModelUtils.NET_ANALYZED_NODES);
 					settignsTable.getRow(defaultGroup).set(ColumnNames.NET_ANALYZED_NODES, analyzedNodes);
 					String enrichmentSettings = network.getRow(network).get(ColumnNames.NET_ENRICHMENT_SETTINGS, String.class);
 					if (enrichmentSettings != null) {
-						// ModelUtils.createListColumnIfNeeded(settignsTable, String.class, ModelUtils.NET_ENRICHMENT_SETTINGS);
 						settignsTable.getRow(defaultGroup).set(ColumnNames.NET_ENRICHMENT_SETTINGS, enrichmentSettings);
 					}					
 				} else if (current.getTitle().equals(TermCategory.PMID.getTable())) {
@@ -138,25 +130,20 @@ public class StringNetwork {
 			if (group.equals("")) {
 				continue; 
 			}
-			// System.out.println("get settings for group: " + group + " in network " + ModelUtils.getName(network, network));
 			// Load our options
 			Map<String, String> settings = EnrichmentUtils.getEnrichmentSettingsTableGroup(manager, network, group);
 			if (settings.size() > 0) {
-				// System.out.println("found settings for _" + group + "_ in network " + ModelUtils.getName(network, network));
 				settingsGroups.put(group, settings);
 				if (settings.containsKey("overlapCutoff")) {
 					overlapCutoff = Double.valueOf(settings.get("overlapCutoff"));
-					//System.out.println(overlapCutoff);
 				}
 				overlapCutoffGroups.put(group, overlapCutoff);
 				if (settings.containsKey("topTerms")) {
 					topTerms = Integer.valueOf(settings.get("topTerms"));
-					//System.out.println(topTerms);
 				}
 				topTermsGroups.put(group, topTerms);
 				if (settings.containsKey("removeOverlap")) {
 					removeOverlap = Boolean.valueOf(settings.get("removeOverlap"));
-					//System.out.println(removeOverlap);
 				}
 				removeOverlapGroups.put(group, removeOverlap);
 				if (settings.containsKey("categoryFilter")) {
@@ -165,70 +152,24 @@ public class StringNetwork {
 					for (String filter: strFilters) {
 						categoryFilter.add(Enum.valueOf(TermCategory.class, filter));
 					}
-					//System.out.println(categoryFilter);
 				}
 				categoryFilterGroups.put(group, categoryFilter);
 				if (settings.containsKey("chartType")) {
 					chartType = Enum.valueOf(ChartType.class, settings.get("chartType"));
-					//System.out.println(chartType);
 				}
 				chartTypeGroups.put(group, chartType);
 		
 				// FIXME
-				/*
-				if (settings.containsKey("brewerPalette")) {
-					brewerPalette = Enum.valueOf(ColorBrewer.class, settings.get("brewerPalette"));
-				}
-				*/
 				// TODO: why do we set this one here and none of the others?
 				if (settings.containsKey("brewerPalette")) {
-					// System.out.println(settings.get("brewerPalette"));
 					manager.setBrewerPalette(network, settings.get("brewerPalette"), group);
 				}
-				// brewerPaletteGroups.put(defaultGroup, brewerPalette);
 			} 
-			// else {
-				// System.out.println("found no settings for _" + group + "_ in network " + ModelUtils.getName(network, network));
-			// }
 		}
 	}
 
-	//public double getOverlapCutoff() { return overlapCutoff; }
-	//public void setOverlapCutoff(double cutoff) { overlapCutoff = cutoff; update(); }
-
-	//public int getTopTerms() { return topTerms; }
-	//public void setTopTerms(int tt) { topTerms = tt; update(); }
-
-	//public List<TermCategory> getCategoryFilter() { return categoryFilter; }
-	//public void setCategoryFilter(List<TermCategory> categories) { categoryFilter = categories; update(); }
-
-	//public Palette getEnrichmentPalette() { return brewerPalette; }
-	//public void setEnrichmentPalette(Palette palette) { brewerPalette = palette; update(); }
-
-	//public ChartType getChartType() { return chartType; }
-	//public void setChartType(ChartType type) { chartType = type; update(); }
-
-	//public boolean getRemoveOverlap() { return removeOverlap; }
-	//public void setRemoveOverlap(boolean remove) { removeOverlap = remove; update(); }
-
 
 	// Update our settings in the network table
-//	private void update() {
-//		settings.put("overlapCutoff", Double.toString(overlapCutoff));
-//		settings.put("topTerms", Integer.toString(topTerms));
-//		settings.put("removeOverlap", Boolean.toString(removeOverlap));
-//		{
-//			List<String> filters = new ArrayList<>();
-//			for (TermCategory cat: categoryFilter) {
-//				filters.add(cat.name());
-//			}
-//			settings.put("categoryFilter", ModelUtils.listToString(filters));
-//		}
-//		settings.put("brewerPalette", brewerPalette.toString());
-//		settings.put("chartType", chartType.name());
-//		ModelUtils.updateEnrichmentSettings(network, settings);
-//
-//	}
 
 	public double getOverlapCutoff(String group) { 
 		if (overlapCutoffGroups.containsKey(group)) 
@@ -299,7 +240,6 @@ public class StringNetwork {
 
 	// Update our settings in the network table
 	private void updateGroup(String group) {
-		// System.out.println("update settings for " + group);
 		Map<String, String> groupSettings = new HashMap<String, String>();
 		if (overlapCutoffGroups.containsKey(group))
 			groupSettings.put("overlapCutoff", Double.toString(overlapCutoffGroups.get(group)));
@@ -343,16 +283,10 @@ public class StringNetwork {
 
 	public Map<String, List<Annotation>> getAnnotations() { return annotations; }
 	
-	// public Map<String, List<Annotation>> getFullAnnotations() { return annotationsFull; }
 
 	public Map<String, List<Annotation>> getAnnotations(StringManager manager, Species species, final String terms, 
 	                                                    final String useDATABASE, boolean includeViruses) throws ConnectionException {
 		String encTerms = terms.trim();
-		// try {
-		// encTerms = URLEncoder.encode(terms.trim(), "UTF-8");
-		// } catch (Exception e) {
-		// return new HashMap<String, List<Annotation>>();
-		// }
 
 		// make list of terms unique
 		Set<String> termsSet = new HashSet<String>(Arrays.asList(encTerms.split("\n")));
@@ -360,7 +294,6 @@ public class StringNetwork {
 		
 		// Split the terms up into groups of 5000
 		annotations = new HashMap<>();
-		// annotationsFull = new HashMap<>();
 		for (int i = 0; i < termsArray.length; i = i + 5000) {
 			String termsBatch = getTerms(termsArray, i, i + 5000, termsArray.length);
 			annotations = getAnnotationBatch(species, termsBatch, useDATABASE, includeViruses);
@@ -377,7 +310,6 @@ public class StringNetwork {
 		// new API 
 
 		String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/get_string_ids";
-		// String url = manager.getResolveURL(Databases.STRING.getAPIName())+"json/resolveList";
 		Map<String, String> args = new HashMap<>();
 		String speciesId;
 		if (species.getTaxId() > 0)
@@ -386,7 +318,6 @@ public class StringNetwork {
 			speciesId = species.getName();
 		args.put("species", speciesId);
 		args.put("identifiers", encTerms);
-		// args.put("limit", "");
 		args.put("csdata", "1");
 		args.put("caller_identity", StringManager.CallerIdentity);
 		manager.info("URL: "+url+"?species="+speciesId+"&caller_identity="+StringManager.CallerIdentity+"&identifiers="+encTerms);
@@ -394,11 +325,8 @@ public class StringNetwork {
 		JSONObject results = null;
 		try {
 			results = HttpUtils.postJSON(url, args, manager);
-			// System.out.println(results.toString());
 			if (results != null) {
-				// System.out.println("Got results");
 				annotations = Annotation.parseAnnotations(results, encTerms, annotations, species, Databases.STRING.getAPIName());
-				// System.out.println("Get annotations returns "+annotations.size());
 			}
 		} catch (ConnectionException ex) {
 			if (ex instanceof UnknownSpeciesException && manager.isVirusesEnabled() && annotations.size() == 0 && includeViruses) {
@@ -411,12 +339,9 @@ public class StringNetwork {
 				manager.info("URL: "+url+"?types=" + speciesId + "&limit=5&format=json"+"&identifiers="+HttpUtils.truncate(encTerms));
 				
 				// Get the results
-				// System.out.println("Getting VIRUSES term resolution");
 				results = HttpUtils.postJSON(url, args, manager);
 				if (results != null) {
-					// System.out.println("Got results");
 					annotations = Annotation.parseAnnotations(results, encTerms, annotations, species, Databases.JENSENLAB.getAPIName());
-					// System.out.println("Get annotations returns "+annotations.size());
 				}
 			}
 		}
@@ -426,12 +351,6 @@ public class StringNetwork {
 		// then, call other APIs to get resolve them
 		// resolve compounds 
 		if (useDATABASE.equals(Databases.STITCH.getAPIName())) {
-			//url = manager.getResolveURL(Databases.STITCH.getAPIName())+"json/resolveList";
-			//args = new HashMap<>();
-			//args.put("species", "CIDm");
-			//args.put("identifiers", encTerms);
-			//args.put("caller_identity", StringManager.CallerIdentity);
-			// manager.info("URL: "+url+"?species="+speciesId+"&caller_identity="+StringManager.CallerIdentity+"&identifiers="+HttpUtils.truncate(encTerms));
 			
 			url = manager.getEntityQueryURL();
 			args = new HashMap<>();
@@ -443,7 +362,6 @@ public class StringNetwork {
 			manager.info("URL: "+url+"?types=-1&limit=10&format=json"+"&identifiers="+HttpUtils.truncate(encTerms));
 			
 			// Get the results
-			// System.out.println("Getting STITCH term resolution");
 			results = HttpUtils.postJSON(url, args, manager);
 
 			if (results != null) {
@@ -493,8 +411,6 @@ public class StringNetwork {
 			for (String key: resolvedIdMap.keySet()) {
 				if (annotations.containsKey(key))
 					// TODO: [Custom] figure out how to add the ones that resolve to multiple ids and the user chose one of them (if needed) 
-					// annotationsFull.put(key, annotations.get(key));
-					// annotations.remove(key);
 					for (Annotation a: annotations.get(key)) {a.setResolved(true);}
 			}
 		}

@@ -93,8 +93,6 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 	
 		// Filter the current list
 		List<TermCategory> categoryList = categories.getSelectedValues();
-		//SwingUtilities.invokeLater(new Runnable() {
-			//public void run() {
 				// when using commands, we need to get the enrichment panel again
 				if (enrichmentPanel == null) { 
 					CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
@@ -110,15 +108,12 @@ public class FilterEnrichmentTableTask extends AbstractTask implements Observabl
 				}
 				EnrichmentTableModel tableModel = enrichmentPanel.getTableModel();
 				tableModel.filter(categoryList, removeOverlapping, overlapCutoff.getValue());
-				// enrichmentPanel.updateLabelRows();
 				manager.setRemoveOverlap(network,removeOverlapping, group);
 				manager.setOverlapCutoff(network,overlapCutoff.getValue(), group);
 				manager.setCategoryFilter(network,categories.getSelectedValues(), group);
 				manager.updateSettings();
 				filteredEnrichmentTable = enrichmentPanel.getFilteredTable();
 				enrichmentPanel.updateFilteredEnrichmentTable(filteredEnrichmentTable);
-			//}
-		//});
 	}
 
 	@Override

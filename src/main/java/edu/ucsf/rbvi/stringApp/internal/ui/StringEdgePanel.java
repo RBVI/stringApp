@@ -69,7 +69,6 @@ public class StringEdgePanel extends AbstractStringPanel {
 	private void init() {
 		setLayout(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
-		// add(new JSeparator(SwingConstants.HORIZONTAL), c.anchor("west").expandHoriz());
 		JComponent scoreSlider = createFilterSlider("score", "Score", createScoreLabel(), currentNetwork, true, 100.0);
 		{
 			scorePanel = new JPanel();
@@ -87,7 +86,6 @@ public class StringEdgePanel extends AbstractStringPanel {
 		JPanel mainPanel = new JPanel();
 		{
 			mainPanel.setLayout(new GridBagLayout());
-			// mainPanel.setBackground(defaultBackground);
 			EasyGBC d = new EasyGBC();
 
 			{
@@ -126,7 +124,6 @@ public class StringEdgePanel extends AbstractStringPanel {
 		add(scrollPane, c.down().anchor("west").expandBoth());
 
 
-		// add(new JPanel(), c.down().anchor("west").expandBoth());
 	}
 
 	private String createScoreLabel() {
@@ -144,7 +141,6 @@ public class StringEdgePanel extends AbstractStringPanel {
 	private JPanel createControlPanel() {
 		JPanel controlPanel = new JPanel();
 		GridLayout layout = new GridLayout(2,2);
-		//layout.setVgap(0);
 		controlPanel.setLayout(layout);
 		{
 			fetchEdges = new JButton("Fetch extra edges");
@@ -174,7 +170,6 @@ public class StringEdgePanel extends AbstractStringPanel {
 			controlPanel.add(deleteEdges);
 			deleteEdges.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					//ChangeConfidenceTaskFactory tf = new ChangeConfidenceTaskFactory(manager);
 					if (filters.containsKey(currentNetwork)
 							&& filters.get(currentNetwork).containsKey("score")
 							&& filters.get(currentNetwork).get("score").containsKey("Score")) {
@@ -210,7 +205,6 @@ public class StringEdgePanel extends AbstractStringPanel {
 		panel.setLayout(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
 
-		//List<String> subScoreList = ModelUtils.getSubScoreList(currentNetwork);
 		List<String> subScoreList = EvidenceType.getOrderedEvidenceTypes(ModelUtils.getNetworkType(currentNetwork));
 
 		// OK, now we want to create 3 panels: Color, Label, and Filter
@@ -229,7 +223,6 @@ public class StringEdgePanel extends AbstractStringPanel {
 				colorPanel.add(createScoreCheckBox(subScore), d.down().expandVert());
 			}
 
-			//colorPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			panel.add(colorPanel, c.anchor("northwest").expandVert());
 		}
 
@@ -264,10 +257,8 @@ public class StringEdgePanel extends AbstractStringPanel {
 			for (String subScore: subScoreList) {
 				JComponent scoreSlider = createFilterSlider("score", subScore, subScore, currentNetwork, false, 100.0);
 				scoreSlider.setMinimumSize(new Dimension(100,30));
-				// scoreSlider.setMaximumSize(new Dimension(100,30));
 				filterPanel.add(scoreSlider, d.down().expandBoth());
 			}
-			//filterPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			panel.add(filterPanel, c.right().expandBoth());
 		}
 
@@ -350,8 +341,6 @@ public class StringEdgePanel extends AbstractStringPanel {
 		}
 		
 
-		
-		// String name = ModelUtils.getName(currentNetwork, edge);
 		String name = ModelUtils.getString(currentNetwork, edge.getSource(), ColumnNames.DISPLAY) + " - "
 				+ ModelUtils.getString(currentNetwork, edge.getTarget(), ColumnNames.DISPLAY);
 		
@@ -382,9 +371,7 @@ public class StringEdgePanel extends AbstractStringPanel {
 		Color sourceNodeColor = (Color)view.getNodeView(edge.getSource()).getVisualProperty(BasicVisualLexicon.NODE_FILL_COLOR);
 		Color targetNodeColor = (Color)view.getNodeView(edge.getTarget()).getVisualProperty(BasicVisualLexicon.NODE_FILL_COLOR);
 		String colors = "?c1=" + Integer.toHexString(sourceNodeColor.getRGB()).substring(2);
-		// String.format("%02x%02x%02x", sourceNodeColor.getRed(), sourceNodeColor.getGreen(), sourceNodeColor.getBlue()); 
 		colors += "&c2=" + Integer.toHexString(targetNodeColor.getRGB()).substring(2);
-		// String.format("%02x%02x%02x", targetNodeColor.getRed(), targetNodeColor.getGreen(), targetNodeColor.getBlue());
 		
 		String url = "https://string-db.org/" + netType + "/" + sourceNode + "/" + targetNode + colors;		
 		return url;
@@ -480,10 +467,8 @@ public class StringEdgePanel extends AbstractStringPanel {
 				}
 			}
 			if (show) {
-				// view.getEdgeView(edge).setVisualProperty(BasicVisualLexicon.EDGE_VISIBLE, true);
 				view.getEdgeView(edge).clearValueLock(BasicVisualLexicon.EDGE_VISIBLE);
 			} else {
-				// view.getEdgeView(edge).setVisualProperty(BasicVisualLexicon.EDGE_VISIBLE, false);
 				view.getEdgeView(edge).setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, false);
 				view.getModel().getRow(edge).set(CyNetwork.SELECTED, false);
 			}

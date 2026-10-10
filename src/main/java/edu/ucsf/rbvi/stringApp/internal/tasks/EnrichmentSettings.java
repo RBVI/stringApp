@@ -27,9 +27,6 @@ import org.cytoscape.work.util.ListSingleSelection;
 
 import edu.ucsf.rbvi.stringApp.internal.model.ChartType;
 import edu.ucsf.rbvi.stringApp.internal.model.StringManager;
-// import org.jcolorbrewer.ColorBrewer;
-// import org.jcolorbrewer.ui.ColorPaletteChooserDialog;
-// import org.jcolorbrewer.ui.ColorPaletteChooserDialog.PALETTE_TYPE;
 
 public class EnrichmentSettings implements ActionListener, RequestsUIHelper {
 	private StringManager manager;
@@ -92,7 +89,6 @@ public class EnrichmentSettings implements ActionListener, RequestsUIHelper {
 			}
 
 		}
-		// ColorBrewer[] palettes = ColorBrewer.getQualitativeColorPalettes(false);
 		defaultEnrichmentPalette = new ListSingleSelection<Palette>(palettes);
 		defaultEnrichmentPalette.setSelectedValue(manager.getEnrichmentPalette(network, group));
 		
@@ -112,15 +108,6 @@ public class EnrichmentSettings implements ActionListener, RequestsUIHelper {
 			defaultEnrichmentPalette.setSelectedValue(palette);
 		}
 
-		/*
-		ColorPaletteChooserDialog dialog = new ColorPaletteChooserDialog(null, PALETTE_TYPE.QUALITATIVE);
-		if (defaultPalette.getSelectedValue() != null)
-			dialog.setColorBrewer(defaultPalette.getSelectedValue());
-		boolean okPressed = dialog.showDialog();
-		if (okPressed) {
-			defaultPalette.setSelectedValue(dialog.getColorPalette());
-		}
-		*/
 	}
 
 	public void setUIHelper(TunableUIHelper helper) {

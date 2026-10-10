@@ -49,7 +49,6 @@ import org.cytoscape.work.SynchronousTaskManager;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskObserver;
-// import org.jcolorbrewer.ColorBrewer;
 import org.json.simple.JSONObject;
 
 import edu.ucsf.rbvi.stringApp.internal.io.HttpUtils;
@@ -118,11 +117,8 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	// TODO: [N] remove these URLs from here and from github config file as we don't use them anymore
 	public static String STITCHResolveURI = "http://stitch.embl.de/api/";
 	public static String VIRUSESResolveURI = "http://viruses.string-db.org/cgi/webservice_handler.pl";
-	//public static String STRINGNetworkURI = "https://string-db.org/api/json/network";
-	// public static String STRINGNetworkURI = "https://string-pythongamma.org/api/json/network";
 	public static String SpeciesURI = Species.class.getResource("/species_v12.0.tsv").toString();
 	public static String PairsURI = Species.class.getResource("/pairs_v12.0.tsv").toString();
-	//public static String STITCHResolveURI = "http://beta.stitch-db.org/api/";
 	public static String URI = "https://api.jensenlab.org/";
 	public static String DATAVERSION = "12";
 	public static String OLD_DATAVERSION = "11.5";
@@ -134,8 +130,6 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	public static String RESULT = "QueryResult";
 	
 	public static String STRINGDevelopmentURI = "https://string-pythongamma.org/api/";
-	// public static String STRING_AGOTOOLenrichmentURI = "https://string-pythongamma.org/api/";
-	// public static String AGOTOOLenrichmentURI = "https://agotool.org/api/";
 	
 	public static boolean enableViruses = true;
 	public static boolean useSTRINGDevelopmentVersion = false; 
@@ -492,15 +486,6 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		return network;
 	}
 
-//	public CyNetwork createStringNetwork(String name, StringNetwork stringNet, 
-//	                                     String useDATABASE, String species, String netType) {
-//		CyNetwork network = createNetwork(name);
-//		ModelUtils.setDatabase(network, useDATABASE);
-//		ModelUtils.setNetSpecies(network, species);
-//		ModelUtils.setNetworkType(network, netType);
-//		addStringNetwork(stringNet, network);
-//		return network;
-//	}
 
 	public void addStringNetwork(StringNetwork stringNet, CyNetwork network) {
 		stringNetworkMap.put(network, stringNet);
@@ -721,8 +706,6 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			return STITCHResolveURI;
 		else if (useDATABASE.equals(Databases.VIRUSES.getAPIName()))
 			return VIRUSESResolveURI;
-		// else if (useDATABASE.equals(Databases.AGOTOOL.getAPIName()))
-		//	return AGOTOOLenrichmentURI;
 		else if (useSTRINGDevelopmentVersion)
 			return STRINGDevelopmentURI;
 		
@@ -765,7 +748,6 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 	}
 
 	public void updateSettings() {
-		// ModelUtils.setStringProperty(configProps, "confidence", Double.toString(overlapCutoff));
 		ModelUtils.setStringProperty(configProps, "showImage", Boolean.toString(showImage));
 		ModelUtils.setStringProperty(configProps, "showEnhancedLabels", Boolean.toString(showEnhancedLabels));
 		ModelUtils.setStringProperty(configProps, "showGlassBallEffect", Boolean.toString(showGlassBallEffect));
@@ -862,7 +844,6 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 
 		// if there are old string networks, figure out what to do
 		if (networksToUpgrade.size() > 0) {
-			// System.out.println("found networks to upgrade");
 			execute(new AddNamespacesTaskFactory(this).createTaskIterator(networksToUpgrade), true);
 		}
 
@@ -870,21 +851,18 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		if (labelsTaskFactory != null) {
 			String sessionValueLabels = ModelUtils.getStringProperty(sessionProperties,
 					ModelUtils.showEnhancedLabelsFlag);
-			// System.out.println("show labels: " + sessionValueLabels);
 			if (sessionValueLabels != null) {
 				showEnhancedLabels = Boolean.parseBoolean(sessionValueLabels);
 			} else {
 				ModelUtils.setStringProperty(sessionProperties, ModelUtils.showEnhancedLabelsFlag,
 						Boolean.valueOf(showEnhancedLabels));
 			}
-			//labelsTaskFactory.reregister();
 		}
 		
 		// check if glass ball effect should be shown or not
 		if (flatNodeDesignTaskFactory != null) {
 			String sessionValueLabels = ModelUtils.getStringProperty(sessionProperties,
 					ModelUtils.showFlatNodeDesignFlag);
-			// System.out.println("show flat node design: " + sessionValueLabels);
 			if (sessionValueLabels != null) {
 				showFlatNodeDesign = Boolean.parseBoolean(sessionValueLabels);
 			} else {
@@ -897,28 +875,24 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		if (glassBallTaskFactory != null) {
 			String sessionValueLabels = ModelUtils.getStringProperty(sessionProperties,
 					ModelUtils.showGlassBallEffectFlag);
-			// System.out.println("show glass ball effect: " + sessionValueLabels);
 			if (sessionValueLabels != null) {
 				showGlassBallEffect = Boolean.parseBoolean(sessionValueLabels);
 			} else {
 				ModelUtils.setStringProperty(sessionProperties, ModelUtils.showGlassBallEffectFlag,
 						Boolean.valueOf(showGlassBallEffect));
 			}
-			//glassBallTaskFactory.reregister();
 		}
 
 		// check if structure images should be shown or not
 		if (imagesTaskFactory != null) {
 			String sessionValueImage = ModelUtils.getStringProperty(sessionProperties,
 					ModelUtils.showStructureImagesFlag);
-			// System.out.println("show image: " + sessionValueImage);
 			if (sessionValueImage != null) {
 				showImage = Boolean.parseBoolean(sessionValueImage);
 			} else {
 				ModelUtils.setStringProperty(sessionProperties, ModelUtils.showStructureImagesFlag,
 						Boolean.valueOf(showImage));
 			}
-			//imagesTaskFactory.reregister();
 		}
 
 		// if string network, show results panel and enrichment if any enrichment found
@@ -930,8 +904,6 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		} else {
 			hideResultsPanel();
 			// TODO: Hide is not implemented yet, do we need it?
-			//hideEnrichmentPanel();
-			//hidePublicationPanel();
 		}
 	}
 
@@ -944,7 +916,6 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 			tableManager.deleteTable(table.getSUID());
 		}
 		// TODO: are we sure that we don't need to reload?
-		// reloadEnrichmentPanel();
 		// remove as string network
 		if (stringNetworkMap.containsKey(network))
 			stringNetworkMap.remove(network);
@@ -979,13 +950,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		Set<CyTable> tables = tableManager.getAllTables(true);
 		for (CyTable table : tables) {
 			if (table.getTitle().contains(EnrichmentTerm.ENRICHMENT_TABLE_PREFIX)) {
-				// System.out.println("manager: found table ALL");
 				if (enrichPanel == null) {
-					// System.out.println("manager: showEnrichPanel -> createTaskIterator");
 					execute(enrichmentTaskFactory.createTaskIterator(), true);
 				}
 				else {
-					// System.out.println("manager: showEnrichPanel -> show panel");
 					enrichPanel.showCytoPanel();
 				}
 				break;
@@ -998,13 +966,10 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		Set<CyTable> tables = tableManager.getAllTables(true);
 		for (CyTable table : tables) {
 			if (table.getTitle().equals(TermCategory.PMID.getTable())) {
-				// System.out.println("manager: found table PMID");
 				if (publPanel == null) {	
-					// System.out.println("manager: showPublPanel -> createTaskIterator");
 					execute(publicationsTaskFactory.createTaskIterator(), true);
 				}
 				else { 
-					// System.out.println("manager: showPublPanel -> show panel");
 					publPanel.showCytoPanel();
 				}
 				break;
@@ -1172,19 +1137,6 @@ public class StringManager implements NetworkAddedListener, SessionLoadedListene
 		setCategoryFilter(network, catList, group);
 	}
 
-	/*
-	public ColorBrewer getBrewerPalette(CyNetwork network) { 
-		if (network == null || !stringNetworkMap.containsKey(network))
-			return brewerPalette; 
-		return stringNetworkMap.get(network).getBrewerPalette();
-	}
-	public void setBrewerPalette(CyNetwork network, ColorBrewer palette) { 
-		if (network == null || !stringNetworkMap.containsKey(network)) {
-			brewerPalette = palette; 
-		} else
-			stringNetworkMap.get(network).setBrewerPalette(palette);
-	}
-*/
 	public Palette getEnrichmentPalette(CyNetwork network, String group) { 
 		if (network == null || !stringNetworkMap.containsKey(network))
 			return brewerPalette;

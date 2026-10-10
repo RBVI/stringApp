@@ -153,9 +153,7 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 			int valfreq = Collections.frequency(colValues, colval);
 			groups.add(new Group(colval.toString(), valfreq));
 		}
-		// monitor.setStatusMessage("Network contains " + groups.size() + " groups.");
 		Collections.sort(groups, Collections.reverseOrder());
-		// System.out.println(groups);
 
 		// create columns to save annotations in the node table
 		ModelUtils.createColumnIfNeeded(nodeTable, String.class, ColumnNames.GENESET_PRIMARY);
@@ -165,7 +163,6 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 		// get annotations for each group
 		int counter = 0;
 		for (Group group : groups) {
-			// System.out.println("Group: " + group);			
 			if (counter >= maxGroupNumber) 
 				break;
 			counter += 1;
@@ -173,18 +170,15 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 			// get set of nodes to retrieve enrichment for
 			String selected = getGroupNodes(network, colGroups, group.getName()).trim(); // also initializes the analyzedNodes
 			if (analyzedNodes.size() < minGroupSize) {
-				// System.out.println("ignore group " + groupTableName);
 				continue;
 			}
 			String groupName = colGroups.getName() + " " + group.getName();
 
-			// System.out.println("Retrieving annotations for " + groupName + " with " + analyzedNodes.size() + " nodes.");
 			monitor.showMessage(Level.INFO, "Retrieving annotataions for group " + groupName + " with " + analyzedNodes.size() + " nodes.");
 
 			// retrieve enrichment (new API)
 			getAnnotationJSON(selected, species, groupName);			
 			if (annotations != null && annotations.size() > 0) {
-				//System.out.println("Annotations: " + annotations.toString());
 				if (annotations.containsKey(primary) && annotations.get(primary) != null) {
 					addAnnotationToNetwork(annotations.get(primary));
 				} else if (annotations.containsKey(secondary) && annotations.get(secondary) != null) {
@@ -238,7 +232,6 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 		}
 		double xSpan = Collections.max(xPos) - Collections.min(xPos);
 		double ySpan = Collections.max(yPos) - Collections.min(yPos);
-		// double scaling = view.getNodeViews().size()/(double)termNodes.size();
 		
 		
 		// create annotation
@@ -260,12 +253,8 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 				annotation = wrap(annotation, 20);
 			}
 		}
-		//args.put(TextAnnotation.Z, String.valueOf(-1));
 		args.put(TextAnnotation.TEXT, annotation);
 		args.put(TextAnnotation.FONTSIZE, String.valueOf(30));
-		//args.put(TextAnnotation.FONTFAMILY, this.font.getFamily());
-		//args.put(TextAnnotation.FONTSTYLE, String.valueOf(this.font.getStyle()));
-		//args.put(TextAnnotation.COLOR, Color.BLACK.toString());
 		
 		TextAnnotation textAnnotation = textFactory.createAnnotation(TextAnnotation.class, view, args);
 		textAnnotation.setName("stringApp_" + annotation);
@@ -302,7 +291,6 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 	    if (trimmedLine.length() > 0) {
 	        allLines.append(trimmedLine);
 	    }
-	    // allLines.append(LINEBREAK);
 	    return allLines.toString();
 	}
 
@@ -338,7 +326,6 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 			monitor.showMessage(Level.ERROR, "Gene set annotation returned no results, possibly due to an error.");
 			return;
 		}
-		// System.out.println(jsonResults);
 		JSONArray annotationsArray = JSONUtils.getResultsFromJSON(jsonResults, JSONArray.class);
 		// [{"primary_description": "p53 binding", "secondary_description": "Regulation of TP53 Activity through Methylation", 
 		// "tertiary_description": "-", "proteins": "CREBBP, DAXX, EP300, MDM2, TP53"}]
@@ -354,7 +341,6 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 		String secondaryAnnot = (String)annotationsObject.get("secondary_description");
 		String tertiaryAnnot = (String)annotationsObject.get("tertiary_description");
 		annotations = new HashMap<String, String>();
-		// String proteins = (String)annotationsObject.get("proteins");
 		if (primary != null) {
 			annotations.put(primary, primaryAnnot);
 		} 
@@ -413,7 +399,6 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 				return 1;
 			}
 			return 0;
-			// return other.name.compareTo(name);
 		}
 
 		public String getName() {
@@ -459,7 +444,6 @@ public class GetGenesetAnnotationTask extends AbstractTask implements Observable
 					result += "\"annotation\": " + annotations.toString();
 				}
 				result += "}";
-				// System.out.println(result);
 				return result;
 			};
 			return (R) res;

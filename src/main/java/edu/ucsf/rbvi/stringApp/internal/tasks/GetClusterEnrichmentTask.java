@@ -57,7 +57,6 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 	List<CyNode> analyzedNodes;
 	TaskMonitor monitor;
 	private List<CyTable> enrichmentTables = new ArrayList<CyTable>();
-	// private static int limitUniqueAttributes = 50; 
 
 	// [N] limit this to the top X with a default -> done, list of values is sorted and only the top X groups are considered
 	// [N] have that as an advanced option -> advanced together with a bunch of others
@@ -183,7 +182,6 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 		}
 		monitor.setStatusMessage("Network contains " + groups.size() + " groups.");
 		Collections.sort(groups, Collections.reverseOrder());
-		// System.out.println(groups);
 
 		// TODO: [N] test deletion of old tables
 		EnrichmentUtils.deleteGroupEnrichmentTables(network, manager, EnrichmentTerm.ENRICHMENT_TABLE_PREFIX + colGroups.getName());
@@ -204,20 +202,16 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			if (counter >= maxGroupNumber) 
 				break;
 
-			// System.out.println(group);
 			// define name of enrichment tables
 			String groupTableName = EnrichmentTerm.ENRICHMENT_TABLE_PREFIX + colGroups.getName() + " " + group.getName();
 			
 			// clear old results (already done above, for now we don't need this one)
-			// deleteEnrichmentTables(groupTableName);
 
 			// get set of nodes to retrieve enrichment for
 			String selected = getGroupNodes(network, colGroups, group.getName()).trim(); // also initializes the analyzedNodes
 			if (analyzedNodes.size() < minGroupSize) {
-				// System.out.println("ignore group " + groupTableName);
 				continue;
 			}
-			// System.out.println("Retrieving enrichment for group " + groupTableName + " with " + analyzedNodes.size() + " nodes.");
 			monitor.showMessage(Level.INFO, "Retrieving enrichment for group " + groupTableName);
 
 			// retrieve enrichment (new API)
@@ -288,7 +282,6 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 					"Enrichment retrieval returned no results, possibly due to an error.");
 			enrichmentResult = null;
 			return;
-			// throw new RuntimeException("Enrichment retrieval returned no results, possibly due to an error.");
 		}
 		List<EnrichmentTerm> terms = JSONUtils.getEnrichmentFromJSON(manager, results, stringNodesMap, network);
 		if (terms == null) {
@@ -297,29 +290,20 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 					"Enrichment retrieval returned no results, possibly due to an error. " + errorMsg);
 			enrichmentResult = null;
 			return;
-			// throw new RuntimeException("Enrichment retrieval returned no results, possibly due to an error. " + errorMsg);
 		} else {
 			Collections.sort(terms);
 			// separate terms into all and pmid
 			List<EnrichmentTerm> termsAll = new ArrayList<EnrichmentTerm>();
 			List<EnrichmentTerm> termsPubl = new ArrayList<EnrichmentTerm>();
 			for (EnrichmentTerm term : terms) {
-				// System.out.println(term.getCategory());
 				if (term.getCategory().equals(TermCategory.PMID.getName())) {
 					termsPubl.add(term);
 				} else {
 					termsAll.add(term);
 				}
 			}
-			// System.out.println("all: " + termsAll.size());
-			// System.out.println("pmid: " + termsPubl.size());
-			// if (publOnly) {
-				//enrichmentResult.put(groupLabel + TermCategory.PMID.getKey(), termsPubl);
-				//saveEnrichmentTable(groupLabel + TermCategory.PMID.getTable(), groupLabel + TermCategory.PMID.getKey());				
-			// } else {
 			enrichmentResult.put(groupTableLabel, termsAll);
 			saveEnrichmentTable(groupTableLabel, groupTableLabel);
-			// }
 			// info for the user
 			if ((publOnly && termsPubl.size() == 0) || (!publOnly && termsAll.size() == 0))
 				monitor.showMessage(Level.WARN, "Enrichment retrieval returned no results that met the criteria.");
@@ -369,7 +353,6 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 			row.set(EnrichmentTerm.colGenes, term.getGenes());
 			row.set(EnrichmentTerm.colGenesSUID, term.getNodesSUID());
 			row.set(EnrichmentTerm.colNetworkSUID, network.getSUID());
-			// row.set(EnrichmentTerm.colShowChart, false);
 			row.set(EnrichmentTerm.colChartColor, "");
 		}
 		return;
@@ -468,7 +451,6 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 				return 1;
 			}
 			return 0;
-			// return other.name.compareTo(name);
 		}
 
 		public String getName() {
@@ -517,7 +499,6 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 				return (R)result;
 			}
 		} else if (clzz.equals(Long.class)) {
-			// if (ppiSummary == null) return null; 
 			return (R) enrichmentTables.get(0).getSUID();
 		} else if (clzz.equals(JSONResult.class)) {
 			JSONResult res = () -> {
@@ -531,7 +512,6 @@ public class GetClusterEnrichmentTask extends AbstractTask implements Observable
 					}
 				}
 				result += "}";
-				// System.out.println(result);
 				return result;
       };
       return (R)res;

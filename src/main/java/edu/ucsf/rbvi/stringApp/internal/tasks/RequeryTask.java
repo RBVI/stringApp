@@ -21,19 +21,9 @@ public class RequeryTask extends AbstractTask {
 
 	final StringManager manager;
 	final CyNetwork network;
-	//private JButton btnOK = null;
-	//private JButton btnCancel = null;
-	//private JDialog confirmDialog = null;
 	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
 	private TaskMonitor monitor;
 
-	// @Tunable(description = "Get the latest STRING network for your nodes", gravity = 1.0,
-	// required = true)
-	// public boolean requery = true;
-
-	// @Tunable(description = "Get the latest STRING network for your nodes", gravity = 1.0,
-	// required = true)
-	// public UserAction requeryBtn = new UserAction(this);
 
 	public RequeryTask(final StringManager manager, CyNetwork network) {
 		this.manager = manager;

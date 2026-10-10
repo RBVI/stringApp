@@ -54,9 +54,6 @@ public class EnrichmentTableModel extends AbstractTableModel {
 		final Long rowName = rowNames[row];
 		// swingColumns = new String[] { colShowChart, colName, colDescription, colFDR,
 		// colGenesCount, colGenes, colGenesSUID };
-		//if (colName.equals(EnrichmentTerm.colShowChart)) {
-		//	return cyTable.getRow(rowName).get(colName, Boolean.class);
-		//} else 
 		if (colName.equals(EnrichmentTerm.colChartColor)) {
 			String hexColor = cyTable.getRow(rowName).get(colName, String.class);
 			if (hexColor != null && !hexColor.equals(""))	
@@ -87,13 +84,9 @@ public class EnrichmentTableModel extends AbstractTableModel {
 	}
 
 	public Object getValueAt(int row, String colName) {
-		// final String colName = columnNames[col];
 		final Long rowName = rowNames[row];
 		// swingColumns = new String[] { colShownChart, colName, colDescription, colFDR,
 		// colGenesCount, colGenes, colGenesSUID };
-		//if (colName.equals(EnrichmentTerm.colShowChart)) {
-		//	return cyTable.getRow(rowName).get(colName, Boolean.class);
-		//} else 
 		if (colName.equals(EnrichmentTerm.colChartColor)) {
 			String hexColor = cyTable.getRow(rowName).get(colName, String.class);
 			if (hexColor != null && !hexColor.equals(""))	
@@ -125,10 +118,6 @@ public class EnrichmentTableModel extends AbstractTableModel {
 
 	public Class<?> getColumnClass(int c) {
 		final String colName = columnNames[c];
-		// return cyTable.getColumn(colName).getClass();
-		// if (colName.equals(EnrichmentTerm.colShowChart)) {
-		//	return Boolean.class;
-		//} else 
 		if (colName.equals(EnrichmentTerm.colChartColor)) {
 			return Color.class;
 		} else if (colName.equals(EnrichmentTerm.colFDR)) {
@@ -166,12 +155,6 @@ public class EnrichmentTableModel extends AbstractTableModel {
 	public void setValueAt(Object value, int row, int col) {
 		final String colName = columnNames[col];
 		final Long rowName = rowNames[row];
-		// if (colName.equals(EnrichmentTerm.colShowChart)) {
-		// 	if (cyTable.getColumn(EnrichmentTerm.colShowChart) == null) {
-		//		cyTable.createColumn(EnrichmentTerm.colShowChart, Boolean.class, false);	
-		//	}
-		//	cyTable.getRow(rowName).set(colName, value);
-		// } 
 		if (colName.equals(EnrichmentTerm.colChartColor)) {
 			if (cyTable.getColumn(EnrichmentTerm.colChartColor) == null) {
 				cyTable.createColumn(EnrichmentTerm.colChartColor, String.class, false);	
@@ -324,7 +307,6 @@ public class EnrichmentTableModel extends AbstractTableModel {
 
 	private void initData() {
 		List<CyRow> rows = cyTable.getAllRows();
-		// Object[][] data = new Object[rows.size()][EnrichmentTerm.swingColumns.length];
 		rowNames = new Long[rows.size()];
 		int i = 0;
 		for (CyRow row : rows) {

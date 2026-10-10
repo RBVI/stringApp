@@ -39,31 +39,18 @@ public class EnrichmentMapTask extends AbstractTask {
 	public BoundedDouble similarity = new BoundedDouble(0.0, defaultSimCutoff, 1.0, true, true);
 
 	// FDR cutoff
-	//@Tunable(description="FDR cutoff", 
-	//         longDescription="The FDR cutoff for terms.  Terms with FDR values larger than this will be dropped.",
-	//         tooltip="Terms with FDR values larger than this cutoff will be dropped",
-	//				 params="slider=true")
-	//public BoundedDouble FDRcutoff = new BoundedDouble(0.0, 0.05, 0.1, true, false);
 	
 	public EnrichmentMapTask(final StringManager manager, final CyNetwork network, final CyTable filteredEnrichmentTable, boolean filtered) {
 		this.manager = manager;
 		this.filteredEnrichmentTable = filteredEnrichmentTable;
 		if (filtered) {
 			// TODO: [N] do we not use this class anymore?
-			// similarity.setBounds(0.0, manager.getOverlapCutoff(network));
-			// similarity.setValue(defaultSimCutoff*manager.getOverlapCutoff(network));
 		}
 		String netName = network.getRow(network).get(CyNetwork.NAME, String.class);
 		mapName = "Enrichment Map - "+ netName;
-		//if (netName.equals("String Network")) {
-		//	mapName = "Enrichment Map - String";
-		//} else 
 		if (netName.startsWith("String Network")) {
 			mapName = "Enrichment Map "+netName.substring(15);
 		}
-		//} else {
-		//	mapName = "Enrichment Map - "+netName;
-		//}
 	}
 
 	@Override
@@ -71,8 +58,6 @@ public class EnrichmentMapTask extends AbstractTask {
 		Map<String, Object> args = new HashMap<>();
 		args.put("networkName", mapName);
 		args.put("pvalueColumn", EnrichmentTerm.colFDR);
-		// args.put("pvalueColumn", EnrichmentTerm.colPvalue);
-		// args.put("qvalueColumn", EnrichmentTerm.colFDR);
 		args.put("genesColumn", EnrichmentTerm.colGenes);
 		args.put("nameColumn", EnrichmentTerm.colName);
 		args.put("descriptionColumn",EnrichmentTerm.colDescription);
@@ -80,7 +65,6 @@ public class EnrichmentMapTask extends AbstractTask {
 		args.put("coefficients","JACCARD");
 		args.put("similaritycutoff",String.valueOf(similarity.getValue()));
 		args.put("pvalue",0.05);
-		// args.put("qvalue",0.05);
 		insertTasksAfterCurrentTask(manager.getCommandTaskIterator("enrichmentmap", "build-table", args, null));
 	}
 

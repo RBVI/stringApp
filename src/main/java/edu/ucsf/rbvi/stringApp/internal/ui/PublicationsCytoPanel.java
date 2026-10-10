@@ -78,7 +78,6 @@ import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
-// import org.jcolorbrewer.ColorBrewer;
 
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm;
 import edu.ucsf.rbvi.stringApp.internal.model.EnrichmentTerm.TermCategory;
@@ -100,14 +99,11 @@ public class PublicationsCytoPanel extends JPanel
 	final StringManager manager;
 	private boolean registered = false;
 	final OpenBrowser openBrowser;
-		// Map<String, JTable> enrichmentTables;
 	JTable publicationsTable;
 	JPanel topPanel;
 	JPanel mainPanel;
 	JScrollPane scrollPane;
-	// public final static String showTable = TermCategory.PMID.getTable();
 	boolean clearSelection = false;
-	// List<String> availableTables;
 	JButton butAnalyzedNodes;
 	JButton butExportTable;
 	JPopupMenu popupMenu;
@@ -124,7 +120,6 @@ public class PublicationsCytoPanel extends JPanel
 	public PublicationsCytoPanel(StringManager manager, boolean noSignificant) {
 		this.manager = manager;
 		this.openBrowser = manager.getService(OpenBrowser.class);
-		// enrichmentTables = new HashMap<String, JTable>();
 		publicationsTable = null;
 		this.setLayout(new BorderLayout());
 		IconManager iconManager = manager.getService(IconManager.class);
@@ -132,7 +127,6 @@ public class PublicationsCytoPanel extends JPanel
 		colorChooserFactory = manager.getService(CyColorPaletteChooserFactory.class);
 		manager.setPublPanel(this);
 		manager.registerService(this, SetCurrentNetworkListener.class, new Properties());
-		// manager.registerService(this, RowsSetListener.class, new Properties());
 		registered = true;
 		initPanel(noSignificant);
 	}
@@ -167,7 +161,6 @@ public class PublicationsCytoPanel extends JPanel
 		CyNetwork network = event.getNetwork();
 		if (ModelUtils.ifHaveStringNS(network)) {
 			if (!registered) {
-				// System.out.println("found string network with unregistered publ panel");
 				showCytoPanel();
 			} else {
 				initPanel(network, false);
@@ -181,7 +174,6 @@ public class PublicationsCytoPanel extends JPanel
 		CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
 		CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.SOUTH);
 		if (!registered) {
-			// System.out.println("panel: register publ panel");
 			manager.registerService(this, CytoPanelComponent.class, new Properties());
 			registered = true;
 		}
@@ -193,7 +185,6 @@ public class PublicationsCytoPanel extends JPanel
 	}
 
 	public void hideCytoPanel() {
-		// System.out.println("panel: unregister publ panel");
 		manager.unregisterService(this, CytoPanelComponent.class);
 		registered = false;
 	}
@@ -239,7 +230,6 @@ public class PublicationsCytoPanel extends JPanel
 				return;
 			for (CyNode node : analyzedNodes) {
 				network.getDefaultNodeTable().getRow(node.getSUID()).set(CyNetwork.SELECTED, true);
-				// System.out.println("select node: " + nodeID);
 			}
 		} else if (e.getSource().equals(butExportTable)) {
 			if (network != null)
@@ -282,7 +272,6 @@ public class PublicationsCytoPanel extends JPanel
 					SwingConstants.CENTER);
 			mainPanel.add(label, BorderLayout.CENTER);
 			this.add(mainPanel, BorderLayout.CENTER);
-			// return;
 		} else {
 			JPanel buttonsPanelRight = new JPanel(new GridLayout(1, 2));
 			butAnalyzedNodes = new JButton(IconManager.ICON_CHECK_SQUARE_O);
@@ -308,7 +297,6 @@ public class PublicationsCytoPanel extends JPanel
 
 			topPanel = new JPanel(new BorderLayout());
 			topPanel.add(buttonsPanelRight, BorderLayout.EAST);
-			// topPanel.add(boxTables, BorderLayout.EAST);
 			this.add(topPanel, BorderLayout.NORTH);
 
 			mainPanel = new JPanel(new BorderLayout());
@@ -330,14 +318,11 @@ public class PublicationsCytoPanel extends JPanel
 		tcm.removeColumn(tcm.getColumn(EnrichmentTerm.nodeSUIDColumnPubl));
 		tcm.getColumn(EnrichmentTerm.fdrColumnPubl).setCellRenderer(new DecimalFormatRenderer());
 		tcm.getColumn(EnrichmentTerm.idColumnPubl).setCellRenderer(new LinkRenderer());
-		// jTable.setDefaultEditor(Object.class, null);
-		// jTable.setPreferredScrollableViewportSize(jTable.getPreferredSize());
 		jTable.setFillsViewportHeight(true);
 		jTable.setAutoCreateRowSorter(true);
 		jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		jTable.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		jTable.getSelectionModel().addListSelectionListener(this);
-		// jTable.getModel().addTableModelListener(this);
 		jTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
 		
 		jTable.addMouseListener(new MouseAdapter() {
@@ -350,9 +335,7 @@ public class PublicationsCytoPanel extends JPanel
 				}
 			}
 		});
-		// jTable.addMouseListener(new TableMouseListener(jTable));
 
-		// enrichmentTables.put(cyTable.getTitle(), jTable);
 		return jTable;
 	}
 
@@ -368,37 +351,6 @@ public class PublicationsCytoPanel extends JPanel
 	}
 
 	public void handleEvent(RowsSetEvent rse) {
-//		CyNetworkManager networkManager = manager.getService(CyNetworkManager.class);
-//		CyNetwork selectedNetwork = null;
-//		if (rse.containsColumn(CyNetwork.SELECTED)) {
-//			Collection<RowSetRecord> columnRecords = rse.getColumnRecords(CyNetwork.SELECTED);
-//			for (RowSetRecord rec : columnRecords) {
-//				CyRow row = rec.getRow();
-//				if (row.toString().indexOf("FACADE") >= 0)
-//					continue;
-//				Long networkID = row.get(CyNetwork.SUID, Long.class);
-//				Boolean selectedValue = (Boolean) rec.getValue();
-//				if (selectedValue && networkManager.networkExists(networkID)) {
-//					selectedNetwork = networkManager.getNetwork(networkID);
-//				}
-//			}
-//		}
-//		if (selectedNetwork != null) {
-//			initPanel(selectedNetwork, false);
-//			return;
-//		}
-//		// experimental: clear term selection when all network nodes are unselected
-//		CyNetwork network = manager.getCurrentNetwork();
-//		// JTable currentTable = enrichmentTables.get(showTable);
-//		if (!clearSelection && network != null && publicationsTable != null) {
-//			List<CyNode> nodes = network.getNodeList();
-//			for (CyNode node : nodes) {
-//				if (network.getRow(node).get(CyNetwork.SELECTED, Boolean.class)) {
-//					return;
-//				}
-//			}
-//			publicationsTable.clearSelection();
-//		}
 	}
 
 	static class DecimalFormatRenderer extends DefaultTableCellRenderer {

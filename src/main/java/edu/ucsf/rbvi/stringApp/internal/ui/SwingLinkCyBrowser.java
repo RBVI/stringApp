@@ -38,11 +38,9 @@ public class SwingLinkCyBrowser extends JLabel {
         open(uri);
       }
       public void mouseEntered(MouseEvent e) {
-        // setText(text,false);
 				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       }
       public void mouseExited(MouseEvent e) {
-        // setText(text,true);
 				setCursor(Cursor.getDefaultCursor());
       }
     });

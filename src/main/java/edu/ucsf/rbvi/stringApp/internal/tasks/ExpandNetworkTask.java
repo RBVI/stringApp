@@ -98,26 +98,17 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			params="slider=true", gravity=3.0)
 	public BoundedDouble selectivityAlpha = new BoundedDouble(0.0, 0.5, 1.0, false, false);
 
-	/*
-	@Tunable(description="Is protein-compound network?", 
-			exampleStringValue = "false", 
-			gravity=4.0)
-	 public boolean mixedTypes = false;
-	 */
 	
 	@Tunable (description="Type of interactors to expand network from", 
 			longDescription = "", 
 			exampleStringValue = "proteins",
 			dependsOn = "mixedTypes=true",
 			gravity=5.0)
-	// public ListSingleSelection<String> nodeTypesSource = new ListSingleSelection<String>(Arrays.asList(mixedTypeProteins, mixedTypeCompounds));
 	public ListSingleSelection<String> nodeTypesSource = null;
 
 	// @Tunable (description="Layout new nodes?", gravity=4.0)
-	// public boolean relayout = true;
 
 	//@Tunable (description="Expand from database", gravity=3.0, groups = "Advanced options", params = "displayState=collapsed")
-	//public ListSingleSelection<String> databases = new ListSingleSelection<String>("string", "stitch");
 	
 	public ExpandNetworkTask(final StringManager manager, final CyNetwork network, CyNetworkView netView) {
 		this.manager = manager;
@@ -189,7 +180,6 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		if (!ModelUtils.isCurrentDataVersion(network)) {
 			monitor.showMessage(Level.ERROR,
 					"Task cannot be performed. Network appears to be an old STRING network.");
-			// showError("Task cannot be performed. Network appears to be an old STRING network.");
 			return;			
 		}
 
@@ -205,7 +195,6 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			}
 		}
 
-		//List<String> allSpecies = ModelUtils.getAllNetSpecies(network);
 		String species = ModelUtils.getNetSpecies(network);
 		if (species == null) {
 			species = ModelUtils.getMostCommonNetSpecies(network);
@@ -218,13 +207,11 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		// if mixed network, replace the existing and selected by either only proteins or only compounds
 		if (nodeTypesSource != null) {
 			if (nodeTypesSource.getSelectedValue().equals(mixedTypeProteins)) {
-				// existing = ModelUtils.getExistingProteins(network).trim();
 				selected = ModelUtils.getSelectedByType(network, nodeView, "protein").trim();
 				if (selected.length() == 0) {
 					selected = ModelUtils.getExistingProteins(network).trim();
 				}
 			} else if (nodeTypesSource.getSelectedValue().equals(mixedTypeCompounds)) {
-				// existing = ModelUtils.getExistingCompounds(network).trim();
 				selected = ModelUtils.getSelectedByType(network, nodeView, "compound").trim();
 				if (selected.length() == 0) {
 					selected = ModelUtils.getExistingCompounds(network).trim();
@@ -237,9 +224,6 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 				}				
 			}
 		}
-		//System.out.println("species: " + species);
-		//System.out.println("existing: " + existing);
-		//System.out.println("selected: " + selected);
 		String selectedType = nodeTypes.getSelectedValue();
 		if (selectedType == null || selectedType.equals(ModelUtils.EMPTYLINE)) {
 			monitor.showMessage(TaskMonitor.Level.WARN, "No node type to expand by");
@@ -253,7 +237,6 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			networkType = currentType.getAPIName();
 
 		String database = ModelUtils.getDatabase(network);
-		// int taxonId = Species.getSpeciesTaxId(species);
 		Species selSpecies = Species.getSpecies(selectedType);
 		String filterString = "";
 		String useDatabase = "";
@@ -343,21 +326,11 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		if (newNodes.size() == 0 && newEdges.size() == 0) {
 			if (conf == 1.0) { 
 				monitor.showMessage(TaskMonitor.Level.ERROR,"String returned no results with a confidence larger than 1.0.<br> Consider changing the confidence threshold.");
-				// manager.error("String returned no results with a confidence larger than 1.0.<br> Consider changing the confidence threshold.");
-				// throw new RuntimeException("String returned no results with a confidence larger than 1.0. Consider changing the confidence threshold.");
 				return;
 			} else { 
 				manager.error("STRING returned no results");
 				throw new RuntimeException("This query will not add any new nodes or edges to the existing network.");
 			}
-			// SwingUtilities.invokeLater(new Runnable() {
-			// public void run() {
-			// JOptionPane.showMessageDialog(null,
-			// "This query will not add any new nodes or edges to the existing network.",
-			// "Warning", JOptionPane.WARNING_MESSAGE);
-			// }
-			// });
-			// return;
 		}
 
 		// set network to multi-species if we expanded by another species
@@ -371,7 +344,6 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		if (newNodes.size() > 1) {			
 			// [move] do we need to ask for edges for all species in the network? even if we expanded only by one? -> I think not!
 			if (!useDatabase.equals(Databases.STRINGDB.getAPIName()) && !Species.isViral(selSpecies) && !selectedType.equals(ModelUtils.COMPOUND)) {
-				//if ((useDatabase.equals(Databases.STRING.getAPIName()) && !Species.isViral(selSpecies)) || (useDatabase.equals(Databases.STITCH.getAPIName()) && selectedType.equals(species))) {
 				args.clear();
 				args.put("required_score",String.valueOf((int)(conf*1000)));
 				args.put("network_type", networkType);
@@ -388,7 +360,6 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 					JSONUtils.augmentNetworkFromJSON(manager.getStringNetwork(network), network, newEdges, results, null, Databases.STRINGDB.getAPIName(), networkType);
 				}
 			} else {
-				// if ((useDatabase.equals(Databases.STRINGDB.getAPIName()) && (mixedTypes || !selectedType.equals(species))) || (useDatabase.equals(Databases.STITCH.getAPIName()))) {
 				// if we went to STRING but the network contains more than one species/node type, we need to also get interactions from Jensenlab 
 				args.clear();
 				args.put("existing", ModelUtils.getExisting(network).trim());
@@ -409,7 +380,6 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
 
 		// Finally, update any node information if we got any new protein nodes from either STRING or Jensenlab (except viral ones) 
-		//if (newNodes.size() > 0 && !Species.isViral(selSpecies) && (useDatabase.equals(Databases.STRINGDB.getAPIName()) || useDatabase.equals(Databases.STRING.getAPIName()))) { --> this was not working properly
 		if (newNodes.size() > 0 && !Species.isViral(selSpecies) && !selectedType.equals(ModelUtils.COMPOUND)) {
 			Map<String, CyNode> nodeMap = new HashMap<>();
 			for (CyNode newNode: newNodes) {
@@ -449,24 +419,20 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 				results = HttpUtils.postJSON(manager.getNodeInfoURL(), args, manager);
 				JSONUtils.addExtraNodeData(stringNet, results);
 			} catch (ConnectionException e) {
-				// e.printStackTrace();
 				monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
 			}
 		}
 
 		// If we have a view, re-apply the style and layout
 		monitor.setStatusMessage("Updating style");
-		// System.out.println("Updating style");
 		if (netView != null)
 			ViewUtils.updateEdgeStyle(manager, netView, newEdges);
 		if (!selectedType.equals(species) && !selectedType.equals(ModelUtils.COMPOUND)) {
 			ViewUtils.updateNodeColors(manager, network, netView, Arrays.asList(species, selectedType));
 		}
-		// System.out.println("Done");
 		if (netView != null) {
 			netView.updateView();
 			monitor.setStatusMessage("Updating layout");
-			// layoutAll();
 			// experimental, layout only the new nodes
 			shiftAndLayoutGridSelectedOnly(newNodes);
 		}
@@ -539,7 +505,6 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 	}
 
 
-
 	private void layoutSelectedCircular(List<CyNode> nodesToLayout) {
 		final VisualProperty<Double> xLoc = BasicVisualLexicon.NODE_X_LOCATION;
 		final VisualProperty<Double> yLoc = BasicVisualLexicon.NODE_Y_LOCATION;
@@ -555,11 +520,8 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 			}
 		}
 		double xSpan = Math.abs(Collections.max(xPos)) + Math.abs(Collections.min(xPos));
-		// System.out.println(xSpan);
 		double ySpan = Math.abs(Collections.max(yPos)) + Math.abs(Collections.min(yPos));
-		// System.out.println(ySpan);
 		int spacing = (int)Math.max(xSpan, ySpan)/4;
-		// System.out.println(spacing);
 		// get layout and set attributes
 		CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("circular");
 		Object context = alg.createLayoutContext();
@@ -569,7 +531,6 @@ public class ExpandNetworkTask extends AbstractTask implements ObservableTask {
 		layoutArgs.put("selectedOnly", true);
 		layoutArgs.put("spacing", spacing);
 		setter.applyTunables(context, layoutArgs);
-		// Set<View<CyNode>> nodeViews = new HashSet<>(netView.getNodeViews());
 		insertTasksAfterCurrentTask(alg.createTaskIterator(netView, context, nodeViews, ColumnNames.SCORE));
 	}
 		

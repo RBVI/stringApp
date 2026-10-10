@@ -61,9 +61,6 @@ public class ViewUtils {
 			useStitch = true;
 		VisualStyle stringStyle = createStyle(manager, network, useStitch);
 
-		// if (useHost)
-		//	updateColorMapHost(manager, stringStyle, netView);
-		// else
 		if (manager.showStringColors())
 			updateColorMap(manager, stringStyle, network);
 		updateEnhancedLabels(manager, stringStyle, network, manager.showEnhancedLabels());
@@ -89,25 +86,21 @@ public class ViewUtils {
 
 	public static void updateNodeStyle(StringManager manager, 
 	                                   CyNetworkView view, List<CyNode> nodes) {
-		// manager.flushEvents();
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
 		VisualStyle style = vmm.getVisualStyle(view);
 		for (CyNode node: nodes) {
 			if (view.getNodeView(node) != null)
 				style.apply(view.getModel().getRow(node), view.getNodeView(node));
 		}
-		// style.apply(view);
 	}
 
 	public static void updateEdgeStyle(StringManager manager, CyNetworkView view, List<CyEdge> edges) {
-		// manager.flushEvents();
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
 		VisualStyle style = vmm.getVisualStyle(view);
 		for (CyEdge edge: edges) {
 			if (view.getEdgeView(edge) != null)
 			style.apply(view.getModel().getRow(edge), view.getEdgeView(edge));
 		}
-		// style.apply(view);
 	}
 
 	public static VisualStyle createStyle(StringManager manager, CyNetwork network, boolean useStitch) {
@@ -172,14 +165,6 @@ public class ViewUtils {
 		}
 
 		// Set colors for edges based on the edge type
-		//{
-		//	DiscreteMapping<String, Color> dMapping = 
-		//		(DiscreteMapping) discreteFactory.createVisualMappingFunction(CyEdge.INTERACTION, String.class,
-		//														BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT);
-		//	dMapping.putMapValue("pp", new Color(31,41,61));
-		//	dMapping.putMapValue("ppp", new Color(170, 41, 74));
-		//	stringStyle.addVisualMappingFunction(dMapping);
-		//}
 
 		// Set the edge width to be dependent on the total score
 		{
@@ -204,40 +189,6 @@ public class ViewUtils {
 
 
 		// If we have enhancedGrahpics loaded, automatically use it
-		// if (manager.haveEnhancedGraphics() && manager.showEnhancedLabels()) {
-		// // Set up the passthrough mapping for the label
-		// {
-		// VisualProperty customGraphics = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_3");
-		// PassthroughMapping pMapping =
-		// (PassthroughMapping)
-		// passthroughFactory.createVisualMappingFunction(ModelUtils.ELABEL_STYLE,
-		// String.class, customGraphics);
-		// stringStyle.addVisualMappingFunction(pMapping);
-		// }
-		//
-		// // Set up our labels to be in the upper right quadrant
-		// {
-		// VisualProperty customGraphicsP = lex.lookup(CyNode.class,
-		// "NODE_CUSTOMGRAPHICS_POSITION_3");
-		// Object upperRight = customGraphicsP.parseSerializableString("NE,C,c,0.00,0.00");
-		// stringStyle.setDefaultValue(customGraphicsP, upperRight);
-		// if (useStitch) {
-		// Object top = customGraphicsP.parseSerializableString("N,C,c,0.00,-8.00");
-		// DiscreteMapping<String,Object> dMapping =
-		// (DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE,
-		// String.class,
-		// customGraphicsP);
-		// dMapping.putMapValue("compound", top);
-		// dMapping.putMapValue("protein", upperRight);
-		// stringStyle.addVisualMappingFunction(dMapping);
-		// }
-		// }
-		//
-		// // Finally, disable the "standard" label passthrough
-		// {
-		// stringStyle.removeVisualMappingFunction(BasicVisualLexicon.NODE_LABEL);
-		// }
-		// }
 
 		// Set up all of our special mappings if we have a stitch network
 		if (useStitch) {
@@ -290,18 +241,6 @@ public class ViewUtils {
 
 			// TODO: Set the label position
 			// We need to export ObjectPosition in the API in order to be able to do this, unfortunately
-			// if (!manager.haveEnhancedGraphics() || !manager.showEnhancedLabels()) {
-			// VisualProperty labelPosition = lex.lookup(CyNode.class, "NODE_LABEL_POSITION");
-			// DiscreteMapping<String,Object> dMapping =
-			// (DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE,
-			// String.class,
-			// labelPosition);
-			// Object top = labelPosition.parseSerializableString("N,S,c,0.00,0.00");
-			// Object upperRight = labelPosition.parseSerializableString("NE,S,c,0.00,0.00");
-			// dMapping.putMapValue("compound", top);
-			// dMapping.putMapValue("protein", upperRight);
-			// stringStyle.addVisualMappingFunction(dMapping);
-			// }
 
 			// Set up a passthrough for chemViz
 			{
@@ -313,29 +252,8 @@ public class ViewUtils {
 			}
 
 			// Set colors for edges based on the edge type
-			//{
-			//	DiscreteMapping<String, Color> dMapping = 
-			//		(DiscreteMapping) discreteFactory.createVisualMappingFunction(CyEdge.INTERACTION, String.class,
-			//														BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT);
-			//	dMapping.putMapValue("pp", new Color(31,41,61));
-			//	dMapping.putMapValue("pc", new Color(31,41,61));
-			//	dMapping.putMapValue("cc", new Color(31,41,61));
-			//	dMapping.putMapValue("ppp", new Color(170, 41, 74));
-			//	dMapping.putMapValue("ppc", new Color(170, 41, 74));
-			//	stringStyle.addVisualMappingFunction(dMapping);
-			//}
 
 			// Now, set colors for edges based on the edge type
-			// {
-			// DiscreteMapping<String,Color> dMapping =
-			// (DiscreteMapping) discreteFactory.createVisualMappingFunction(CyEdge.INTERACTION,
-			// String.class,
-			// BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT);
-			// dMapping.putMapValue("pp", new Color(31,41,61));
-			// dMapping.putMapValue("cc", new Color(255,0,0));
-			// dMapping.putMapValue("pc", new Color(0,128,0));
-			// stringStyle.addVisualMappingFunction(dMapping);
-			// }
 		}
 
 		vmm.addVisualStyle(stringStyle);
@@ -384,30 +302,15 @@ public class ViewUtils {
 			}
 	
 			// Set up our labels to be in the upper right quadrant
-			// {
-			// 	VisualProperty customGraphicsP = lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_POSITION_3");
-			// 	Object upperRight = customGraphicsP.parseSerializableString("N,SW,l,-1.00,-1.00");
-			// 	stringStyle.setDefaultValue(customGraphicsP, upperRight);
-			// 	if (useStitch) {
-			// 		Object top = customGraphicsP.parseSerializableString("N,S,c,0.00,-10.00");
-			// 		DiscreteMapping<String, Object> dMapping = (DiscreteMapping) discreteFactory
-			// 				.createVisualMappingFunction(ModelUtils.TYPE, String.class, customGraphicsP);
-			// 		dMapping.putMapValue("compound", top);
-			// 		dMapping.putMapValue("protein", upperRight);
-			// 		stringStyle.addVisualMappingFunction(dMapping);
-			// 	}
-			// }
 	
 			// Finally, disable the "standard" label passthrough and position
 			{
 				stringStyle.removeVisualMappingFunction(BasicVisualLexicon.NODE_LABEL);
-				// stringStyle.removeVisualMappingFunction(lex.lookup(CyNode.class, "NODE_LABEL_POSITION"));
 			}
 		} else {
 			stringStyle
 					.removeVisualMappingFunction(lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_3"));
 			// stringStyle.removeVisualMappingFunction(
-			// 		lex.lookup(CyNode.class, "NODE_CUSTOMGRAPHICS_POSITION_3"));
 
 			{
 				PassthroughMapping pMapping = (PassthroughMapping) passthroughFactory
@@ -416,18 +319,6 @@ public class ViewUtils {
 				stringStyle.addVisualMappingFunction(pMapping);
 			}
 			
-			// {
-			// VisualProperty labelPosition = lex.lookup(CyNode.class, "NODE_LABEL_POSITION");
-			// DiscreteMapping<String,Object> dMapping =
-			// (DiscreteMapping) discreteFactory.createVisualMappingFunction(ModelUtils.TYPE,
-			// String.class,
-			// labelPosition);
-			// Object top = labelPosition.parseSerializableString("N,S,c,0.00,0.00");
-			// Object upperRight = labelPosition.parseSerializableString("NE,S,c,0.00,0.00");
-			// dMapping.putMapValue("compound", top);
-			// dMapping.putMapValue("protein", upperRight);
-			// stringStyle.addVisualMappingFunction(dMapping);
-			// }
 		}
 	}
 
@@ -581,7 +472,6 @@ public class ViewUtils {
 	
 	public static void updateNodeColors(StringManager manager, CyNetwork net, CyNetworkView view,
 			List<String> speciesList) {
-		// manager.flushEvents();
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
 
 		VisualStyle style = null;
@@ -671,7 +561,6 @@ public class ViewUtils {
 			nodeTable.getRow(node.getSUID()).set(EnrichmentTerm.colEnrichmentTermsIntegers, nodeTermsIntegers);
 		}
 
-		// System.out.println(selectedTerms);
 		VisualMappingManager vmm = manager.getService(VisualMappingManager.class);
 		CyNetworkView netView = manager.getCurrentNetworkView();
 		if (netView != null) {
@@ -681,12 +570,9 @@ public class ViewUtils {
 			if (manager.showGlassBallEffect() && vmm.getVisualStyle(netView).getTitle().startsWith(ViewUtils.STYLE_NAME_SIMPLE)) {
 				if (ChartType.PIE.equals(type) || ChartType.SPLIT_PIE.equals(type)) {
 					ViewUtils.updateNodeStyle(manager, vmm.getVisualStyle(netView), network, false);
-					// manager.setShowGlassBallEffect(false);
 				} else {
 					ViewUtils.updateNodeStyle(manager, vmm.getVisualStyle(netView), network, true);
-					// manager.setShowGlassBallEffect(true);
 				}
-				// manager.getShowGlassBallEffectTaskFactory().reregister();
 			}
 			netView.updateView();
 		}		
@@ -748,8 +634,6 @@ public class ViewUtils {
 	}
 
 	public static void clearHighlight(StringManager manager, CyNetworkView view) {
-		// if (node == null) return;
-		// View<CyNode> nodeView = view.getNodeView(node);
 		if (view == null) return;
 
 		VisualLexicon lex = manager.getService(RenderingEngineManager.class).getDefaultVisualLexicon();
@@ -786,24 +670,6 @@ public class ViewUtils {
 		}
 
 		// alternative fix by Marc ... to check 
-		// VisualMappingFunction<?,?> vmf =
-		// style.getVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
-		// // get the root network
-		// CyNetwork rootNetwork =
-		// manager.getService(CyRootNetworkManager.class).getRootNetwork(view.getModel()).getBaseNetwork();
-		//
-		// if (show) {
-		// // We update the colorMap only if there is no VisualMapping already applied
-		// if (vmf == null) {
-		// updateColorMap(manager, style, rootNetwork);
-		// } else {
-		// // We make sure that this is not a custom VisualMapping
-		// if (vmf != null && sameVisualMappingFunction(rootNetwork, vmf,
-		// getStringNodeColorMapping(manager, rootNetwork))) {
-		// style.removeVisualMappingFunction(BasicVisualLexicon.NODE_FILL_COLOR);
-		// }
-		// }
-		// }
 	}
 
 	public static void hideSingletons(CyNetworkView view, boolean show) {
@@ -822,12 +688,8 @@ public class ViewUtils {
 	private static List<String> getColorList(Map<EnrichmentTerm, String> selectedTerms) {
 		List<String> colorList = new ArrayList<String>();
 		for (EnrichmentTerm term : selectedTerms.keySet()) {
-			// Color color = selectedTerms.get(term);
 			String color = selectedTerms.get(term);
 			if (color != null) {
-				//String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(),
-				//		color.getBlue());
-				//colorList += hex + ",";
 				colorList.add(color);
 			} else {
 				colorList.add("");

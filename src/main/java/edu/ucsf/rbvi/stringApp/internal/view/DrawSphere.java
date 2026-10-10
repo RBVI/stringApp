@@ -78,7 +78,6 @@ public class DrawSphere {
 			g2.setPaint(p);
 			fillOval(g2, xOff, xOff, xScale*40f, yScale*40f);
 
-			// Draw our image (if we have one);
 			// For some reason, I can't make the compositing to work right.  The image is transparent,
 			// but when I composite it, the translucent areas come out white.  Doesn't make sense to me
 			// 
@@ -147,7 +146,6 @@ public class DrawSphere {
 				fillOval(g2, xOff, yOff, xScale*40f, yScale*40f);
 			}
 
-			// Draw our image (if we have one);
 			// For some reason, I can't make the compositing to work right.  The image is transparent,
 			// but when I composite it, the translucent areas come out white.  Doesn't make sense to
 			// me
@@ -158,7 +156,6 @@ public class DrawSphere {
 			}
 
 			{
-				// Color clr = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int)(((float)255)*0.4f));
 				if (selected) {
 					Stops s1 = new Stops(2, 0.6f);
 					s1.addStop(0f, Color.YELLOW);
@@ -193,7 +190,6 @@ public class DrawSphere {
 		}
 		// Restores the previous state
 		g2.setPaint(oldPaint);
-		// g2.setTransform(xform);
 	}
 
 	int scaleX(int value) {

@@ -26,10 +26,6 @@ public class AddNamespacesTask extends AbstractTask {
 	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
 	private TaskMonitor monitor;
 
-	// @Tunable(description = "Add column namespaces to current STRING networks", 
-	//		longDescription = "Upgrade loaded STRING networks to work with the new side panel of stringApp v1.5 by adding column namespaces to the column names", 
-	//		exampleStringValue = "true", gravity = 1.0, required = true)
-	// public boolean upgrade = true;
 
 	public AddNamespacesTask(final StringManager manager, final Set<CyNetwork> networks) {
 		this.manager = manager;
@@ -44,16 +40,12 @@ public class AddNamespacesTask extends AbstractTask {
 	public void run(TaskMonitor aMonitor) {
 		this.monitor = aMonitor;
 		monitor.setTitle("Add namespaces to column names");
-		// System.out.println("running task add namespaces");
 		for (CyNetwork net : networks) {
-			// System.out.println("checking network: " + net.toString());
 			// Set old data version for each network
 			ModelUtils.setDataVersion(net, manager.getOldDataVersion());
 			ModelUtils.setNetURI(net, "");
 
 			// If user wants to upgrade, add namespaces to the node and edge columns
-			// if (upgrade) {
-			// System.out.println("Adding namespaces to old STRING network: " + net.toString());
 			monitor.setStatusMessage("Adding namespaces to detected STRING network: " + net.toString());
 
 			// Get node columns to copy
@@ -86,9 +78,6 @@ public class AddNamespacesTask extends AbstractTask {
 			}
 
 			// delete old columns
-			// for (CyColumn oldCol : fromToColumns.keySet()) {
-			// ModelUtils.deleteColumnIfExisting(nodeTable, oldCol.getName());
-			// }
 
 			// Edge columns
 			CyTable edgeTable = net.getDefaultEdgeTable();

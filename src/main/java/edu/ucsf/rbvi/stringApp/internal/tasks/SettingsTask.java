@@ -167,9 +167,6 @@ public class SettingsTask extends AbstractTask implements ObservableTask, Action
 	@Override
 	public void run(TaskMonitor arg0) throws Exception {
 		arg0.setTitle("stringApp settings");;
-		// manager.setDefaultSpecies(species.getSelectedValue());
-		// System.out.println(species.getSelectedValue());
-		// System.out.println(defaultConfidence.getValue());
 
 		TaskManager<?, ?> tm = (TaskManager<?, ?>) manager.getService(TaskManager.class);
 		CyNetworkView currentView = manager.getCurrentNetworkView();

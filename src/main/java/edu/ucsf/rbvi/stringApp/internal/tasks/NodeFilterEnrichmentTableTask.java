@@ -70,11 +70,7 @@ public class NodeFilterEnrichmentTableTask extends AbstractTask implements Obser
 							cytoPanel.indexOfComponent("edu.ucsf.rbvi.stringApp.Enrichment"));
 				}
 				EnrichmentTableModel tableModel = enrichmentPanel.getTableModel();
-				// tableModel.filterByNodeSUID(nodesToFilter, annotateAllNodes, manager.getCategoryFilter(network), manager.getRemoveOverlap(network), manager.getOverlapCutoff(network));
 				enrichmentPanel.updateLabelRows();
-				// manager.setCategoryFilter(network,categories.getSelectedValues());
-				// manager.updateSettings();
-				// enrichmentPanel.updateFilteredEnrichmentTable();
 			}
 		});
 	}

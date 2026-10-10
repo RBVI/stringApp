@@ -14,7 +14,6 @@ public class SwingLinkOSBrowser extends JLabel {
 	private static final long serialVersionUID = 8273875024682878518L;
 	private String text;
 	private URI uri;
-	// private final OpenBrowser openBrowser;
 
 	public SwingLinkOSBrowser(final String text, final URI uri) {
 		super();
@@ -37,12 +36,10 @@ public class SwingLinkOSBrowser extends JLabel {
 			}
 
 			public void mouseEntered(MouseEvent e) {
-				// setText(text,false);
 				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			}
 
 			public void mouseExited(MouseEvent e) {
-				// setText(text,true);
 				setCursor(Cursor.getDefaultCursor());
 			}
 		});
@@ -70,18 +67,8 @@ public class SwingLinkOSBrowser extends JLabel {
 				desktop.browse(uri);
 			} catch (IOException e) {
 				e.printStackTrace();
-				// monitor.showMessage(Level.ERROR, "Encountered error: " + e.getMessage());
 			}
 		}
-		//	else {
-		//		Runtime runtime = Runtime.getRuntime();
-		//		try {
-		//			runtime.exec("xdg-open " + returnURL);
-		//		} catch (IOException e) {
-		//			// e.printStackTrace();
-		//			monitor.showMessage(Level.ERROR, "Encountered error: " + e.getMessage());
-		//		}
-		//	}
 
 	}
 }

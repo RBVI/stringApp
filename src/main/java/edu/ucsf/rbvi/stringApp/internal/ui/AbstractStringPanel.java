@@ -65,7 +65,6 @@ public abstract class AbstractStringPanel extends JPanel {
 		    filters.get(network).containsKey(type) && 
 		    filters.get(network).get(type).containsKey(name)) {
 			value = filters.get(network).get(type).get(name);
-			// System.out.println("value = "+value);
 		} else {
 			value = initFilter(type, name);
 		}
@@ -83,7 +82,6 @@ public abstract class AbstractStringPanel extends JPanel {
 		slider.setToolTipText("Filter ranges between 0.0 and " + max/100);
 		slider.setPreferredSize(new Dimension(150,20));
 		box.add(slider);
-		// box.add(Box.createHorizontalGlue());
 		JTextField textField;
 		textField = new JTextField(String.format("%.2f",value),4);
 		textField.setPreferredSize(new Dimension(30,20));

@@ -144,7 +144,6 @@ public class SearchQueryComponent extends JTextField {
 	}
 
 	private void updateQueryTextField() {
-		// String text = query.stream().collect(Collectors.joining(" "));
 		// TODO: truncate the text -- no need for this to be the entire string
 		String text = queryTextArea.getText();
 		if (text.length() > 30)
@@ -172,7 +171,6 @@ public class SearchQueryComponent extends JTextField {
 		queryTextArea.getActionMap().put(ENTER_ACTION_KEY, new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// System.out.println("\n\nENTER");
 				SearchQueryComponent.this.firePropertyChange(NetworkSearchTaskFactory.SEARCH_REQUESTED_PROPERTY, null, null);
 				popup.setVisible(false);
 			}

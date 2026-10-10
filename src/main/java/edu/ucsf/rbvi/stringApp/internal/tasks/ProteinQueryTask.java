@@ -120,7 +120,6 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 	public void run(TaskMonitor monitor) {
 		monitor.setTitle("STRING Protein Query");
 		Species sp = Species.getSpecies(species);
-		// if (taxonID != -1 && sp != null && !sp.isCustom()) {
 		// Fallback to species taxonID if species name was not enough to find our species
 		if (sp == null && taxonID != -1) {
 			for (Species s : speciesList) {
@@ -188,8 +187,6 @@ public class ProteinQueryTask extends AbstractTask implements ObservableTask {
 
 		// Temporary workaround until the database is completely moved
 		String database = Databases.STRINGDB.getAPIName();
-		// if (sp.isCustom())
-		// 	database = Databases.STRINGDB.getAPIName();
 		LoadInteractions load = new LoadInteractions(stringNetwork, sp.toString(), sp,
 								confidence, limit.getValue(), stringIds, queryTermMap, newNetName, 
 								database, networkType.getSelectedValue());

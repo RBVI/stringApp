@@ -34,7 +34,6 @@ public class SetLabelAttributeTask extends AbstractTask {
 
 	public void run(TaskMonitor monitor) throws Exception {
 		monitor.setTitle("Set STRING label attribute");
-		// System.out.println("use " + attributes.getSelectedValue());
 		if (nodeTable.getColumn(ColumnNames.ELABEL_STYLE) == null
 				|| attributes.getSelectedValue() == null)
 			return;
@@ -76,9 +75,7 @@ public class SetLabelAttributeTask extends AbstractTask {
 		String enhancedLabel = row.get(ColumnNames.ELABEL_STYLE, String.class);
 		String newEnhancedLabel = "";
 		if (enhancedLabel != null) {
-			// System.out.println(enhancedLabel.length());
 			int index1 = enhancedLabel.indexOf("attribute=") + 10;
-			// System.out.println(index1);
 			int index2 = 0;
 			if (enhancedLabel.substring(index1).startsWith("\"")) {
 				index2 = index1 + 1 + enhancedLabel.substring(index1 + 1).indexOf("\"") + 1;
@@ -87,23 +84,6 @@ public class SetLabelAttributeTask extends AbstractTask {
 			}
 			newEnhancedLabel = enhancedLabel.substring(0, index1) + "\"" + labelAttribute + "\""
 					+ enhancedLabel.substring(index2);
-			// System.out.println(index2);
-			// System.out.println("attribute: " + enhancedLabel.substring(index1, index2));
-			// String regex = "attribute=.*\\s+";
-			// Matcher m = Pattern.compile(regex).matcher(enhancedLabel);
-			// while (m.find()) {
-			// System.out.println(enhancedLabel.substring(m.start(), m.end()));
-			// }
-			// String[] eLabelParts = enhancedLabel.split("\\s+");
-			// for (String part : eLabelParts) {
-			// part = part.trim();
-			// if (part.startsWith("attribute=")) {
-			// newEnhancedLabel += " attribute=" + "\"" + labelAttribute + "\"";
-			// } else {
-			// newEnhancedLabel += part;
-			// }
-			// newEnhancedLabel += " ";
-			// }
 		}
 		row.set(ColumnNames.ELABEL_STYLE, newEnhancedLabel);
 	}
@@ -112,26 +92,13 @@ public class SetLabelAttributeTask extends AbstractTask {
 		String enhancedLabel = row.get(ColumnNames.ELABEL_STYLE, String.class);
 		if (enhancedLabel != null) {
 			int index1 = enhancedLabel.indexOf("attribute=") + 10;
-			// System.out.println(index1);
 			int index2 = 0;
 			if (enhancedLabel.substring(index1).startsWith("\"")) {
 				index2 = index1 + 1 + enhancedLabel.substring(index1 + 1).indexOf("\"") + 1;
 			} else {
 				index2 = index1 + enhancedLabel.substring(index1).indexOf(" ");
 			}
-			// System.out.println(index2);
-			// System.out.println("attribute: " + enhancedLabel.substring(index1, index2));
 			return enhancedLabel.substring(index1 + 1, index2 - 1);
-			// String[] eLabelParts = enhancedLabel.split(" ");
-			// for (String part : eLabelParts) {
-			// if (part.startsWith("attribute=")) {
-			// String[] partParts = part.split("=");
-			// if (partParts.length == 2) {
-			// if (partParts[1].startsWith("\""))
-			// return partParts[1].substring(1, partParts[1].length() - 2);
-			// }
-			// }
-			// }
 		}
 		return "";
 	}

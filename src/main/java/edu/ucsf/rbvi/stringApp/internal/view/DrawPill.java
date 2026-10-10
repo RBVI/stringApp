@@ -116,10 +116,8 @@ public class DrawPill {
 				g2.setClip(nodeShape);
 				// tried to scale the images a little bit (by a factor of 0.9) such that they fit within the nodes and don't overlap with the node "border"
 				if (bounds.getHeight() <= bounds.getWidth()) {
-					// g2.drawImage(image, (int)(xOff+bounds.getWidth()/2-bounds.getHeight()/2), (int)yOff, (int)bounds.getHeight(), (int)bounds.getHeight(), null);
 					g2.drawImage(image, (int)(xOff+bounds.getWidth()*0.9/2-bounds.getHeight()*0.9/3), (int)(yOff+bounds.getHeight()*0.05), (int)(bounds.getHeight()*0.9), (int)(bounds.getHeight()*0.9), null);
 				} else {
-					// g2.drawImage(image, (int)(xOff), (int)yOff, (int)bounds.getWidth(), (int)bounds.getWidth(), null);
 					g2.drawImage(image, (int)(xOff+bounds.getWidth()*0.05), (int)(yOff+bounds.getWidth()*0.05), (int)(bounds.getWidth()*0.9), (int)(bounds.getWidth()*0.9), null);
 				}
 				g2.setClip(null);
@@ -183,7 +181,6 @@ public class DrawPill {
 				fillPill(g2, xOff, yOff, xScale*40f, yScale*40f);
 			}
 
-			// Draw our image (if we have one);
 			// For some reason, I can't make the compositing to work right.  The image is transparent,
 			// but when I composite it, the translucent areas come out white.  Doesn't make sense to
 			// me
@@ -198,7 +195,6 @@ public class DrawPill {
 			}
 
 			{
-				// Color clr = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int)(((float)255)*0.4f));
 				if (selected) {
 					Stops s1 = new Stops(2, 0.6f);
 					s1.addStop(0f, Color.YELLOW);
@@ -233,7 +229,6 @@ public class DrawPill {
 
 		// Restores the previous state
 		g2.setPaint(oldPaint);
-		// g2.setTransform(xform);
 	}
 
 	int scaleX(int value) {
@@ -277,7 +272,6 @@ public class DrawPill {
 		double xStart = x+15*wScale; // Take into account the curve
 		double yStart = y;
 
-		// path.moveTo(xStart,yStart);
 		// A15,15 0 0,0 485.5,212
 		// Create an arc with radii 15,15 that starts at the current point and ends at 485.5,212
 		Arc2D arc = new Arc2D.Double(x,y,30*wScale,30*hScale, 270, -180, Arc2D.OPEN);

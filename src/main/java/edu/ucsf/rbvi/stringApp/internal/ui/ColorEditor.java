@@ -63,7 +63,6 @@ public class ColorEditor extends AbstractCellEditor
     Color currentColor;
 		Palette currentPalette;
     JButton button;
-    // JColorChooser colorChooser;
     CyColorPaletteChooserFactory chooserFactory;
 		final Component parent;
 		final StringManager manager;
@@ -95,7 +94,6 @@ public class ColorEditor extends AbstractCellEditor
      */
     public void actionPerformed(ActionEvent e) {
         if (EDIT.equals(e.getActionCommand())) {
-					// button.setBackground(currentColor);
         			// TODO: [N] is it ok to just add the group here?
 					Palette currentPalette = manager.getEnrichmentPalette(network, group);
 					CyColorPaletteChooser chooser = chooserFactory.getColorPaletteChooser(BrewerType.QUALITATIVE, false);
@@ -104,22 +102,8 @@ public class ColorEditor extends AbstractCellEditor
 					currentColor = chooser.getSelectedColor();
            fireEditingStopped();
 
-					/*
-            //The user has clicked the cell, so
-            //bring up the dialog.
-            button.setBackground(currentColor);
-            dialog.setColor(currentColor);
-						dialog.setColorBrewer(currentPalette);
-            // colorChooser.showDialog();
-            dialog.setVisible(true);
-
-            //Make the renderer reappear.
-            fireEditingStopped();
-					*/
 
         } else { //User pressed dialog's "OK" button.
-            // currentColor = dialog.getColor();
-						// currentPalette = dialog.getColorPalette();
         }
     }
 

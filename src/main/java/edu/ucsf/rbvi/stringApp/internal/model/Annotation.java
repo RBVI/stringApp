@@ -24,7 +24,6 @@ public class Annotation {
 	String uniprot;
 	String sequence;
 	String color;
-	//String color;
 	String image;
 	List<String> structures;
 	boolean resolved;
@@ -44,7 +43,6 @@ public class Annotation {
 		this.taxonName = "";
 		this.uniprot = "";
 		this.sequence = "";
-		//this.color = "";
 		this.image = "";
 		this.color = "";
 		this.structures = new ArrayList<>();
@@ -52,7 +50,6 @@ public class Annotation {
 
 	public String getPreferredName() { return preferredName; }
 	// TODO: [Custom] figure out if we can save both the name and the ID of custom species
-	// public int getTaxId() { return taxId; }
 	public String getQueryString() { return query; }
 	public String getStringId() { return stringId; }
 	public String getAnnotation() { return annotation; }
@@ -127,8 +124,6 @@ public class Annotation {
 				annotation = (String)ann.get("annotation");
 			if (ann.containsKey("stringId"))
 				stringId = (String)ann.get("stringId");
-			//if (ann.containsKey("ncbiTaxonId"))
-			//	taxId = ((Long)ann.get("ncbiTaxonId")).intValue();
 			if (ann.containsKey("queryIndex")) {
 				Object index = ann.get("queryIndex");
 				if (index instanceof Long) {
@@ -166,8 +161,6 @@ public class Annotation {
 					annotation = description;
 			}
 			// TODO: type is actually the taxId, but do we need it?
-			//if (ann.containsKey("type"))
-			//	taxId = (Long)ann.get("type");
 			if(ann.containsKey("id")) {
 				if (ann.containsKey("type") && (Long)ann.get("type") != -1)
 					stringId = (Long)ann.get("type") + "." +(String)ann.get("id");
@@ -184,8 +177,6 @@ public class Annotation {
 			}
 			
 			// Temporary HACK
-			// if (stringId.startsWith("-1.CID1"))
-			// 	stringId = stringId.replaceFirst("-1.CID1","CIDm");
 
 			Annotation newAnnotation = new Annotation(preferredName, stringId, taxId, terms[queryIndex], annotation);
 

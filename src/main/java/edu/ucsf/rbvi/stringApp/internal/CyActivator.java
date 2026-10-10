@@ -51,8 +51,6 @@ import edu.ucsf.rbvi.stringApp.internal.tasks.GetPublicationsTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetSelectedSpeciesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.GetSpeciesTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.HideChartsTaskFactory;
-// import edu.ucsf.rbvi.stringApp.internal.tasks.FindProteinsTaskFactory;
-// import edu.ucsf.rbvi.stringApp.internal.tasks.OpenEvidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.PubmedSearchTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.SetConfidenceTaskFactory;
 import edu.ucsf.rbvi.stringApp.internal.tasks.SetLabelAttributeTaskFactory;
@@ -349,12 +347,6 @@ public class CyActivator extends AbstractCyActivator {
 		{
 			ChangeConfidenceTaskFactory changeConfidence = new ChangeConfidenceTaskFactory(manager);
 			// Move change confidence menu item to new menu item which also chnages network type
-			//Properties props = new Properties();
-			//props.setProperty(PREFERRED_MENU, "Apps.STRING");
-			//props.setProperty(TITLE, "Change confidence");
-			//props.setProperty(MENU_GRAVITY, "2.0");
-			//props.setProperty(IN_MENU_BAR, "true");
-			//registerService(bc, changeConfidence, NetworkTaskFactory.class, props);
 			
 			// keep the command
 			Properties props2 = new Properties();
@@ -457,12 +449,6 @@ public class CyActivator extends AbstractCyActivator {
 
 		{
 			ExportEnrichmentTaskFactory exportEnrichment = new ExportEnrichmentTaskFactory(manager);
-			// Properties props = new Properties();
-			// props.setProperty(PREFERRED_MENU, "File.Export");
-			// props.setProperty(TITLE, "STRING Enrichment");
-			// props.setProperty(MENU_GRAVITY, "4.0");
-			// props.setProperty(IN_MENU_BAR, "true");
-			// registerService(bc, exportEnrichment, NetworkTaskFactory.class, props);
 
 			Properties props2 = new Properties();
 			props2.setProperty(PREFERRED_MENU, "Apps.STRING Enrichment");
@@ -490,7 +476,6 @@ public class CyActivator extends AbstractCyActivator {
 				propsEnrichment.setProperty(TITLE, "Retrieve functional enrichment");
 				propsEnrichment.setProperty(MENU_GRAVITY, "1.0");
 				propsEnrichment.setProperty(IN_MENU_BAR, "true");
-				// propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 				registerService(bc, getEnrichment, NetworkTaskFactory.class, propsEnrichment);
 			}
 			
@@ -519,7 +504,6 @@ public class CyActivator extends AbstractCyActivator {
 				registerService(bc, sea, CyAction.class);
 
 				ShowEnrichmentPanelTaskFactory showEnrichment = new ShowEnrichmentPanelTaskFactory(manager);
-				// showEnrichment.reregister();
 				getEnrichment.setShowEnrichmentPanelFactory(showEnrichment);
 				getClusterEnrichment.setShowEnrichmentPanelFactory(showEnrichment);
 				manager.setShowEnrichmentPanelTaskFactory(showEnrichment);
@@ -552,7 +536,6 @@ public class CyActivator extends AbstractCyActivator {
 				registerService(bc, spa, CyAction.class);
 
 				ShowPublicationsPanelTaskFactory showPublications = new ShowPublicationsPanelTaskFactory(manager);
-				// showPublications.reregister();
 				getPublications.setShowPublicationsPanelFactory(showPublications);
 				manager.setShowPublicationsPanelTaskFactory(showPublications);
 				
@@ -572,7 +555,6 @@ public class CyActivator extends AbstractCyActivator {
 				registerService(bc, sra, CyAction.class);
 
 				ShowResultsPanelTaskFactory showResults = new ShowResultsPanelTaskFactory(manager);				
-				//showResults.reregister();
 				manager.setShowResultsPanelTaskFactory(showResults);
 				
 				// Now bring up the side panel if the current network is a STRING network
@@ -597,7 +579,6 @@ public class CyActivator extends AbstractCyActivator {
 			                            "InterPro, KEGG Pathways, and PFAM.");
 			propsEnrichment.setProperty(COMMAND_SUPPORTS_JSON, "true");
 			propsEnrichment.setProperty(COMMAND_EXAMPLE_JSON, GetEnrichmentTaskFactory.EXAMPLE_JSON);
-			// propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 			registerService(bc, getCommandEnrichment, NetworkTaskFactory.class, propsEnrichment);
 		}
 
@@ -614,7 +595,6 @@ public class CyActivator extends AbstractCyActivator {
 			                            "InterPro, KEGG Pathways, and PFAM.");
 			propsEnrichment.setProperty(COMMAND_SUPPORTS_JSON, "true");
 			propsEnrichment.setProperty(COMMAND_EXAMPLE_JSON, GetEnrichmentTaskFactory.EXAMPLE_JSON);
-			// propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 			registerService(bc, getCommandGroupEnrichment, NetworkTaskFactory.class, propsEnrichment);
 		}
 
@@ -657,7 +637,6 @@ public class CyActivator extends AbstractCyActivator {
 			                            "Retrieve the list of all species known to the STRING database, including the taxonomy ID.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
 			props.setProperty(COMMAND_EXAMPLE_JSON, "[{\"taxonomyId\": 9606, \"scientificName\": \"Homo sapiens\", \"abbreviatedName\":\"Homo sapiens\"}]");
-			// propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 			registerService(bc, getSpecies, TaskFactory.class, props);
 		}
 
@@ -672,7 +651,6 @@ public class CyActivator extends AbstractCyActivator {
 			                            "Retrieve the list of species known to the STRING database and based on a selection criterium such as category, including the taxonomy ID.");
 			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
 			props.setProperty(COMMAND_EXAMPLE_JSON, "[{\"taxonomyId\": 9606, \"scientificName\": \"Homo sapiens\", \"abbreviatedName\":\"Homo sapiens\"}]");
-			// propsEnrichment.setProperty(INSERT_SEPARATOR_BEFORE, "true");
 			registerService(bc, getSpeciesDetailed, TaskFactory.class, props);
 		}
 
@@ -704,7 +682,6 @@ public class CyActivator extends AbstractCyActivator {
 			
 			ShowImagesTaskFactory showImagesTF = new ShowImagesTaskFactory(manager);
 			manager.setShowImagesTaskFactory(showImagesTF);
-			//showImagesTF.reregister();
 			
 			// Create command version and register it
 			Properties props = new Properties();
@@ -725,7 +702,6 @@ public class CyActivator extends AbstractCyActivator {
 			
 			ShowEnhancedLabelsTaskFactory showEnhancedLabelsTF = new ShowEnhancedLabelsTaskFactory(manager);
 			manager.setShowEnhancedLabelsTaskFactory(showEnhancedLabelsTF);
-			//showEnhancedLabelsTF.reregister();
 			
 			// Create command version and register it
 			Properties props = new Properties();
@@ -745,7 +721,6 @@ public class CyActivator extends AbstractCyActivator {
 			
 			ShowGlassBallEffectTaskFactory showGlassBallEffectTF = new ShowGlassBallEffectTaskFactory(manager);
 			manager.setShowGlassBallEffectTaskFactory(showGlassBallEffectTF);
-			//showGlassBallEffectTF.reregister();
 			
 			// Create command version and register it
 			Properties props = new Properties();

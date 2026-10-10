@@ -87,8 +87,6 @@ public class StringNodePanel extends AbstractStringPanel {
 	private JButton highlightQuery;
 	private boolean updating = false;
 	private Color defaultBackground;
-	// private List<CyNode> highlightNodes = null;
-	// private JCheckBox highlightCheck = null;
 
 	public StringNodePanel(final StringManager manager) {
 		super(manager);
@@ -256,7 +254,6 @@ public class StringNodePanel extends AbstractStringPanel {
 			showStructure = new JCheckBox("Structure images");
 			showStructure.setFont(labelFont);
 			showStructure.setSelected(manager.showImage());
-			// showStructure.setBorder(null);
 			showStructure.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
 					if (updating) return;
@@ -288,11 +285,9 @@ public class StringNodePanel extends AbstractStringPanel {
 
 		controlPanel.add(upperPanel, d.anchor("northwest").expandHoriz());
 		
-		// controlPanel.add(new JLabel());
 
 		JPanel lowerPanel = new JPanel();
 		GridLayout layout2 = new GridLayout(2,2);
-		// GridLayout layout2 = new GridLayout(3,2);
 		layout2.setVgap(0);
 		lowerPanel.setLayout(layout2);
 		{
@@ -349,18 +344,8 @@ public class StringNodePanel extends AbstractStringPanel {
 			layoutNetwork.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					// TOOD: how to get the view?
-					//if (currentNetworkView == null) return;
-					// CyLayoutAlgorithm alg = manager.getService(CyLayoutAlgorithmManager.class).getLayout("force-directed");
-					//Object context = alg.createLayoutContext();
-					//TunableSetter setter = manager.getService(TunableSetter.class);
-					//Map<String, Object> layoutArgs = new HashMap<>();
-					//layoutArgs.put("defaultNodeMass", 10.0);
-					//setter.applyTunables(context, layoutArgs);
-					//Set<View<CyNode>> nodeViews = new HashSet<>(currentNetworkView.getNodeViews());
-					//manager.execute(alg.createTaskIterator(currentNetworkView, context, nodeViews, "score"));
 				}
 			});
-			//lowerPanel.add(layoutNetwork);
 		}
 
 		{
@@ -369,10 +354,8 @@ public class StringNodePanel extends AbstractStringPanel {
 			expandNetwork.setFont(labelFont);
 			expandNetwork.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					// manager.execute(new ExpandNetworkTaskFactory(manager).createTaskIterator());
 				}
 			});
-			//lowerPanel.add(expandNetwork);
 		}
 
 		{
@@ -624,14 +607,6 @@ public class StringNodePanel extends AbstractStringPanel {
 				crosslinkPanel.add(link);
 			}
 
-			/*
-			 * FIXME: Need to link to get to the STRING web site for this
-			{
-  			JLabel link = new SwingLink("STRING", sNode.getStringURL(), openBrowser);
-				link.setFont(textFont);
-				link.add(crosslinkPanel);
-			}
-			*/
 			crosslinkPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 			panel.add(crosslinkPanel, c.anchor("west").down().noExpand());
 		}
@@ -670,8 +645,6 @@ public class StringNodePanel extends AbstractStringPanel {
 			// Now add our image
 			Image scaledImage = img.getScaledInstance(200,200,Image.SCALE_SMOOTH);
 			JLabel label = new JLabel(new ImageIcon(scaledImage));
-			// label.setPreferredSize(new Dimension(100,100));
-			// label.setMinimumSize(new Dimension(100,100));
 			label.setAlignmentX(Component.LEFT_ALIGNMENT);
 			panel.add(label, c.anchor("north").down().noExpand());
 		}

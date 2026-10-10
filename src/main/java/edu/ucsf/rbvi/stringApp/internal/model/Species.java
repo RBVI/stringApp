@@ -107,7 +107,6 @@ public class Species implements Comparable<Species> {
 		this.officialName = oName;
 		this.interactionPartners = new ArrayList<String>();
 		this.alias = alias;
-		// System.out.println("Created species: "+taxon_id+" "+type+" "+compactName+" "+officialName);
 	}
 
 	public static List<Species> getSpecies() {
@@ -247,17 +246,11 @@ public class Species implements Comparable<Species> {
 
 		// sort all collections
 		Collections.sort(allSpecies);
-		//System.out.println("all species: " + allSpecies.size());
 		Collections.sort(guiSpecies);
-		//System.out.println("gui species: " + guiSpecies.size());
 		Collections.sort(coreSpecies);
-		//System.out.println("core species: " + coreSpecies.size());
 		Collections.sort(peripherySpecies);
-		//System.out.println("periphery species: " + peripherySpecies.size());
 		Collections.sort(mappedSpecies);
-		//System.out.println("mapped species: " + mappedSpecies.size());
 		Collections.sort(virusSpecies);
-		//System.out.println("virus species: " + virusSpecies.size());
 		Collections.sort(modelSpecies);
 
     haveSpecies = true;

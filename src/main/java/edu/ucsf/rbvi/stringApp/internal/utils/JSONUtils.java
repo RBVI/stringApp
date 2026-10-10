@@ -74,7 +74,6 @@ public class JSONUtils {
 			if (data.containsKey("background"))
 				bg = ((Long) data.get("background")).intValue();
 			Double score = (Double) data.get("score");
-			// String url = getDiseaseURL((String)stringid, query);
 			TextMiningResult tm = new TextMiningResult(taxon + "." + (String) stringid, name, fg,
 					bg, score, disease);
 			results.add(tm);
@@ -167,7 +166,6 @@ public class JSONUtils {
 				currTerm.setNodesSUID(currNodeList);
 			}
 			// save only if above cutoff
-			// if (currTerm.getFDRPValue() <= enrichmentCutoff)
 			// save always since enrichment API returns fdr values < 0.05 
 			results.add(currTerm);
 		}
@@ -234,7 +232,6 @@ public class JSONUtils {
 
 		StringManager manager = stringNetwork.getManager();
 
-		// System.out.println("Database = "+useDATABASE);
 
 		Object results = getResultsFromJSON(object, JSONObject.class);
 		if (results == null)
@@ -255,7 +252,6 @@ public class JSONUtils {
 		Map<String, String> nodeNameMap = new HashMap<>();
 		String species = ModelUtils.getNetSpecies(net);
 		// TODO: Check if we really don't have to infer the database!
-		// String useDATABASE = StringManager.STRINGDB;
 		for (CyNode node : net.getNodeList()) {
 			if (species == null)
 				species = net.getRow(node).get(ColumnNames.SPECIES, String.class);
@@ -266,12 +262,9 @@ public class JSONUtils {
 			nodeMap.put(stringId, node);
 			nodeNameMap.put(stringId, name);
 			// TODO: Change network from string to stitch once we add compounds?
-			// if (ModelUtils.isCompound(net, node))
-			// 	useDATABASE = Databases.STITCH.getAPIName();
 			if (ModelUtils.isCompound(net, node))
 				ModelUtils.setDatabase(net, Databases.STITCH.getAPIName());
 		}
-		// ModelUtils.setDatabase(net, useDATABASE);
 
 		List<CyNode> nodes;
 		if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
@@ -558,7 +551,6 @@ public class JSONUtils {
 		List<String> jsonKeysSorted = new ArrayList<String>(jsonKeysClass.keySet());
 		Collections.sort(jsonKeysSorted);
 		for (String jsonKey : jsonKeysSorted) {
-			// String formattedJsonKey = formatForColumnNamespace(jsonKey);
 			if (ModelUtils.ignoreKeys.contains(jsonKey))
 				continue;
 			if (listKeys.contains(jsonKey)) {
@@ -582,12 +574,10 @@ public class JSONUtils {
 
 		if (nodeMap.containsKey(stringId))
 			return null;
-		// System.out.println("Node id = "+id+", stringID = "+stringId+", namespace="+namespace);
 		CyNode newNode = network.addNode();
 		CyRow row = network.getRow(newNode);
 
 		row.set(CyNetwork.NAME, stringId);
-		// row.set(CyRootNetwork.SHARED_NAME, stringId);
 		row.set(ColumnNames.DISPLAY, name);
 		row.set(ColumnNames.STRINGID, stringId);
 		row.set(ColumnNames.ID, id);
@@ -623,7 +613,6 @@ public class JSONUtils {
 				row.set(ColumnNames.DESCRIPTION, (String) nodeObj.get("description"));
 			} else if (key.equals("canonical")) {
 				// TODO: [move improvement] consider keeping the unirpto ID returned from Jensenlab?
-				//row.set(ColumnNames.CANONICAL, (String) nodeObj.get("canonical"));
 				continue;
 			} else if (key.equals(ColumnNames.SEQUENCE)) {
 				row.set(ColumnNames.SEQUENCE, (String) nodeObj.get(ColumnNames.SEQUENCE));
@@ -642,24 +631,7 @@ public class JSONUtils {
 				// It's not one of our "standard" attributes, create a column for it (if necessary)
 				// and then add it
 				Object value = nodeObj.get(key);
-				// String formattedKey = formatForColumnNamespace(key);
 				row.set(key, value);
-				// if (value instanceof JSONArray) {
-				// JSONArray list = (JSONArray) value;
-				// if (!columnMap.contains(key)) {
-				// Object element = list.get(0);
-				// createListColumnIfNeeded(network.getDefaultNodeTable(), element.getClass(),
-				// key);
-				// columnMap.add(key);
-				// }
-				// row.set(key, list);
-				// } else {
-				// if (!columnMap.contains(key)) {
-				// createColumnIfNeeded(network.getDefaultNodeTable(), value.getClass(), key);
-				// columnMap.add(key);
-				// }
-				// row.set(key, value);
-				// }
 			}
 			{
 				// Construct instructions for enhanced graphics label
@@ -696,15 +668,12 @@ public class JSONUtils {
 
 		if (nodeMap.containsKey(id))
 			return null;
-		// System.out.println("Node id = "+id+", name = "+name);
 		CyNode newNode = network.addNode();
 		CyRow row = network.getRow(newNode);
 		nodeMap.put(id, newNode);
 
-		// System.out.println("Creating node "+id);
 
 		row.set(CyNetwork.NAME, id);
-		// row.set(CyRootNetwork.SHARED_NAME, stringId);
 		row.set(ColumnNames.DISPLAY, name);
 		row.set(ColumnNames.STRINGID, id);
 		row.set(ColumnNames.SPECIES, speciesName);
@@ -960,24 +929,18 @@ public class JSONUtils {
 		// Update the score information
 		JSONObject scores = (JSONObject) edgeObj.get("scores");
 		// NOTE: we should not compute this score but get it from the database!!!
-		// double scoreProduct = 1.0;
 		for (Object key : scores.keySet()) {
 			String score = (String) key;
-			// String scoreFormatted = formatForColumnNamespace(score);
 			ModelUtils.createColumnIfNeeded(network.getDefaultEdgeTable(), Double.class, score, 0.0);
 			Double v = (Double) scores.get(key);
 			network.getRow(edge).set(score, v);
-			// scoreProduct *= (1 - v);
 		}
-		// double totalScore = -(scoreProduct - 1.0);
-		// network.getRow(edge).set(SCORE, totalScore);
 	}
 
 	public static <T> T getResultsFromJSON(JSONObject json, Class<? extends T> clazz) {
 		if (json == null || !json.containsKey(StringManager.RESULT))
 			return null;
 		
-		// System.out.println("json: " + json.toJSONString());
 
 		Object result = json.get(StringManager.RESULT);
 		if (!clazz.isAssignableFrom(result.getClass()))

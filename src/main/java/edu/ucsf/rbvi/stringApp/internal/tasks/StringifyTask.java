@@ -265,11 +265,9 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
 		if (useDatabase.equals(Databases.STITCH.getAPIName())) {
-			//System.out.println("Calling LoadInteractions2 on behalf of Stringify");
 			manager.execute(new TaskIterator(new LoadInteractions2(stringNetwork, sp.toString(), sp, (int)(cutoff.getValue()*100), additionalNodes, stringIds,
 					  queryTermMap, netName, useDatabase, networkType.getSelectedValue())), true);
 		} else {
-			//System.out.println("Calling LoadInteractions on behalf of Stringify");
 			manager.execute(new TaskIterator(new LoadInteractions(stringNetwork, sp.toString(), sp, 
 							(int)(cutoff.getValue()*100), additionalNodes, stringIds, queryTermMap, netName, useDatabase, networkType.getSelectedValue())), true);
 		}		
@@ -338,7 +336,6 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 		}
 		boolean noAmbiguity = stringNetwork.resolveAnnotations();
 		if (noAmbiguity) {
-			// System.out.println("Calling importNetwork");
 			importNetwork(species, (int)(cutoff.getValue()*100), additionalNodes, useDatabase, networkType.getSelectedValue());
 
 			// Creating the copyTask
@@ -350,8 +347,6 @@ public class StringifyTask extends AbstractTask implements ObservableTask, TaskO
 					JDialog d = new JDialog();
 					d.setTitle("Resolve Ambiguous Terms");
 					d.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-					// GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, Databases.STRING.getAPIName(), 
-					//                                         getSpecies(), false, getConfidence(), getAdditionalNodes());
 					CopyTask copyTask = new CopyTask(manager, column, net, stringNetwork, includeNotMapped, colDisplayName);
 					GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, 
 					                                        useDatabase, false, 

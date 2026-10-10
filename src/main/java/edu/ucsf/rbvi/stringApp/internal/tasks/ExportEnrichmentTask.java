@@ -35,14 +35,12 @@ public class ExportEnrichmentTask extends AbstractTask {
 					         "full path.  For example, <i>/tmp/foo_</i> will become <i>/tmp/foo_InterPro</i>.<br/> "+
 									 "If only one table is to be exported, this field will be used as full file name.<br/>"+
 									 "Note: for convenience spaces are replaced by underscores.</html>", gravity = 2.0)
-	// public String name = "test";
 	public File prefix = null;
 
 	public ExportEnrichmentTask(StringManager manager, CyNetwork network) {
 		this.manager = manager;
 		this.network = network;
 		getAvailableTables();
-		// file = new File("test.csv");
 	}
 
 	public ExportEnrichmentTask(StringManager manager, CyNetwork network, CyTable table,

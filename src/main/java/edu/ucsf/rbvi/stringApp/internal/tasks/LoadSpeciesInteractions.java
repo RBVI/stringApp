@@ -43,9 +43,6 @@ public class LoadSpeciesInteractions extends AbstractTask {
 	final Species species;
 	Species species2 = null;
 	final int confidence;
-	// final int additionalNodes;
-	// final List<String> stringIds;
-	// final Map<String, String> queryTermMap;
 	final String netName;
 	final String useDATABASE;
 	NetworkType netType;
@@ -111,7 +108,6 @@ public class LoadSpeciesInteractions extends AbstractTask {
 			args.put("caller_identity", StringManager.CallerIdentity);
 		} 
 		
-		// double time = System.currentTimeMillis();
 		JSONObject results;
 		try {
 			results = HttpUtils.postJSON(networkURL, args, manager);
@@ -126,16 +122,10 @@ public class LoadSpeciesInteractions extends AbstractTask {
 				throw new RuntimeException("Network error: " + this.errorMsg);
 			}
 		}
-		// System.out.println(
-		// "postJSON method " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
-		// time = System.currentTimeMillis();
 
 		Map<String, CyNode> nodeMap = new HashMap<>();
 		CyNetwork network = JSONUtils.createNetworkFromJSON(stringNet, speciesName, results, null, nodeMap,
 		                                                    null, netName, useDATABASE, netType.getAPIName());
-		// System.out.println("createNetworkFromJSON method "
-		// + (System.currentTimeMillis() - time) / 1000 + " seconds.");
-		// time = System.currentTimeMillis();
 
 		if (network == null) {
 			this.errorMsg = "STRING returned no results";

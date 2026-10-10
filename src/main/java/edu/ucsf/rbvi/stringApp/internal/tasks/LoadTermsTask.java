@@ -102,9 +102,7 @@ public class LoadTermsTask extends AbstractTask {
 			taxString = String.valueOf(species.getTaxId());
 
 
-		// String url = "http://api.jensenlab.org/network?entities="+URLEncoder.encode(ids.trim())+"&score="+conf;
 		Map<String, String> args = new HashMap<>();
-		// args.put("database", useDATABASE);
 		// TODO: Is it OK to always use stitch?
 		if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
 			args.put("species",taxString);
@@ -158,16 +156,7 @@ public class LoadTermsTask extends AbstractTask {
 		if (newEdges.size() > 0 || (newNodes != null && newNodes.size() > 0)) {
 			monitor.setStatusMessage("Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
 		} else {
-			// monitor.showMessage(Level.WARN, "Adding "+newNodes.size()+" nodes and "+newEdges.size()+" edges");
 			throw new RuntimeException("This query will not add any new nodes or edges to the existing network.");
-			// SwingUtilities.invokeLater(new Runnable() {
-			// public void run() {
-			// JOptionPane.showMessageDialog(null,
-			// "This query will not add any new nodes or edges to the existing network.",
-			// "Warning", JOptionPane.WARNING_MESSAGE);
-			// }
-			// });
-			// return;
 		}
 
 		// Fetch extra edges from STRING if we added a protein despite the network being a STITCH network
@@ -207,7 +196,6 @@ public class LoadTermsTask extends AbstractTask {
 				results = HttpUtils.postJSON(manager.getNodeInfoURL(), args, manager);
 				JSONUtils.addExtraNodeData(stringNet, results);
 			} catch (ConnectionException e) {
-				// e.printStackTrace();
 				monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
 			}
 		}
@@ -255,7 +243,6 @@ public class LoadTermsTask extends AbstractTask {
 		// If we have a view, re-apply the style and layout
 		if (netView != null) {
 			monitor.setStatusMessage("Updating style");
-			// monitor.setStatusMessage("Laying out network");
 			ViewUtils.updateNodeStyle(manager, netView, newNodes);
 			ViewUtils.updateEdgeStyle(manager, netView, newEdges);
 			netView.updateView();

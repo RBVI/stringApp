@@ -91,7 +91,6 @@ public class LoadInteractions2 extends AbstractTask {
 		else if (useDATABASE.equals(Databases.STITCH.getAPIName()))
 			monitor.setTitle("Loading interacting compounds for " + uniqueIds.size() + " identifier(s).");
 
-		// System.out.println("Using database: "+useDATABASE);
 		StringManager manager = stringNet.getManager();
 		String ids = null;
 		for (String id: uniqueIds) {
@@ -102,7 +101,6 @@ public class LoadInteractions2 extends AbstractTask {
 		}
 
 
-		// String url = "http://api.jensenlab.org/network?entities="+URLEncoder.encode(ids.trim())+"&score="+conf;
 		Map<String, String> args = new HashMap<>();
 		String networkURL = manager.getNetworkURL();
 
@@ -125,16 +123,13 @@ public class LoadInteractions2 extends AbstractTask {
 		}
 
 		JSONObject results;
-		// System.out.println("URL: "+networkURL);
 		try {
 			results = HttpUtils.postJSON(networkURL, args, manager);
 		} catch (ConnectionException e) {
-			// e.printStackTrace();
 			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
 			return;
 		}
 
-		// System.out.println("results: "+results.toString());
 
 		Map<String, CyNode> nodeMap = new HashMap<>();
 		CyNetwork network = JSONUtils.createNetworkFromJSON(stringNet, speciesName, results, 
@@ -177,14 +172,10 @@ public class LoadInteractions2 extends AbstractTask {
 				
 				// Query string
 				args.clear();
-				// System.out.println("Identifiers: "+proteins.trim());
 				networkURL = manager.getStringNetworkURL();
 				args.put("identifiers",ids.trim());
 				args.put("required_score",String.valueOf(confidence*10));
 				args.put("network_type", netType.getAPIName());
-				// if (additionalNodes > 0) {
-				// 	args.put("additional_network_nodes", Integer.toString(additionalNodes));
-				// }
 				args.put("additional_network_nodes", "0");
 				args.put("caller_identity", StringManager.CallerIdentity);
 		
@@ -196,7 +187,6 @@ public class LoadInteractions2 extends AbstractTask {
 					return;
 				}
 		
-				// System.out.println("String-db results: "+results.toString());
 		
 				// Add to network
 				List<CyEdge> newEdges = new ArrayList<>();
@@ -216,7 +206,6 @@ public class LoadInteractions2 extends AbstractTask {
 			}
 		}
 		
-		// System.out.println("Results: "+results.toString());
 		int viewThreshold = ModelUtils.getViewThreshold(manager);
 		int networkSize = network.getNodeList().size() + network.getEdgeList().size();
 		if (networkSize < viewThreshold) {

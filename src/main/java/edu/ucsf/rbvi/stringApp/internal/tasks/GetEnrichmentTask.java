@@ -70,11 +70,6 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 	// boolean guiMode;
 
 	// not needed since the API returns only values with fdr < 0.05
-	// @Tunable(description = "Enrichment FDR value cutoff", 
-	//         longDescription = "Sets the false discovery rate (FDR) value cutoff a term must reach in order to be included",
-	//				 exampleStringValue = "0.05",
-	//				 gravity = 1.0)
-	// public double cutoff = 0.05;
 
 	@Tunable(description="Network to be used as background"
 		// longDescription = StringToModel.CY_NETWORK_VIEW_LONG_DESCRIPTION,
@@ -140,17 +135,11 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		if (!ModelUtils.isCurrentDataVersion(network)) {
 			monitor.showMessage(Level.ERROR,
 					"Task cannot be performed. Network appears to be an old STRING network.");
-			// showError("Task cannot be performed. Network appears to be an old STRING network.");
 			return;			
 		}
 		
 		if (!selectedNodesOnly)
 			selected = getExisting(network).trim();
-		/*
-		if (selected.length() == 0 && !selectedNodesOnly) {
-			selected = getExisting(network).trim();
-		}
-		*/
 		
 		if (selected.length() == 0) {
 			monitor.showMessage(Level.ERROR,
@@ -185,28 +174,11 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			// Two ways to report errors.  If the user hasn't selected any nodes, then
 			// suggest that the user selects some.  If they have selected some nodes,
 			// then tell them that they need to select fewer.
-			/*if (CyTableUtil.getNodesInState(network, CyNetwork.SELECTED, true).size() > 0) {
-				monitor.showMessage(Level.ERROR, "Selection has too many nodes. Enrichment can be retrieved only for at most 2000 proteins.");
-				showError("Selection has too many nodes. Enrichment can be retrieved only for at most 2000 proteins.");
-			} else {
-				monitor.showMessage(Level.ERROR, "Enrichment can be retrieved only for at most 2000 proteins. Please select fewer nodes.");
-				showError("Enrichment can be retrieved only for at most 2000 proteins. Please select fewer nodes.");
-			}
-			return;*/
 		}
-		// System.out.println(selected);
-		// List<String> netSpecies = ModelUtils.getNetworkSpeciesTaxons(network);
 		Species selSpecies = Species.getSpecies(allNetSpecies.getSelectedValue());
 		String species = String.valueOf(selSpecies.getTaxId());
 		if (selSpecies.isCustom())
 			species = selSpecies.toString();
-		//if (netSpecies.size() == 1) {
-		//	species = netSpecies.get(0);
-		//} else {
-		//	monitor.showMessage(Level.ERROR,
-		//			"Task cannot be performed. Enrichment can be retrieved for networks that contain nodes from one species only.");
-		//	return;
-		// }
 
 		// map of STRING ID to CyNodes
 		// TODO: Remove specific nodes from selected?
@@ -292,13 +264,9 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		}
 		SynchronousTaskManager<?> taskM = manager.getService(SynchronousTaskManager.class);
 		if (showFactoryPubl != null && publOnly) {
-			//TaskIterator ti = showFactoryPubl.createTaskIterator();
-			//taskM.execute(ti);
 			manager.showPublicationPanel();
 		}
 		if (showFactoryEnrich != null && !publOnly) {
-			//TaskIterator ti = showFactoryEnrich.createTaskIterator();
-			//taskM.execute(ti);
 			manager.showEnrichmentPanel();
 		} 
 	}
@@ -341,7 +309,6 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 					"Enrichment retrieval returned no results, possibly due to an error.");
 			enrichmentResult = null;
 			return;
-			// throw new RuntimeException("Enrichment retrieval returned no results, possibly due to an error.");
 		}
 		List<EnrichmentTerm> terms = JSONUtils.getEnrichmentFromJSON(manager, results, stringNodesMap, network);
 		if (terms == null) {
@@ -350,14 +317,12 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 					"Enrichment retrieval returned no results, possibly due to an error. " + errorMsg);
 			enrichmentResult = null;
 			return;
-			// throw new RuntimeException("Enrichment retrieval returned no results, possibly due to an error. " + errorMsg);
 		} else {
 			Collections.sort(terms);
 			// separate terms into all and pmid
 			List<EnrichmentTerm> termsAll = new ArrayList<EnrichmentTerm>();
 			List<EnrichmentTerm> termsPubl = new ArrayList<EnrichmentTerm>();
 			for (EnrichmentTerm term : terms) {
-				// System.out.println(term.getCategory());
 				if (term.getCategory().equals(TermCategory.PMID.getName())) {
 					termsPubl.add(term);
 				} else {
@@ -412,7 +377,6 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		if (results == null) {
 			monitor.showMessage(Level.ERROR,
 					"PPI enrichment retrieval returned no results, possibly due to an error.");
-			// throw new RuntimeException("PPI enrichment retrieval returned no results, possibly due to an error.");
 			return null;
 		}
 		Map<String, String> ppiEnrichment = 
@@ -420,12 +384,10 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 		if (ppiEnrichment == null) {
 			monitor.showMessage(Level.ERROR,
 					"PPI Enrichment retrieval returned no results, possibly due to an error.");
-			// throw new RuntimeException("PPI enrichment retrieval returned no results, possibly due to an error.");
 			return null;
 		}  else if (ppiEnrichment.containsKey("ErrorMessage")) {
 			monitor.showMessage(Level.ERROR,
 					"PPI Enrichment retrieval failed: "+ppiEnrichment.get("ErrorMessage"));
-			// throw new RuntimeException("PPI Enrichment retrieval failed: "+ppiEnrichment.get("ErrorMessage"));
 			return null;
 		}
 		return ppiEnrichment;
@@ -471,7 +433,6 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 			row.set(EnrichmentTerm.colGenes, term.getGenes());
 			row.set(EnrichmentTerm.colGenesSUID, term.getNodesSUID());
 			row.set(EnrichmentTerm.colNetworkSUID, network.getSUID());
-			// row.set(EnrichmentTerm.colShowChart, false);
 			row.set(EnrichmentTerm.colChartColor, "");
 		}
 		return;
@@ -581,7 +542,6 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 				return (R)result;
 			}
 		} else if (clzz.equals(Long.class)) {
-			// if (ppiSummary == null) return null; 
 			return (R) enrichmentTable.getSUID();
 		} else if (clzz.equals(JSONResult.class)) {
 			JSONResult res = () -> {
@@ -597,7 +557,6 @@ public class GetEnrichmentTask extends AbstractTask implements ObservableTask {
 					result = addResult(result, ColumnNames.NET_ENRICHMENT_DEGREE);
 				}
 				result += "}";
-				// System.out.println(result);
 				return result;
       };
       return (R)res;

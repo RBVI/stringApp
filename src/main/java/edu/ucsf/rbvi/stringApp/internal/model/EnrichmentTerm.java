@@ -129,7 +129,6 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	public static final String colGenesCount = "# genes";
 	public static final String colGenesCountOld = "# enriched genes";
 	public static final String colNetworkSUID = "network.SUID";
-	// public static final String colShowChart = "showInPieChart";
 	public static final String colChartColor = "chart color";
 
 	public static final String colEnrichmentTermsNames = "enrichmentTermsNames";
@@ -141,7 +140,6 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 			colGenesCount, colGenesBG, colGenes, colGenesSUID };
 	public static final String[] swingColumnsEnrichmentOld = new String[] { colCategory, colChartColor, colName, colDescription, colFDR,
 			colGenesCountOld, colGenesBG, colGenesOld, colGenesSUID };
-	// public static final int chartColumnSel = 1;
 	public static final int catColumn = 0;
 	public static final int chartColumnCol = 1;
 	public static final int nameColumn = 2;
@@ -292,7 +290,6 @@ public class EnrichmentTerm implements Comparable<EnrichmentTerm> {
 	}
 
 	public int compareTo(EnrichmentTerm et) {
-		// if (t.toString() == null) return 1;
 		if (this.fdrPValue < et.getFDRPValue()) {
 			return -1;
 		} else if (this.fdrPValue == et.getFDRPValue()) {

@@ -177,7 +177,6 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
       valueMap.put("cutoff", 0.05);
       TaskIterator newIterator =
               setter.createTaskIterator(tf.createTaskIterator(manager.getCurrentNetwork()), valueMap);
-      // System.out.println("stringNetwork network = "+stringNetwork.getNetwork());
       manager.execute(newIterator);
     }
 	}
@@ -215,19 +214,9 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 			int additionalNodes = getAdditionalNodes();
 			// This mimics the String web site behavior
 			if (stringNetwork.getResolvedTerms() == 1 && additionalNodes == 0) {
-				/*
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						JOptionPane.showMessageDialog(null, 
-												"This will return only one node (Hint: increase maximum interactors slider?)",
-									       "Hint", JOptionPane.WARNING_MESSAGE); 
-					}
-				});
-				*/
 				additionalNodes = 10;
 				logger.warn("STRING Compound: Only one protein or compound was selected -- additional interactions set to 10");
 			}
-			//	additionalNodes = 10;
 
 			final int addNodes = additionalNodes;
 
@@ -242,8 +231,6 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 					JDialog d = new JDialog();
 					d.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 					d.setTitle("Resolve Ambiguous Terms");
-					// GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, Databases.STITCH.getAPIName(), 
-					//                                         getSpecies(), false, getConfidence(), getAdditionalNodes());
 					GetTermsPanel panel = new GetTermsPanel(manager, stringNetwork, 
 					                                        Databases.STITCH.getAPIName(), false, optionsPanel);
 					panel.createResolutionPanel();
@@ -259,7 +246,6 @@ public class StitchSearchTaskFactory extends AbstractNetworkSearchTaskFactory im
 	void importNetwork(Species species, int confidence, int additionalNodes) {
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = stringNetwork.combineIds(queryTermMap);
-		// System.out.println("Importing "+stringIds);
 		TaskFactory factory = new ImportNetworkTaskFactory(stringNetwork, getSpeciesName(), 
 		                                                   species, confidence, additionalNodes, stringIds,
 		                                                   queryTermMap, "", Databases.STITCH.getAPIName(), 

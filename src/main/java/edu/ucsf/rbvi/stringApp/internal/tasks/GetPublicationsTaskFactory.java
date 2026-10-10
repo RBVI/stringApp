@@ -15,14 +15,12 @@ import edu.ucsf.rbvi.stringApp.internal.utils.ModelUtils;
 public class GetPublicationsTaskFactory extends AbstractNetworkTaskFactory
 		implements NetworkViewTaskFactory {
 	final StringManager manager;
-	// ShowEnrichmentPanelTaskFactory showEnrichmentFactory;
 	ShowPublicationsPanelTaskFactory showFactoryPubl;
 	public static String EXAMPLE_JSON = GetEnrichmentTask.EXAMPLE_JSON_PUBL;
 	boolean hasGUI = false;
 
 	public GetPublicationsTaskFactory(final StringManager manager, boolean hasGUI) {
 		this.manager = manager;
-		// showEnrichmentFactory = null;
 		showFactoryPubl = null;
 		this.hasGUI = hasGUI;
 	}

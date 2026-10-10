@@ -50,7 +50,6 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 
 	public TaskIterator createTaskIterator() {
 		if (stringIds == null) {
-			//System.out.println("Calling LoadSpeciesInteractions");
 			// if viral species, makre sure to set the database to string 
 			if (Species.isViral(species)) 
 				useDATABASE = Databases.STRING.getAPIName();
@@ -60,7 +59,6 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 					                            useDATABASE, netType));
 		} else if (stringNet.getNetwork() == null) {
 			if (useDATABASE.equals(Databases.STITCH.getAPIName())) {
-				//System.out.println("Calling LoadInteractions2");
 				return new TaskIterator(new LoadInteractions2(stringNet, speciesName, species,
 																										  confidence, additionalNodes, stringIds,
 																										  queryTermMap, netName, useDATABASE, netType));
@@ -70,13 +68,11 @@ public class ImportNetworkTaskFactory extends AbstractTaskFactory {
 						  confidence, additionalNodes, stringIds,
 						  queryTermMap, netName, useDATABASE, netType));
 			} else {
-				//System.out.println("Calling LoadInteractions");
 				return new TaskIterator(new LoadInteractions(stringNet, speciesName, species,
 																										 confidence, additionalNodes, stringIds,
 																										 queryTermMap, netName, useDATABASE, netType));
 			}
 		}
-		//System.out.println("Calling LoadTermsTask");
 		return new TaskIterator(new LoadTermsTask(stringNet, speciesName, species, confidence,
 		                                          additionalNodes, stringIds, queryTermMap, useDATABASE, netType));
 	}

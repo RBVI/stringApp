@@ -91,7 +91,6 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 		if (!ModelUtils.isCurrentDataVersion(network)) {
 			monitor.showMessage(Level.ERROR,
 					"Task cannot be performed. Network appears to be an old STRING network.");
-			// showError("Task cannot be performed. Network appears to be an old STRING network.");
 			return;			
 		}
 
@@ -183,42 +182,33 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			JSONObject resultsSTRINGDB = null;
 			JSONObject resultsJensenlab = null;
 			if (database.equals(Databases.STITCH.getAPIName()) || (database.equals(Databases.STRING.getAPIName()) && !Species.isViral(selSpecies))) {
-				//System.out.println("Call both APIs");
 				try {
 					monitor.setStatusMessage("Fetching data from: "+manager.getStringNetworkURL());
 					resultsSTRINGDB = HttpUtils.postJSON(manager.getStringNetworkURL(), argsSTRINGDB, manager);
 				} catch (ConnectionException e) {
-					//e.printStackTrace();
 					monitor.showMessage(Level.WARN, "Network error: " + e.getMessage());
-					//return;
 				}
 				try {
 					monitor.setStatusMessage("Fetching data from: "+manager.getNetworkURL());
 					resultsJensenlab = HttpUtils.postJSON(manager.getNetworkURL(), argsJensenlab, manager);
 				} catch (ConnectionException e) {
-					//e.printStackTrace();
 					monitor.showMessage(Level.WARN, "Network error: " + e.getMessage());
 				}
 			} else if (Species.isViral(selSpecies)) {
-				//System.out.println("Call Jensenlab API only");
 				try {
 					monitor.setStatusMessage("Fetching data from: "+manager.getNetworkURL());
 					resultsJensenlab = HttpUtils.postJSON(manager.getNetworkURL(), argsJensenlab, manager);
 				} catch (ConnectionException e) {
-					// e.printStackTrace();
 					monitor.showMessage(Level.WARN, "Network error: " + e.getMessage());
 				}
 			} else if (database.equals(Databases.STRINGDB.getAPIName())) {
-				//System.out.println("Call STRING-DB API only");
 				try {
 				monitor.setStatusMessage("Fetching data from: "+manager.getStringNetworkURL());
 				resultsSTRINGDB = HttpUtils.postJSON(manager.getStringNetworkURL(), argsSTRINGDB, manager);
 				} catch (ConnectionException e) {
-					// e.printStackTrace();
 					monitor.showMessage(Level.WARN, "Network error: " + e.getMessage());
 				}
 			} else {
-				//System.out.println("What do we have here?!");
 			}
 	
 			if (resultsJensenlab == null && resultsSTRINGDB == null) {
@@ -227,7 +217,6 @@ public class ChangeNetTypeTask extends AbstractTask implements ObservableTask {
 			
 			// remove old edges
 			List<CyEdge> removeEdges = ModelUtils.getStringNetEdges(network);;
-			// monitor.setStatusMessage("Removing "+removeEdges.size()+" edges");
 			network.removeEdges(removeEdges);
 
 			// add new edges from Jensenlab

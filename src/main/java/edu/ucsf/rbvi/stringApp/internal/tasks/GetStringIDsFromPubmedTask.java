@@ -95,13 +95,11 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 		JSONObject result = JSONUtils.getResultsFromJSON(object, JSONObject.class);
 		if (result == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"Pubmed returned no results");
-			// System.out.println("object wrong type: "+object.toString());
 			return;
 		}
 		JSONObject json = (JSONObject)result.get("esearchresult");
 		if (json == null) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"Pubmed returned no results");
-			// System.out.println("object doesn't contain esearchresult: "+object.toString());
 			return;
 		}
 
@@ -109,7 +107,6 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 		int count = Integer.parseInt((String)json.get("count"));
 		if (count == 0) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,"Pubmed returned no results");
-			// System.out.println("object doesn't contain count: "+json.toString());
 			return;
 		}
 
@@ -145,7 +142,6 @@ public class GetStringIDsFromPubmedTask extends AbstractTask implements Observab
 		if (tmResults == null || tmResults.size() == 0) {
 			monitor.showMessage(TaskMonitor.Level.ERROR,
 					"Jensenlab API returned no results for query '" + query + "'.");
-			//throw new RuntimeException("Jensenlab returned no results for this PubMed query '" + query + "'.");
 			return;
 		}
 		monitor.showMessage(TaskMonitor.Level.INFO,"Found "+tmResults.size()+" associated entities.");

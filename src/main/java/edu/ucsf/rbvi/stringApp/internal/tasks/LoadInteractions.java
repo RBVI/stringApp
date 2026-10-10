@@ -86,7 +86,6 @@ public class LoadInteractions extends AbstractTask {
 		else if (useDATABASE.equals(Databases.STRINGDB.getAPIName()))
 			monitor.setTitle("Loading data from STRING-DB for " + uniqueIds.size() + " identifier(s).");
 
-		// System.out.println("Using database: "+useDATABASE);
 		StringManager manager = stringNet.getManager();
 		String ids = null;
 		for (String id: uniqueIds) {
@@ -97,13 +96,11 @@ public class LoadInteractions extends AbstractTask {
 		}
 
 
-		// String url = "http://api.jensenlab.org/network?entities="+URLEncoder.encode(ids.trim())+"&score="+conf;
 		Map<String, String> args = new HashMap<>();
 		String networkURL = manager.getNetworkURL();
 
 		// We use different arguments depending on the database
 		if (useDATABASE.equals(Databases.STRINGDB.getAPIName())) {
-			// System.out.println("Identifiers: "+ids.trim());
 			args.put("identifiers",ids.trim());
 			args.put("required_score",String.valueOf(confidence*10));
 			args.put("network_type", netType.getAPIName());
@@ -131,16 +128,13 @@ public class LoadInteractions extends AbstractTask {
 			}
 		}
 		JSONObject results;
-		// System.out.println("URL: "+networkURL);
 		try {
 			results = HttpUtils.postJSON(networkURL, args, manager);
 		} catch (ConnectionException e) {
-			// e.printStackTrace();
 			monitor.showMessage(Level.ERROR, "Network error: " + e.getMessage());
 			return;
 		}
 
-		// System.out.println("results: "+results.toString());
 
 		Map<String, CyNode> nodeMap = new HashMap<>();
 		// This may change...
@@ -154,10 +148,6 @@ public class LoadInteractions extends AbstractTask {
 		}
 
 		// Rename network collection to have the same name as network
-		// EditNetworkTitleTaskFactory editNetworkTitle = (EditNetworkTitleTaskFactory) manager
-		//		.getService(EditNetworkTitleTaskFactory.class);
-		//insertTasksAfterCurrentTask(editNetworkTitle.createTaskIterator(network,
-		//		network.getRow(network).get(CyNetwork.NAME, String.class)));
 		
 		// Set our confidence score
 		ModelUtils.setConfidence(network, ((double)confidence)/100.0);
@@ -204,18 +194,15 @@ public class LoadInteractions extends AbstractTask {
 			args.put("entities",ids.trim());
 			args.put("caller_identity", StringManager.CallerIdentity);
 			networkURL = manager.getNodeInfoURL();
-			// System.out.println("Network URL: "+networkURL);
 			try {
 				results = HttpUtils.postJSON(networkURL, args, manager);
 				JSONUtils.addExtraNodeData(stringNet, results);
 			} catch (ConnectionException e) {
-				//e.printStackTrace();
 				monitor.showMessage(Level.WARN, "Network error from Jensenlab API: " + e.getMessage());
 			}
 
 		}
 
-		// System.out.println("Results: "+results.toString());
 		int viewThreshold = ModelUtils.getViewThreshold(manager);
 		int networkSize = network.getNodeList().size() + network.getEdgeList().size();
 		if (networkSize < viewThreshold) {

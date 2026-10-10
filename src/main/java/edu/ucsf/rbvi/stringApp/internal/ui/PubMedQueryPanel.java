@@ -261,7 +261,6 @@ public class PubMedQueryPanel extends JPanel {
 				return;				
 			}
 			
-			// Species species = (Species)speciesCombo.getSelectedItem();
 			if (stringNetwork == null)
 				stringNetwork = new StringNetwork(manager);
 
@@ -283,7 +282,6 @@ public class PubMedQueryPanel extends JPanel {
 			manager.execute(new TaskIterator(new GetStringIDsFromPubmedTask(stringNetwork, species, 
 		                                                                  additionalNodes, confidence, 
 		                                                                  query, networkType)), this);
-			// cancel();
 			((Window)getRootPane().getParent()).dispose();
 		}
 
@@ -316,7 +314,6 @@ public class PubMedQueryPanel extends JPanel {
 				valueMap.put("cutoff", 0.05);
 				TaskIterator newIterator = 
 								setter.createTaskIterator(tf.createTaskIterator(manager.getCurrentNetwork()), valueMap);
-				// System.out.println("stringNetwork network = "+stringNetwork.getNetwork());
 				manager.execute(newIterator);
 				((Window)getRootPane().getParent()).dispose();
 			}

@@ -90,8 +90,6 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 	final StringManager manager;
 	private final Logger logger = Logger.getLogger(CyUserLog.NAME);
 
-	// Map<String, List<String>> resolvedIdMap = null;
-	// Map<String, List<Annotation>> annotations = null;
 
 	JTextArea searchTerms;
 	JComboBox<Species> speciesCombo;
@@ -112,7 +110,6 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 
 	public CrossSpeciesPanel(final StringManager manager, final String useDATABASE, boolean queryAddNodes) {
 		super(new GridBagLayout());
-		// System.out.println("Simple terms panel");
 		this.manager = manager;
 		this.useDATABASE = useDATABASE;
 		this.queryAddNodes = queryAddNodes;
@@ -127,7 +124,6 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 		this(manager, stringNetwork, useDATABASE, queryAddNodes, null);
 		if (aNetSpecies != null) {
 			this.netSpecies = aNetSpecies;
-			// optionsPanel.setSpeciesText(aNetSpecies);
 		}
 	}
 
@@ -140,7 +136,6 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 	                     String useDATABASE, boolean queryAddNodes, SearchOptionsPanel panel,
 	                     String netName, Task additionalTask) {
 		super(new GridBagLayout());
-		// System.out.println("Terms panel");
 		this.manager = manager;
 		this.stringNetwork = stringNetwork;
 		this.initialStringNetwork = stringNetwork;
@@ -168,7 +163,6 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 		// Create the species panel
 		// Retrieve only the list of main species for now, otherwise the dialogs are very slow
 		List<Species> speciesList = Species.getModelSpecies();
-		// JPanel organismBox = createOrgBox();
 
 		JPanel speciesBox = createSpeciesComboBox(speciesList);
 		add(speciesBox, c.expandHoriz().insets(0,5,0,5));
@@ -293,7 +287,6 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 		buttonPanel.add(Box.createRigidArea(new Dimension(10,0)));
 		buttonPanel.add(cancelButton);
 		buttonPanel.add(Box.createHorizontalGlue());
-		// buttonPanel.add(Box.createRigidArea(new Dimension(10,0)));
 		buttonPanel.add(Box.createRigidArea(new Dimension(10,0)));
 		buttonPanel.add(importButton);
 		return buttonPanel;
@@ -302,13 +295,10 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 	void importNetwork(Species species1, Species species2, int confidence, NetworkType netType) {
 		Map<String, String> queryTermMap = new HashMap<>();
 		List<String> stringIds = null;
-		// System.out.println("Importing "+stringIds);
 		TaskFactory factory = null;
 		if (stringNetwork == null) {
 			stringNetwork = new StringNetwork(manager);
 		}
-		// public LoadSpeciesInteractions(final StringNetwork stringNet, final Species species1,
-	  //                                final Species species2, final int confidence, final NetworkType netType) {
 		TaskIterator ti = new TaskIterator(new LoadSpeciesInteractions(stringNetwork, species1, species2, confidence, netType, species1.toString() + " & " + species2.toString()));
 		if (additionalTask != null)
 			ti.append(additionalTask);
@@ -339,7 +329,6 @@ public class CrossSpeciesPanel extends JPanel implements TaskObserver {
 			valueMap.put("cutoff", 0.05);
 			TaskIterator newIterator = 
 							setter.createTaskIterator(tf.createTaskIterator(manager.getCurrentNetwork()), valueMap);
-			// System.out.println("stringNetwork network = "+stringNetwork.getNetwork());
 			manager.execute(newIterator);
 		}
 		optionsPanel.showSpeciesBox(true); // Turn this back on

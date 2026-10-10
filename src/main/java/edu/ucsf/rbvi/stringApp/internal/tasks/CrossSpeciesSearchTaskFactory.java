@@ -123,7 +123,6 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 		return new TaskIterator(new AbstractTask() {
 			@Override
 			public void run(TaskMonitor m) {
-				// m.setTitle(CROSS_SPECIES_NAME);
 				m.setTitle("Loading interactions from Jensenlab for " + species1.toString() + " and " + species2.toString());
 				m.setStatusMessage("Please be patient, this might take several minutes. In case of server timeout, consider increasing the confidence cutoff.");
 				StringNetwork stringNetwork = new StringNetwork(manager);
@@ -211,11 +210,8 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 			msgColor = UIManager.getColor("Label.disabledForeground");
 			setBackground(UIManager.getColor("TextField.background"));
 			setLayout(new GridBagLayout());
-			// setMinimumSize(getPreferredSize());
-			// setBorder(BorderFactory.createEmptyBorder(vgap, hgap, vgap, hgap));
 			smallFont = getFont().deriveFont(LookAndFeelUtil.getSmallFontSize());
 
-			// speciesPanel2 = createSpeciesPartnerComboBox(Species.getSpeciesPartners(Species.getHumanSpecies().toString()));
 
 			EasyGBC c = new EasyGBC();
 
@@ -328,7 +324,6 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 					model2.addAll(crossList);
 					species2Decorator.updateEntries(crossList);
 					species2.setSelectedItem(first);
-					// speciesFrame1.setVisible(false);
 
 					Species sp1 = (Species) species1.getSelectedItem();
 					if (sp1 == null || sp1.toString() == "")
@@ -359,11 +354,6 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 			species2.setFont(getFont().deriveFont(LookAndFeelUtil.getSmallFontSize()));
 			model2 = (DefaultComboBoxModel) species2.getModel();
 
-			//if (speciesList.contains("Plasmodium falciparum")) {
-			//	species2.setSelectedItem("Plasmodium falciparum");
-			//	String sp2 = Species.abbreviate("Plasmodium falciparum");
-			//	sp2Button.setText(sp2);
-			//}
 			species2.setSelectedItem(first);
 			String sp2 = Species.abbreviate(first);
 			sp2Button.setText(sp2);
@@ -379,9 +369,6 @@ public class CrossSpeciesSearchTaskFactory extends AbstractNetworkSearchTaskFact
 				public void actionPerformed(ActionEvent ae) {
 					String sp2 = (String) species2.getSelectedItem();
 					if (sp2 == null || sp2.toString() == "" || Species.getSpecies(sp2) == null) {
-						// sp2Button.setText("Species 2");
-						// System.out.println("Updating entries");
-						// species2Decorator.updateEntries(speciesList);
 						return;
 					}
 					Species sp = Species.getSpecies(sp2);
