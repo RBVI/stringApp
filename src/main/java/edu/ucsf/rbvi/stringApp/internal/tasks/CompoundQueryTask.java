@@ -96,6 +96,13 @@ public class CompoundQueryTask extends AbstractTask implements ObservableTask {
 
 	public void run(TaskMonitor monitor) {
 		monitor.setTitle("STITCH Compound/Protein Query");
+		// A network type that isn't in the list (e.g. "regulatory subnetwork") comes through as a String
+		Object selectedType = ((ListSingleSelection<?>)networkType).getSelectedValue();
+		if (!(selectedType instanceof NetworkType)) {
+			if (NetworkType.REGULATORY.toString().equals(selectedType))
+				throw new RuntimeException(NetworkType.JENSENLAB_UNSUPPORTED_MESSAGE);
+			throw new RuntimeException("Unknown network type: " + selectedType);
+		}
 		boolean found;
 		Species sp = null;
 		for (Species s : speciesList) {

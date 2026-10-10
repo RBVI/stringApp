@@ -78,6 +78,13 @@ public class CrossSpeciesQueryTask extends AbstractTask implements ObservableTas
 
 	public void run(TaskMonitor monitor)  {
 		monitor.setTitle("Cross-species query");
+		// A network type that isn't in the list (e.g. "regulatory subnetwork") comes through as a String
+		Object selectedType = ((ListSingleSelection<?>)networkType).getSelectedValue();
+		if (!(selectedType instanceof NetworkType)) {
+			if (NetworkType.REGULATORY.toString().equals(selectedType))
+				throw new RuntimeException(NetworkType.JENSENLAB_UNSUPPORTED_MESSAGE);
+			throw new RuntimeException("Unknown network type: " + selectedType);
+		}
 		boolean found;
 		Species sp1 = getSpecies(species1, taxonID1);
 		if (sp1 == null) {
